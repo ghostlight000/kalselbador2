@@ -25,13 +25,15 @@ with sync_playwright() as p:
     pg.click('button[data-c=start]'); pg.wait_for_timeout(150)
     # 시작 연출: 네 장 + 제목. 처음 누르면 줄이 다 뜨고, 다시 누르면 넘어간다
     assert pg.is_visible('#pv .eo'); first=pg.inner_text('#pv')
-    for i in range(4):
+    for i in range(5):
         pg.click('#pv .eo'); pg.click('#pv .eo'); pg.wait_for_timeout(50)
         t=pg.inner_text('#pv')
         if i==1: assert '레아는' in t and '용 사냥꾼' in t, t   # 출신 1 = 용 사냥꾼 일족의 후예
-        if i==2: assert '불지기' in t, t                     # 1편 엔딩 k의 소문
+        if i==2: assert '레아의 것' in t and '아버지가' in t, t # 편지 + 출신의 잊은 것
+        if i==3: assert '편지가 가리킨' in t and '불지기' in t, t  # 첫날 밤 + 1편 엔딩 k의 소문
     pg.click('#pv .eo'); pg.click('#pv [data-pv=close]'); pg.wait_for_timeout(100)
-    S=pg.evaluate('window.__k2.S'); print('made',S['name'],S['race'],S['og'],S['st'],S['loc'],S['pro']); assert S['pro']==99 and S['loc']=='street' and not S['base']
+    S=pg.evaluate('window.__k2.S'); print('made',S['name'],S['race'],S['og'],S['st'],S['loc'],S['pro']); assert S['pro']==99 and S['loc']=='street' and not S['base'] and S['inv'].get('letter')==1
+    assert '보낸 이 없는 편지' in pg.inner_text('.M')
     # 본거지 전: 여관·파견이 보이지 않는다
     assert pg.locator('button[data-c=go][data-a=inn]').count()==0 and pg.locator('button[data-c=board]').count()==0
     assert pg.is_disabled('button[data-c=go][data-a=church]')
