@@ -67,7 +67,10 @@ with sync_playwright() as p:
     choose(pg,'장부에 뭐가 있느냐고 묻는다'); assert pg.locator('#ov button:has-text("각자 갈 길을 간다")').count()==1; choose(pg,'여관으로 보낸다'); assert '여관 1층에서 기다린다' in pg.inner_text('#ov') and '털 날리는' not in pg.inner_text('#ov'); choose(pg,'좋다'); s=S(pg); assert s['comps']==['kirien','oswin'] and s['party']=='kirien'; print('oswin joined')
     assert '여관 1층에서 기다린다' in pg.inner_text('.Rr')
     # ---- 여관 주인 소문 → 저택 ----
-    go(pg,'docks'); pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='녹슨 닻 여관' and '오르빌 저택' in pg.inner_text('#ov'); choose(pg,'가 보기로 한다')
+    go(pg,'docks'); pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='녹슨 닻 여관' and '오르빌 저택' in pg.inner_text('#ov'); choose(pg,'브리타를 찾아가 보기로 한다')
+    assert pg.locator('.map .node[data-a=base]').count()==0
+    go(pg,'street'); pg.click('button[data-c=brita]'); assert '한 줄도 말이 안 돼' in pg.inner_text('#ov'); choose(pg,'주문이 사라졌다는 거야?'); assert '겨울 시대 노인들' in pg.inner_text('#ov'); choose(pg,'묘지로 가 보기로 한다')
+    go(pg,'church'); pg.click('button[data-c=tomb]'); t=pg.inner_text('#ov'); assert '불을 거둔 이' in t; choose(pg,'열쇠를 챙긴다'); print('pre-manor story ok')
     assert pg.locator('.map .node[data-a=base]').count()==1
     go(pg,'base'); pg.click('button[data-c=manorIn]'); assert '노래 들려?' in pg.inner_text('#ov'); choose(pg,'위층으로 올라간다'); h=fight(pg); assert '노래하는 옛 주인' in h
     pg.wait_for_selector('#ov.on h2',timeout=5000); t=pg.inner_text('#ov'); assert '여관비는 아끼겠네' in t and '여우 모양 문진' in t; choose(pg,'짐을 옮긴다')

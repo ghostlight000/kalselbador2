@@ -22,7 +22,7 @@ with sync_playwright() as p:
     s=S(pg);assert s['party']=='kirien' and s['comps']==['kirien','oswin'];print('send to inn ok')
     # 여관에서 바꾸기 (여관 소문 창이 먼저 뜰 수 있다)
     pg.wait_for_timeout(700)
-    if pg.is_visible('#ov.on'):choose(pg,'가 보기로 한다')
+    if pg.is_visible('#ov.on'):choose(pg,'브리타를 찾아가')
     pg.click('button[data-c=rooms]');assert '여관 1층' in pg.inner_text('#ov h2');choose(pg,'오스윈과 나간다');assert S(pg)['party']=='oswin';print('inn swap ok')
     # 길 위 마주침
     pg.evaluate("()=>{const K=window.__k2;K.ENC_ON=true;K._r=Math.random;Math.random=()=>0.01}")
