@@ -9,7 +9,7 @@ E=lambda pg,x:pg.evaluate(x)
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=cav][data-a=i2]')
-    pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]')
+    pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
     assert E(pg,"window.__k2.S.av")=='i2' and pg.locator('.L .av').count()==1
     # 나쁜 사진 주소는 그리지 않는다
     E(pg,"()=>{const K=window.__k2;K.S.av='data:image/png;base64,AAA\" onerror=\"alert(1)';K.render()}");assert pg.locator('.L img.av').count()==0

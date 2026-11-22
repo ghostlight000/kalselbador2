@@ -8,7 +8,7 @@ def go(pg,k):pg.click(f'.map .node[data-a={k}]');choose(pg,'간다');pg.wait_for
 S=lambda pg:pg.evaluate('window.__k2.S')
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))
-    pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]')
+    pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
     pg.evaluate("()=>{const K=window.__k2;K.S.night=3;K.S.tutd=1;K.S.loc='street';K.render();K.SCENE.kirien()}")
     choose(pg,'못 알아들었다고');choose(pg,'말하지 않는다');choose(pg,'혼자 하겠다');assert '초소 앞으로 와' in pg.inner_text('#ov');choose(pg,'고개를 끄덕인다')
     s=S(pg);assert s['dec']['kirien']==1 and s['comps']==[];print('kirien declined')

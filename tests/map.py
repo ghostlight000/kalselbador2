@@ -5,7 +5,7 @@ ROOT=pathlib.Path(__file__).resolve().parent.parent;url=(ROOT/'index.html').as_u
 errs=[]
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))
-    pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]')
+    pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
     MW=lambda:pg.evaluate('window.__k2.MW');vb=lambda:pg.get_attribute('.map','viewBox')
     w0=MW()['w'];assert w0==92
     pg.click('button[data-c=mapzoom][data-a="1.3"]');pg.click('button[data-c=mapzoom][data-a="1.3"]');m=MW();print('zoom in',m);assert m['w']<60 and vb()==f"{m['x']} {m['y']} {m['w']} {m['h']}"

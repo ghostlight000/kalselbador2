@@ -14,7 +14,7 @@ def setup(pg):
     pg.goto(url);pg.evaluate("localStorage.clear()");pg.goto(url);pg.wait_for_timeout(200)
     assert pg.input_value('#cname')=='베렌'
     pg.click('button[data-c=start]');pg.click('#pv .eo');assert '백이십 년' in pg.inner_text('#pv') or True
-    pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]')
+    pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
     assert S(pg)['name']=='베렌'
     pg.evaluate("()=>{const K=window.__k2;K.S.night=3;K.S.tutd=1;K.joinComp('kirien');K.joinComp('oswin');K.grantBase()}");okpop(pg)
     pg.evaluate("()=>{const K=window.__k2;K.S.pit=1;K.S.coin=50;K.S.loc='street';K.render()}")
