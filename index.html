@@ -112,6 +112,9 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .map .node:hover rect,.map .node:focus rect{fill:var(--c2);stroke-width:.8}
 .map .node.here rect{fill:var(--a)}
 .map .node.dest rect{stroke:var(--kw);stroke-width:.9}
+.map .node.goal rect{stroke:var(--a);stroke-width:.8;animation:gpulse 1.6s ease-in-out infinite}@keyframes gpulse{50%{stroke-width:1.8;stroke-opacity:.35}}
+.goalc{border:1px solid var(--a);border-radius:10px;padding:10px 14px;margin:0 0 12px;background:color-mix(in srgb,var(--a) 7%,transparent)}.goalc .m{margin-top:4px}
+.btn.goal{border-color:var(--a);box-shadow:inset 0 0 0 1px var(--a)}
 .map .node.lk{opacity:.4}
 .map .node text{font:3.7px "Gowun Batang",serif;fill:var(--t);text-anchor:middle}
 .map .node.here text{font-weight:700;fill:var(--a)}
@@ -541,7 +544,7 @@ const BOOK=[
 // 임무(뼈대용 첫 줄기)
 const MS=[
  ['오렌하르트에 닿았다','내 글씨로 쓰인 편지를 따라왔다. 쓴 기억은 없다. 운하 부두의 녹슨 닻 여관에 방을 얻었다.',s=>true],
- ['가스등 거리를 순찰한다','경비대 초소의 모르텐이 밤길에 나설 사람을 찾는다.',s=>s.night>=1],
+ ['가스등 거리를 순찰한다','모르텐과 함께 가스등 거리로 가서 밤길을 순찰한다.',s=>s.night>=1],
  ['칼을 든 도둑','가스등을 훔치는 손이 있다.',s=>s.night>=2],
  ['꺼지지 않는 등불을 든 사람','편지가 가리킨 사람. 거리 끝에 서 있다고 한다.',s=>s.night>=3],
  ['여우 머리의 여자',s=>s.dec.kirien&&!s.comps.includes('kirien')?'키리엔과 함께 가지 않았다. 마음이 바뀌면 가스등 거리 초소 앞에서 만날 수 있다.':'점등꾼을 쫓던 사람이 있었다.',s=>s.comps.includes('kirien')||!!s.dec.kirien],
@@ -731,22 +734,35 @@ const TALK={
 const QA={
  kirien:[
   ['뭐 좀 먹을래?',['배고파 죽겠어. 생선만 아니면 뭐든.','*키리엔의 꼬리가 기대에 차서 한 번 흔들린다.']],
-  ['꼬리 만져 봐도 돼?',s=>affTier('kirien')>=8?['…잠깐만이야.','*키리엔이 꼬리를 슬쩍 내민다. 귀 끝이 빨갛다.']:['안 돼.','*키리엔이 꼬리를 홱 감춘다.','…나중에. 아주 나중에.']],
-  ['엄마 꿈은 자주 꿔?',['어제 꿈에 엄마가 나왔어. 근데 얼굴이 기억이 안 나. 꿈에서도.']],
+  ['사람 찾는 일은 어때?',['사람 찾는 일을 하다 보면 사람이 싫어져. 그러다 찾으면 또 좋아져. 이상하지.']],
   ['편지를 또 받으면 어떡하지?',['이번엔 따라가지 마.','*키리엔이 잠깐 생각한다.','…아니. 따라가. 나도 같이 가 줄게.']],
-  ['사람 찾는 일은 어때?',['사람 찾는 일을 하다 보면 사람이 싫어져. 그러다 찾으면 또 좋아져. 이상하지.']]],
+  ['엄마 꿈은 자주 꿔?',['어제 꿈에 엄마가 나왔어. 근데 얼굴이 기억이 안 나. 꿈에서도.']],
+  ['꼬리 만져 봐도 돼?',s=>affTier('kirien')>=8?['…잠깐만이야.','*키리엔이 꼬리를 슬쩍 내민다. 귀 끝이 빨갛다.']:['안 돼.','*키리엔이 꼬리를 홱 감춘다.','…나중에. 아주 나중에.']]],
  oswin:[
   ['요즘 잠은 자?',['장부를 베고 잡니다. 머리가 좀 똑똑해질까 싶어서요. 아직 효과는 없습니다.']],
-  ['꼬리에서 불꽃이 튀던데?',['겨울 시대의 흔적입니다. 정전기라고 부르셔도 되고요. 놀라지 마십시오. 저도 가끔 놀랍니다.']],
-  ['학술원 시절 별명이 있었어?',['‘번개 도마뱀’이었지요. 지금은 그 사람들이 제 이름조차 모릅니다. 별명보다는 나은 처지일까요.']],
   ['차 한잔 할래?',['제가 끓였습니다. 맛은 묻지 마십시오. 학자의 차는 원래 실험입니다.','*찻잔에서 쇠 냄새가 난다.']],
-  ['나 말수가 적은 편이야?',['생각보다 적으시지요. 저는 생각보다 많고요. 균형이 맞습니다.']]]
+  ['나 말수가 적은 편이야?',['생각보다 적으시지요. 저는 생각보다 많고요. 균형이 맞습니다.']],
+  ['학술원 시절 별명이 있었어?',['‘번개 도마뱀’이었지요. 지금은 그 사람들이 제 이름조차 모릅니다. 별명보다는 나은 처지일까요.']],
+  ['꼬리에서 불꽃이 튀던데?',['겨울 시대의 흔적입니다. 정전기라고 부르셔도 되고요. 놀라지 마십시오. 저도 가끔 놀랍니다.']]]
 };
 const MOOD={
  kirien:[['그럭저럭. 털이 덜 빠지는 계절이라 좋아.'],['피곤해. 근데 나쁜 피곤은 아니야.'],['비 냄새가 나. 오늘 밤은 다들 일찍 잘 거야.']],
  oswin:[['나쁘지 않습니다. 오늘은 아무도 제 이름을 지우지 않았으니까요.'],['장부 세 쪽을 되살렸습니다. 기분이 좋다는 뜻입니다. 얼굴에는 안 드러나겠지만.'],['비늘이 가렵습니다. 날씨가 바뀌려나 봅니다.']]
 };
 const DEFL={kirien:[['내 얘기? 재미없어. 다음에.'],['이제 네가 모르는 내 얘기는 별로 없어. …아마도.']],oswin:[['제 이야기는 각주가 너무 많습니다. 다음에 하지요.'],['제 이야기는 이제 거의 다 아시지요. 나머지는 각주입니다.']]};
+/* 동료가 처음 이야기할 때 주인공의 출신에 반응한다(ORIGIN 순서) */
+const ORX={
+ kirien:[['해빙 전쟁에서 왔다며. 그래서 칼 잡는 손이 그렇구나.','밤에 잠꼬대는 안 해? 전쟁 다녀온 사람들 많이 하던데.'],['용 사냥꾼 집안이라고? 용은 없잖아.','…없는 걸 쫓는 거면 나랑 비슷하네.'],['영매사였다고? 우리 엄마랑 같은 장사네. 손님 울리는 법은 알겠다.','*키리엔이 웃는데 귀는 웃지 않는다.'],['등에 번호 있다며. 보여 줄 필요는 없어.','나도 귀에 흉 있어. 서로 안 물어보면 되지.'],['정화자였다고.','*키리엔의 귀가 뒤로 붙는다.','내 귀 찢은 게 정화자야. 너는 아니겠지.','>그건 내가 아니다','…알아. 그냥 한번 듣고 싶었어.'],['기억 전당포에서 일했다고?','엄마가 거기 단골이었을지도 몰라. 아니 됐어. 묻지 마.'],['무덤 파던 사람이랑 다니게 될 줄은 몰랐네.','그래도 죽은 사람은 산 사람보다 거짓말을 덜 하지?'],['넝마주이였다며. 하수구 길 알아?','그럼 쓸모 있네. 칭찬이야.']],
+ oswin:[['퇴역병이시라고요. 해빙 전쟁 장부를 본 적이 있습니다.','돌아온 병사 이름 옆에 작은 글씨가 붙어 있었지요. 무엇이었는지는 다음에 말씀드리겠습니다.'],['용 사냥꾼의 후예와 용의 피를 이은 파볼릭이 같이 다니는군요.','학술원이 알면 논문을 쓰겠습니다. 제목은 제가 짓지요.'],['영매사셨다고요. 실례지만 저는 강령회를 믿지 않습니다.','다만 대답이 온 적이 있다면 그 이야기는 듣고 싶군요.'],['학술원 유리관 출신이시라고요.','*오스윈이 한동안 말이 없다.','저는 그 유리관 옆에서 기록하던 쪽이었습니다. 직접 하진 않았지만 말리지도 못했지요.'],['재의 정화자셨다고요. 이름을 지우는 일을 하셨겠지요.','*오스윈의 꼬리 끝에서 불꽃이 튄다.','제 이름도 그렇게 지워졌습니다. 당신 손이었는지는 묻지 않겠습니다. 장부를 보면 알겠지만 보지 않겠습니다.'],['기억 전당포라. 장부를 쓰는 일이었겠군요.','동업자를 만나 반갑습니다. 우리 둘 다 남의 것을 적어 두는 사람이지요.'],['도굴꾼이셨다고요. 학술원 해부실에 시신을 대던.','그 시신들 이름은 어느 장부에도 없었습니다. 제가 찾아봤거든요.'],['넝마주이라. 도시가 버린 걸 주우셨군요.','저도 버려진 쪽이니 주워 주신 셈입니다.']],
+ ibre:[['전쟁에 나가셨군요.','무색도 끌려갔습니다. 맨 앞줄에.'],['용을 쫓던 집안. 저는 용의 먼 후손입니다. 쫓지 마십시오.','*이브레의 입꼬리가 아주 조금 올라간다. 농담이었던 것 같다.'],['죽은 사람이 대답을 했습니까.','제 이름을 불러 줄 죽은 사람은 없습니다. 이름이 없었으니까.'],['등에 번호가 있으십니까. 저도 있습니다. 무색 셋.','같은 쪽입니다.'],['정화자였다고 하셨습니다. 무색을 장부에서 지우는 사람들입니다.','지금은 아니시니 괜찮습니다.'],['기억을 맡아 두는 일.','제 동생도 학술원에 맡겼습니다. 찾으러 가면 돌려줄지 모르겠습니다.'],['무덤을 파셨습니까.','무색은 무덤이 없습니다. 팔 것도 없습니다.'],['넝마주이. 부두 아이들처럼.','저도 그렇게 자랐습니다.']],
+ kasimir:[['퇴역병이시라. 전쟁에 나가셨던 분들은 걸음이 다르시죠.','저는 대리로만 싸워 봐서 부럽습니다. 진심입니다. 반쯤은.'],['용 사냥꾼 가문이라니. 벨데인 귀족들도 그 이름엔 고개를 숙였죠. 한때는요.','몰락한 가문끼리 잘 지내 보시죠.'],['영매사셨다니. 오래 죽은 사람과도 이야기하실 줄 아십니까?','묻고 싶은 게 하나 있어서요. 농담입니다.'],['학술원 유리관이라. 그들은 영원히 사는 법도 연구하죠.','혹시 거기서 붉은 물도 보셨습니까?','*대답을 기다리지 않고 웃는다.'],['교단 정화자셨다니.','납골당 계단에서 마주쳤다면 저를 태우셨겠군요. 늦게 만나서 다행입니다.'],['기억 전당포. 저도 거기 맡긴 게 있을지 모르겠군요.','오래 살면 맡긴 줄도 모르는 게 생기죠.'],['도굴꾼이셨다니. 벨데인 납골당은 파 보셨습니까?','안 파셨길 바랍니다. 거기 제 자리가 있거든요.'],['넝마주이셨다니. 버려진 것 중에 쓸 만한 걸 고르는 눈이 있으시겠군요.','저를 고르신 걸 보면.']]
+};
+/* 종족에 대한 반응: 질문 묶음 안에서 2단계부터 */
+const RCX={kirien:{p:['크고 비늘 있고. 파볼릭들은 다 무섭게 생겼는데 너는 좀 덜해.','비늘 색 가지고 뭐라는 사람 있으면 말해. 귀 물어 줄게.'],i:['같은 잉그라드라 편해. 머리가 뭐든 간에.','변두리 가면 다들 너한테 말 걸 거야. 이주민끼리는 그래.'],b:['벨데인은 다 귀족인 줄 알았어.','너는 손이 거칠어서 아닌 거 알겠다.']},
+ oswin:{p:['같은 파볼릭이시군요. 비늘 색은… 학술원식으로 말하지 않겠습니다.','그냥 좋은 색입니다.'],i:['잉그라드시군요. 학술원은 잉그라드를 이주민 표본이라 불렀지요.','저는 그 단어를 쓰지 않습니다.'],b:['벨데인이시군요. 이 도시 법을 만든 사람들 얼굴이지요.','당신이 만든 건 아니니 원망하진 않겠습니다.']},
+ ibre:{p:['비늘 색이 있으십니다. 명부에 이름이 있는 쪽입니다.','부럽다는 말은 아닙니다. 그냥 다르다는 말입니다.'],i:['잉그라드. 부두에서 같이 일했습니다.','힘은 약해도 계산이 빠릅니다. 칭찬입니다.'],b:['벨데인은 저를 올려다봐야 합니다. 다들 싫어합니다.','당신은 괜찮아 보입니다.']},
+ kasimir:{p:['파볼릭 분과 춤을 추려면 발을 밟힐 각오를 해야 하죠.','각오는 돼 있습니다.'],i:['잉그라드라니. 벨데인 살롱에서는 잉그라드 점쟁이가 인기였죠.','당신은 점보다 칼이 어울리시지만.'],b:['같은 벨데인이시군요. 어느 가문이신지는 묻지 않겠습니다.','저도 대답하기 곤란한 질문이니까요.']}};
+const QAT=[1,1,2,3,4]; // 질문마다 필요한 호감 단계(앞 질문을 먼저 물어야 열린다)
 const GREET={kirien:'키리엔이 귀를 이쪽으로 돌린다.',oswin:'오스윈이 읽던 장부에서 눈을 든다.'};
 // 호감 단계가 오르면 다음 대화에서 한 번 드러나는 몸짓(숫자 대신)
 const TIERL={
@@ -873,8 +889,7 @@ const SCENE={
    [[joinL('kasimir'),()=>{delete S.dec.kasimir;joinComp('kasimir');SCENE.joined('kasimir','기다리게 하셨으니 이자는 나중에 받죠.')}],['아직이다',null]]),
  mort0:()=>ev('문 앞의 노인',`<p>문을 열자 늙은 경비가 서 있다. 회색 수염에 등은 곧다. 손에 손때 묻은 참나무 막대를 쥐었다.</p><p>모르텐 — “가스등 거리 경비대 교관 모르텐일세. 경비들은 다 도망갔네. 거리 끝에 그게 또 나왔어. 꺼지지 않는 등불을 든 놈.”</p>
    <p>모르텐이 내 손을 흘끗 본다.</p><p>모르텐 — “손끝이 푸르군. 그럼 이 도시에서 더 잃을 것도 별로 없겠지. 따라오게.”</p>`,
-   [['싸우는 법부터 알려 달라고 한다',()=>{S.mort=1;S.tutAsk=1;jr('첫날 밤 경비대 교관 모르텐이 문을 두드렸다. 거리 끝에 꺼지지 않는 등불을 든 사람이 나왔다고 했다.');save();startBattle('tut')}],
-    ['가르침은 건너뛴다',()=>{S.mort=1;S.tutAsk=1;jr('첫날 밤 경비대 교관 모르텐이 문을 두드렸다. 거리 끝에 꺼지지 않는 등불을 든 사람이 나왔다고 했다.');ev('모르텐','<p>모르텐 — “자신만만하군. 좋네. 박자는 길에서 배우게. 가스등 거리로 가세. 내가 옆에 있겠네.”</p>',[['막대를 쥔 노인을 따라간다',null]],1);save()}]]),
+   [['막대를 쥔 노인을 따라간다',()=>{S.mort=1;S.tutAsk=1;jr('첫날 밤 경비대 교관 모르텐이 문을 두드렸다. 거리 끝에 꺼지지 않는 등불을 든 사람이 나왔다고 했다. 길에 나서기 전에 박자부터 배웠다.');save();ev('여관 뒷마당',`<p>모르텐이 여관 뒷마당 가스등 아래 멈춰 선다. 막대 끝으로 돌바닥을 두 번 친다.</p><p>모르텐 — “거리에 나가기 전에 박자부터 맞춰 보세. 놈들은 칼보다 박자로 죽이네. 오래 안 걸려.”</p>`,[['막대 앞에 선다',()=>startBattle('tut')]],1)}]]),
  mortDie:()=>ev('모르텐',`<p>점등꾼이 쓰러진 자리에서 몇 걸음 떨어진 곳에 모르텐이 누워 있다. 숨이 얕다. 막대는 두 동강이 났다.</p><p>모르텐 — “박자가… 늦었네. 내가. 자네 말고.”</p>
    <p>모르텐 — “이 도시는 쓰러진 사람을 기다려 주지 않네. 자네는 서 있게. 끝까지.”</p><p class="m">모르텐의 손에서 힘이 빠진다.</p>`,
    [['그의 눈을 감겨 준다',()=>SCENE.mortCart(0)],['이름을 부른다',()=>SCENE.mortCart(1)]]),
@@ -1200,7 +1215,7 @@ function morph(P,h){const T=document.createElement('template');T.innerHTML=h;msy
 function msync(o,n){const oc=[...o.childNodes],nc=[...n.childNodes];nc.forEach((b,i)=>{const a=oc[i];if(!a){o.appendChild(b);return}if(a.nodeType!==b.nodeType||a.nodeName!==b.nodeName||(a.nodeType==1&&a.id!==b.id)){o.replaceChild(b,a);return}if(a.nodeType!=1){if(a.nodeValue!==b.nodeValue)a.nodeValue=b.nodeValue;return}if(a.isEqualNode(b))return;mattr(a,b);msync(a,b)});for(let i=oc.length-1;i>=nc.length;i--)o.removeChild(oc[i])}
 function mattr(a,b){for(const x of [...a.attributes])if(!b.hasAttribute(x.name))a.removeAttribute(x.name);for(const x of b.attributes)if(a.getAttribute(x.name)!==x.value)a.setAttribute(x.name,x.value);if((a.nodeName=='INPUT'||a.nodeName=='TEXTAREA')&&a!==document.activeElement&&a.type!='file'&&a.value!==(b.getAttribute('value')||''))a.value=b.getAttribute('value')||'';if(a.nodeName=='DETAILS')a.open=b.hasAttribute('open')}
 
-const B=(c,label,o={})=>`<button class="btn${o.cls?' '+o.cls:''}" data-c="${c}"${o.a!=null?` data-a="${esc(o.a)}"`:''}${o.dis?' disabled':''}>${label}${o.sub?`<small>${o.sub}</small>`:''}</button>`;
+const B=(c,label,o={})=>`<button class="btn${o.cls?' '+o.cls:''}${GK.includes(c)&&!o.dis?' goal':''}" data-c="${c}"${o.a!=null?` data-a="${esc(o.a)}"`:''}${o.dis?' disabled':''}>${label}${o.sub?`<small>${o.sub}</small>`:''}</button>`;
 const bar=(v,m,cls)=>`<div class="bar ${cls||''}"><i style="width:${Math.max(0,Math.min(100,v/m*100))}%"></i></div>`;
 
 function render(){
@@ -1282,8 +1297,8 @@ function mapSvg(){
   ROAD.filter(([x,y])=>vis(x)&&vis(y)).forEach(([x,y])=>{const lk=(PL[x].u&&!PL[x].u(S))||(PL[y].u&&!PL[y].u(S));
     o+=`<line x1="${PL[x].x}" y1="${PL[x].y}" x2="${PL[y].x}" y2="${PL[y].y}" class="road${lk?' lk':''}"/>`});
   if(mv)o+=`<line x1="${PL[a.fr].x}" y1="${PL[a.fr].y}" x2="${PL[a.to].x}" y2="${PL[a.to].y}" class="route"/>`;
-  Object.entries(PL).filter(([k])=>vis(k)).forEach(([k,p])=>{const ok=!p.u||p.u(S),here=k===S.loc&&!mv,dest=mv&&a.to===k;
-    o+=`<g class="node${ok?'':' lk'}${here?' here':''}${dest?' dest':''}" data-c="mapsel" data-a="${k}"><title>${p.n}${ok?'':' — '+p.lk}</title>
+  Object.entries(PL).filter(([k])=>vis(k)).forEach(([k,p])=>{const ok=!p.u||p.u(S),here=k===S.loc&&!mv,dest=mv&&a.to===k,gl=!here&&!dest&&GOALAT===k;
+    o+=`<g class="node${ok?'':' lk'}${here?' here':''}${dest?' dest':''}${gl?' goal':''}" data-c="mapsel" data-a="${k}"><title>${p.n}${ok?'':' — '+p.lk}</title>
       <rect x="${p.x-2.8}" y="${p.y-2.8}" width="5.6" height="5.6" transform="rotate(45 ${p.x} ${p.y})"/>
       <text x="${p.x}" y="${p.y+8.2}">${p.n}</text></g>`});
   const [mx,my]=mapPos();
@@ -1293,6 +1308,8 @@ function mapSvg(){
 function placeView(){
   const P=PL[S.loc],busy=!!S.act;
   let h=actProg();
+  const GO=S.pro===99?goalNow():null;GOALAT=GO&&GO.at;GK=GO&&(!GO.at||GO.at===S.loc)?GO.k:[];
+  if(GO)h+=`<div class="goalc"><span class="g">◆ 지금 할 일</span> <b>${GO.t}</b><div class="m">${GO.d}${GO.at&&GO.at!==S.loc&&PL[GO.at]?` 지도에서 <b>${josa(PL[GO.at].n,'으로','로')}</b> 가자.`:''}</div></div>`;
   h+=`<div class="card"><div class="scw">${SCN.scene(S.loc,S)}</div><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
   const acts=[];
   if(S.loc==='base'&&!S.base)acts.push(B('manorIn','저택 안으로 들어간다',{sub:met(S,'kasimir')?'위층에서 노래가 들린다':'납골당 계단의 남자가 마음에 걸린다',dis:busy||!met(S,'kasimir')}));
@@ -1336,8 +1353,8 @@ function placeView(){
   if(S.loc==='academy'&&S.kq===1)acts.push(B('kq2','밤의 요양소',{sub:kirSub('회색 마차가 드나드는 뒷문'),dis:busy||!kir}));
   if(S.loc==='street'){
     acts.push(B('patrol','밤길 순찰',{sub:S.night<3?`15초 · ${S.night===0?'무언가 돌아다닌다':S.night===1?'칼을 든 누군가가 있다':'거리 끝의 등불'}`:'15초 · 남은 것들을 쫓는다',dis:busy}),
-      B('tutor',S.mort===2?'빈 초소 — 모르텐의 가르침을 떠올린다':'경비대 초소 — 모르텐',{sub:S.mort===2?'그가 가르쳐 준 박자를 되짚는다':S.tutd?'가르침을 다시 받는다':'싸우는 법을 배운다',dis:busy}),
-      B('practice','박자 연습',{sub:S.mort===2?'부러진 막대를 세워 두고 혼자 연습한다':'모르텐의 막대를 받아 본다',dis:busy}));
+      B('tutor',S.mort===2?'빈 초소 — 모르텐의 가르침을 떠올린다':'경비대 초소 — 모르텐',{sub:S.mort===2?'그가 가르쳐 준 박자를 되짚는다':S.tutd?'가르침을 다시 받는다':'싸우는 법을 배운다',dis:busy})
+      );
   }
   if(!S.party&&S.mort===1)acts.push(B('mtalk','모르텐과 이야기하기',{sub:'막대를 쥔 늙은 교관',dis:busy&&S.act.t==='m'}));
   if(S.party)acts.push(B('talk',josa(cn(S.party),'과','와')+' 이야기하기',{a:S.party,sub:talkSub(S.party),dis:busy&&S.act.t==='m'}));
@@ -1372,6 +1389,32 @@ function charView(){
   if(S.legacy){const L=S.legacy;h+=`<div class="card"><h2>1편의 기억</h2><p>${esc(L.name)} · ${RACE1[L.race]}${L.og?' · '+esc(L.og):''}</p><p class="m">${L.end?'『'+END1[L.end]+'』의 끝을 본 여정':'끝을 보지 못한 여정'}</p></div>`}
   return h;
 }
+/* 지금 할 일: 메인 이야기의 지금 단계만 알려 준다(앞일은 말하지 않는다) */
+/* 모르텐에게 묻기: [id, 먼저 물어야 할 것, 질문, 대답] */
+const MTQ=[
+ ['toben',null,'거리 끝의 그건 누구야?',['토벤. 딸 하나 키우는 성실한 점등꾼이었네. 석 달 전부터 등불을 든 채 집에 안 갔어. 재를 너무 오래 마셨지.','>그런데 왜 싸워?','친구니까. 저렇게 서 있는 걸 더 보고 싶지 않네.']],
+ ['guard',null,'왜 아직 경비를 서?',['다른 데 갈 데가 없네. 사십 년을 이 거리에서 섰어. 가스등이 처음 켜지던 밤도 봤지. 그땐 다들 밤이 끝났다고 좋아했네.','*모르텐이 꺼진 가스등을 올려다본다.','끝난 건 밤이 아니라 다른 거였지.']],
+ ['city',null,'이 도시는 어떤 곳이야?',['오렌하르트. 겨울이 끝나고 녹은 땅 위에 제일 먼저 굴뚝을 세운 도시지.','운하로 배가 들어오고 공장 지대에서 쇠가 나오고 언덕에서는 학자들이 무언가를 적네.','밤이 제일 밝은 도시라고들 하지. 밝은 데는 그만한 값이 있네.']],
+ ['ash','city','푸른 재가 뭐야?',['가스등을 켜는 연료일세. 석탄보다 오래 타고 연기도 없지.','어디서 나는지는 아무도 크게 말하지 않네. 회색 마차가 밤마다 실어 오는 것만 알지.','>회색 마차가 뭔데?','죽은 사람을 거두는 마차라네. 요즘은 산 사람도 태운다는 소문이 있고.','*모르텐이 목소리를 낮춘다.','그 소문을 큰 소리로 하는 사람은 다음 달에 안 보이더군.']],
+ ['church','city','교단은 어떤 곳이야?',['대성당 깊은 곳에 겨울 내내 꺼지지 않은 옛 불이 있네. 교단은 그 불을 모시지.','정화자들이 회색 옷을 입고 장부를 들고 다니네. 이름을 적기도 하고 지우기도 하지.','불을 모시는 사람들이 불 다루는 사람을 제일 싫어한다는 게 우습지 않나.']],
+ ['academy','city','언덕의 학술원은?',['겨울 시대 마법사들의 집이었네. 지금은 마법 대신 마법이 남긴 찌꺼기를 연구하지.','유리 지붕 아래서 밤새 불이 켜져 있네. 무얼 하는지는 모르겠군. 거기 들어간 사람 중에 나온 사람을 못 봤어.']],
+ ['blue','ash','손끝이 푸른 게 뭐야?',['재를 많이 마셨다는 뜻이네. 자네는 이 도시에 처음 왔을 텐데. 그럼 다른 데서 마셨겠지. 아니면 누가 먹였거나.','*모르텐이 더 묻지 않는다.']],
+ ['fire','church','옛 불은 누구 이름으로 타?',['아무도 모르네. 교단도 모르지. 그래서 더 모시는 걸세.','젊을 때 한 번 가까이서 봤네. 그 앞에 서니 누가 날 부르는 것 같았지.','*모르텐이 헛기침을 한다.','늙은이 헛소리일세.']],
+ ['magic','academy','마법은 정말 없어졌어?',['내 어머니는 주문 한 줄로 화덕에 불을 붙였네. 나는 그걸 봤어. 분명히.','그런데 겨울이 끝나고 스무 해쯤 지나서 아무도 못 하게 됐지. 하룻밤 사이에.','다들 마법이 겨울과 함께 끝났다고 하네. 나는 가끔 어디 숨은 것 같다고 생각하지. 잃어버린 물건처럼.']],
+ ['winter','guard','칼셀바도르가 뭐였어?',()=>['영원한 겨울이네. 백이십 년 전에 끝났지. 나는 그 끝을 본 사람을 본 사람을 알 뿐이고.','겨울을 누가 끝냈는지는 노래마다 다르네. 불을 이어받은 사람이라고도 하고 하늘을 닫은 사람이라고도 하지. 이름을 불러 준 사람이라는 노래도 있네.'].concat(S.legacy&&S.legacy.end?['*모르텐이 나를 빤히 본다.','자네 얼굴을 보니 그 노래가 생각나는군. '+({k:'불을 이어받은 사람.',r:'하늘을 닫은 사람.',w:'이름을 불러 준 사람.'})[S.legacy.end]+' 이상한 일이지.']:[])],
+ ['teach','guard','가르침은 어디서 배웠어?',['해빙 전쟁에서. 박자를 못 맞춘 젊은 놈들은 다 북쪽 눈밭에 누워 있네. 나는 박자를 맞춰서 늙었고.']],
+ ['war','teach','해빙 전쟁은 어떤 싸움이었어?',['녹은 북쪽 땅을 두고 열다섯 해 전에 벌어진 싸움이네.','이긴 쪽도 진 쪽도 땅보다 사람을 더 잃었지. 돌아온 병사들은 밤마다 이름을 부르네. 죽은 전우들 이름을.','*모르텐이 막대를 고쳐 쥔다.','나는 안 부르네. 부르면 다 대답할 것 같아서.']]
+];
+const GOAL={'가스등 거리를 순찰한다':['street',['patrol']],'칼을 든 도둑':['street',['patrol']],'꺼지지 않는 등불을 든 사람':['street',['patrol']],'여우 머리의 여자':['street',['kirAgain']],
+ '대성당 문서고':['church',['archive','oswAgain']],'부두의 내기 결투장':['docks',['ibreM','ibreAgain']],'쉴 곳':[s=>s.comps.length>=2?'docks':null,['rumor']],'노래를 들은 사람':['street',['brita']],
+ '오르빌 가문의 무덤':['church',['tomb']],'납골당의 남자':['church',['kasM','kasAgain']],'노래하는 저택':['base',['manorIn']],'하수구의 아이':['docks',['explore']],
+ '등불을 든 사람의 딸':['street',['eda']],'언덕 위 유리 지붕':['academy',[]],'깨진 돔의 강의실':['academy',['aw1']]};
+const KQAT=[['academy','kq1'],['academy','kq2'],['street','kq3'],['outskirts','kqM'],['street','kqD'],['street','kqC']];
+function goalNow(){const i=MS.findIndex(m=>!m[2](S));if(i<0)return null;const m=MS[i],g=GOAL[m[0]];
+  if(g){const at=typeof g[0]==='function'?g[0](S):g[0];return{t:m[0],d:typeof m[1]==='function'?m[1](S):m[1],at,k:g[1]}}
+  const kq=S.kq||0;if(S.acad&&S.comps.includes('kirien')&&kq<6&&!(kq===4&&actN()<2.5)){const [at,k]=KQAT[kq],q=KQ[kq];return{t:'키리엔의 이야기 — '+q[0],d:(typeof q[1]==='function'?q[1]():q[1])+(S.party!=='kirien'?' 키리엔과 함께 가야 한다.':''),at,k:[k]}}
+  return{t:'동료들의 이야기',d:'동료들과 이야기를 나누고 도시를 둘러보자.',at:null,k:[]}}
+let GK=[],GOALAT=null;
 const KQ=[['요양소의 기록','학술원 언덕 끝 하얀 요양소에 토벤이 실려 갔을지도 모른다.'],['밤의 요양소','밤에 다시 와서 토벤을 찾는다.'],['기억 전당포','가스등 거리 뒷골목의 기억 전당포에 가 본다.'],['엄마의 천막','변두리 천막촌에 키리엔의 엄마 미라가 산다. 키리엔과 함께 가 보자.'],['토벤의 그림',()=>actN()<2.5?'에다가 토벤이 밤마다 무언가를 그린다고 알려 왔다. 아직은 무엇인지 알아볼 수 없다고 한다. 이야기가 더 흘러야 할 것 같다.':'토벤이 그림을 다 그렸다고 한다. 에다의 집에 가 보자.'],['에다의 선택','에다의 집에서 토벤을 어떻게 할지 정한다.']];
 const KQE={pour:'남의 기억을 부어 주었다. 토벤은 에다를 다른 이름으로 부른다.',new:'토벤은 빈 채로 집에 돌아갔다. 에다가 처음부터 알려 주고 있다.',rest:'토벤은 교단 구호소에서 쉰다. 에다가 등잔을 기억한다.'};
 function questView(){
@@ -1492,24 +1535,30 @@ const CMD={
     ev('거실',`<p class="m">${DECO[sl].n}을(를) ${nm}(으)로 바꿨다. 지금 저택은 <b>${comfortT()}</b>.</p>`+(say?`<p>${cn(S.party)} — “${say}”</p>`:''),[['좋다',null]],1);save()},
   read:()=>{if(S.act||!S.fix.study)return;startAct({t:'b',d:120})},
   explore:a=>{if(S.act)return;const X=(EXP[S.loc]||[])[+a];if(!X)return;startAct({t:'x',at:S.loc,i:+a,l:X.n,d:X.d})},
-  mtalk:()=>{if(S.mort!==1)return;const back=[['다른 이야기를 한다',()=>CMD.mtalk()],['이야기를 그만둔다',null]],Q=[
-    ['왜 아직 경비를 서?',['다른 데 갈 데가 없네. 사십 년을 이 거리에서 섰어. 가스등이 처음 켜지던 밤도 봤지. 그땐 다들 밤이 끝났다고 좋아했네.','*모르텐이 꺼진 가스등을 올려다본다.','끝난 건 밤이 아니라 다른 거였지.']],
-    ['점등꾼을 알아?',['토벤. 딸 하나 키우는 성실한 친구였네. 석 달 전부터 등불을 든 채 집에 안 갔어. 재를 너무 오래 마셨지.','>그런데 왜 싸워?','친구니까. 저렇게 서 있는 걸 더 보고 싶지 않네.']],
-    ['가르침은 어디서 배웠어?',['해빙 전쟁에서. 박자를 못 맞춘 젊은 놈들은 다 북쪽 눈밭에 누워 있네. 나는 박자를 맞춰서 늙었고.']],
-    ['손끝이 푸른 게 뭐야?',['재를 많이 마셨다는 뜻이네. 자네는 이 도시에 처음 왔을 텐데. 그럼 다른 데서 마셨겠지. 아니면 누가 먹였거나.','*모르텐이 더 묻지 않는다.']]];
-    ev('모르텐','<p class="m">모르텐이 막대에 몸을 기댄다.</p>',Q.map(([q,L])=>[q,()=>seq('morten','모르텐',L,h=>ev('모르텐',h,back))]).concat([['이야기를 그만둔다',null]]))},
+  mtalk:()=>{if(S.mort!==1)return;S.masked=S.masked||{};const back=[['다른 이야기를 한다',()=>CMD.mtalk()],['이야기를 그만둔다',null]];
+    const N=MTQ.filter(n=>!S.masked[n[0]]&&(!n[1]||S.masked[n[1]])).slice(0,3),L=N.length?N:MTQ.filter(n=>S.masked[n[0]]);
+    ev('모르텐','<p class="m">모르텐이 막대에 몸을 기댄다.</p>'+(N.length?'':'<p class="m">더 묻고 싶은 건 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>'),L.map(([id,,q,Ls])=>[q,()=>{S.masked[id]=1;seq('morten','모르텐',typeof Ls==='function'?Ls():Ls,h=>ev('모르텐',h,back))}]).concat([['이야기를 그만둔다',null]]))},
   talk:a=>{const id=a||S.party;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.asked=S.asked||{};S.tnew=S.tnew||{};
     let top='';const tn=S.tnew[id];if(tn){delete S.tnew[id];const L=(TIERL[id]||{})[tn];if(L)top=tln(id,[L])}
-    const back=[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]],T=cn(id);
+    const back=[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]],T=cn(id);S.orx=S.orx||{};
+    if(!S.orx[id]&&ORX[id]){S.orx[id]=1;aff(id,1);seq(id,T,ORX[id][S.og]||ORX[id][0],h=>ev(T,top+h,[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]]));return}
     const loc=(TALK[id]||{})[S.loc],qs=[];
     if(loc)qs.push(['이곳은 어때?',()=>{const key=id+':'+S.loc,first=!S.talked[key];S.talked[key]=1;if(first)aff(id,4);seq(id,T,loc,h=>ev(T,h,back))}]);
     qs.push(['요즘 어때?',()=>{const M=MOOD[id]||[['…']];ev(T,tln(id,M[Math.random()*M.length|0]),back)}]);
-    (QA[id]||[]).forEach(([q,ans],i)=>qs.push([q,()=>{const key=id+':'+i;if(!S.asked[key]){S.asked[key]=1;aff(id,2)}const L=typeof ans==='function'?ans(S):ans;seq(id,T,L,h=>ev(T,h,back))}]));
+    qs.push(['물어보고 싶은 게 있어',()=>CMD.ask(id)]);
     qs.push(['너에 대해 이야기해 줘',()=>{const ch=chNext(id);
       if(!ch){const D=DEFL[id]||[['…'],['…']];ev(T,tln(id,(S.chd[id]||0)>=(CH[id]||[]).length?D[1]:D[0]),back);return}
       seq(id,`${T} — ${ch.t}`,ch.p,h=>ev(`${T} — ${ch.t}`,h,ch.c.map(([l,g,r])=>[l,()=>{aff(id,g);S.chd[id]=(S.chd[id]||0)+1;jr(`${josa(T,'이','가')} 「${ch.t}」 이야기를 들려주었다.`);seq(id,`${T} — ${ch.t}`,r,h2=>ev(`${T} — ${ch.t}`,h2,back))}])))}]);
     qs.push(['이야기를 그만둔다',null]);
     ev(T,top+`<p class="m">${GREET[id]||''}</p>`,qs)},
+  ask:id=>{const T=cn(id),Q=QA[id]||[],back=[['다른 것도 묻는다',()=>CMD.ask(id)],['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]];
+    const run=(key,L)=>{if(!S.asked[key]){S.asked[key]=1;aff(id,2)}seq(id,T,L,h=>ev(T,h,back))};
+    const open=[];for(let i=0;i<Q.length&&open.length<2;i++){if(S.asked[id+':'+i])continue;if(i>1&&!S.asked[id+':'+(i-1)])break;if(affTier(id)<QAT[Math.min(i,QAT.length-1)])break;open.push(i)}
+    let L=open.map(i=>[Q[i][0],()=>run(id+':'+i,typeof Q[i][1]==='function'?Q[i][1](S):Q[i][1])]);
+    if(RCX[id]&&!S.asked[id+':r']&&affTier(id)>=2)L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)]);
+    let note='';
+    if(!L.length){note='<p class="m">지금은 더 묻고 싶은 게 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>';L=Q.map((x,i)=>[x,i]).filter(([,i])=>S.asked[id+':'+i]).map(([x,i])=>[x[0],()=>run(id+':'+i,typeof x[1]==='function'?x[1](S):x[1])]);if(RCX[id]&&S.asked[id+':r'])L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)])}
+    ev(T,`<p class="m">${GREET[id]||''}</p>`+note,L.concat([['다른 이야기를 한다',()=>CMD.talk(id)]]))},
   manorIn:()=>{if(!S.act&&met(S,'kasimir'))SCENE.manorIn()},ibreM:()=>{if(!S.act&&S.night>=3&&!met(S,'ibre'))SCENE.ibreM()},ibreAgain:()=>{if(!S.act&&S.dec.ibre)SCENE.ibreAgain()},kasM:()=>{if(!S.act&&S.manor&&!met(S,'kasimir'))SCENE.kasM()},kasAgain:()=>{if(!S.act&&S.dec.kasimir)SCENE.kasAgain()},kqM:()=>{if(!S.act&&S.kq===3&&S.party==='kirien')SCENE.kqM()},kqD:()=>{if(!S.act&&S.kq===4&&S.party==='kirien'&&actN()>=2.5)SCENE.kqD()},kqC:()=>{if(!S.act&&S.kq===5&&S.party==='kirien')SCENE.kqC()},eda:()=>{if(!S.act&&S.pit&&!S.eda)SCENE.eda()},brita:()=>{if(!S.act&&S.mr===1)SCENE.brita()},tomb:()=>{if(!S.act&&S.mr===2&&!S.manor)SCENE.tomb()},pqask:()=>{if(!S.act&&S.pq===1)SCENE.pqask()},pqtent:()=>{if(!S.act&&S.pq===2)SCENE.pqtent()},hag:()=>{if(!S.act&&S.outs)SCENE.hag()},kq1:()=>{if(!S.act&&!S.kq&&S.party==='kirien')SCENE.kq1()},aw1:()=>{if(!S.act&&S.eda&&!S.mg)SCENE.aw1()},britaM:()=>{if(!S.act&&S.mg&&S.bm!==1)SCENE.britaM()},hagM:()=>{if(!S.act&&S.mg&&S.hq===3&&S.hm!==1)SCENE.hagM()},pitM:()=>{if(!S.act&&S.mg&&S.pit&&S.pm!==1)SCENE.pitM()},kq2:()=>{if(!S.act&&S.kq===1&&S.party==='kirien')SCENE.kq2()},kq3:()=>{if(!S.act&&S.kq===2&&S.party==='kirien')SCENE.kq3()},kqbuy:()=>{if(!S.act&&S.kq>=3&&S.kq<6&&!S.inv.mem)SCENE.kqBuy(1)},archive:()=>{if(!S.act)SCENE.archive()},kirAgain:()=>{if(!S.act)SCENE.kirAgain()},oswAgain:()=>{if(!S.act)SCENE.oswAgain()},
   rumor:()=>{const L=S.legacy;const pool=RU.concat(L&&L.end&&LEGRU[L.end]?[LEGRU[L.end]]:[]);ev(LODGE,`<p>여관 주인이 잔을 닦으며 말한다.</p><p>“${pool[Math.random()*pool.length|0]}”</p>`,[['고개를 끄덕인다',null]],1)},
   mapzoom:a=>mzoom(+a),mapcenter:()=>mcenter(),
@@ -1703,7 +1752,7 @@ function startBattle(kind,foe){
      S:{dodge:0,parry:0,hit:0,graze:0,whiff:0,full:0,ofs:[],perf:0,qte:0}};
   G.fhp=bfoe().hp;
   $('#bt').classList.add('on');$('#blog').innerHTML='';sizeCv();readCols();
-  $('#bstop').hidden=kind==='fight';$('#bstop').textContent=kind==='tut'?'가르침 건너뛰기':'연습 끝내기';
+  $('#bstop').hidden=kind==='fight'||(kind==='tut'&&!S.tutd);$('#bstop').textContent=kind==='tut'?'가르침 건너뛰기':'연습 끝내기';
   if(kind==='tut'){brender();tutStep()}
   else if(kind==='practice'){G.next=bpick();blog('박자 연습. 모르텐이 막대를 휘두른다. 피해는 없다.');brender();setTimeout(()=>{if(G.on&&G.st==='wait')enemyTurn()},900)}
   else{const F=bfoe();G.next=bpick();brender();bov(`<h2>${F.n}</h2><p>${F.intro}</p>${F.tier>1?'<p class="m">밤이 깊어졌다. 박자가 빨라진다.</p>':''}`+bbtns([['fgo','맞선다',1]]))}
@@ -1915,7 +1964,7 @@ function endBattle(res){
       S.hp=Math.ceil(S.mhp*.3);S.loc=S.base?'base':'docks';S.act=null;log(F.n+' 앞에서 쓰러졌다.');
       pop('쓰러졌다',{n:[F.n+' 앞에서 돌바닥이 차가웠다.',(S.base?'눈을 뜨니 본거지 화로 앞이다.':`눈을 뜨니 ${LODGE} 방이다.`)+' 누군가 끌고 와 준 모양이다. 체력이 조금 돌아왔다.',`<span class="m">${line}</span>`]});
     }
-  }else if(kind==='tut'){S.tutd=1;log('모르텐에게 싸우는 법을 배웠다.');pop('가르침을 마쳤다',{n:['모르텐 — “밤길은 갈수록 험해지네. 처음엔 굶은 개고 그다음엔 사람이지. 그다음은… 가 보면 알겠지.”']})}
+  }else if(kind==='tut'){const first=!S.tutd;S.tutd=1;log('모르텐에게 싸우는 법을 배웠다.');pop('가르침을 마쳤다',{n:['모르텐 — “밤길은 갈수록 험해지네. 처음엔 굶은 개고 그다음엔 사람이지. 그다음은… 가 보면 알겠지.”'].concat(first&&S.night<1?['모르텐 — “이제 가스등 거리로 가세. 지도에서 거리를 누르면 되네. 가서 밤길을 순찰하는 걸세.”']:[])})}
   else pop('연습 기록',{n:[`<span class="m">${line}</span>`]});
   save();render();
 }

@@ -11,7 +11,7 @@ with sync_playwright() as p:
     # 2. #dev로 열면 보인다(내 컴퓨터 파일)
     pg.goto(base+'#dev');pg.reload();pg.wait_for_timeout(300);assert pg.is_visible('#devb');print('#dev: visible')
     pg.goto(base+'?test');pg.wait_for_timeout(300)
-    pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
+    pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
     pg.click('#devb');assert pg.is_visible('#dov .dev')
     pg.click('#dov [data-dv=coin]');pg.click('#dov [data-dv=band]');S=pg.evaluate('window.__k2.S');assert S['coin']==55 and S['inv']['band']==7
     pg.click('#dov [data-dv=leg]');assert pg.evaluate('window.__k2.S.legacy.end')=='k'

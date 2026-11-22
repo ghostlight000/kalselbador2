@@ -14,7 +14,7 @@ def setup(pg):
     pg.goto(url);pg.evaluate("localStorage.clear()");pg.goto(url);pg.wait_for_timeout(200)
     assert pg.input_value('#cname')=='베렌'
     pg.click('button[data-c=start]');pg.click('#pv .eo');assert '백이십 년' in pg.inner_text('#pv') or True
-    pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
+    pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
     assert S(pg)['name']=='베렌'
     pg.evaluate("()=>{const K=window.__k2;K.S.night=3;K.S.tutd=1;K.joinComp('kirien');K.joinComp('oswin');K.grantBase()}");okpop(pg)
     pg.evaluate("()=>{const K=window.__k2;K.S.pit=1;K.S.coin=50;K.S.loc='street';K.S.dec.ibre=1;K.S.dec.kasimir=1;K.S.mort=2;K.render()}")
@@ -35,7 +35,7 @@ with sync_playwright() as p:
         pg.evaluate("()=>{const K=window.__k2;K.S.party='oswin';K.render()}")
         go(pg,'academy');assert pg.locator('button[data-c=kq1][disabled]').count()==1
         if end=='new':
-            pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '연구실이 있던 자리' in t;choose(pg,'이야기를 그만둔다')
+            pg.evaluate("()=>{window.__k2.S.orx={kirien:1,oswin:1,ibre:1,kasimir:1}}");pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '연구실이 있던 자리' in t;choose(pg,'이야기를 그만둔다')
             pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '동료 이야기' in q and '키리엔과 함께 다녀야' in q and '◆ 언덕 위 유리 지붕' in q;pg.click('button[data-c=tab][data-a=place]')
         pg.evaluate("()=>{const K=window.__k2;K.S.party='kirien';K.render()}")
         pg.click('button[data-c=kq1]');assert '공급 대기' in pg.inner_text('#ov');okpop(pg);assert S(pg)['kq']==1

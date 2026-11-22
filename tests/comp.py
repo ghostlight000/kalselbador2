@@ -7,13 +7,13 @@ def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=1
 E=lambda pg,x:pg.evaluate(x)
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))
-    pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
+    pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
     # 배우지 않은 기술이 흐리게 보인다
     pg.click('button[data-c=tab][data-a=char]');t=pg.inner_text('.M');assert '혼불' not in t and '하나씩 배운다' in t
     pg.click('button[data-c=tab][data-a=place]')
     E(pg,"()=>{const K=window.__k2;K.joinComp('kirien');K.S.loc='docks';K.render()}")
     # 대화: > 줄은 내가 고른다
-    pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '비린내' in t and '그럼 왜 따라왔어?' in t and '말없이 듣는다' in t
+    pg.evaluate("()=>{window.__k2.S.orx={kirien:1,oswin:1,ibre:1,kasimir:1}}");pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '비린내' in t and '그럼 왜 따라왔어?' in t and '말없이 듣는다' in t
     choose(pg,'그럼 왜 따라왔어?');t=pg.inner_text('#ov');assert '베렌 — “그럼 왜 따라왔어?”' in t and '방향이 같았을 뿐' in t
     choose(pg,'다른 이야기를 한다');choose(pg,'이곳은 어때?');choose(pg,'말없이 듣는다');t=pg.inner_text('#ov');assert '베렌 —' not in t and '방향이 같았을 뿐' in t;choose(pg,'이야기를 그만둔다')
     assert E(pg,"window.__k2.S.aff.kirien")==14;print('talk choice ok')

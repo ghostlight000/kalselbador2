@@ -10,7 +10,7 @@ def waitact(pg):pg.wait_for_function('!window.__k2.S.act',timeout=10000);pg.wait
 S=lambda pg:pg.evaluate('window.__k2.S')
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))
-    pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
+    pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
     # 이동 시간: 1분 이상
     t=pg.evaluate("window.__k2.travelSec('docks','street')");assert 100<=t<=140,t
     assert pg.evaluate("window.__k2.travelSec('docks','base')")>=60;print('travel',t)
