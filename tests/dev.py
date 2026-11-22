@@ -15,8 +15,10 @@ with sync_playwright() as p:
     pg.click('#devb');assert pg.is_visible('#dov .dev')
     pg.click('#dov [data-dv=coin]');pg.click('#dov [data-dv=band]');S=pg.evaluate('window.__k2.S');assert S['coin']==55 and S['inv']['band']==7
     pg.click('#dov [data-dv=leg]');assert pg.evaluate('window.__k2.S.legacy.end')=='k'
-    pg.click('#dov [data-dv=night][data-a="3"]');pg.click('#dov [data-dv=close]');pg.wait_for_timeout(800)
-    assert pg.inner_text('#ov h2')=='잿빛 사슴 여관';assert '여우 모양 문진' in pg.inner_text('#ov');pg.click('#ov .btn.pri');print('night3 → base ok')
+    pg.click('#dov [data-dv=night][data-a="3"]');pg.click('#dov [data-dv=comp]');pg.click('#dov [data-dv=close]');pg.wait_for_timeout(800)
+    assert not pg.is_visible('#ov.on') and not pg.evaluate('window.__k2.S.base')
+    pg.click('#devb');pg.click('#dov [data-dv=comp]');pg.click('#dov [data-dv=close]');pg.wait_for_timeout(800)
+    assert pg.inner_text('#ov h2')=='잿빛 사슴 여관';assert '여우 모양 문진' in pg.inner_text('#ov');pg.click('#ov .btn.pri');print('2 companions → base ok')
     # 즉시 완료: ?test에서는 이미 빠르니 끄고 켜는 표시만 확인
     pg.click('#devb');t=pg.inner_text('#dov [data-dv=fast]');print('fast btn:',t);pg.click('#dov [data-dv=close]')
     # 격노 직전 점등꾼 → 공격 한 번이면 격노 → 즉시 승리

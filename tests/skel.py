@@ -29,7 +29,7 @@ with sync_playwright() as p:
         pg.click('#pv .eo'); pg.click('#pv .eo'); pg.wait_for_timeout(50)
         t=pg.inner_text('#pv')
         if i==1: assert '레아는' in t and '용 사냥꾼' in t, t   # 출신 1 = 용 사냥꾼 일족의 후예
-        if i==2: assert '레아의 것' in t and '아버지가' in t, t # 편지 + 출신의 잊은 것
+        if i==2: assert '레아의 것' in t and '아버지의 마지막 말' in t, t # 편지 + 출신의 잊은 것
         if i==3: assert '편지가 가리킨' in t and '불지기' in t, t  # 첫날 밤 + 1편 엔딩 k의 소문
     pg.click('#pv .eo'); pg.click('#pv [data-pv=close]'); pg.wait_for_timeout(100)
     S=pg.evaluate('window.__k2.S'); print('made',S['name'],S['race'],S['og'],S['st'],S['loc'],S['pro']); assert S['pro']==99 and S['loc']=='street' and not S['base'] and S['inv'].get('letter')==1
@@ -50,9 +50,13 @@ with sync_playwright() as p:
         pg.wait_for_function('!window.__k2.G.on',timeout=200000); h=okpop(pg)
         S=pg.evaluate('window.__k2.S'); print(foe,'->',h,'hp',S['hp'],'night',S['night'])
         if h=='쓰러졌다': raise SystemExit('lost to '+foe)
-    # 첫 번째 밤 → 본거지 장면
-    pg.wait_for_selector('#ov.on h2'); assert pg.inner_text('#ov h2')=='잿빛 사슴 여관'; assert '여우 모양 문진' in pg.inner_text('#ov'); okpop(pg)
-    S=pg.evaluate('window.__k2.S'); assert S['base']==1 and S['inv'].get('relic')==1 and S['night']==3 and S['inv'].get('wick')==1
+    # 첫 번째 밤을 넘겨도 본거지는 아직 없다
+    pg.wait_for_timeout(700); S=pg.evaluate('window.__k2.S'); assert S['night']==3 and not S['base'] and S['inv'].get('wick')==1 and not pg.is_visible('#ov.on')
+    # 동료 하나: 아직 없음 / 둘째: 본거지 장면
+    pg.evaluate("window.__k2.joinComp('시험 동료 1')"); pg.wait_for_timeout(700); assert not pg.evaluate('window.__k2.S.base') and not pg.is_visible('#ov.on')
+    pg.evaluate("window.__k2.joinComp('시험 동료 2')"); pg.wait_for_selector('#ov.on h2',timeout=5000)
+    assert pg.inner_text('#ov h2')=='잿빛 사슴 여관'; assert '둘이나' in pg.inner_text('#ov') and '여우 모양 문진' in pg.inner_text('#ov'); okpop(pg)
+    S=pg.evaluate('window.__k2.S'); assert S['base']==1 and S['inv'].get('relic')==1 and S['party']=='시험 동료 1'; print('base after 2nd companion ok')
     pg.click('button[data-c=go][data-a=inn]'); pg.wait_for_function("window.__k2.S.loc==='inn'",timeout=10000); pg.wait_for_timeout(600)
     # 파견
     pg.click('button[data-c=board]'); pg.click('#ov button:has-text("시장 심부름")'); pg.wait_for_timeout(100)
