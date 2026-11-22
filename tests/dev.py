@@ -34,7 +34,7 @@ with sync_playwright() as p:
         pg.click('#devb');pg.click(f'#dov [data-dv=fight][data-a={f}]');pg.click('#bov .btn.pri');pg.click('#bdev [data-bdev=win]');pg.wait_for_function('!window.__k2.G.on',timeout=5000);pg.click('#ov .btn.pri');pg.wait_for_timeout(100)
     print('new foes ok')
     pg.click('#devb');pg.click('#dov [data-dv=fight][data-a=dog]');pg.click('#bov .btn.pri');pg.click('#bdev [data-bdev=lose]');pg.wait_for_function('!window.__k2.G.on',timeout=5000)
-    assert pg.inner_text('#ov h2')=='쓰러졌다';pg.click('#ov .btn.pri')
+    pg.wait_for_timeout(300);assert pg.inner_text('#ov h2')=='쓰러졌다';pg.click('#ov .btn.pri')
     # 진행 중인 일 끝내기(빠른 모드 끄고)
     pg.evaluate("()=>{window.__k2.TEST}")
     pg.click('#devb');pg.click('#dov [data-dv=state]');assert '"night": 3' in pg.input_value('#dvs');pg.click('#dov [data-dv=close]')

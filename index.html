@@ -84,6 +84,7 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .empty{color:var(--m);font-size:13px;text-align:center;padding:10px 0}
 .disp{border-top:1px solid var(--b);padding:6px 0;font-size:13px}
 .ms{padding:6px 0;border-bottom:1px solid var(--b)}
+.csk{margin:6px 0 0 10px}.csk.off b{opacity:.55}
 .ms.done{color:var(--m)}
 .ms.now b{color:var(--a)}
 
@@ -227,6 +228,7 @@ input[type=range]{width:100%;accent-color:var(--a)}
    <div class="row"><span>체력</span><b id="bhpn"></b></div>
    <div class="bbar me"><b id="bphpd"></b><i id="bphp"></i></div>
    <div class="row" style="margin-top:6px"><span>기력</span><span class="pips" id="bfp"></span></div>
+   <div class="row" id="bcomp" hidden><span>함께 싸우는 이</span><b id="bcompn"></b></div>
   </section>
   <div id="bacts"></div>
   <div id="blog"></div>
@@ -511,7 +513,7 @@ let C={r:'p',t:0,o:0,sx:'x',n:'베렌',leg:null,legMsg:''}; // 만들기 화면
 
 function newGame(){
   const st=baseStats(C.r,C.t,C.o),mhp=calcMhp(st,1);
-  S={v:7,chd:{},kq:0,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'베렌').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
+  S={v:8,asked:{},tnew:{},cl:{},chd:{},kq:0,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'베렌').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
      inv:{letter:1,band:2},loc:'docks',act:null,disp:[],comps:[],party:null,aff:{},cq:{},rom:null,talked:{},dec:{},fix:{},deco:{...DECO0},own:{},read:{},night:0,tutd:0,base:0,pit:0,pro:0,vis:{docks:1},log:[],jr:[],legacy:C.leg,t0:Date.now()};
   log('편지를 따라 오렌하르트에 닿았다. 운하 부두의 녹슨 닻 여관에 방을 얻었다.');
   save();V='place';try{window.scrollTo(0,0)}catch(e){}
@@ -547,21 +549,34 @@ $('#pv').addEventListener('click',e=>{const t=e.target.closest('[data-pv]');if(!
 function joinComp(id){
   if(S.comps.includes(id))return;
   S.comps.push(id);if(!S.party)S.party=id;
-  S.aff=S.aff||{};if(S.aff[id]==null)S.aff[id]=10;
+  S.aff=S.aff||{};if(S.aff[id]==null)S.aff[id]=10;cst(id);
   log(josa(cn(id),'이','가')+' 함께하기로 했다.');
   save();
 }
+/* 동료의 전투 성장: 함께 싸워 경험을 얻고 레벨이 오르면 기술 점수 +1. 기술은 셋, 각각 3단계까지 */
+const CSK={
+ kirien:{flurry:{n:'연속 베기',d:r=>`내 차례 뒤에 ${1+r}번 벤다`},cut:{n:'공격 끊기',d:r=>r?`적이 휘두르기 전에 ${r*12}% 확률로 끼어들어 끊는다`:'적이 휘두르기 전에 끼어들어 끊는다'},mark:{n:'약점 짚기',d:r=>r?`벤 자리를 짚어 둔다. 다음 내 공격·강타 피해 +${r*15}%`:'벤 자리를 짚어 다음 내 공격을 세게 한다'}},
+ oswin:{bolt:{n:'번개',d:r=>`내 차례 뒤에 번개를 떨군다${r?` (피해 +${r*3})`:''}`},mend:{n:'응급 처치',d:r=>r?`내 체력이 절반 아래면 번개 대신 ${8*r} 회복 (세 턴에 한 번)`:'내 체력이 낮으면 번개 대신 상처를 돌본다'},ward:{n:'정전기 막',d:r=>r?`${r*15}% 확률로 다음에 맞는 공격을 절반으로`:'다음에 맞는 공격을 막아 준다'}}
+};
+const CSK0={kirien:'flurry',oswin:'bolt'};
+const cst=id=>{S.cl=S.cl||{};if(!S.cl[id])S.cl[id]={lv:1,xp:0,cp:1,r:{}};return S.cl[id]};
+const sexN=x=>({m:'남',f:'여',x:'밝히지 않음'})[x]||'';
+function compXp(n){const id=S.party;if(!id||!CSK[id])return [];const C=cst(id),out=[];C.xp+=n;
+  while(C.xp>=xpNeed(C.lv)){C.xp-=xpNeed(C.lv);C.lv++;C.cp++;out.push(`<b class="g">${cn(id)} 레벨 ${C.lv}</b> — 기술 점수 +1. 캐릭터 탭에서 고른다.`);log(`${josa(cn(id),'이','가')} 레벨 ${C.lv}에 올랐다.`)}
+  return out}
+const compLine=id=>{const c=COMP[id];return `${sexN(c.sx)} · ${c.k}${CSK[id]?` · 레벨 ${cst(id).lv}`:''}`};
+
 /* 동료 명단. rom: 'm'=남성 주인공만, 'f'=여성 주인공만, 'any'=성별 무관, null=로맨스 없음. demi=깊은 유대(개인 퀘스트)가 먼저 */
 const COMP={
- kirien:{n:'키리엔',k:'여우 머리의 잉그라드',d:'변두리 신탁 상점 점쟁이의 딸. 사라진 사람을 찾아 주고 돈을 받는다. 점등꾼을 석 달 동안 쫓았다.',sp:'툭툭 던지는 반말',rom:'f',hello:{oswin:'키 큰 도마뱀이네. 문틀에 머리 찧지 않게 조심해.'}},
- oswin:{n:'오스윈',k:'적동 번개비늘 파볼릭',d:'학술원에서 쫓겨난 칼라쉬의 후예. 마력 추출 실험을 막으려다 서류에서 이름이 지워졌다. 냉소적이고 말이 날카롭다.',sp:'길고 비꼬는 “~지요”',rom:'any',hello:{kirien:'털 날리는 동료라. 제 장부 근처에는 앉히지 말아 주십시오.'}},
- barg:{n:'바르그',k:'늑대 머리의 잉그라드',d:'해빙 전쟁에서 도망친 탈영병. 덩치가 크고 말이 적다. 요리를 잘하고 밤에 혼자 전우들 이름을 부른다.',sp:'느릿한 반말',rom:'any',demi:1},
- kasimir:{n:'카시미르',k:'벨데인',d:'몰락한 귀족의 마지막 상속자. 귀족 대신 명예 결투에 나가는 고용 검객. 붉은 물을 마셔 늙지 않는다는 소문이 있다.',sp:'우아한 존댓말 “~시죠”',rom:'m'},
- ibre:{n:'이브레',k:'무색 비늘 파볼릭',d:'키 3미터. 비늘 색 법 때문에 시민 명부에 이름이 없다. 공장 지대 내기 결투로 먹고산다.',sp:'짧은 “~습니다”',rom:null},
- eno:{n:'에노',k:'하수구 안내인',d:'도시 아래 물길 지도를 그린다. 성별을 묻는 사람에게는 물에 비친 쪽으로 정하라며 웃는다.',sp:'반말과 존댓말을 오간다',rom:'any'}
+ kirien:{n:'키리엔',sx:'f',k:'여우 머리의 잉그라드',d:'변두리 신탁 상점 점쟁이의 딸. 사라진 사람을 찾아 주고 돈을 받는다. 점등꾼을 석 달 동안 쫓았다.',sp:'툭툭 던지는 반말',rom:'f',hello:{oswin:'키 큰 도마뱀이네. 문틀에 머리 찧지 않게 조심해.'}},
+ oswin:{n:'오스윈',sx:'m',k:'적동 번개비늘 파볼릭',d:'학술원에서 쫓겨난 칼라쉬의 후예. 마력 추출 실험을 막으려다 서류에서 이름이 지워졌다. 냉소적이고 말이 날카롭다.',sp:'길고 비꼬는 “~지요”',rom:'any',hello:{kirien:'털 날리는 동료라. 제 장부 근처에는 앉히지 말아 주십시오.'}},
+ barg:{n:'바르그',sx:'m',k:'늑대 머리의 잉그라드',d:'해빙 전쟁에서 도망친 탈영병. 덩치가 크고 말이 적다. 요리를 잘하고 밤에 혼자 전우들 이름을 부른다.',sp:'느릿한 반말',rom:'any',demi:1},
+ kasimir:{n:'카시미르',sx:'m',k:'벨데인',d:'몰락한 귀족의 마지막 상속자. 귀족 대신 명예 결투에 나가는 고용 검객. 붉은 물을 마셔 늙지 않는다는 소문이 있다.',sp:'우아한 존댓말 “~시죠”',rom:'m'},
+ ibre:{n:'이브레',sx:'f',k:'무색 비늘 파볼릭',d:'키 3미터. 비늘 색 법 때문에 시민 명부에 이름이 없다. 공장 지대 내기 결투로 먹고산다.',sp:'짧은 “~습니다”',rom:null},
+ eno:{n:'에노',sx:'x',k:'하수구 안내인',d:'도시 아래 물길 지도를 그린다. 성별을 묻는 사람에게는 물에 비친 쪽으로 정하라며 웃는다.',sp:'반말과 존댓말을 오간다',rom:'any'}
 };
-/* 동료와의 대화. 줄 앞 *는 지문, >는 주인공의 말, 나머지는 동료의 말
-   TALK: 장소마다 처음 한 번(호감 +4) · IDLE: 그 뒤의 잡담 · CH: 호감이 쌓이면 꺼내는 자기 이야기(차례대로) */
+/* 동료와의 대화. 줄 앞 *는 지문, >는 내가 고를 수 있는 말, !는 내가 한 말, 나머지는 동료의 말
+   TALK: 장소마다(처음 물으면 호감 +4) · QA: 내가 고르는 질문 · CH: 호감이 쌓이면 꺼내는 자기 이야기(차례대로) */
 const TALK={
  kirien:{
   docks:['부두는 싫어. 비린내가 털에 배.','>그럼 왜 따라왔어?','따라온 거 아니야. 가는 방향이 같았을 뿐이지.','*키리엔이 코를 찡그리며 짐배 쪽을 본다.','저 배들 밤마다 뭘 싣고 나가는지 알아? 자루야. 가볍고 푸른 자루.'],
@@ -576,47 +591,70 @@ const TALK={
   base:['벽난로가 있군요. 장부를 태우기 좋겠습니다. 농담입니다. 아마도요.','*오스윈이 젖은 책 한 권을 불 가까이 펼쳐 둔다.','책은 말리면 다시 읽힙니다. 사람도 그랬으면 좋았을 텐데요.'],
   academy:['돌아오고 싶지 않았던 곳입니다. 계단 하나하나가 기억나는군요. 기억난다는 게 다행인지는 모르겠습니다.','*오스윈이 언덕 위 굴뚝을 턱으로 가리킨다.','저 푸른 연기 보이십니까. 실험동입니다. 제 연구실이 있던 자리지요.']}
 };
-const IDLE={
- kirien:[['배고파. 너 뭐 먹을 거 없어?','>없는데.','쓸모없긴.'],['내 꼬리 쳐다보지 마.','>안 봤어.','봤어. 다 알아.'],['어제 꿈에 엄마가 나왔어. 근데 얼굴이 기억이 안 나. 꿈에서도.'],
-  ['넌 그런 편지 또 받으면 어쩔 거야? 이번엔 따라가지 마.','*키리엔이 잠깐 생각한다.','…아니. 따라가. 나도 같이 가 줄게.'],['사람 찾는 일을 하다 보면 사람이 싫어져. 그러다 찾으면 또 좋아져. 이상하지.']],
- oswin:[['당신은 생각보다 말이 적군요. 저는 생각보다 말이 많고요. 균형이 맞습니다.'],['제 꼬리 끝에서 불꽃이 튀어도 놀라지 마십시오. 겨울 시대의 흔적입니다. 정전기라고 부르셔도 되고요.'],
-  ['>요즘 잠은 자?','장부를 베고 잡니다. 머리가 좀 똑똑해질까 싶어서요. 아직 효과는 없습니다.'],['학술원 시절 동료들은 저를 ‘번개 도마뱀’이라고 불렀지요. 지금은 그 사람들이 제 이름조차 모릅니다. 별명보다는 나은 처지일까요.'],
-  ['차를 끓였습니다. 맛은 묻지 마십시오. 학자의 차는 원래 실험입니다.']]
+/* 내가 고르는 질문들. 처음 물으면 호감 +2. 줄 앞 *는 지문, >는 내가 고를 수 있는 말(고르지 않아도 이야기는 이어진다), @N은 내 이름 */
+const QA={
+ kirien:[
+  ['뭐 좀 먹을래?',['배고파 죽겠어. 생선만 아니면 뭐든.','*키리엔의 꼬리가 기대에 차서 한 번 흔들린다.']],
+  ['꼬리 만져 봐도 돼?',s=>affTier('kirien')>=8?['…잠깐만이야.','*키리엔이 꼬리를 슬쩍 내민다. 귀 끝이 빨갛다.']:['안 돼.','*키리엔이 꼬리를 홱 감춘다.','…나중에. 아주 나중에.']],
+  ['엄마 꿈은 자주 꿔?',['어제 꿈에 엄마가 나왔어. 근데 얼굴이 기억이 안 나. 꿈에서도.']],
+  ['편지를 또 받으면 어떡하지?',['이번엔 따라가지 마.','*키리엔이 잠깐 생각한다.','…아니. 따라가. 나도 같이 가 줄게.']],
+  ['사람 찾는 일은 어때?',['사람 찾는 일을 하다 보면 사람이 싫어져. 그러다 찾으면 또 좋아져. 이상하지.']]],
+ oswin:[
+  ['요즘 잠은 자?',['장부를 베고 잡니다. 머리가 좀 똑똑해질까 싶어서요. 아직 효과는 없습니다.']],
+  ['꼬리에서 불꽃이 튀던데?',['겨울 시대의 흔적입니다. 정전기라고 부르셔도 되고요. 놀라지 마십시오. 저도 가끔 놀랍니다.']],
+  ['학술원 시절 별명이 있었어?',['‘번개 도마뱀’이었지요. 지금은 그 사람들이 제 이름조차 모릅니다. 별명보다는 나은 처지일까요.']],
+  ['차 한잔 할래?',['제가 끓였습니다. 맛은 묻지 마십시오. 학자의 차는 원래 실험입니다.','*찻잔에서 쇠 냄새가 난다.']],
+  ['나 말수가 적은 편이야?',['생각보다 적으시지요. 저는 생각보다 많고요. 균형이 맞습니다.']]]
+};
+const MOOD={
+ kirien:[['그럭저럭. 털이 덜 빠지는 계절이라 좋아.'],['피곤해. 근데 나쁜 피곤은 아니야.'],['비 냄새가 나. 오늘 밤은 다들 일찍 잘 거야.']],
+ oswin:[['나쁘지 않습니다. 오늘은 아무도 제 이름을 지우지 않았으니까요.'],['장부 세 쪽을 되살렸습니다. 기분이 좋다는 뜻입니다. 얼굴에는 안 드러나겠지만.'],['비늘이 가렵습니다. 날씨가 바뀌려나 봅니다.']]
+};
+const DEFL={kirien:[['내 얘기? 재미없어. 다음에.'],['이제 네가 모르는 내 얘기는 별로 없어. …아마도.']],oswin:[['제 이야기는 각주가 너무 많습니다. 다음에 하지요.'],['제 이야기는 이제 거의 다 아시지요. 나머지는 각주입니다.']]};
+const GREET={kirien:'키리엔이 귀를 이쪽으로 돌린다.',oswin:'오스윈이 읽던 장부에서 눈을 든다.'};
+// 호감 단계가 오르면 다음 대화에서 한 번 드러나는 몸짓(숫자 대신)
+const TIERL={
+ kirien:{3:'*키리엔이 옆에 앉는다. 한 사람 자리만큼 떨어져서.',4:'*키리엔이 제 몫의 빵을 말없이 반 갈라 내민다.',5:'*키리엔이 처음으로 이름을 부른다. “@N.” 그러고는 괜히 딴 데를 본다.',6:'*키리엔이 어깨에 기대어 깜박 존다. 깨어나서는 아무 일도 없었던 척한다.',7:'*키리엔의 꼬리가 이쪽으로 감겨 온다. 본인은 모르는 것 같다.',8:'*늦게 돌아오자 키리엔이 문 앞에 서 있었다. “걱정한 거 아니야.”',9:'*키리엔이 손을 잡고 손금을 들여다본다. 엄마가 그랬던 것처럼.',10:'어디 가든 같이 가. 이건 부탁 아니야.'},
+ oswin:{3:'*오스윈이 말을 줄였다. 대신 내 말을 끝까지 듣는다.',4:'*오스윈이 내 몫의 찻잔도 데워 둔다.',5:'@N 씨. 아니, @N. 이쪽이 낫군요.',6:'*오스윈이 장부 한 쪽을 읽어 달라고 내민다. 남에게 장부를 맡긴 건 처음일 것이다.',7:'*오스윈의 꼬리 끝에서 불꽃이 튄다. 내가 웃자 그도 따라 웃는다.',8:'당신이 없는 날은 문장이 두 배로 길어집니다. 아무도 끊어 주지 않으니까요.',9:'*오스윈이 젖은 책 사이에 눌러 둔 꽃 한 송이를 건넨다. 설명은 없다.',10:'서류가 저를 지워도 상관없습니다. 당신이 기억하면 되니까요.'}
 };
 const CH={
  kirien:[
-  {need:15,t:'점쟁이의 딸',p:['*키리엔이 창틀에 걸터앉아 제 손금을 들여다본다.','우리 엄마는 점쟁이였어. 변두리 천막에서. 손님 손을 잡으면 그 사람이 잊은 게 보인대.','잃어버린 반지. 돌아가신 할머니 목소리. 누가 먼저 떠났는지. 그런 거.','다들 앞날을 보러 왔는데 엄마는 지난 일만 봤어. 그래도 다들 울면서 돌아갔어. 고맙다고.'],
+  {need:20,t:'점쟁이의 딸',p:['*키리엔이 창틀에 걸터앉아 제 손금을 들여다본다.','우리 엄마는 점쟁이였어. 변두리 천막에서. 손님 손을 잡으면 그 사람이 잊은 게 보인대.','잃어버린 반지. 돌아가신 할머니 목소리. 누가 먼저 떠났는지. 그런 거.','다들 앞날을 보러 왔는데 엄마는 지난 일만 봤어. 그래도 다들 울면서 돌아갔어. 고맙다고.'],
    c:[['너도 볼 수 있어?',3,['아니. 난 못 봐. 그래서 발로 찾아. 발은 거짓말을 안 하거든.']],['점은 안 믿어.',2,['나도 안 믿어. 근데 엄마 점은 틀린 적이 없었어. 그게 제일 무서웠지.']]]},
-  {need:25,t:'서른여덟 명',p:['지금까지 서른여덟 명을 찾았어.','*키리엔이 손가락을 꼽다가 그만둔다.','살아 있던 건 열한 명. 나머지는 묘지에서 찾았거나 운하에서 건졌어.','살아 있던 열한 명 중에 일곱은 날 못 알아봤어. 자기 가족도 못 알아봤고.','>그런데도 계속 찾는 이유가 있어?','오빠. 일곱 해 전에 가스등 켜는 일을 하러 나가서 안 돌아왔어. 서른아홉 번째는 아직 못 찾았어.'],
+  {need:40,t:'서른여덟 명',p:['지금까지 서른여덟 명을 찾았어.','*키리엔이 손가락을 꼽다가 그만둔다.','살아 있던 건 열한 명. 나머지는 묘지에서 찾았거나 운하에서 건졌어.','살아 있던 열한 명 중에 일곱은 날 못 알아봤어. 자기 가족도 못 알아봤고.','>그런데도 계속 찾는 이유가 있어?','오빠. 일곱 해 전에 가스등 켜는 일을 하러 나가서 안 돌아왔어. 서른아홉 번째는 아직 못 찾았어.'],
    c:[['같이 찾자.',4,['…그런 말 쉽게 하지 마. 진짜로 기대하게 되잖아.','*그래도 키리엔의 꼬리가 한 번 크게 흔들린다.']],['힘들지 않아?',2,['힘들어. 근데 안 찾으면 오빠가 정말로 없던 사람이 될 것 같아서.']]]},
-  {need:38,t:'찢어진 귀',p:['*키리엔이 왼쪽 귀 끝의 찢긴 자리를 무심코 만진다.','이거? 정화자들이 엄마 천막을 걷어 갈 때. 내가 엄마 앞을 막았거든. 열 살이었어.','향로 사슬에 걸려서 찢어졌어. 아픈 건 금방 나았는데 그날 들은 말은 안 잊혀.','‘짐승 머리는 불 앞에 서지 마라.’','>지금도 그 말이 들려?','가끔. 대성당 앞을 지날 때마다. 그래서 일부러 더 자주 지나가.'],
+  {need:60,t:'찢어진 귀',p:['*키리엔이 왼쪽 귀 끝의 찢긴 자리를 무심코 만진다.','이거? 정화자들이 엄마 천막을 걷어 갈 때. 내가 엄마 앞을 막았거든. 열 살이었어.','향로 사슬에 걸려서 찢어졌어. 아픈 건 금방 나았는데 그날 들은 말은 안 잊혀.','‘짐승 머리는 불 앞에 서지 마라.’','>지금도 그 말이 들려?','가끔. 대성당 앞을 지날 때마다. 그래서 일부러 더 자주 지나가.'],
    c:[['너는 불 앞에 설 자격이 있어.',4,['…불 앞에 서고 싶은 게 아니야. 아무도 날 쫓아내지 못하는 데 서고 싶은 거지.','*키리엔이 주위를 한 번 둘러본다.','너희 옆 같은 데.']],['그 정화자를 찾아 줄까?',2,['찾아서 뭐 하게. 그 사람도 지금쯤 자기가 한 일을 다 잊었을걸. 정화자들은 그렇게 버틴대.']]]},
-  {need:50,t:'엄마가 본 것',p:['엄마는 아직 변두리에 살아.','*키리엔이 한참 말을 고른다.','빚을 갚으려고 기억을 팔았어. 전당포에. 처음엔 조금씩. 나중엔 한꺼번에.','지금은 날 몰라. 찾아가면 손님인 줄 알고 내 손을 잡아 줘. 그리고 내가 잊은 걸 말해 줘.','‘너는 엄마를 잃어버렸구나.’ 그렇게.','웃기지. 엄마 점은 여전히 틀린 적이 없어.'],
+  {need:80,t:'엄마가 본 것',p:['엄마는 아직 변두리에 살아.','*키리엔이 한참 말을 고른다.','빚을 갚으려고 기억을 팔았어. 전당포에. 처음엔 조금씩. 나중엔 한꺼번에.','지금은 날 몰라. 찾아가면 손님인 줄 알고 내 손을 잡아 줘. 그리고 내가 잊은 걸 말해 줘.','‘너는 엄마를 잃어버렸구나.’ 그렇게.','웃기지. 엄마 점은 여전히 틀린 적이 없어.'],
    c:[['그래도 엄마는 엄마야.',5,['그렇게 생각하려고 해. 손이 똑같거든. 따뜻한 것도 똑같고.','*키리엔이 내 손을 잠깐 잡았다가 놓는다.','너도 손이 따뜻하네. 기억해 둘게.']],['기억이 없으면 다른 사람이 아닐까.',1,['…그런가. 나도 가끔 그렇게 생각해. 그게 제일 싫어.','*키리엔이 오래 말이 없다.','그래도 말해 줘서 고마워. 다들 듣기 좋은 말만 하거든.']]]}],
  oswin:[
-  {need:15,t:'칼라쉬의 후예',p:['*오스윈의 비늘 사이로 작은 불꽃이 튀었다가 사라진다.','놀라셨습니까. 칼라쉬는 겨울 시대에 번개를 다루던 마법사 집안이지요. 마력이 사라진 지 백 년인데 비늘은 아직 그걸 모릅니다.','학술원은 저를 학자로 뽑은 게 아니었습니다. 표본으로 뽑았지요. 마지막으로 불꽃이 튀는 칼라쉬.','저는 그걸 알고도 들어갔습니다. 서고 열쇠를 준다길래.'],
+  {need:20,t:'칼라쉬의 후예',p:['*오스윈의 비늘 사이로 작은 불꽃이 튀었다가 사라진다.','놀라셨습니까. 칼라쉬는 겨울 시대에 번개를 다루던 마법사 집안이지요. 마력이 사라진 지 백 년인데 비늘은 아직 그걸 모릅니다.','학술원은 저를 학자로 뽑은 게 아니었습니다. 표본으로 뽑았지요. 마지막으로 불꽃이 튀는 칼라쉬.','저는 그걸 알고도 들어갔습니다. 서고 열쇠를 준다길래.'],
    c:[['책을 좋아하는구나.',3,['책은 저를 들여다보지 않으니까요. 제가 들여다볼 뿐이지요. 공평한 관계입니다.']],['표본 취급은 싫었겠다.',2,['싫었지요. 그런데 싫다는 말도 기록되더군요. ‘표본이 불쾌감을 표현함.’ 그 뒤로는 말을 아꼈습니다. 지금은 그 반동이고요.']]]},
-  {need:25,t:'지워진 아침',p:['제가 어떻게 지워졌는지 말씀드린 적이 없지요.','학술원이 기억 추출량을 두 배로 늘리자는 서류를 돌렸습니다. 저는 서명하지 않았고요. 이유를 적는 칸에 꽤 긴 문장을 썼습니다. 제 버릇이지요.','다음 날 아침 제 연구실 문패에 다른 이름이 붙어 있었습니다.','동료들이 저를 보고 물었습니다. ‘무슨 일로 오셨습니까.’ 농담이 아니었습니다. 눈이 진심이었지요.','명부에도 급여 장부에도 제 이름이 없었습니다. 저는 그날 서류 위에서 죽었습니다. 몸은 멀쩡한데요.'],
+  {need:40,t:'지워진 아침',p:['제가 어떻게 지워졌는지 말씀드린 적이 없지요.','학술원이 기억 추출량을 두 배로 늘리자는 서류를 돌렸습니다. 저는 서명하지 않았고요. 이유를 적는 칸에 꽤 긴 문장을 썼습니다. 제 버릇이지요.','다음 날 아침 제 연구실 문패에 다른 이름이 붙어 있었습니다.','동료들이 저를 보고 물었습니다. ‘무슨 일로 오셨습니까.’ 농담이 아니었습니다. 눈이 진심이었지요.','명부에도 급여 장부에도 제 이름이 없었습니다. 저는 그날 서류 위에서 죽었습니다. 몸은 멀쩡한데요.'],
    c:[['그래도 넌 여기 있어.',4,['…예. 여기 있군요. 당신이 그렇게 말하니 조금 더 여기 있는 것 같습니다.']],['동료들 기억을 지운 거야?',2,['그랬겠지요. 저 하나를 지우려고 열두 사람의 기억을 조금씩 잘라 냈을 겁니다. 그 조각들은 지금쯤 어느 거리의 가스등에서 타고 있겠지요.']]]},
-  {need:38,t:'장부를 훔친 이유',p:['장부를 훔친 진짜 이유를 말씀드리지요.','*오스윈이 장부를 펼치고 손톱으로 한 줄을 짚는다.','‘리세. 칼라쉬. 열아홉. 공급 등급 상.’ 제 동생입니다.','살아는 있습니다. 공장 지대 방직소에서 일하지요. 저를 오빠라고 부르지 않을 뿐입니다. 부를 이유가 없으니까요.','그 아이가 무엇을 잊었는지 저는 알아야겠습니다. 되찾을 수 없더라도 적어는 둬야지요.'],
+  {need:60,t:'장부를 훔친 이유',p:['장부를 훔친 진짜 이유를 말씀드리지요.','*오스윈이 장부를 펼치고 손톱으로 한 줄을 짚는다.','‘리세. 칼라쉬. 열아홉. 공급 등급 상.’ 제 동생입니다.','살아는 있습니다. 공장 지대 방직소에서 일하지요. 저를 오빠라고 부르지 않을 뿐입니다. 부를 이유가 없으니까요.','그 아이가 무엇을 잊었는지 저는 알아야겠습니다. 되찾을 수 없더라도 적어는 둬야지요.'],
    c:[['리세를 만나러 가자.',4,['언젠가는요. 지금 가면 저는 낯선 도마뱀일 뿐입니다. 그 아이에게 줄 무언가를 들고 가고 싶습니다. 이름이든 기억이든.']],['적어 두는 게 무슨 소용이야?',1,['소용이 없을지도 모르지요. 하지만 아무도 적지 않으면 그 아이의 열아홉 해는 그냥 연기입니다. 저는 학자라서 연기를 견디지 못합니다.']]]},
-  {need:50,t:'농담이 아닌 말',p:['*늦은 밤. 오스윈이 벽난로 앞에서 장부를 덮는다.','제가 왜 말을 길게 하는지 아십니까. 짧게 하면 진심이 새어 나가거든요.','그래서 오늘은 짧게 하겠습니다.','당신 이름은 어디에도 적지 않겠습니다. 서류는 지워지니까요.','대신 외워 두겠습니다.'],
+  {need:80,t:'농담이 아닌 말',p:['*늦은 밤. 오스윈이 벽난로 앞에서 장부를 덮는다.','제가 왜 말을 길게 하는지 아십니까. 짧게 하면 진심이 새어 나가거든요.','그래서 오늘은 짧게 하겠습니다.','당신 이름은 어디에도 적지 않겠습니다. 서류는 지워지니까요.','대신 외워 두겠습니다.'],
    c:[['나도 네 이름 외워 둘게.',5,['…오스윈입니다. 혹시 모르니 철자도 말씀드리지요.','*오스윈이 웃는다. 비꼬지 않는 웃음은 처음 본다.']],['갑자기 왜 그래?',2,['그러게 말입니다. 벽난로가 너무 따뜻해서 그렇습니다. 내일이면 다시 길고 재미없는 문장으로 돌아가겠습니다. 약속하지요.']]]}]
 };
-const tln=(id,L)=>L.map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:x[0]==='>'?`<p>${esc(S.name)} — “${x.slice(1)}”</p>`:`<p>${cn(id)} — “${x}”</p>`).join('');
+const tln=(id,L)=>L.map(x=>(x=x.replace(/@N/g,esc(S.name)),x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:x[0]==='!'?`<p>${esc(S.name)} — “${x.slice(1)}”</p>`:`<p>${cn(id)} — “${x}”</p>`)).join('');
+// 줄을 차례로 보여 준다. > 줄에서 멈추고 그 말을 할지 고른다(말없이 들어도 이어진다). 끝나면 end(html)
+function seq(id,title,L,end){const i=L.findIndex(x=>x[0]==='>');if(i<0){end(tln(id,L));return}
+  const say=L[i].slice(1),rest=L.slice(i+1);ev(title,tln(id,L.slice(0,i)),[[say,()=>seq(id,title,['!'+say].concat(rest),end)],['말없이 듣는다',()=>seq(id,title,rest,end)]])}
 const chNext=id=>{const L=CH[id];if(!L)return null;const n=(S.chd||{})[id]||0;return L[n]&&((S.aff||{})[id]||0)>=L[n].need?L[n]:null};
-const talkSub=id=>chNext(id)?'✦ 할 이야기가 있는 것 같다':(TALK[id]||{})[S.loc]&&!S.talked[id+':'+S.loc]?'이곳에 대해':'잡담';
-// 호감도: 낯섦 → 믿음 → 가까움 → 마음(로맨스를 고른 뒤)
-const AFT=[[0,'낯섦'],[20,'믿음'],[50,'가까움']];
-const affTier=id=>{if((S.rom||'')===id)return '마음';const a=(S.aff||{})[id]||0;let t=AFT[0][1];AFT.forEach(([n,l])=>{if(a>=n)t=l});return t};
+const talkSub=id=>chNext(id)?'✦ 할 이야기가 있는 것 같다':'이야기를 나눈다';
+// 호감 10단계(불의 크기). 화면에는 숫자도 이름도 보이지 않는다. 로맨스를 고르면 '마음'
+const AFT=[[0,'식은 재'],[10,'불씨'],[20,'성냥불'],[30,'촛불'],[40,'등잔불'],[50,'난롯불'],[60,'화톳불'],[70,'횃불'],[80,'등대불'],[90,'꺼지지 않는 불']]; // 화면에는 보이지 않는다
+const affTier=id=>{const a=(S.aff||{})[id]||0;let t=1;AFT.forEach(([n],i)=>{if(a>=n)t=i+1});return t}; // 1~10
+const affName=id=>(S.rom||'')===id?'마음':AFT[affTier(id)-1][1];
 const romOK=id=>{const c=COMP[id];if(!c||!c.rom)return false;if(c.rom==='any')return true;return c.rom===S.sex}; // 지향이 맞는가
-const romReady=id=>romOK(id)&&!S.rom&&((S.aff||{})[id]||0)>=50&&(!COMP[id].demi||(S.cq||{})[id]==='done'); // 고르는 장면이 열릴 수 있는가
+const romReady=id=>romOK(id)&&!S.rom&&((S.aff||{})[id]||0)>=70&&(!COMP[id].demi||(S.cq||{})[id]==='done'); // 고르는 장면이 열릴 수 있는가
 function gainXp(n){const out=[`경험 +${n}`];S.xp+=n;
   while(S.xp>=xpNeed(S.lv)){S.xp-=xpNeed(S.lv);S.lv++;S.sp++;if(SKILL_LV.includes(S.lv)&&S.sk.length+S.skp<Object.keys(SKL).length)S.skp++;
     const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,S.hp+(S.mhp-m0));
     out.push(`<b class="g">레벨 ${S.lv}</b> — 능력치 점수 +1${S.skp?' · 새 기술을 배울 수 있다':''}. 캐릭터 탭에서 고른다.`);log('레벨 '+S.lv+'에 올랐다.')}
   return out}
-function aff(id,n){S.aff=S.aff||{};S.aff[id]=Math.max(0,Math.min(100,(S.aff[id]||0)+n))}
+function aff(id,n){S.aff=S.aff||{};const t0=affTier(id);S.aff[id]=Math.max(0,Math.min(100,(S.aff[id]||0)+n));const t1=affTier(id);if(t1>t0){S.tnew=S.tnew||{};S.tnew[id]=t1}}
 const cn=id=>COMP[id]?COMP[id].n:id;
 /* 미뤄 둔 이야기 장면: 결과 창이 닫힌 뒤 tick에서 연다 */
 const homeN=()=>S.base?'저택':'여관';
@@ -745,7 +783,8 @@ function migrate(){
   if(!ORIGIN[S.og])S.og=0;if(!S.letter0){S.letter0=1;if(!S.inv.letter)S.inv.letter=1}if(!PL[S.loc]||(PL[S.loc].hide&&PL[S.loc].hide(S)))S.loc='docks';
   S.lv=S.lv||1;S.xp=S.xp||0;S.sp=S.sp||0;S.skp=S.skp||0;S.sk=(S.sk||[]).filter(k=>SKL[k]);if(!S.sk.length)S.sk=[OSK[S.og]||'stance'];if(S.v<5)S.v=5;
   S.fix=S.fix||{};S.deco=Object.assign({},DECO0,S.deco||{});Object.keys(DECO).forEach(sl=>{if(decoO(sl,S.deco[sl])[0]!==S.deco[sl])S.deco[sl]=DECO0[sl]});S.own=S.own||{};S.read=S.read||{};if(S.v<6)S.v=6;
-  S.chd=S.chd||{};S.kq=S.kq||0;if(S.v<7)S.v=7; // v7: 동료 자기 이야기, 키리엔 퀘스트 // v6: 저택 손보기·꾸미기
+  S.chd=S.chd||{};S.kq=S.kq||0;if(S.v<7)S.v=7;
+  S.asked=S.asked||{};S.tnew=S.tnew||{};S.cl=S.cl||{};S.comps.forEach(cst);if(S.v<8)S.v=8; // v8: 호감 10단계, 질문 대화, 동료 전투 // v7: 동료 자기 이야기, 키리엔 퀘스트 // v6: 저택 손보기·꾸미기
   S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,Math.max(0,S.hp|0));
 }
 const log=t=>{S.log.unshift(t);S.log=S.log.slice(0,40)};
@@ -964,7 +1003,7 @@ function placeView(){
 function bagHtml(){const e=Object.entries(S.inv).filter(([,n])=>n>0);return e.length?`<div class="bag">${e.map(([k,n])=>`<span title="${esc(k==='relic'&&S.legacy&&RELIC[S.legacy.pa]?RELIC[S.legacy.pa][1]:(IT[k]||['',''])[1])}">${esc(itName(k))} ${n}</span>`).join('')}</div>`:'<p class="empty">가방이 비어 있다</p>'}
 function sideCards(){
   const P=COMP[S.party];
-  let h=`<div class="card"><h2>동료</h2>${P?`<p><b class="g">${P.n}</b> <span class="m">${P.k}</span></p><p class="m">${affTier(S.party)}${romReady(S.party)?' · 마음을 전할 수 있을 것 같다':''}</p>${S.comps.length>1?`<p class="m">${S.comps.filter(x=>x!==S.party).map(cn).join(', ')} — ${S.base?'본거지에서 지낸다':'여관 1층에서 기다린다'}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
+  let h=`<div class="card"><h2>동료</h2>${P?`<p><b class="g">${P.n}</b></p><p class="m">${compLine(S.party)}</p>${CSK[S.party]?`<p class="m">${Object.keys(CSK[S.party]).filter(k=>cst(S.party).r[k]).map(k=>CSK[S.party][k].n+' '+'◆'.repeat(cst(S.party).r[k])).join(' · ')||'기술을 아직 고르지 않았다'}${cst(S.party).cp?' · <span class="hbn">점수 '+cst(S.party).cp+'</span>':''}</p>`:''}${S.comps.length>1?`<p class="m">${S.comps.filter(x=>x!==S.party).map(cn).join(', ')} — ${S.base?'본거지에서 지낸다':'여관 1층에서 기다린다'}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
   if(S.base&&S.pit)h+=`<div class="card"><h2>파견</h2>${S.disp.length?S.disp.map(d=>`<div class="disp">${HELPER} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`).join(''):`<p class="empty">${HELPER}가 여관 계단에 앉아 있다</p>`}</div>`;
   if(!S.base)h+=`<div class="card"><h2>머무는 곳</h2><p class="m">운하 부두 ${LODGE} 이층 끝방. 하룻밤씩 값을 치른다. 짐을 둘 데도 사람을 들일 데도 없다.</p></div>`;
   h+=`<div class="card"><h2>기록</h2><div class="log">${S.log.slice(0,14).map(x=>`<div>${x}</div>`).join('')}</div></div>`;
@@ -977,8 +1016,9 @@ function charView(){
   <h3>능력치${S.sp?` <span class="hbn">올릴 수 있는 점수 ${S.sp}</span>`:''}</h3><div class="stats st4">${SN.map((n,i)=>`<span>${n}</span>${bar(S.st[i],14)}<span>${S.st[i]}${S.sp?' '+B('statup','＋',{a:i,cls:'sm'}):''}</span><span class="m sne">${SNE[i]}</span>`).join('')}</div>
   <p class="m">체력 ${S.mhp} · 공격 ${dAtk(S.st)} · 강타 ${dHeavy(S.st,0)}~${dHeavy(S.st,1)} · 되받아치기 ${dCounter(S.st,0)}</p></div>
   <div class="card"><h2>기술 ${S.skp?'<span class="hbn">새 기술을 배울 수 있다</span>':''}</h2>${S.sk.map(k=>`<div class="ms"><b>${SKL[k].n}</b> <span class="m">기력 ${'◆'.repeat(SKL[k].c)}${SKL[k].item?' · '+IT[SKL[k].item][0]+' 1':''} · ${SN[SKL[k].st]}</span><div class="m">${SKL[k].d}</div></div>`).join('')}
+  ${!S.skp&&S.sk.length<Object.keys(SKL).length?`<p class="m">레벨 2부터 6까지 오를 때마다 하나씩 배운다.</p>${Object.keys(SKL).filter(k=>!S.sk.includes(k)).map(k=>`<div class="ms csk off"><b>${SKL[k].n}</b> <span class="m">기력 ${'◆'.repeat(SKL[k].c)} · ${SN[SKL[k].st]}</span><div class="m">${SKL[k].d}</div></div>`).join('')}`:''}
   ${S.skp?`<h3>배울 기술 고르기</h3><div class="acts">${Object.keys(SKL).filter(k=>!S.sk.includes(k)).map(k=>B('learn',SKL[k].n,{a:k,sub:`기력 ${SKL[k].c} · ${SN[SKL[k].st]} — ${SKL[k].d}`})).join('')}</div>`:''}</div>`;
-  if(S.comps.length)h+=`<div class="card"><h2>동료</h2>${S.comps.map(id=>{const c=COMP[id];return `<div class="ms"><b>${c.n}</b> <span class="m">${c.k} · ${affTier(id)}${CH[id]?` · 들은 이야기 ${(S.chd||{})[id]||0} / ${CH[id].length}`:''}</span><div class="m">${c.d}</div><div class="m">말투: ${c.sp}</div></div>`}).join('')}</div>`;
+  if(S.comps.length)h+=`<div class="card"><h2>동료</h2>${S.comps.map(id=>{const c=COMP[id],K=CSK[id],C=K&&cst(id);return `<div class="ms"><b>${c.n}</b> <span class="m">${compLine(id)}</span>${K?`<div class="m">경험 ${C.xp} / ${xpNeed(C.lv)}${C.cp?` · <span class="hbn">기술 점수 ${C.cp}</span>`:''}</div>`+Object.keys(K).map(k=>{const r=C.r[k]||0;return `<div class="csk${r?'':' off'}"><b>${K[k].n}</b> ${'◆'.repeat(r)}${'◇'.repeat(3-r)} ${C.cp&&r<3?B('cskup','＋',{a:id+':'+k,cls:'sm'}):''}<div class="m">${K[k].d(r||0)}</div></div>`}).join(''):''}</div>`}).join('')}<p class="m">데리고 다니는 동료는 내 차례가 끝날 때마다 스스로 싸운다. 함께 이기면 동료도 경험을 얻는다.</p></div>`;
   if(S.legacy){const L=S.legacy;h+=`<div class="card"><h2>1편의 기억</h2><p>${esc(L.name)} · ${RACE1[L.race]}${L.og?' · '+esc(L.og):''}</p><p class="m">${L.end?'『'+END1[L.end]+'』의 끝을 본 여정':'끝을 보지 못한 여정'}</p></div>`}
   return h;
 }
@@ -1061,6 +1101,7 @@ function tick(){
 const CMD={
   tab:a=>{V=a;render()},
   statup:a=>{if(!S.sp)return;const i=+a;S.st[i]++;S.sp--;const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp+=S.mhp-m0;log(SN[i]+'이(가) 올랐다.');save();render()},
+  cskup:a=>{const [id,k]=(a||'').split(':');const K=CSK[id];if(!K||!K[k]||!S.comps.includes(id))return;const C=cst(id);if(!C.cp||(C.r[k]||0)>=3)return;C.r[k]=(C.r[k]||0)+1;C.cp--;log(`${cn(id)} — ${K[k].n} ${C.r[k]}단계`);save();render()},
   learn:a=>{if(!S.skp||!SKL[a]||S.sk.includes(a))return;S.sk.push(a);S.skp--;log('새 기술 — '+SKL[a].n);save();render()},
   race:a=>{C.r=a;C.t=0;render()},sex:a=>{C.sx=a;render()},trait:a=>{C.t=+a;render()},origin:a=>{C.o=+a;render()},
   legread:async()=>{const t=($('#legt')||{}).value||'';try{C.leg=await legacyDecode(t);C.legMsg='1편의 여정을 읽었다.'}catch(e){C.leg=null;C.legMsg='코드를 읽지 못했다. 1편의 설정 → 기록에서 만든 코드를 처음부터 끝까지 붙여 넣었는지 확인하자.'}render()},
@@ -1091,13 +1132,18 @@ const CMD={
     ev('거실',`<p class="m">${DECO[sl].n}을(를) ${nm}(으)로 바꿨다. 지금 저택은 <b>${comfortT()}</b>.</p>`+(say?`<p>${cn(S.party)} — “${say}”</p>`:''),[['좋다',null]],1);save()},
   read:()=>{if(S.act||!S.fix.study)return;startAct({t:'b',d:120})},
   explore:a=>{if(S.act)return;const X=(EXP[S.loc]||[])[+a];if(!X)return;startAct({t:'x',at:S.loc,i:+a,l:X.n,d:X.d})},
-  talk:a=>{const id=a||S.party;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};
-    const ch=chNext(id);
-    if(ch){ev(`${cn(id)} — ${ch.t}`,tln(id,ch.p),ch.c.map(([l,g,r])=>[l,()=>{aff(id,g);S.chd[id]=(S.chd[id]||0)+1;jr(`${josa(cn(id),'이','가')} 「${ch.t}」 이야기를 들려주었다.`);
-      ev(`${cn(id)} — ${ch.t}`,tln(id,r)+`<p class="m">${cn(id)}에 대해 조금 더 알게 되었다. (${S.chd[id]} / ${CH[id].length})</p>`,[['고개를 끄덕인다',null]],1)}]));return}
-    const L=(TALK[id]||{})[S.loc],key=id+':'+S.loc;
-    if(L&&!S.talked[key]){S.talked[key]=1;aff(id,4);ev(cn(id),tln(id,L)+'<p class="m">조금 가까워진 것 같다.</p>',[['고개를 끄덕인다',null]],1);return}
-    const P=IDLE[id]||[['…']];ev(cn(id),tln(id,P[Math.random()*P.length|0])+(CH[id]&&CH[id][(S.chd[id]||0)]?'<p class="m">더 가까워지면 자기 이야기를 들려줄 것 같다.</p>':''),[['고개를 끄덕인다',null]],1)},
+  talk:a=>{const id=a||S.party;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.asked=S.asked||{};S.tnew=S.tnew||{};
+    let top='';const tn=S.tnew[id];if(tn){delete S.tnew[id];const L=(TIERL[id]||{})[tn];if(L)top=tln(id,[L])}
+    const back=[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]],T=cn(id);
+    const loc=(TALK[id]||{})[S.loc],qs=[];
+    if(loc)qs.push(['이곳은 어때?',()=>{const key=id+':'+S.loc,first=!S.talked[key];S.talked[key]=1;if(first)aff(id,4);seq(id,T,loc,h=>ev(T,h,back))}]);
+    qs.push(['요즘 어때?',()=>{const M=MOOD[id]||[['…']];ev(T,tln(id,M[Math.random()*M.length|0]),back)}]);
+    (QA[id]||[]).forEach(([q,ans],i)=>qs.push([q,()=>{const key=id+':'+i;if(!S.asked[key]){S.asked[key]=1;aff(id,2)}const L=typeof ans==='function'?ans(S):ans;seq(id,T,L,h=>ev(T,h,back))}]));
+    qs.push(['너에 대해 이야기해 줘',()=>{const ch=chNext(id);
+      if(!ch){const D=DEFL[id]||[['…'],['…']];ev(T,tln(id,(S.chd[id]||0)>=(CH[id]||[]).length?D[1]:D[0]),back);return}
+      seq(id,`${T} — ${ch.t}`,ch.p,h=>ev(`${T} — ${ch.t}`,h,ch.c.map(([l,g,r])=>[l,()=>{aff(id,g);S.chd[id]=(S.chd[id]||0)+1;jr(`${josa(T,'이','가')} 「${ch.t}」 이야기를 들려주었다.`);seq(id,`${T} — ${ch.t}`,r,h2=>ev(`${T} — ${ch.t}`,h2,back))}])))}]);
+    qs.push(['이야기를 그만둔다',null]);
+    ev(T,top+`<p class="m">${GREET[id]||''}</p>`,qs)},
   manorIn:()=>{if(!S.act)SCENE.manorIn()},eda:()=>{if(!S.act&&S.pit&&!S.eda)SCENE.eda()},kq1:()=>{if(!S.act&&!S.kq&&S.party==='kirien')SCENE.kq1()},kq2:()=>{if(!S.act&&S.kq===1&&S.party==='kirien')SCENE.kq2()},kq3:()=>{if(!S.act&&S.kq===2&&S.party==='kirien')SCENE.kq3()},kq4:()=>{if(!S.act&&S.kq===3&&S.party==='kirien')SCENE.kq4()},kqbuy:()=>{if(!S.act&&S.kq===3&&!S.inv.mem)SCENE.kqBuy(1)},archive:()=>{if(!S.act)SCENE.archive()},kirAgain:()=>{if(!S.act)SCENE.kirAgain()},oswAgain:()=>{if(!S.act)SCENE.oswAgain()},
   rumor:()=>{const L=S.legacy;const pool=RU.concat(L&&L.end&&LEGRU[L.end]?[LEGRU[L.end]]:[]);ev(LODGE,`<p>여관 주인이 잔을 닦으며 말한다.</p><p>“${pool[Math.random()*pool.length|0]}”</p>`,[['고개를 끄덕인다',null]],1)},
   mapzoom:a=>mzoom(+a),mapcenter:()=>mcenter(),
@@ -1111,7 +1157,7 @@ const CMD={
   board:()=>{if(!S.base||!S.pit)return;const full=S.disp.length>=1;ev('파견 게시판',`<p class="m">${HELPER}에게 일을 맡긴다. 지금은 한 번에 하나만 맡길 수 있다.</p>${Object.entries(DSP).map(([k,d])=>`<p><b>${d.n}</b> <span class="m">${fmt(d.d*SEC())}${d.risk?' · 다칠 수 있다':''}</span></p>`).join('')}${full?'<p class="m">피트가 이미 나가 있다.</p>':''}`,
     full?[['닫기',null]]:Object.entries(DSP).map(([k,d])=>[d.n,()=>{S.disp.push({id:k,t0:Date.now(),d:d.d*SEC()});log(`${HELPER}를 ${d.n}에 보냈다.`);save()}]).concat([['닫기',null]]),1)},
   rooms:()=>{const L=S.comps,inn=!S.base;if(inn&&S.loc!=='docks'||!inn&&S.loc!=='base')return;if(!L.length){CMD.rooms0();return}
-    ev(inn?'여관 1층':'동료의 방',`<p class="m">${inn?'저택이 생기기 전까지는 여관에서 데리고 나갈 사람을 바꾼다.':'데리고 나갈 사람은 여기서만 바꿀 수 있다.'}</p>${L.map(id=>`<p><b>${cn(id)}</b> <span class="m">${COMP[id].k} · ${affTier(id)}${S.party===id?' · 함께 걷는 중':''}</span></p>`).join('')}`,
+    ev(inn?'여관 1층':'동료의 방',`<p class="m">${inn?'저택이 생기기 전까지는 여관에서 데리고 나갈 사람을 바꾼다.':'데리고 나갈 사람은 여기서만 바꿀 수 있다.'}</p>${L.map(id=>`<p><b>${cn(id)}</b> <span class="m">${compLine(id)}${S.party===id?' · 함께 걷는 중':''}</span></p>`).join('')}`,
       (inn?[]:L.map(id=>[josa(cn(id),'과','와')+' 이야기한다'+(chNext(id)?' ✦':''),()=>CMD.talk(id)])).concat(L.filter(id=>id!==S.party).map(id=>[josa(cn(id),'과','와')+' 나간다',()=>{S.party=id;log(josa(cn(id),'과','와')+' 함께 나서기로 했다.');save()}])).concat([['문을 닫는다',null]]))},
   rooms0:()=>ev('동료의 방','<p>복도를 따라 빈 방 네 칸. 침대 틀만 남아 있다.</p><p class="m">함께 걸을 사람을 만나면 여기서 지내게 된다. 데리고 나갈 사람도 여기서만 바꿀 수 있다.</p>',[['문을 닫는다',null]]),
   evb:a=>{const f=EV0&&EV0.b[+a][1];EV0=null;if(f)f();if(S)save();render()},
@@ -1226,6 +1272,7 @@ function bbars(){
   $('#bhpn').textContent=bsafe()?(G.kind==='tut'?'가르침':'연습')+' — 피해 없음':Math.max(0,G.hp)+' / '+G.mhp;
   let s='';for(let i=0;i<5;i++)s+=i<G.fp?'◆':'<s>◇</s>';$('#bfp').innerHTML=s;
   $('#bfph').textContent=G.ph===2?'격노':'';
+  const cid=G.kind==='fight'&&S&&S.party&&CSK[S.party]?S.party:null;$('#bcomp').hidden=!cid;if(cid)$('#bcompn').textContent=cn(cid)+' · 레벨 '+cst(cid).lv+(G.ward?' · 정전기 막':'')+(G.mark?' · 약점 짚음':'');
 }
 function btele(){
   const el=$('#btele');let tut='';
@@ -1281,14 +1328,14 @@ function bpick(){
   const F=bfoe(),pool=G.ph===2&&F.pool2?F.pool2:F.pool;
   let m;do{m=pool[Math.random()*pool.length|0]}while(m===G.last&&pool.length>1);G.last=m;return m;
 }
-function playerTurn(){G.st='player';G.turn++;if(G.turn>1)G.fp=Math.min(5,G.fp+1);G.guard=false;if(!G.next&&G.kind!=='tut')G.next=bpick();brender()}
+function playerTurn(){G.st='player';G.cDone=false;G.turn++;if(G.turn>1)G.fp=Math.min(5,G.fp+1);G.guard=false;if(!G.next&&G.kind!=='tut')G.next=bpick();brender()}
 function afterAct(){G.st='wait';G.menu=null;brender();setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650)}
 function bact(a,k){
   ac();if(G.st!=='player')return;if(G.kind==='tut'&&a!=='heavy')return;
   if(a==='skill'){G.menu='skill';brender();return}
   if(a==='back'){G.menu=null;brender();return}
   if(a==='sk'){useSkill(k);return}
-  if(a==='atk'){let d=dAtk(SV());if(G.open){d=Math.round(d*1.5);G.open=false}G.fx.push({k:'slash',t:now()});SND.slash();bjudge('일격','dodge');dmgFoe(d);blog('공격. '+d+' 피해.');afterAct();return}
+  if(a==='atk'){let d=dAtk(SV());if(G.open){d=Math.round(d*1.5);G.open=false}if(G.mark){d=Math.round(d*(1+.15*G.mark));G.mark=0}G.fx.push({k:'slash',t:now()});SND.slash();bjudge('일격','dodge');dmgFoe(d);blog('공격. '+d+' 피해.');afterAct();return}
   if(a==='heavy'){if(G.kind!=='tut'){if(G.fp<2)return;G.fp-=2}G.menu=null;startQte('heavy');return}
   if(a==='guard'){G.guard=true;G.fp=Math.min(5,G.fp+1);blog('자세를 낮춘다. 다음 공격을 읽기 쉬워진다.');enemyTurn();return}
   if(a==='band'){if(G.band<=0)return;G.band--;const h=Math.min(24+2*sv(3),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
@@ -1313,7 +1360,7 @@ function startQte(kind){
 function qteHit(ts){const q=G.q;if(!q||q.done)return;const p=(ts+CFG.lat-q.t0)/q.dur;if(p<0)return;resolveQte(p>=q.z[0]&&p<=q.z[1])}
 function resolveQte(perfect){
   const q=G.q;q.done=true;const hv=true;
-  let d=dHeavy(SV(),perfect);if(G.open){d=Math.round(d*1.5);G.open=false}
+  let d=dHeavy(SV(),perfect);if(G.open){d=Math.round(d*1.5);G.open=false}if(G.mark){d=Math.round(d*(1+.15*G.mark));G.mark=0}
   G.S.qte++;if(perfect)G.S.perf++;
   G.fx.push({k:'slash',t:now(),gold:perfect});perfect?SND.perfect():SND.slash();
   bjudge(perfect?'정확한 강타':'강타',perfect?'parry':'dodge');
@@ -1331,9 +1378,20 @@ function maybePhase(then){
     setTimeout(()=>{d.remove();blog(P2.l);then()},2200);
   }else then();
 }
+/* 동료의 차례: 내 행동 뒤, 적이 휘두르기 전에 스스로 싸운다. 적은 동료를 노리지 않는다 */
+function compAct(){
+  const id=S.party,C=cst(id),r=C.r;let d=0;
+  if(id==='kirien'){const n=1+(r.flurry||0),e=3+C.lv;d=n*e;G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`키리엔 — ${n>1?n+'번 벤다':'벤다'}. ${d} 피해.`);if(r.mark)G.mark=r.mark;if(r.cut&&Math.random()<.12*r.cut)G.cut=1}
+  else if(id==='oswin'){if(r.mend&&G.hp<G.mhp/2&&G.turn>=(G.mendT||0)){const h=Math.min(8*r.mend,G.mhp-G.hp);G.hp+=h;G.mendT=G.turn+3;bfloat('#bphp','+'+h,'heal');blog(`오스윈 — 상처를 돌본다. 체력 ${h} 회복.`)}
+    else{d=5+2*C.lv+3*(r.bolt||0);G.fx.push({k:'parry',t:now(),r:Math.random()});SND.parry();dmgFoe(d);blog(`오스윈 — 번개를 떨군다. ${d} 피해.`)}
+    if(r.ward&&!G.ward&&Math.random()<.15*r.ward){G.ward=1;blog('오스윈 — 정전기 막이 몸을 감싼다.')}}
+  else{d=4+C.lv;dmgFoe(d);blog(`${cn(id)} — ${d} 피해.`)}
+  bbars()}
 function enemyTurn(){
   if(!G.on)return;
   if($('#sov').classList.contains('on')){G.cur=G.next;G.paused='enemy';return}
+  if(G.kind==='fight'&&S.party&&CSK[S.party]&&!G.cDone){G.cDone=true;G.st='wait';brender();compAct();if(checkEnd())return;const g=G;setTimeout(()=>{if(G===g&&G.on&&!checkEnd())maybePhase(enemyTurn)},750);return}
+  if(G.cut){G.cut=0;const m0=MV[G.next];G.st='wait';G.beats=[];bjudge('공격 끊기','parry');blog(`키리엔 — ${m0.n}을(를) 휘두르기 전에 끼어들어 끊었다.`);G.next=bpick();brender();setTimeout(()=>{if(G.on)playerTurn()},900);return}
   const m=MV[G.next];G.cur=G.next;G.st='enemy';
   const sp=DF().sp*btier().sp*(G.slow?1.3:1),bs=m.b.map(b=>({t:b.t*sp,a:b.a*sp,f:b.f&&b.f.map(x=>x*sp)}));G.slow=0;
   if(G.forget){G.forget=0;
@@ -1343,7 +1401,7 @@ function enemyTurn(){
   G.beats=bs.map(b=>({T:base+b.t,a:b.a,f:b.f,res:null,warned:false}));
   G.res={dodge:0,parry:0,hit:0,graze:0};G.lock=0;brender();
 }
-function hurt(d){if(bsafe())return;G.hp-=d;bfloat('#bphp','-'+d,'hurt')}
+function hurt(d){if(bsafe())return;if(G.ward){G.ward=0;d=Math.max(1,Math.round(d/2));blog('정전기 막이 충격을 반으로 줄였다.')}G.hp-=d;bfloat('#bphp','-'+d,'hurt')}
 function resolveBeat(b,kind,ofs,note){
   b.res=kind;const m=MV[G.cur],t=now(),dm=DF().dm*(G.guard?.5:1);
   if(ofs!=null)G.S.ofs.push(ofs);
@@ -1369,9 +1427,9 @@ function finishEnemy(){
   setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(playerTurn)},full?700:350);
 }
 function checkEnd(){
-  if(bsafe())return false;
-  if(G.hp<=0){G.st='end';brender();setTimeout(()=>endBattle('lose'),700);return true}
-  if(G.fhp<=0){G.st='end';brender();setTimeout(()=>endBattle('win'),700);return true}
+  if(bsafe())return false;if(G.st==='end')return true;const g=G;
+  if(G.hp<=0){G.st='end';brender();setTimeout(()=>{if(G===g)endBattle('lose')},700);return true}
+  if(G.fhp<=0){G.st='end';brender();setTimeout(()=>{if(G===g)endBattle('win')},700);return true}
   return false;
 }
 function press(kind,ts){
@@ -1413,7 +1471,7 @@ function endBattle(res){
     if(res==='win'){
       const L=F.loot();if(XL){Object.entries(XL.i).forEach(([k,n])=>L.i[k]=(L.i[k]||0)+n);L.g+=XL.g}Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;
       const story=NIGHT[S.night]===G.foe;if(story)S.night++;
-      log(F.n+'을(를) 물리쳤다.');const XPL=gainXp(F.xp||5);
+      log(F.n+'을(를) 물리쳤다.');const XPL=gainXp(F.xp||5).concat(compXp(F.xp||5));
       if(story&&G.foe==='lamp'){S.pend='kirien';jr('편지가 가리킨 사람을 쓰러뜨렸다. 꺼지지 않는 등불이 돌바닥을 굴렀다. 그 사람이 중얼거린 이름은 끝내 알아듣지 못했다. 잊은 것은 아직 찾지 못했다. 교단 구역으로 가는 길이 열렸다.');S.hp=Math.max(S.hp,1)}
       else if(story)jr(F.win);
       pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([F.win,`<span class="m">${line}</span>`]).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
@@ -1479,7 +1537,7 @@ const DV={
   pro:()=>{devClose();prologue();return 1},
   leg:()=>{const order=['k','r','w',''];const cur=S.legacy?S.legacy.end:'';const nx=order[(order.indexOf(cur)+1)%order.length];
     S.legacy=nx?{name:'시험용 여행자',race:'p',og:'칼라쉬',tr:'남색 서리비늘',end:nx,pa:'fox'}:null;if(S.legacy&&S.base)S.inv.relic=1;save()},
-  state:()=>{const t=$('#dvs');t.style.display='';t.value=JSON.stringify(S,null,1);return 1},
+  state:()=>{const t=$('#dvs');t.style.display='';t.value=S.comps.map(id=>`${cn(id)} 호감 ${S.aff[id]||0} · ${affTier(id)}단계 ${affName(id)}`).join('\n')+'\n\n'+JSON.stringify(S,null,1);return 1},
   close:()=>{devClose();return 1}
 };
 function devClose(){$('#dov').classList.remove('on');$('#dov').innerHTML=''}
@@ -1490,7 +1548,7 @@ $('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-bdev]');if
 
 /* ===================== 시작 ===================== */
 // 테스트 손잡이(자동 테스트가 쓴다)
-window.__k2={TALK,IDLE,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>

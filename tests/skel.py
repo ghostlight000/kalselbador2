@@ -57,8 +57,10 @@ with sync_playwright() as p:
     s=S(pg); assert s['comps']==['kirien'] and s['party']=='kirien' and s['aff']['kirien']==18, s['aff']; print('kirien joined, aff',s['aff'])
     assert pg.evaluate("window.__k2.romOK('kirien')") and not pg.evaluate("window.__k2.romOK('kasimir')")
     # 대화(이곳에 대해) → 호감 +4 한 번만
-    assert '할 이야기가' in pg.inner_text('button[data-c=talk]'); pg.click('button[data-c=talk]'); assert '점쟁이의 딸' in pg.inner_text('#ov'); choose(pg,'점은 안 믿어'); assert '틀린 적이 없었어' in pg.inner_text('#ov'); okpop(pg); assert S(pg)['aff']['kirien']==20; pg.click('button[data-c=talk]'); assert '조금 가까워진' in pg.inner_text('#ov'); okpop(pg); pg.click('button[data-c=talk]'); assert '키리엔 —' in pg.inner_text('#ov'); okpop(pg); assert S(pg)['aff']['kirien']==24 and S(pg)['chd']['kirien']==1
-    assert pg.evaluate("window.__k2.affTier('kirien')")=='믿음'
+    pg.click('button[data-c=talk]'); assert '귀를 이쪽으로' in pg.inner_text('#ov'); choose(pg,'이곳은 어때?'); assert '이름을 붙인대' in pg.inner_text('#ov'); choose(pg,'다른 이야기를 한다'); assert '한 사람 자리만큼' in pg.inner_text('#ov')
+    choose(pg,'너에 대해 이야기해 줘'); assert '점쟁이의 딸' in pg.inner_text('#ov'); choose(pg,'점은 안 믿어'); t=pg.inner_text('#ov'); assert '틀린 적이 없었어' in t and '/ 4' not in t; choose(pg,'다른 이야기를 한다')
+    choose(pg,'사람 찾는 일은 어때?'); choose(pg,'이야기를 그만둔다'); assert S(pg)['aff']['kirien']==26 and S(pg)['chd']['kirien']==1, S(pg)['aff']
+    assert pg.evaluate("window.__k2.affTier('kirien')")==3 and '성냥불' not in pg.inner_text('body')
     # ---- 교단 문서고 → 오스윈 ----
     go(pg,'church'); pg.click('button[data-c=archive]'); choose(pg,'끼어든다'); h=fight(pg); assert '정화자' in h
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='오스윈'; assert '말 많네' in pg.inner_text('#ov')
@@ -102,7 +104,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.hp=99999;delete s.vis;delete s.sex;delete s.aff;s.comps.push('임시 동료 1');localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
     s=S(pg); assert s['hp']==s['mhp'] and s['vis'] and s['sex']=='x' and s['aff']=={} and s['comps']==['kirien','oswin']
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.v=1;delete s.base;delete s.pro;s.loc='inn';localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
-    s=S(pg); assert s['v']==7 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
+    s=S(pg); assert s['v']==8 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
     # ---- 패배: 본거지 없으면 여관에서 ----
     pg.evaluate("()=>{const K=window.__k2;K.S=null}"); pg.evaluate("window.__k2.render()")
     pg.fill('#cname','카인'); pg.click('button[data-c=start]'); pg.wait_for_timeout(100); pg.click('#pv [data-pv=skip]'); pg.click('#pv .eo'); pg.click('#pv [data-pv=close]')
