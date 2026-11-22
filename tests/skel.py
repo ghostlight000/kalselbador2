@@ -57,7 +57,7 @@ with sync_playwright() as p:
     s=S(pg); assert s['comps']==['kirien'] and s['party']=='kirien' and s['aff']['kirien']==18, s['aff']; print('kirien joined, aff',s['aff'])
     assert pg.evaluate("window.__k2.romOK('kirien')") and not pg.evaluate("window.__k2.romOK('kasimir')")
     # 대화(이곳에 대해) → 호감 +4 한 번만
-    pg.click('button[data-c=talk]'); assert '키리엔 —' in pg.inner_text('#ov'); okpop(pg); pg.click('button[data-c=talk]'); okpop(pg); assert S(pg)['aff']['kirien']==22
+    assert '할 이야기가' in pg.inner_text('button[data-c=talk]'); pg.click('button[data-c=talk]'); assert '점쟁이의 딸' in pg.inner_text('#ov'); choose(pg,'점은 안 믿어'); assert '틀린 적이 없었어' in pg.inner_text('#ov'); okpop(pg); assert S(pg)['aff']['kirien']==20; pg.click('button[data-c=talk]'); assert '조금 가까워진' in pg.inner_text('#ov'); okpop(pg); pg.click('button[data-c=talk]'); assert '키리엔 —' in pg.inner_text('#ov'); okpop(pg); assert S(pg)['aff']['kirien']==24 and S(pg)['chd']['kirien']==1
     assert pg.evaluate("window.__k2.affTier('kirien')")=='믿음'
     # ---- 교단 문서고 → 오스윈 ----
     go(pg,'church'); pg.click('button[data-c=archive]'); choose(pg,'끼어든다'); h=fight(pg); assert '정화자' in h
@@ -92,7 +92,7 @@ with sync_playwright() as p:
     pg.evaluate("window.__k2.G.fp=5"); pg.click('#bacts [data-ba=skill]'); assert pg.locator('#bacts [data-k=spirit]').count()==1
     f0=pg.evaluate('window.__k2.G.fhp'); pg.click('#bacts [data-k=spirit]'); pg.wait_for_timeout(50); f1=pg.evaluate('window.__k2.G.fhp'); assert f0-f1==round(10+2.4*S(pg)['st'][1]) or f0-f1==int(10+2.4*S(pg)['st'][1]+.5), (f0,f1)
     pg.wait_for_function("window.__k2.G.st==='enemy'",timeout=5000); pg.evaluate(BOT); pg.wait_for_function('!window.__k2.G.on',timeout=120000); okpop(pg); print('skill in battle ok')
-    pg.click('button[data-c=tab][data-a=quest]'); q=pg.inner_text('.M'); assert '◇ — 뼈대는 여기까지' in q
+    pg.click('button[data-c=tab][data-a=quest]'); q=pg.inner_text('.M'); assert '◇ 등불을 든 사람의 딸' in q
     pg.click('button[data-c=tab][data-a=char]'); c=pg.inner_text('.M'); assert '키리엔' in c and '오스윈' in c and '여' in c
     pg.click('button[data-c=tab][data-a=story]'); assert '테오르' in pg.inner_text('.M') and '오르빌 저택' in pg.inner_text('.M')
     pg.click('button[data-c=tab][data-a=place]')
@@ -102,7 +102,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.hp=99999;delete s.vis;delete s.sex;delete s.aff;s.comps.push('임시 동료 1');localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
     s=S(pg); assert s['hp']==s['mhp'] and s['vis'] and s['sex']=='x' and s['aff']=={} and s['comps']==['kirien','oswin']
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.v=1;delete s.base;delete s.pro;s.loc='inn';localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
-    s=S(pg); assert s['v']==6 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
+    s=S(pg); assert s['v']==7 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
     # ---- 패배: 본거지 없으면 여관에서 ----
     pg.evaluate("()=>{const K=window.__k2;K.S=null}"); pg.evaluate("window.__k2.render()")
     pg.fill('#cname','카인'); pg.click('button[data-c=start]'); pg.wait_for_timeout(100); pg.click('#pv [data-pv=skip]'); pg.click('#pv .eo'); pg.click('#pv [data-pv=close]')
