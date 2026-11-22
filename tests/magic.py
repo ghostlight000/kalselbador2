@@ -5,7 +5,7 @@ ROOT=pathlib.Path(__file__).resolve().parent.parent;url=(ROOT/'index.html').as_u
 errs=[]
 def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=10000);pg.click(f'#ov.on button:has-text("{t}")');pg.wait_for_timeout(60)
 def okpop(pg):pg.wait_for_selector('#ov.on .btn.pri',timeout=10000);pg.click('#ov.on .btn.pri');pg.wait_for_timeout(60)
-def go(pg,k):pg.click(f'.map .node[data-a={k}]');choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650)
+def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650)
 E=lambda pg,x:pg.evaluate(x)
 def newgame(pg,origin=2):
     pg.goto(url);pg.wait_for_timeout(200);E(pg,"localStorage.clear()");pg.goto(url);pg.wait_for_timeout(200)
@@ -43,7 +43,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=quest]');assert '깨진 돔의 강의실' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     assert pg.locator('button[data-c=aw1]').count()==0
     # 레벨 기술 고르기에 혼불이 나오고 받은 주문은 나오지 않는다
-    pg.click('button[data-c=tab][data-a=char]');t=pg.inner_text('.M');assert '혼불' in t and '바람막이' not in t and '주문 피해' in t;pg.click('button[data-c=learn][data-a=spirit]');pg.click('button[data-c=tab][data-a=place]')
+    pg.click('button[data-c=tab][data-a=char]');t=pg.inner_text('.M');assert '혼불' in t and '바람막이' not in t and '목소리에 실려' in t;pg.click('button[data-c=learn][data-a=spirit]');pg.click('button[data-c=tab][data-a=place]')
     print('awaken ok')
     # 부두 수군거림(드러냈다)
     go(pg,'street');go(pg,'docks');pg.wait_for_selector('#ov.on h2:has-text("운하 부두")',timeout=5000);assert '손끝에서 불이 나는 사람' in pg.inner_text('#ov');okpop(pg)
