@@ -32,37 +32,50 @@ with sync_playwright() as p:
         if i==2: assert '레아의 것' in t and '아버지의 마지막 말' in t, t # 편지 + 출신의 잊은 것
         if i==3: assert '편지가 가리킨' in t and '불지기' in t, t  # 첫날 밤 + 1편 엔딩 k의 소문
     pg.click('#pv .eo'); pg.click('#pv [data-pv=close]'); pg.wait_for_timeout(100)
-    S=pg.evaluate('window.__k2.S'); print('made',S['name'],S['race'],S['og'],S['st'],S['loc'],S['pro']); assert S['pro']==99 and S['loc']=='street' and not S['base'] and S['inv'].get('letter')==1
+    S=pg.evaluate('window.__k2.S'); print('made',S['name'],S['race'],S['og'],S['st'],S['loc'],S['pro']); assert S['pro']==99 and S['loc']=='docks' and not S['base'] and S['inv'].get('letter')==1
     assert '보낸 이 없는 편지' in pg.inner_text('.M')
-    # 본거지 전: 여관·파견이 보이지 않는다
-    assert pg.locator('button[data-c=go][data-a=inn]').count()==0 and pg.locator('button[data-c=board]').count()==0
-    assert pg.is_disabled('button[data-c=go][data-a=church]')
+    # 본거지·피트 전: 파견 게시판도 본거지 점도 없다
+    assert pg.locator('button[data-c=board]').count()==0 and pg.locator('.map .node[data-a=base]').count()==0
+    # 여관 주인의 이야기
+    pg.click('button[data-c=rumor]'); assert '여관 주인' in pg.inner_text('#ov'); okpop(pg)
+    # 탐사: 마주침 없음 → 결과 창
+    pg.evaluate("window.__k2.EXP.docks[0].enc=0"); pg.click('button[data-c=explore][data-a="0"]')
+    pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='부두 창고 뒤지기'",timeout=10000); okpop(pg)
+    assert pg.evaluate('window.__k2.S.inv.scrap')>=1; print('explore ok')
+    # 잠긴 곳을 누르면 안내만
+    pg.click('.map .node[data-a=church]'); assert '첫 번째 밤' in pg.inner_text('#ov'); okpop(pg)
+    # 지도로 가스등 거리에 간다
+    pg.click('.map .node[data-a=street]'); pg.click('#ov button:has-text("간다")')
+    pg.wait_for_function("window.__k2.S.loc==='street'",timeout=10000); pg.wait_for_timeout(600)
     # 순찰 → 가르침 권유 → 가르침
     pg.click('button[data-c=patrol]'); pg.click('#ov button:has-text("가르침을 받는다")'); pg.wait_for_function('window.__k2.G.on')
     pg.evaluate(BOT)
     pg.wait_for_function('!window.__k2.G.on',timeout=120000); print('tut:',okpop(pg)); assert pg.evaluate('window.__k2.S.tutd')==1
     for i in range(3):
         pg.wait_for_timeout(300)
-        if pg.evaluate('window.__k2.S.hp')<pg.evaluate('window.__k2.S.mhp')*0.6:
-            pg.click('button[data-c=rest]'); okpop(pg)
+        pg.evaluate("()=>{const S=window.__k2.S;S.hp=S.mhp}")
         pg.click('button[data-c=patrol]')
         pg.wait_for_function('window.__k2.G.on',timeout=10000); foe=pg.evaluate('window.__k2.G.foe')
         pg.wait_for_function('!window.__k2.G.on',timeout=200000); h=okpop(pg)
         S=pg.evaluate('window.__k2.S'); print(foe,'->',h,'hp',S['hp'],'night',S['night'])
         if h=='쓰러졌다': raise SystemExit('lost to '+foe)
-    # 첫 번째 밤을 넘겨도 본거지는 아직 없다
-    pg.wait_for_timeout(700); S=pg.evaluate('window.__k2.S'); assert S['night']==3 and not S['base'] and S['inv'].get('wick')==1 and not pg.is_visible('#ov.on')
-    # 동료 하나: 아직 없음 / 둘째: 본거지 장면
-    pg.evaluate("window.__k2.joinComp('시험 동료 1')"); pg.wait_for_timeout(700); assert not pg.evaluate('window.__k2.S.base') and not pg.is_visible('#ov.on')
-    pg.evaluate("window.__k2.joinComp('시험 동료 2')"); pg.wait_for_selector('#ov.on h2',timeout=5000)
-    assert pg.inner_text('#ov h2')=='잿빛 사슴 여관'; assert '둘이나' in pg.inner_text('#ov') and '여우 모양 문진' in pg.inner_text('#ov'); okpop(pg)
-    S=pg.evaluate('window.__k2.S'); assert S['base']==1 and S['inv'].get('relic')==1 and S['party']=='시험 동료 1'; print('base after 2nd companion ok')
-    pg.click('button[data-c=go][data-a=inn]'); pg.wait_for_function("window.__k2.S.loc==='inn'",timeout=10000); pg.wait_for_timeout(600)
-    # 파견
+    # 탐사 중 마주침 → 전투 → 탐사에서 얻은 것도 함께
+    pg.evaluate("window.__k2.EXP.street[0].enc=1"); c0=pg.evaluate('window.__k2.S.coin')
+    pg.click('button[data-c=explore][data-a="0"]'); pg.wait_for_function('window.__k2.G.on',timeout=10000)
+    pg.wait_for_function('!window.__k2.G.on',timeout=200000); t2=pg.inner_text('#ov'); assert '뒷골목 뒤지기 중에 맞닥뜨렸다' in t2, t2; okpop(pg); print('explore encounter ok')
+    # 첫 번째 밤 뒤에도, 동료 둘이어도 본거지는 저절로 생기지 않는다(이야기는 아직)
+    pg.evaluate("window.__k2.joinComp('시험 동료 1')"); pg.evaluate("window.__k2.joinComp('시험 동료 2')"); pg.wait_for_timeout(700)
+    S=pg.evaluate('window.__k2.S'); assert S['night']==3 and not S['base'] and S['party']=='시험 동료 1' and not pg.is_visible('#ov.on')
+    # 임시 본거지 + 피트
+    pg.evaluate("window.__k2.grantBase()"); okpop(pg); assert pg.evaluate('window.__k2.S.inv.relic')==1
+    assert pg.locator('.map .node[data-a=base]').count()==1
+    pg.click('.map .node[data-a=base]'); pg.click('#ov button:has-text("간다")'); pg.wait_for_function("window.__k2.S.loc==='base'",timeout=10000); pg.wait_for_timeout(600)
+    assert pg.locator('button[data-c=board]').count()==0
+    pg.evaluate("window.__k2.grantPit()"); pg.evaluate("window.__k2.render()")
     pg.click('button[data-c=board]'); pg.click('#ov button:has-text("시장 심부름")'); pg.wait_for_timeout(100)
     pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='파견에서 돌아왔다'",timeout=10000)
     b0=S['inv'].get('band',0); okpop(pg); S=pg.evaluate('window.__k2.S'); print('dispatch ->',S['inv'],S['coin']); assert S['inv']['band']==b0+1
-    pg.click('button[data-c=go][data-a=church]'); pg.wait_for_function("window.__k2.S.loc==='church'",timeout=10000); pg.wait_for_timeout(600)
+    pg.click('.map .node[data-a=church]'); pg.click('#ov button:has-text("간다")'); pg.wait_for_function("window.__k2.S.loc==='church'",timeout=10000); pg.wait_for_timeout(600)
     pg.click('button[data-c=tab][data-a=quest]'); q=pg.inner_text('.M'); print('quest now:',[l for l in q.split('\n') if '◇' in l]); assert '뼈대는 여기까지' in q
     pg.click('button[data-c=tab][data-a=story]'); assert '테오르' in pg.inner_text('.M')
     pg.click('button[data-c=tab][data-a=char]'); assert '용 사냥꾼 일족의 후예' in pg.inner_text('.M')
@@ -75,7 +88,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.hp=99999;delete s.vis;localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
     S=pg.evaluate('window.__k2.S'); assert S['hp']==S['mhp'] and S['vis']
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.v=1;delete s.base;delete s.pro;s.loc='inn';s.og=2;localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
-    S=pg.evaluate('window.__k2.S'); assert S['v']==2 and S['base']==1 and S['pro']==99 and S['loc']=='inn' and not pg.is_visible('#pv .eo'); print('v1 migrate ok')
+    S=pg.evaluate('window.__k2.S'); assert S['v']==3 and S['base']==1 and S['pro']==99 and S['loc']=='base' and S['pit']==1 and not pg.is_visible('#pv .eo'); print('v1 migrate ok')
     # 처음부터 다시
     pg.click('button[data-c=settings]'); pg.click('#sov >> text=처음부터 다시'); pg.click('#sov >> text=지우고 처음부터'); pg.wait_for_timeout(200)
     assert pg.evaluate('window.__k2.S') is None and pg.is_visible('#cname')
@@ -85,6 +98,6 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const K=window.__k2;K.S.loc='street';K.S.night=2;K.S.tutd=1;K.startBattle('fight','lamp')}")
     pg.evaluate("""()=>{const K=window.__k2;window.__b2=setInterval(()=>{const G=K.G;if(!G.on)return;const bo=document.querySelector('#bov.on .btn.pri');if(bo){bo.click();return}if(G.st==='player')K.bact('guard')},20)}""")
     pg.wait_for_function('!window.__k2.G.on',timeout=200000); h=okpop(pg); S=pg.evaluate('window.__k2.S'); print('lose ->',h,S['loc'],S['hp'],S['mhp'])
-    assert h=='쓰러졌다' and S['loc']=='street' and S['hp']==-(-S['mhp']*3//10)
+    assert h=='쓰러졌다' and S['loc']=='docks' and S['hp']==-(-S['mhp']*3//10)
     b.close()
 print('errors',errs); assert not errs; print('ALL OK')

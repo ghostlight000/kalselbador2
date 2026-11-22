@@ -86,6 +86,23 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .ms.done{color:var(--m)}
 .ms.now b{color:var(--a)}
 
+/* ===== 지도 ===== */
+.map{width:100%;height:auto;max-height:480px;display:block;margin:2px auto 0;aspect-ratio:92/82}
+.map .canal{fill:none;stroke:var(--b);stroke-width:3.2;opacity:.7}
+.map .road{stroke:var(--a);stroke-width:.45;stroke-dasharray:1.6 1.6;opacity:.55}
+.map .road.lk{opacity:.2}
+.map .route{stroke:var(--kw);stroke-width:.8;stroke-dasharray:2 1.4;animation:rt 1.2s linear infinite}
+@keyframes rt{to{stroke-dashoffset:-3.4}}
+.map .node{cursor:pointer}
+.map .node rect{fill:var(--c);stroke:var(--a);stroke-width:.5}
+.map .node:hover rect,.map .node:focus rect{fill:var(--c2);stroke-width:.8}
+.map .node.here rect{fill:var(--a)}
+.map .node.dest rect{stroke:var(--kw);stroke-width:.9}
+.map .node.lk{opacity:.4}
+.map .node text{font:3.7px "Gowun Batang",serif;fill:var(--t);text-anchor:middle}
+.map .node.here text{font-weight:700;fill:var(--a)}
+.map .mk{fill:var(--kw);stroke:var(--c);stroke-width:.5}
+
 /* ===== 만들기 화면 ===== */
 .cr{max-width:720px;margin:0 auto}
 .lead{text-align:center;max-width:560px;margin:4px auto;text-wrap:balance}
@@ -298,21 +315,34 @@ const LEGRU={k:'대성당의 옛 불이 어젯밤 한 번 크게 일렁였다고
   r:'늙은 뱃사람 말로는 겨울이 끝난 날 하늘에서 검은 원이 닫히는 소리가 들렸다고 한다. 아무도 믿지 않는다.',
   w:'곧 이름 부르기 축일이다. 사람들은 성녀 세레인의 제단 앞에서 잊힌 이름을 하나씩 부른다.'};
 
-// 장소: x,y 좌표로 거리(이동 시간)를 잰다. u=열리는 조건
+// 장소: x,y는 지도 좌표(0~100). 이동 시간은 좌표 거리로 잰다. u=열리는 조건, hide=지도에서 숨김
 const PL={
- inn:{n:'잿빛 사슴 여관',k:'본거지',x:0,y:0,d:'운하 옆 버려진 여관을 고쳐 쓰는 곳. 지붕은 새고 계단은 삐걱댄다. 그래도 화로는 아직 따뜻하다.',u:s=>!!s.base,lk:'',hide:s=>!s.base},
- street:{n:'가스등 거리',k:'구역',x:3,y:1,d:'푸른 가스등이 줄지어 선 돌길. 밤이 되면 등불 사이의 어둠이 길어진다. 골목 안쪽에 싸구려 하숙집이 있다.'},
- church:{n:'교단 구역',k:'구역',x:6,y:-1,d:'꺼지지 않는 옛 불을 모신 대성당이 있다. 향 냄새와 그을음 냄새가 섞여 있다.',u:s=>s.night>=3,lk:'첫 번째 밤을 넘기면 갈 수 있다.'},
- works:{n:'하칸골 공장 지대',k:'구역',x:5,y:4,d:'제철소 굴뚝이 하늘을 메운다. 깊은 갱도에서 미지근한 물이 올라온다는 소문이 있다.',u:s=>false,lk:'아직 길이 열리지 않았다.'}
+ docks:{n:'운하 부두',k:'구역',x:22,y:60,d:'짐배가 밤새 드나드는 부두. 생선 비린내와 석탄 연기가 섞여 있다. 부두 끝에 녹슨 닻 여관이 있다.'},
+ street:{n:'가스등 거리',k:'구역',x:48,y:44,d:'푸른 가스등이 줄지어 선 돌길. 밤이 되면 등불 사이의 어둠이 길어진다. 골목 어귀에 경비대 초소가 있다.'},
+ church:{n:'교단 구역',k:'구역',x:72,y:22,d:'꺼지지 않는 옛 불을 모신 대성당이 있다. 향 냄새와 그을음 냄새가 섞여 있다.',u:s=>s.night>=3,lk:'첫 번째 밤을 넘기면 갈 수 있다.'},
+ academy:{n:'학술원 언덕',k:'구역',x:82,y:56,d:'유리 지붕을 인 강의동이 언덕을 덮고 있다.',u:s=>false,lk:'아직 길이 열리지 않았다.'},
+ outskirts:{n:'변두리',k:'구역',x:14,y:26,d:'성벽 바깥에 이주민 천막과 신탁 상점이 모여 있다.',u:s=>false,lk:'아직 길이 열리지 않았다.'},
+ works:{n:'하칸골 공장 지대',k:'구역',x:46,y:84,d:'제철소 굴뚝이 하늘을 메운다. 깊은 갱도에서 미지근한 물이 올라온다는 소문이 있다.',u:s=>false,lk:'아직 길이 열리지 않았다.'},
+ base:{n:'운하 옆 빈집',k:'본거지',x:28,y:78,d:'우리가 머무는 곳. (본거지 이야기는 아직 정하지 않았다)',hide:s=>!s.base}
 };
-const travelSec=(a,b)=>Math.round(Math.hypot(PL[a].x-PL[b].x,PL[a].y-PL[b].y)*7);
+const ROAD=[['docks','street'],['street','church'],['street','academy'],['street','outskirts'],['docks','works'],['works','academy'],['docks','base'],['church','academy']];
+const travelSec=(a,b)=>Math.max(8,Math.round(Math.hypot(PL[a].x-PL[b].x,PL[a].y-PL[b].y)*.6));
+const LODGE='녹슨 닻 여관';
+// 탐사: 직접 둘러본다. d=초, enc=무언가와 맞닥뜨릴 확률, foes=맞닥뜨릴 수 있는 것
+const EXP={
+ docks:[{n:'부두 창고 뒤지기',d:90,enc:.2,foes:s=>['dog'],loot:()=>({i:{scrap:R(1,2)},g:R(0,2)}),say:'젖은 나무 상자 사이에서 쓸 만한 쇠붙이를 건졌다.'}],
+ street:[{n:'뒷골목 뒤지기',d:120,enc:.3,foes:s=>s.night>=1?['dog','thief']:['dog'],loot:()=>({i:Math.random()<.4?{ash:1}:{},g:R(1,4)}),say:'꺼진 가스등 밑을 훑었다. 손끝이 조금 파래졌다.'}],
+ church:[{n:'교단 묘지 둘러보기',d:150,enc:.25,foes:s=>['thief'],loot:()=>({i:Math.random()<.3?{band:1}:{},g:R(2,5)}),say:'이름이 지워진 비석이 유난히 많다.'}]
+};
+// 여관 주인의 이야기(소문)
+const RU=['가스등 불빛 아래 오래 서 있지 마. 집에 가는 길을 잊는다고들 해.','학술원 사람들이 요즘 밤마다 묘지를 돈다더군. 무얼 찾는지는 몰라.','공장 지대 갱도에서 미지근한 물이 올라온대. 겨울 내내 얼어 있던 곳인데.','부두 쪽 짐꾼 하나가 어제 제 이름을 못 댔다지. 오늘은 기억해 냈다던가.','대성당 정화자들이 또 장부를 고친대. 누구 이름이 빠졌는지는 아무도 몰라.'];
 
 // 아이템
 const IT={letter:['보낸 이 없는 편지','“오렌하르트로 가. 가스등 거리 끝에서 꺼지지 않는 등불을 든 사람을 찾아. 네가 잊은 것이 거기 있다.” 내 글씨다. 쓴 기억은 없다.'],band:['붕대','전투에서 체력 30을 되찾는다.'],scrap:['고철','공방이 열리면 쓸 수 있다.'],ash:['푸른 재','꺼진 가스등에서 긁어낸 재. 손에 묻으면 무언가를 잠깐 잊는다.'],
   wick:['그을린 심지','점등꾼의 등불에서 나온 심지. 아직 따뜻하다.'],relic:['1편의 골동품','']};
 const itName=id=>id==='relic'&&S&&S.legacy&&RELIC[S.legacy.pa]?RELIC[S.legacy.pa][0]:(IT[id]||[id])[0];
 
-// 파견: 조수(동료가 아닌 심부름꾼)를 보낸다. d=초, risk=다쳐서 빈손일 확률
+// 파견: 조수(동료가 아닌 심부름꾼)를 보낸다. 본거지와 피트가 모두 있어야 한다. d=초, risk=다쳐서 빈손일 확률
 const DSP={
  dock:{n:'부두 잡동사니 줍기',d:180,risk:0,res:()=>({i:{scrap:R(1,3)},g:R(2,5)}),say:'부두 널판 밑에서 쓸 만한 쇠붙이를 주워 왔다.'},
  market:{n:'시장 심부름',d:300,risk:0,res:()=>({i:{band:1},g:R(3,6)}),say:'시장에서 붕대를 사 오고, 거스름돈을 조금 남겨 왔다.'},
@@ -322,13 +352,13 @@ const HELPER='심부름꾼 아이 피트';
 
 // 임무(뼈대용 첫 줄기)
 const MS=[
- ['오렌하르트에 닿았다','내 글씨로 쓰인 편지를 따라왔다. 쓴 기억은 없다. 가스등 거리 하숙집 다락방이 당분간 머물 곳이다.',s=>true],
+ ['오렌하르트에 닿았다','내 글씨로 쓰인 편지를 따라왔다. 쓴 기억은 없다. 운하 부두의 녹슨 닻 여관에 방을 얻었다.',s=>true],
  ['가스등 거리를 순찰한다','경비대 초소의 모르텐이 밤길에 나설 사람을 찾는다.',s=>s.night>=1],
  ['칼을 든 도둑','가스등을 훔치는 손이 있다.',s=>s.night>=2],
  ['꺼지지 않는 등불을 든 사람','편지가 가리킨 사람. 거리 끝에 서 있다고 한다.',s=>s.night>=3],
  ['함께 걸을 사람','혼자서는 끝까지 갈 수 없다.',s=>s.comps.length>=1],
- ['두 번째 동료','다락방은 둘이 지내기에도 좁다.',s=>s.comps.length>=2],
- ['본거지','모르텐이 운하 옆 버려진 여관 이야기를 했다.',s=>!!s.base],
+ ['두 번째 동료','여관 방 하나로는 셋이 지낼 수 없다.',s=>s.comps.length>=2],
+ ['본거지','머물 곳이 필요하다. (본거지를 얻는 이야기는 아직 정하지 않았다)',s=>!!s.base],
  
  ['— 뼈대는 여기까지','동료 이야기는 아직 쓰이지 않았다.',s=>false]
 ];
@@ -384,9 +414,9 @@ let C={r:'p',t:0,o:0,n:'',leg:null,legMsg:''}; // 만들기 화면
 
 function newGame(){
   const st=baseStats(C.r,C.t,C.o),mhp=calcMhp(st);
-  S={v:2,name:(C.n.trim()||'이름 없는 나그네').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
-     inv:{letter:1,band:2},loc:'street',act:null,disp:[],comps:[],party:null,night:0,tutd:0,base:0,pro:0,vis:{street:1},log:[],jr:[],legacy:C.leg,t0:Date.now()};
-  log('편지를 따라 오렌하르트에 닿았다. 가스등 거리 하숙집에 다락방을 얻었다.');
+  S={v:3,name:(C.n.trim()||'이름 없는 나그네').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
+     inv:{letter:1,band:2},loc:'docks',act:null,disp:[],comps:[],party:null,night:0,tutd:0,base:0,pit:0,pro:0,vis:{docks:1},log:[],jr:[],legacy:C.leg,t0:Date.now()};
+  log('편지를 따라 오렌하르트에 닿았다. 운하 부두의 녹슨 닻 여관에 방을 얻었다.');
   save();V='place';try{window.scrollTo(0,0)}catch(e){}
   render();prologue();
 }
@@ -398,7 +428,7 @@ function proSlides(){
     {h:'오렌하르트',L:['해빙 뒤 강이 녹고 운하가 열렸다. 굴뚝이 서고 거리마다 가스등이 켜졌다.','가스등은 푸른 재를 태운다.','그 불빛 아래 오래 머문 사람은 조금씩 무언가를 잊는다.','대성당 깊은 곳에는 꺼지지 않는 옛 불이 있다. 누구의 이름으로 타는지는 아무도 모른다.']},
     {h:esc(S.name),L:[`${r.n}. ${r.t[S.tr][0]}의 핏줄.`,tx(O[3])]},
     {h:'편지',L:['석 달 전 편지 한 통이 왔다.',tx('보낸 이는 적혀 있지 않았다. 글씨는 틀림없이 @name@의 것이었다.'),'“오렌하르트로 가. 가스등 거리 끝에서 꺼지지 않는 등불을 든 사람을 찾아. 네가 잊은 것이 거기 있다.”','그런 편지를 쓴 기억은 없다.',O[4]]},
-    {h:'첫날 밤',L:['가스등 거리 골목 안쪽의 하숙집 다락방. 창밖에서 등불 하나가 깜박인다.','하숙집 주인 말로는 거리 끝에 등불을 든 사람이 서 있다고 한다. 다가간 사람이 여럿 다쳤다.','편지가 가리킨 곳이다.','경비대 초소의 늙은 경비 모르텐이 밤길에 나설 사람을 찾고 있다.'].concat(L&&L.end&&LEGRU[L.end]?['<span class="m">'+LEGRU[L.end]+'</span>']:[])},
+    {h:'첫날 밤',L:['운하 부두의 녹슨 닻 여관. 이층 끝방 창밖에서 가스등 하나가 깜박인다.','여관 주인 말로는 가스등 거리 끝에 등불을 든 사람이 서 있다고 한다. 다가간 사람이 여럿 다쳤다.','편지가 가리킨 곳이다.','가스등 거리 경비대 초소의 늙은 경비 모르텐이 밤길에 나설 사람을 찾고 있다.'].concat(L&&L.end&&LEGRU[L.end]?['<span class="m">'+LEGRU[L.end]+'</span>']:[])},
     {h:'',L:['칼셀바도르','<span class="esub">푸른 재</span>'],c:'fin'}
   ];
 }
@@ -421,35 +451,30 @@ function joinComp(id){
   if(S.comps.includes(id))return;
   S.comps.push(id);if(!S.party)S.party=id;
   log((COMP[id]?COMP[id].n:id)+'이(가) 함께하기로 했다.');
-  if(S.comps.length>=2&&!S.base)S.pend='base';
   save();
 }
 const COMP={}; // 동료 자료는 아직 없다(다음 작업)
 /* 미뤄 둔 이야기 장면 */
-function pending(){
-  const k=S.pend;S.pend=null;
-  if(k==='base'){
-    S.base=1;S.vis.inn=1;const L=S.legacy;
-    if(L&&RELIC[L.pa])S.inv.relic=1;
-    log('잿빛 사슴 여관의 열쇠를 받았다.');jr('모르텐에게서 운하 옆 버려진 여관의 열쇠를 받았다. 본거지가 생겼다.');
-    ev('잿빛 사슴 여관',
-     `<p>모르텐이 초소 서랍에서 녹슨 열쇠를 꺼낸다.</p><p>모르텐 — “둘이나 데리고 다락방에서 지낼 셈인가? 운하 옆에 경비대가 몰수한 여관이 하나 있네. 주인은 오래전에 떠났지. 지붕은 새도 다락방보다는 낫겠지.”</p>
-      <p>간판이 반쯤 떨어진 여관이다. 화로에 불을 붙이자 먼지 냄새 사이로 오래된 장작 냄새가 올라온다. 계단에 앉아 있던 아이 하나가 고개를 든다. 심부름이라면 뭐든 하겠다고 한다.</p>
-      ${L&&RELIC[L.pa]?`<p class=m>다락에서 낡은 물건 하나를 찾았다 — 「${RELIC[L.pa][0]}」. ${RELIC[L.pa][1]}</p>`:''}
-      <p class=m>본거지가 생겼다. 화로에서 쉴 수 있고 ${HELPER}에게 파견을 맡길 수 있다. 동료들은 여기서 지낸다. 데리고 나갈 사람은 여기서만 바꿀 수 있다.</p>`,
-     [['열쇠를 받는다',null]],1);
-  }
+function pending(){S.pend=null;save()}
+/* 본거지·피트: 어떻게 얻는지는 아직 정하지 않았다. 지금은 개발자 창에서만 */
+function grantBase(){
+  if(S.base)return;S.base=1;S.vis.base=1;const L=S.legacy;
+  if(L&&RELIC[L.pa])S.inv.relic=1;
+  log('[임시] 본거지가 생겼다.');jr('[임시] 본거지가 생겼다. 어떻게 얻는지는 아직 쓰이지 않았다.');
+  ev('본거지(임시)',`<p class="m">본거지를 얻는 이야기는 아직 정하지 않았다. 지금은 시험용으로 '운하 옆 빈집'을 준다.</p>${L&&RELIC[L.pa]?`<p class=m>다락에서 낡은 물건 하나를 찾았다 — 「${RELIC[L.pa][0]}」. ${RELIC[L.pa][1]}</p>`:''}`,[['알겠다',null]],1);
   save();
 }
+function grantPit(){if(S.pit)return;S.pit=1;log('[임시] 심부름꾼 피트가 함께하게 되었다.');save()}
 // 저장 이전: 구조를 바꾸면 여기서 옛 저장을 고친다(1편 원칙)
 function migrate(){
   if(!S.v)S.v=1;
   if(S.v<2){S.base=1;S.pro=99;S.og=Math.min(7,Math.max(0,S.og|0));S.v=2} // v1: 처음부터 여관에서 시작했다
+  if(S.v<3){if(S.loc==='inn')S.loc='base';S.vis=S.vis||{};if(S.vis.inn){S.vis.base=1;delete S.vis.inn}S.pit=S.base?1:0;S.v=3} // v2: 본거지 id가 inn이었다
   S.inv=S.inv||{};S.disp=S.disp||[];S.vis=S.vis||{inn:1};S.log=S.log||[];S.jr=S.jr||[];
   if(!RACE[S.race])S.race='b';
   if(!S.st||S.st.length!==4)S.st=baseStats(S.race,S.tr||0,S.og||0);
   S.comps=S.comps||[];if(S.party===undefined)S.party=null;
-  if(!ORIGIN[S.og])S.og=0;if(!S.letter0){S.letter0=1;if(!S.inv.letter)S.inv.letter=1}if(!S.base&&S.loc==='inn')S.loc='street';
+  if(!ORIGIN[S.og])S.og=0;if(!S.letter0){S.letter0=1;if(!S.inv.letter)S.inv.letter=1}if(!PL[S.loc]||(PL[S.loc].hide&&PL[S.loc].hide(S)))S.loc='docks';
   S.mhp=calcMhp(S.st);S.hp=Math.min(S.mhp,Math.max(0,S.hp|0));
 }
 const log=t=>{S.log.unshift(t);S.log=S.log.slice(0,40)};
@@ -467,7 +492,7 @@ const CL={st:'wait',dirty:0,busy:0,last:0,ref:null,cloud:null,ask:0,dv:''};
 try{CL.dv=localStorage.getItem('k2dv')||'';if(!CL.dv){CL.dv=Math.random().toString(36).slice(2,10);localStorage.setItem('k2dv',CL.dv)}}catch(e){CL.dv='x'}
 function save(){if(!S||CL.st==='pull')return;S.sv=Date.now();try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}CL.dirty=1}
 function load(){try{const j=localStorage.getItem(K);if(j){S=scrub(JSON.parse(j));migrate()}}catch(e){S=null}}
-const fstate=()=>S?`${S.name} · ${RACE[S.race].n} · ${(PL[S.loc]||PL.street).n} · 밤 ${S.night}`:'—';
+const fstate=()=>S?`${S.name} · ${RACE[S.race].n} · ${(PL[S.loc]||PL.docks).n} · 밤 ${S.night}`:'—';
 const tfmt=t=>{if(!t)return '—';const d=new Date(t),z=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}월 ${d.getDate()}일 ${z(d.getHours())}:${z(d.getMinutes())}`};
 async function caps(){
   try{
@@ -579,45 +604,59 @@ function statusCard(){
 }
 function actProg(){
   const a=S.act;if(!a)return '';
-  const lbl=a.t==='m'?`${PL[a.to].n}(으)로 가는 중`:a.t==='r'?(S.loc==='inn'?'화로 곁에서 쉬는 중':'다락방에서 쉬는 중'):a.t==='p'?'가스등 거리를 순찰하는 중':'';
+  const lbl=a.t==='m'?`${PL[a.to].n}(으)로 가는 중`:a.t==='r'?(S.loc==='base'?'화로 곁에서 쉬는 중':'여관 방에서 쉬는 중'):a.t==='p'?'가스등 거리를 순찰하는 중':a.t==='x'?`${a.l} 중`:'';
   return `<div class="card prog"><div class="row"><span>${lbl}</span><span id="rm">${fmt((a.t0+a.d*1000-Date.now())/1000)}</span></div>
   <div class="bar"><i id="pb" style="width:${Math.min(100,(Date.now()-a.t0)/(a.d*10))}%"></i></div>${B('cancel','그만두기',{cls:'sm'})}</div>`;
+}
+/* 도시 지도 (1편처럼 점과 길) */
+function mapPos(){const a=S.act;if(a&&a.t==='m'){const F=PL[a.fr],T=PL[a.to],q=Math.min(1,(Date.now()-a.t0)/(a.d*1000));return [F.x+(T.x-F.x)*q,F.y+(T.y-F.y)*q]}return [PL[S.loc].x,PL[S.loc].y]}
+function mapSvg(){
+  const vis=k=>!(PL[k].hide&&PL[k].hide(S)),a=S.act,mv=a&&a.t==='m';
+  let o=`<svg class="map" viewBox="4 12 92 82" preserveAspectRatio="xMidYMid meet" role="img" aria-label="오렌하르트 지도">`;
+  o+=`<path d="M4 66 C18 60 30 68 44 64 S72 72 96 66" class="canal"/>`;
+  ROAD.filter(([x,y])=>vis(x)&&vis(y)).forEach(([x,y])=>{const lk=(PL[x].u&&!PL[x].u(S))||(PL[y].u&&!PL[y].u(S));
+    o+=`<line x1="${PL[x].x}" y1="${PL[x].y}" x2="${PL[y].x}" y2="${PL[y].y}" class="road${lk?' lk':''}"/>`});
+  if(mv)o+=`<line x1="${PL[a.fr].x}" y1="${PL[a.fr].y}" x2="${PL[a.to].x}" y2="${PL[a.to].y}" class="route"/>`;
+  Object.entries(PL).filter(([k])=>vis(k)).forEach(([k,p])=>{const ok=!p.u||p.u(S),here=k===S.loc&&!mv,dest=mv&&a.to===k;
+    o+=`<g class="node${ok?'':' lk'}${here?' here':''}${dest?' dest':''}" data-c="mapsel" data-a="${k}"><title>${p.n}${ok?'':' — '+p.lk}</title>
+      <rect x="${p.x-2.8}" y="${p.y-2.8}" width="5.6" height="5.6" transform="rotate(45 ${p.x} ${p.y})"/>
+      <text x="${p.x}" y="${p.y+8.2}">${p.n}</text></g>`});
+  const [mx,my]=mapPos();
+  o+=`<circle id="mk" cx="${mx}" cy="${my}" r="1.6" class="mk"/></svg>`;
+  return o;
 }
 function placeView(){
   const P=PL[S.loc],busy=!!S.act;
   let h=actProg();
   h+=`<div class="card"><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
-  if(S.loc==='inn'){
-    h+=`<h3>본거지</h3><div class="acts">
-      ${B('rest','화로 곁에서 쉬기',{sub:S.hp>=S.mhp?'체력이 가득하다':'1분 · 체력을 모두 되찾는다',dis:busy||S.hp>=S.mhp})}
-      ${B('board','파견 게시판',{sub:`${HELPER}에게 일을 맡긴다`,dis:false})}
-      ${B('locked','공방',{sub:'고쳐야 쓸 수 있다',dis:true})}
-      ${B('locked','서고',{sub:'책장이 비어 있다',dis:true})}
-      ${B('rooms','동료의 방',{sub:'빈 방 네 칸'})}
-    </div>`;
-  }else if(S.loc==='street'){
-    const nx=FOES[NIGHT[Math.min(S.night,NIGHT.length-1)]];
-    h+=`<h3>밤길</h3><div class="acts">
-      ${B('patrol','밤길 순찰',{sub:S.night<3?`15초 · ${S.night===0?'무언가 돌아다닌다':S.night===1?'칼을 든 누군가가 있다':'거리 끝의 등불'}`:'15초 · 남은 것들을 쫓는다',dis:busy})}
-      ${B('tutor','경비대 초소 — 모르텐',{sub:S.tutd?'가르침을 다시 받는다':'싸우는 법을 배운다',dis:busy})}
-      ${B('practice','박자 연습',{sub:'모르텐의 막대를 받아 본다',dis:busy})}
-      ${!S.base?B('rest','하숙 다락방에서 쉬기',{sub:S.hp>=S.mhp?'체력이 가득하다':'2분 · 체력을 모두 되찾는다',dis:busy||S.hp>=S.mhp}):''}
-    </div>`;
-  }else if(S.loc==='church'){
-    h+=`<p class="m">대성당 문 앞에 순례자들이 줄을 서 있다. 안쪽 깊은 곳에서 옛 불이 소리 없이 탄다. 그 불이 누구의 이름으로 타는지 아는 사람은 없다.</p><p class="empty">— 이 구역의 이야기는 아직 쓰이지 않았다 —</p>`;
+  const acts=[];
+  if(S.loc==='base'){
+    acts.push(B('rest','화로 곁에서 쉬기',{sub:S.hp>=S.mhp?'체력이 가득하다':'1분 · 체력을 모두 되찾는다',dis:busy||S.hp>=S.mhp}));
+    if(S.pit)acts.push(B('board','파견 게시판',{sub:`${HELPER}에게 일을 맡긴다`}));
+    acts.push(B('locked','공방',{sub:'고쳐야 쓸 수 있다',dis:true}),B('locked','서고',{sub:'책장이 비어 있다',dis:true}),B('rooms','동료의 방',{sub:'빈 방 네 칸'}));
   }
+  if(S.loc==='docks'&&!S.base){
+    acts.push(B('rest',`${LODGE}에서 쉬기`,{sub:S.hp>=S.mhp?'체력이 가득하다':'2분 · 체력을 모두 되찾는다',dis:busy||S.hp>=S.mhp}),B('rumor','여관 주인의 이야기',{sub:'요즘 도는 소문'}));
+  }
+  if(S.loc==='street'){
+    acts.push(B('patrol','밤길 순찰',{sub:S.night<3?`15초 · ${S.night===0?'무언가 돌아다닌다':S.night===1?'칼을 든 누군가가 있다':'거리 끝의 등불'}`:'15초 · 남은 것들을 쫓는다',dis:busy}),
+      B('tutor','경비대 초소 — 모르텐',{sub:S.tutd?'가르침을 다시 받는다':'싸우는 법을 배운다',dis:busy}),
+      B('practice','박자 연습',{sub:'모르텐의 막대를 받아 본다',dis:busy}));
+  }
+  if(acts.length)h+=`<div class="acts">${acts.join('')}</div>`;
+  const X=EXP[S.loc];
+  if(X)h+=`<h3>탐사</h3><div class="acts">${X.map((x,i)=>B('explore',x.n,{a:i,sub:`${fmt(x.d*SEC())}${x.enc?' · 무언가와 마주칠 수 있다':''}`,dis:busy})).join('')}</div>`;
+  if(S.loc==='church')h+=`<p class="m">대성당 문 앞에 순례자들이 줄을 서 있다. 안쪽 깊은 곳에서 옛 불이 소리 없이 탄다.</p><p class="empty">— 이 구역의 이야기는 아직 쓰이지 않았다 —</p>`;
   h+=`</div>`;
-  // 지도(구역 목록)
-  h+=`<div class="card"><details open><summary>도시 지도</summary><div class="acts">${Object.entries(PL).filter(([k,p])=>k!==S.loc&&!(p.hide&&p.hide(S))).map(([k,p])=>{const ok=!p.u||p.u(S);
-    return B('go',p.n,{a:k,sub:ok?`${p.k} · ${fmt(travelSec(S.loc,k)*SEC())}`:p.lk,dis:busy||!ok,cls:ok?'':'lock'})}).join('')}</div></details></div>`;
-  if(S.loc==='inn'||(!S.base&&S.loc==='street'))h+=`<div class="card"><details open><summary>가방</summary>${bagHtml()}</details></div>`;
+  h+=`<div class="card"><h2>오렌하르트 <span class="m">${S.act&&S.act.t==='m'?PL[S.act.fr].n+' → '+PL[S.act.to].n:'지도의 장소를 누르면 그곳으로 간다'}</span></h2>${mapSvg()}</div>`;
+  if(S.loc===(S.base?'base':'docks'))h+=`<div class="card"><details open><summary>가방</summary>${bagHtml()}</details></div>`;
   return h;
 }
 function bagHtml(){const e=Object.entries(S.inv).filter(([,n])=>n>0);return e.length?`<div class="bag">${e.map(([k,n])=>`<span title="${esc(k==='relic'&&S.legacy&&RELIC[S.legacy.pa]?RELIC[S.legacy.pa][1]:(IT[k]||['',''])[1])}">${esc(itName(k))} ${n}</span>`).join('')}</div>`:'<p class="empty">가방이 비어 있다</p>'}
 function sideCards(){
-  let h=`<div class="card"><h2>동료</h2>${S.comps.length?`<p>함께 걷는 이 — <b class="g">${esc(COMP[S.party]?COMP[S.party].n:S.party||'')}</b></p>${S.comps.length>1?`<p class="m">${S.base?'나머지는 잿빛 사슴 여관에서 지낸다.':''}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
-  if(S.base)h+=`<div class="card"><h2>파견</h2>${S.disp.length?S.disp.map(d=>`<div class="disp">${HELPER} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`).join(''):`<p class="empty">${HELPER}가 여관 계단에 앉아 있다</p>`}</div>`;
-  else h+=`<div class="card"><h2>머무는 곳</h2><p class="m">가스등 거리 하숙집 다락방. 하룻밤씩 값을 치른다. 짐을 둘 데도, 사람을 들일 데도 없다.</p></div>`;
+  let h=`<div class="card"><h2>동료</h2>${S.comps.length?`<p>함께 걷는 이 — <b class="g">${esc(COMP[S.party]?COMP[S.party].n:S.party||'')}</b></p>${S.comps.length>1?`<p class="m">${S.base?'나머지는 본거지에서 지낸다.':''}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
+  if(S.base&&S.pit)h+=`<div class="card"><h2>파견</h2>${S.disp.length?S.disp.map(d=>`<div class="disp">${HELPER} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`).join(''):`<p class="empty">${HELPER}가 여관 계단에 앉아 있다</p>`}</div>`;
+  if(!S.base)h+=`<div class="card"><h2>머무는 곳</h2><p class="m">운하 부두 ${LODGE} 이층 끝방. 하룻밤씩 값을 치른다. 짐을 둘 데도 사람을 들일 데도 없다.</p></div>`;
   h+=`<div class="card"><h2>기록</h2><div class="log">${S.log.slice(0,14).map(x=>`<div>${x}</div>`).join('')}</div></div>`;
   return h;
 }
@@ -656,8 +695,11 @@ function startAct(a){S.act=Object.assign({t0:Date.now()},a);a.d=a.d*SEC();S.act.
 function resolveAct(){
   const a=S.act;if(!a||Date.now()<a.t0+a.d*1000)return false;
   S.act=null;
+  if(a.t==='x'){const X=EXP[a.at][a.i],L=X.loot();Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;log(X.n+'.');
+    if(Math.random()<X.enc){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:X.say};save();startBattle('fight',foe);return true}
+    pop(X.n,{i:L.i,g:L.g,n:[X.say]})}
   if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.')}
-  if(a.t==='r'){S.hp=S.mhp;const inn=S.loc==='inn';log(inn?'화로 곁에서 쉬었다. 몸이 풀렸다.':'다락방에서 쉬었다.');pop('휴식',{n:[inn?'장작이 타는 소리를 듣다 깜박 잠들었다. 체력을 모두 되찾았다.':'창밖 가스등이 밤새 깜박였다. 그래도 눈을 붙였다. 체력을 모두 되찾았다.']})}
+  if(a.t==='r'){S.hp=S.mhp;const b=S.loc==='base';log(b?'화로 곁에서 쉬었다. 몸이 풀렸다.':'여관 방에서 쉬었다.');pop('휴식',{n:[b?'장작이 타는 소리를 듣다 깜박 잠들었다. 체력을 모두 되찾았다.':'창밖 가스등이 밤새 깜박였다. 그래도 눈을 붙였다. 체력을 모두 되찾았다.']})}
   if(a.t==='p'){save();const foe=S.night<NIGHT.length?NIGHT[S.night]:(Math.random()<.5?'dog':'thief');startBattle('fight',foe);return true}
   save();return true;
 }
@@ -681,6 +723,7 @@ function tick(){
   // 진행 막대·남은 시간만 다시 칠한다
   const a=S.act;
   if(a){const e=(Date.now()-a.t0)/1000,pb=$('#pb'),rm=$('#rm');if(pb)pb.style.width=Math.min(100,e/a.d*100)+'%';if(rm)rm.textContent=fmt(a.d-e)}
+  if(a&&a.t==='m'){const mk=$('#mk');if(mk){const [x,y]=mapPos();mk.setAttribute('cx',x);mk.setAttribute('cy',y)}}
   document.querySelectorAll('.dl').forEach(x=>x.textContent=fmt((+x.dataset.t-Date.now())/1000));
 }
 
@@ -693,11 +736,17 @@ const CMD={
   start:()=>{newGame()},
   import2:()=>{ev('기록 코드로 이어 하기',`<p class="m">다른 기기에서 만든 2편 기록 코드(KS2.)를 붙여 넣는다.</p><textarea id="imp2"></textarea><p class="m" id="impm"></p>`,[['불러오기',()=>doImport()],['닫기',null]])},
   go:a=>{if(S.act)return;const p=PL[a];if(p.u&&!p.u(S))return;startAct({t:'m',fr:S.loc,to:a,d:travelSec(S.loc,a)})},
-  rest:()=>{if(S.act)return;startAct({t:'r',d:S.loc==='inn'?60:120})},
+  rest:()=>{if(S.act)return;startAct({t:'r',d:S.loc==='base'?60:120})},
+  explore:a=>{if(S.act)return;const X=(EXP[S.loc]||[])[+a];if(!X)return;startAct({t:'x',at:S.loc,i:+a,l:X.n,d:X.d})},
+  rumor:()=>{const L=S.legacy;const pool=RU.concat(L&&L.end&&LEGRU[L.end]?[LEGRU[L.end]]:[]);ev(LODGE,`<p>여관 주인이 잔을 닦으며 말한다.</p><p>“${pool[Math.random()*pool.length|0]}”</p>`,[['고개를 끄덕인다',null]],1)},
+  mapsel:a=>{const p=PL[a];if(!p)return;if(a===S.loc&&!S.act){return}const ok=!p.u||p.u(S);
+    if(!ok){ev(p.n,`<p class="m">${p.d}</p><p>${p.lk}</p>`,[['알겠다',null]],1);return}
+    if(S.act){ev(p.n,`<p class="m">${p.d}</p><p>지금 하던 일이 있다.</p>`,[['알겠다',null]],1);return}
+    ev(p.n,`<p class="m">${p.d}</p><p>${fmt(travelSec(S.loc,a)*SEC())} 걸린다.</p>`,[['간다',()=>CMD.go(a)],['그만둔다',null]])},
   patrol:()=>{if(S.act)return;if(!S.tutd&&!S.tutAsk){S.tutAsk=1;ev('경비대 초소','<p>초소 앞에 서 있던 늙은 경비가 막대로 길을 막는다.</p><p>모르텐 — “밤길에 나가려면 박자부터 배우게. 오래 안 걸리네.”</p>',[['가르침을 받는다',()=>startBattle('tut')],['그냥 나간다',()=>startAct({t:'p',d:15})]]);return}startAct({t:'p',d:15})},
   cancel:()=>{const a=S.act;if(!a)return;S.act=null;log(a.t==='m'?'걸음을 돌렸다.':'하던 일을 그만두었다.');save();render()},
   tutor:()=>startBattle('tut'),practice:()=>startBattle('practice'),
-  board:()=>{if(!S.base)return;const full=S.disp.length>=1;ev('파견 게시판',`<p class="m">${HELPER}에게 일을 맡긴다. 지금은 한 번에 하나만 맡길 수 있다.</p>${Object.entries(DSP).map(([k,d])=>`<p><b>${d.n}</b> <span class="m">${fmt(d.d*SEC())}${d.risk?' · 다칠 수 있다':''}</span></p>`).join('')}${full?'<p class="m">피트가 이미 나가 있다.</p>':''}`,
+  board:()=>{if(!S.base||!S.pit)return;const full=S.disp.length>=1;ev('파견 게시판',`<p class="m">${HELPER}에게 일을 맡긴다. 지금은 한 번에 하나만 맡길 수 있다.</p>${Object.entries(DSP).map(([k,d])=>`<p><b>${d.n}</b> <span class="m">${fmt(d.d*SEC())}${d.risk?' · 다칠 수 있다':''}</span></p>`).join('')}${full?'<p class="m">피트가 이미 나가 있다.</p>':''}`,
     full?[['닫기',null]]:Object.entries(DSP).map(([k,d])=>[d.n,()=>{S.disp.push({id:k,t0:Date.now(),d:d.d*SEC()});log(`${HELPER}를 ${d.n}에 보냈다.`);save()}]).concat([['닫기',null]]),1)},
   rooms:()=>ev('동료의 방','<p>복도를 따라 빈 방 네 칸. 침대 틀만 남아 있다.</p><p class="m">함께 걸을 사람을 만나면 여기서 지내게 된다. 데리고 나갈 사람도 여기서만 바꿀 수 있다.</p>',[['문을 닫는다',null]]),
   evb:a=>{const f=EV0&&EV0.b[+a][1];EV0=null;if(f)f();if(S)save();render()},
@@ -965,16 +1014,17 @@ function endBattle(res){
   G.on=false;G.beats=[];bovClose();$('#bt').classList.remove('on');
   if(kind==='fight'){
     S.hp=Math.max(0,G.hp);S.inv.band=G.band;if(!S.inv.band)delete S.inv.band;
+    const XL=S.xl;S.xl=null;
     if(res==='win'){
-      const L=F.loot();Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;
+      const L=F.loot();if(XL){Object.entries(XL.i).forEach(([k,n])=>L.i[k]=(L.i[k]||0)+n);L.g+=XL.g}Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;
       const story=NIGHT[S.night]===G.foe;if(story)S.night++;
       log(F.n+'을(를) 물리쳤다.');
       if(story&&G.foe==='lamp'){jr('편지가 가리킨 사람을 쓰러뜨렸다. 꺼지지 않는 등불이 돌바닥을 굴렀다. 그 사람이 중얼거린 이름은 끝내 알아듣지 못했다. 잊은 것은 아직 찾지 못했다. 교단 구역으로 가는 길이 열렸다.');S.hp=Math.max(S.hp,1)}
       else if(story)jr(F.win);
-      pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:[F.win,`<span class="m">${line}</span>`].concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
+      pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([F.win,`<span class="m">${line}</span>`].concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[]))});
     }else{
-      S.hp=Math.ceil(S.mhp*.3);S.loc=S.base?'inn':'street';S.act=null;log(F.n+' 앞에서 쓰러졌다.');
-      pop('쓰러졌다',{n:[F.n+' 앞에서 돌바닥이 차가웠다.',(S.base?'눈을 뜨니 여관 화로 앞이다.':'눈을 뜨니 하숙 다락방이다.')+' 누군가 끌고 와 준 모양이다. 체력이 조금 돌아왔다.',`<span class="m">${line}</span>`]});
+      S.hp=Math.ceil(S.mhp*.3);S.loc=S.base?'base':'docks';S.act=null;log(F.n+' 앞에서 쓰러졌다.');
+      pop('쓰러졌다',{n:[F.n+' 앞에서 돌바닥이 차가웠다.',(S.base?'눈을 뜨니 본거지 화로 앞이다.':`눈을 뜨니 ${LODGE} 방이다.`)+' 누군가 끌고 와 준 모양이다. 체력이 조금 돌아왔다.',`<span class="m">${line}</span>`]});
     }
   }else if(kind==='tut'){S.tutd=1;log('모르텐에게 싸우는 법을 배웠다.');pop('가르침을 마쳤다',{n:['모르텐 — “밤길은 갈수록 험해지네. 처음엔 굶은 개고 그다음엔 사람이지. 그다음은… 가 보면 알겠지.”']})}
   else pop('연습 기록',{n:[`<span class="m">${line}</span>`]});
@@ -1013,7 +1063,7 @@ function devOpen(){
   $('#dov').innerHTML=`<div class="pcard dev"><h2>개발</h2>
   <div class="seg">${b('fast','즉시 완료: '+(FAST||TEST?'켬':'끔'))}${s?b('finish','진행 중인 일 끝내기'):''}</div>
   ${s?`<h3>진행</h3><div class="seg">${b('night','밤 0',0)}${b('night','밤 1',1)}${b('night','밤 2',2)}${b('night','밤 3',3)}</div>
-  <div class="seg">${b('heal','체력 가득')}${b('coin','동전 +50')}${b('band','붕대 +5')}${b('tut','가르침 처음부터')}${b('comp','임시 동료 +1 ('+s.comps.length+')')}</div>
+  <div class="seg">${b('heal','체력 가득')}${b('coin','동전 +50')}${b('band','붕대 +5')}${b('tut','가르침 처음부터')}${b('comp','임시 동료 +1 ('+s.comps.length+')')}${b('base','본거지 얻기(임시)')}${b('pit','피트 얻기(임시)')}</div>
   <h3>전투</h3><div class="seg">${b('fight','골목개','dog')}${b('fight','도둑','thief')}${b('fight','점등꾼','lamp')}${b('fight','점등꾼 격노 직전','lamp2')}</div>
   <h3>이야기</h3><div class="seg">${b('pro','시작 연출 다시')}${b('leg','1편 기억: '+(s.legacy?(s.legacy.end||'없음'):'없음'))}${b('state','상태 보기')}</div>
   <textarea id="dvs" readonly style="display:none"></textarea>`:'<p class="m">캐릭터를 만들면 진행 도구가 나온다.</p>'}
@@ -1027,6 +1077,7 @@ const DV={
   heal:()=>{S.hp=S.mhp;save()},coin:()=>{S.coin+=50;save()},band:()=>{add('band',5);save()},
   tut:()=>{S.tutd=0;S.tutAsk=0;save()},
   comp:()=>{joinComp('임시 동료 '+(S.comps.length+1))},
+  base:()=>{devClose();grantBase();render();return 1},pit:()=>{grantPit()},
   fight:a=>{devClose();if(a==='lamp2'){startBattle('fight','lamp');G.fhp=Math.ceil(FOES.lamp.hp/2)+5;bbars()}else startBattle('fight',a);return 1},
   pro:()=>{devClose();prologue();return 1},
   leg:()=>{const order=['k','r','w',''];const cur=S.legacy?S.legacy.end:'';const nx=order[(order.indexOf(cur)+1)%order.length];
@@ -1042,7 +1093,7 @@ $('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-bdev]');if
 
 /* ===================== 시작 ===================== */
 // 테스트 손잡이(자동 테스트가 쓴다)
-window.__k2={joinComp,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>
