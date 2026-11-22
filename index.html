@@ -863,7 +863,7 @@ const SCENE={
  mort0:()=>ev('문 앞의 노인',`<p>문을 열자 늙은 경비가 서 있다. 회색 수염에 등은 곧다. 손에 손때 묻은 참나무 막대를 쥐었다.</p><p>모르텐 — “가스등 거리 경비대 교관 모르텐일세. 경비들은 다 도망갔네. 거리 끝에 그게 또 나왔어. 꺼지지 않는 등불을 든 놈.”</p>
    <p>모르텐이 내 손을 흘끗 본다.</p><p>모르텐 — “손끝이 푸르군. 그럼 이 도시에서 더 잃을 것도 별로 없겠지. 따라오게.”</p>`,
    [['싸우는 법부터 알려 달라고 한다',()=>{S.mort=1;S.tutAsk=1;jr('첫날 밤 경비대 교관 모르텐이 문을 두드렸다. 거리 끝에 꺼지지 않는 등불을 든 사람이 나왔다고 했다.');save();startBattle('tut')}],
-    ['가르침은 건너뛴다',()=>{S.mort=1;S.tutAsk=1;jr('첫날 밤 경비대 교관 모르텐이 문을 두드렸다. 거리 끝에 꺼지지 않는 등불을 든 사람이 나왔다고 했다.');ev('모르텐','<p>모르텐 — “자신만만하군. 좋네. 박자는 길에서 배우게. 가스등 거리로 가세. 내가 옆에 있겠네.”</p><p class="m">모르텐이 첫 번째 밤 동안 함께 다닌다. 가스등 거리에서 밤길을 순찰하자.</p>',[['막대를 쥔 노인을 따라간다',null]],1);save()}]]),
+    ['가르침은 건너뛴다',()=>{S.mort=1;S.tutAsk=1;jr('첫날 밤 경비대 교관 모르텐이 문을 두드렸다. 거리 끝에 꺼지지 않는 등불을 든 사람이 나왔다고 했다.');ev('모르텐','<p>모르텐 — “자신만만하군. 좋네. 박자는 길에서 배우게. 가스등 거리로 가세. 내가 옆에 있겠네.”</p>',[['막대를 쥔 노인을 따라간다',null]],1);save()}]]),
  mortDie:()=>ev('모르텐',`<p>점등꾼이 쓰러진 자리에서 몇 걸음 떨어진 곳에 모르텐이 누워 있다. 숨이 얕다. 막대는 두 동강이 났다.</p><p>모르텐 — “박자가… 늦었네. 내가. 자네 말고.”</p>
    <p>모르텐 — “이 도시는 쓰러진 사람을 기다려 주지 않네. 자네는 서 있게. 끝까지.”</p><p class="m">모르텐의 손에서 힘이 빠진다.</p>`,
    [['그의 눈을 감겨 준다',()=>SCENE.mortCart(0)],['이름을 부른다',()=>SCENE.mortCart(1)]]),
@@ -1266,7 +1266,7 @@ function placeView(){
 function bagHtml(){const e=Object.entries(S.inv).filter(([,n])=>n>0);return e.length?`<div class="bag">${e.map(([k,n])=>`<span title="${esc(k==='relic'&&S.legacy&&RELIC[S.legacy.pa]?RELIC[S.legacy.pa][1]:(IT[k]||['',''])[1])}">${esc(itName(k))} ${n}</span>`).join('')}</div>`:'<p class="empty">가방이 비어 있다</p>'}
 function sideCards(){
   const P=COMP[S.party];
-  let h=`<div class="card"><h2>동료</h2>${!P&&S.mort===1?'<p><b class="g">모르텐</b></p><p class="m">경비대 교관 · 첫 번째 밤 동안 함께 걷는다</p>':''}${P?`<p><b class="g">${P.n}</b></p><p class="m">${compLine(S.party)}</p>${CSK[S.party]?`<p class="m">${Object.keys(CSK[S.party]).filter(k=>cst(S.party).r[k]).map(k=>CSK[S.party][k].n+' '+'◆'.repeat(cst(S.party).r[k])).join(' · ')||'기술을 아직 고르지 않았다'}${cst(S.party).cp?' · <span class="hbn">점수 '+cst(S.party).cp+'</span>':''}</p>`:''}${S.comps.length>1?`<p class="m">${S.comps.filter(x=>x!==S.party).map(cn).join(', ')} — ${S.base?'본거지에서 지낸다':'여관 1층에서 기다린다'}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
+  let h=`<div class="card"><h2>동료</h2>${!P&&S.mort===1?'<p><b class="g">모르텐</b></p><p class="m">경비대 교관</p>':''}${P?`<p><b class="g">${P.n}</b></p><p class="m">${compLine(S.party)}</p>${CSK[S.party]?`<p class="m">${Object.keys(CSK[S.party]).filter(k=>cst(S.party).r[k]).map(k=>CSK[S.party][k].n+' '+'◆'.repeat(cst(S.party).r[k])).join(' · ')||'기술을 아직 고르지 않았다'}${cst(S.party).cp?' · <span class="hbn">점수 '+cst(S.party).cp+'</span>':''}</p>`:''}${S.comps.length>1?`<p class="m">${S.comps.filter(x=>x!==S.party).map(cn).join(', ')} — ${S.base?'본거지에서 지낸다':'여관 1층에서 기다린다'}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
   if(S.base&&S.pit)h+=`<div class="card"><h2>파견</h2>${Object.keys(S.kids||{}).map(k=>{const d=S.disp.find(x=>(x.kid||'pit')===k);return d?`<div class="disp">${KIDS[k].n} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`:`<p class="m">${KIDS[k].n} — ${kidSt(k)}</p>`}).join('')}</div>`;
   if(!S.base)h+=`<div class="card"><h2>머무는 곳</h2><p class="m">운하 부두 ${LODGE} 이층 끝방. 하룻밤씩 값을 치른다. 짐을 둘 데도 사람을 들일 데도 없다.</p></div>`;
   h+=`<div class="card"><h2>기록</h2><div class="log">${S.log.slice(0,14).map(x=>`<div>${x}</div>`).join('')}</div></div>`;
