@@ -1,4 +1,4 @@
-# 칼셀바도르 2
+# 칼셀바도르: 푸른 재
 
 브라우저에서 돌아가는 고딕 웹게임. 「칼셀바도르」(https://github.com/ghostlight000/kalselbador)와 같은 세계의 후속작.
 
