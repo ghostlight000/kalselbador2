@@ -66,6 +66,7 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .top>.btn{margin-left:auto}
 .tab{font:inherit;background:none;border:0;color:var(--m);padding:6px 12px;cursor:pointer;position:relative;font-size:15px}
 .tab.on{color:var(--t)}
+.hbn{font-style:normal;color:var(--kw);font-size:11px}
 .tab.on:after{content:"";position:absolute;left:50%;bottom:0;width:7px;height:7px;background:var(--a);transform:translateX(-50%) rotate(45deg)}
 .grid{display:grid;grid-template-columns:290px 1fr 270px;gap:14px;align-items:start}
 @media (max-width:900px){.grid{grid-template-columns:1fr}.grid .L{order:1}.grid .M{order:0}.grid .Rr{order:2}.tabs{order:3;flex-basis:100%}}
@@ -87,7 +88,11 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .ms.now b{color:var(--a)}
 
 /* ===== 지도 ===== */
-.map{width:100%;height:auto;max-height:480px;display:block;margin:2px auto 0;aspect-ratio:92/82}
+.mapw{position:relative;overflow:hidden;touch-action:none;cursor:grab;border:1px solid var(--b);background:var(--g);margin-top:4px;user-select:none;-webkit-user-select:none}
+.mapw.drag{cursor:grabbing}
+.mapc{position:absolute;top:6px;right:6px;display:flex;gap:4px;z-index:2}
+.mapc .btn{min-height:32px;min-width:34px;padding:0 6px;font-size:14px;background:var(--c)}
+.map{width:100%;height:auto;display:block;aspect-ratio:92/82;overflow:hidden}
 .map .canal{fill:none;stroke:var(--b);stroke-width:3.2;opacity:.7}
 .map .road{stroke:var(--a);stroke-width:.45;stroke-dasharray:1.6 1.6;opacity:.55}
 .map .road.lk{opacity:.2}
@@ -112,6 +117,9 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .tr-list .btn{font-size:13px;min-height:36px}
 .stats{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:center;font-size:14px}
 .stats .bar{margin:0}
+.stats.st4{grid-template-columns:auto 1fr auto}
+.stats.st4 .sne{grid-column:1/-1;margin:-2px 0 6px}
+.stats .btn.sm{min-height:26px;padding:0 4px;margin-left:4px}
 
 /* ===== 창 ===== */
 .ovl{position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;background:rgba(14,12,10,.72);overflow:auto;padding:24px 14px}
@@ -303,7 +311,21 @@ const baseStats=(r,t,o)=>RACE[r].s.map((v,i)=>v+RACE[r].t[t][2][i]+ORIGIN[o][2][
 // 받침에 따라 조사 고르기: @name:은/는@
 const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1);return w+(c>=44032&&c<=55203&&(c-44032)%28?a:b)};
 const tx=t=>t.replace(/@name:(.)\/(.)@/g,(m,a,b)=>josa(S.name,a,b)).replace(/@name@/g,S.name);
-const calcMhp=st=>70+st[0]*4+st[2]*2;
+const calcMhp=(st,lv)=>70+st[0]*4+st[2]*2+((lv||1)-1)*6;
+// 능력치가 전투에서 하는 일
+const SNE=['공격·강타 피해, 체력','혼불·방전 피해, 받아치기의 되받아치는 피해','회피·받아치기 판정, 숨 고르기 회복, 체력','강타의 금빛 구간, 발목 긋기, 붕대 회복'];
+// 기술: c=기력, st=기대는 능력치, item=필요한 물건
+const SKL={
+ stance:{n:'받아치기 자세',c:1,st:0,d:'다음 적의 차례 동안 받아치기 판정이 1.5배, 되받아치는 피해가 2배가 된다.'},
+ hamstring:{n:'발목 긋기',c:1,st:3,d:'손재주만큼 베고, 적의 다음 공격을 느리게 만든다.'},
+ spirit:{n:'혼불',c:3,st:1,d:'푸른 혼불을 던진다. 마력에 비례한 큰 피해. 맞추는 칸이 없다.'},
+ shock:{n:'방전',c:2,st:1,d:'몸에 남은 마력을 터뜨린다. 피해를 주고 다음 적의 차례 판정이 넓어진다.'},
+ mend:{n:'숨 고르기',c:2,st:2,d:'정신을 가다듬어 체력을 되찾는다.'},
+ ash:{n:'재 흩뿌리기',c:1,st:2,item:'ash',d:'푸른 재 한 줌을 뿌린다. 적이 다음 공격의 첫 박자를 잊는다.'}
+};
+const OSK=['stance','hamstring','spirit','shock','ash','mend','hamstring','ash']; // 출신마다 시작 기술(ORIGIN 순서)
+const xpNeed=lv=>25*lv;
+const SKILL_LV=[2,3,4,5,6]; // 이 레벨에 오르면 새 기술을 하나 고른다
 
 // 1편 기억(1편 기록 코드에서 읽은 것)
 const END1={k:'불을 이어받은 자',r:'닫힌 하늘',w:'이름을 부르는 자'};
@@ -357,9 +379,9 @@ const MS=[
  ['가스등 거리를 순찰한다','경비대 초소의 모르텐이 밤길에 나설 사람을 찾는다.',s=>s.night>=1],
  ['칼을 든 도둑','가스등을 훔치는 손이 있다.',s=>s.night>=2],
  ['꺼지지 않는 등불을 든 사람','편지가 가리킨 사람. 거리 끝에 서 있다고 한다.',s=>s.night>=3],
- ['여우 머리의 여자','점등꾼을 쫓던 사람이 있었다.',s=>s.comps.includes('kirien')],
- ['대성당 문서고','키리엔이 교단 장부를 보고 싶어 한다.',s=>s.comps.includes('oswin')],
- ['쉴 곳','여관 방 하나로는 셋이 지낼 수 없다. 여관 주인에게 물어보자.',s=>!!s.manor],
+ ['여우 머리의 여자',s=>s.dec.kirien&&!s.comps.includes('kirien')?'키리엔과 함께 가지 않았다. 마음이 바뀌면 가스등 거리 초소 앞에서 만날 수 있다.':'점등꾼을 쫓던 사람이 있었다.',s=>s.comps.includes('kirien')||!!s.dec.kirien],
+ ['대성당 문서고',s=>s.dec.oswin&&!s.comps.includes('oswin')?'오스윈과 함께 가지 않았다. 마음이 바뀌면 대성당 문서고에서 만날 수 있다.':'교단 구역 대성당 뒤편이 소란스럽다는 말이 있다.',s=>s.comps.includes('oswin')||!!s.dec.oswin],
+ ['쉴 곳',s=>s.comps.length>=2?'여관 방 하나로는 셋이 지낼 수 없다. 여관 주인에게 물어보자.':'함께 다닐 일행이 둘은 되어야 쉴 곳을 따로 구할 마음이 들 것 같다. 거절했던 사람을 다시 찾아가 볼까.',s=>!!s.manor],
  ['노래하는 저택','밤마다 이름 하나를 부르는 노래가 들린다는 빈집.',s=>!!s.base],
  ['하수구의 아이','저택에 짐을 풀었다. 도시를 더 둘러보자.',s=>!!s.pit],
  ['— 뼈대는 여기까지','다음 이야기는 아직 쓰이지 않았다.',s=>false]
@@ -393,13 +415,13 @@ const DIFF=[
   {n:'가스등 거리',s:'보통. 회피는 넉넉하고 받아치기는 노려야 한다.',d:220,p:65,dm:1,sp:1},
   {n:'안개 낀 밤',s:'어렵게. 판정이 좁다. 고리는 빠르고 더 아프다.',d:160,p:45,dm:1.3,sp:.85}];
 const FOES={
-  dog:{n:'굶주린 골목개',hp:70,tier:1,pool:['bite','bite2'],intro:'골목 끝에서 개 한 마리가 이를 드러낸다. 갈비뼈가 다 보인다.',win:'개는 낑낑대며 어둠 속으로 사라진다.',loot:()=>({i:{},g:R(1,3)})},
-  thief:{n:'가스등 도둑',hp:120,tier:2,pool:['stab','triple','late'],intro:'가스등 아래에서 누군가 칼을 꺼낸다. 등불을 훔치던 손이다.',win:'도둑이 달아난다. 떨어뜨린 자루에서 푸른 재가 샌다.',loot:()=>({i:{ash:1},g:R(4,8)})},
-  lamp:{n:'재에 먹힌 점등꾼',hp:260,tier:3,tier2:4,boss:true,pool:['swing','triple','late'],pool2:['swing','late','ash','pull','four'],intro:'거리 끝에 꺼지지 않는 등불을 든 사람이 서 있다. 등불 속에서 푸른 재가 탄다.',win:'등불이 돌바닥을 구른다. 푸른 재가 꺼지자 그 사람은 잠깐 누군가의 이름을 중얼거렸다.',loot:()=>({i:{wick:1},g:R(10,15)})},
-  warden:{n:'교단 정화자',hp:140,tier:2,pool:['censer','brand','stab'],intro:'회색 옷의 정화자가 향로 사슬을 감아쥔다. 향 냄새 사이로 탄내가 난다.',win:'정화자가 무릎을 꿇는다. 장부는 아직 파볼릭의 품에 있다.',loot:()=>({i:{band:1},g:R(3,6)})},
-  singer:{n:'노래하는 옛 주인',hp:240,tier:3,tier2:4,boss:true,pool:['hum','claw','wail'],pool2:['hum','wail','claw','late'],intro:'낡은 연미복을 입은 사람이 계단 끝에 서 있다. 얼굴이 있어야 할 자리에 푸른 재가 맴돈다. 노래는 그 입에서 나온다.',win:'노래가 그쳤다. 낡은 옷 속에 푸른 재만 한 줌 남았다.',
+  dog:{xp:6,n:'굶주린 골목개',hp:70,tier:1,pool:['bite','bite2'],intro:'골목 끝에서 개 한 마리가 이를 드러낸다. 갈비뼈가 다 보인다.',win:'개는 낑낑대며 어둠 속으로 사라진다.',loot:()=>({i:{},g:R(1,3)})},
+  thief:{xp:10,n:'가스등 도둑',hp:120,tier:2,pool:['stab','triple','late'],intro:'가스등 아래에서 누군가 칼을 꺼낸다. 등불을 훔치던 손이다.',win:'도둑이 달아난다. 떨어뜨린 자루에서 푸른 재가 샌다.',loot:()=>({i:{ash:1},g:R(4,8)})},
+  lamp:{xp:30,n:'재에 먹힌 점등꾼',hp:260,tier:3,tier2:4,boss:true,pool:['swing','triple','late'],pool2:['swing','late','ash','pull','four'],intro:'거리 끝에 꺼지지 않는 등불을 든 사람이 서 있다. 등불 속에서 푸른 재가 탄다.',win:'등불이 돌바닥을 구른다. 푸른 재가 꺼지자 그 사람은 잠깐 누군가의 이름을 중얼거렸다.',loot:()=>({i:{wick:1},g:R(10,15)})},
+  warden:{xp:14,n:'교단 정화자',hp:140,tier:2,pool:['censer','brand','stab'],intro:'회색 옷의 정화자가 향로 사슬을 감아쥔다. 향 냄새 사이로 탄내가 난다.',win:'정화자가 무릎을 꿇는다. 장부는 아직 파볼릭의 품에 있다.',loot:()=>({i:{band:1},g:R(3,6)})},
+  singer:{xp:40,n:'노래하는 옛 주인',hp:240,tier:3,tier2:4,boss:true,pool:['hum','claw','wail'],pool2:['hum','wail','claw','late'],intro:'낡은 연미복을 입은 사람이 계단 끝에 서 있다. 얼굴이 있어야 할 자리에 푸른 재가 맴돈다. 노래는 그 입에서 나온다.',win:'노래가 그쳤다. 낡은 옷 속에 푸른 재만 한 줌 남았다.',
     ph2:{h:'노래가 높아진다',s:'이름 하나가 집 전체를 울린다',l:'옛 주인의 노래가 비명처럼 높아진다. 박자가 빨라진다.'},loot:()=>({i:{ash:2},g:R(8,12)})},
-  rats:{n:'하수구 쥐 떼',hp:80,tier:2,pool:['swarm','bite','swarm'],intro:'물 위로 쥐 떼가 검은 융단처럼 몰려온다. 그 뒤에서 아이 하나가 철창을 붙들고 있다.',win:'쥐 떼가 물길 안쪽으로 흩어진다.',loot:()=>({i:{},g:R(0,2)})},
+  rats:{xp:8,n:'하수구 쥐 떼',hp:80,tier:2,pool:['swarm','bite','swarm'],intro:'물 위로 쥐 떼가 검은 융단처럼 몰려온다. 그 뒤에서 아이 하나가 철창을 붙들고 있다.',win:'쥐 떼가 물길 안쪽으로 흩어진다.',loot:()=>({i:{},g:R(0,2)})},
   drill:{n:'모르텐 교관',hp:1,tier:2,pool:Object.keys(MV).filter(k=>!/^t\d/.test(k)),intro:'',win:''}
 };
 const TUTF={n:'모르텐 교관',hp:1,tier:0};
@@ -409,7 +431,7 @@ const TS=[
   {mv:'t1',goal:'parry',need:2,say:'이번엔 받아치게. 회피보다 훨씬 짧은 순간이야. 맞히면 상대가 아프고, 놓치면 자네가 아프네.',key:'받아치기 두 번 — J',ok:'그 소리야. 쇠가 쇠를 밀어내는 소리.'},
   {mv:'t3',goal:'clean',need:1,say:'세 번 온다. 진한 고리만 보게. 옅은 건 그다음 차례야.',key:'세 번 연속 공격을 한 번도 맞지 않고 넘기기',ok:'박자를 탔군.'},
   {mv:'t4',goal:'clean',need:2,say:'점선 고리는 속임수야. 멈췄다가 늦게 온다. 서두르는 놈이 먼저 맞네.',key:'속임 동작을 두 번 넘기기',ok:'참을성이 있군.'},
-  {mv:null,goal:'perf',need:1,say:'이제 자네 차례. 공격을 고르고, 표식이 금빛 구간에 닿을 때 누르게.',key:'정확한 일격 한 번 — Space 또는 탭',ok:'됐네.'}
+  {mv:null,goal:'perf',need:1,say:'이제 자네 차례네. 그냥 휘두르는 공격은 알아서 나가. 강타는 다르지. 표식이 금빛 구간에 닿을 때 누르게.',key:'정확한 강타 한 번 — 강타를 고르고 Space 또는 탭',ok:'됐네.'}
 ];
 
 /* ===================== 설정 (기기마다) ===================== */
@@ -425,9 +447,9 @@ let S=null,V='place',EV0=null,POP=null;
 let C={r:'p',t:0,o:0,sx:'x',n:'',leg:null,legMsg:''}; // 만들기 화면
 
 function newGame(){
-  const st=baseStats(C.r,C.t,C.o),mhp=calcMhp(st);
-  S={v:4,sex:C.sx,name:(C.n.trim()||'이름 없는 나그네').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
-     inv:{letter:1,band:2},loc:'docks',act:null,disp:[],comps:[],party:null,aff:{},cq:{},rom:null,talked:{},night:0,tutd:0,base:0,pit:0,pro:0,vis:{docks:1},log:[],jr:[],legacy:C.leg,t0:Date.now()};
+  const st=baseStats(C.r,C.t,C.o),mhp=calcMhp(st,1);
+  S={v:5,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'이름 없는 나그네').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
+     inv:{letter:1,band:2},loc:'docks',act:null,disp:[],comps:[],party:null,aff:{},cq:{},rom:null,talked:{},dec:{},night:0,tutd:0,base:0,pit:0,pro:0,vis:{docks:1},log:[],jr:[],legacy:C.leg,t0:Date.now()};
   log('편지를 따라 오렌하르트에 닿았다. 운하 부두의 녹슨 닻 여관에 방을 얻었다.');
   save();V='place';try{window.scrollTo(0,0)}catch(e){}
   render();prologue();
@@ -482,6 +504,11 @@ const AFT=[[0,'낯섦'],[20,'믿음'],[50,'가까움']];
 const affTier=id=>{if((S.rom||'')===id)return '마음';const a=(S.aff||{})[id]||0;let t=AFT[0][1];AFT.forEach(([n,l])=>{if(a>=n)t=l});return t};
 const romOK=id=>{const c=COMP[id];if(!c||!c.rom)return false;if(c.rom==='any')return true;return c.rom===S.sex}; // 지향이 맞는가
 const romReady=id=>romOK(id)&&!S.rom&&((S.aff||{})[id]||0)>=50&&(!COMP[id].demi||(S.cq||{})[id]==='done'); // 고르는 장면이 열릴 수 있는가
+function gainXp(n){const out=[`경험 +${n}`];S.xp+=n;
+  while(S.xp>=xpNeed(S.lv)){S.xp-=xpNeed(S.lv);S.lv++;S.sp++;if(SKILL_LV.includes(S.lv)&&S.sk.length+S.skp<Object.keys(SKL).length)S.skp++;
+    const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,S.hp+(S.mhp-m0));
+    out.push(`<b class="g">레벨 ${S.lv}</b> — 능력치 점수 +1${S.skp?' · 새 기술을 배울 수 있다':''}. 캐릭터 탭에서 고른다.`);log('레벨 '+S.lv+'에 올랐다.')}
+  return out}
 function aff(id,n){S.aff=S.aff||{};S.aff[id]=Math.max(0,Math.min(100,(S.aff[id]||0)+n))}
 const cn=id=>COMP[id]?COMP[id].n:id;
 /* 미뤄 둔 이야기 장면: 결과 창이 닫힌 뒤 tick에서 연다 */
@@ -493,20 +520,31 @@ const SCENE={
  kir2:c=>ev('키리엔',(c?'<p>키리엔 — “나? 키리엔. 변두리에서 사람 찾는 일을 해.”</p>':'<p>키리엔 — “그래. 나도 못 들었어. 그게 제일 아까워.”</p>')+
    `<p>키리엔 — “이 점등꾼은 석 달 전에 사라진 사람이야. 의뢰인은 이 사람 딸이고. 아빠가 등불을 들고 나가서 안 돌아왔대.”</p><p>키리엔 — “그런데 넌 왜 이 사람을 찾았어?”</p>`,
    [['편지를 보여 준다',()=>SCENE.kir3(1)],['말하지 않는다',()=>SCENE.kir3(0)]]),
- kir3:show=>{joinComp('kirien');if(show)aff('kirien',6);jr('점등꾼을 쫓던 여우 머리의 잉그라드 키리엔을 만났다. 함께 다니기로 했다.');
+ kir3:show=>{S.kshow=show?1:0;
    ev('키리엔',(show?'<p>키리엔이 편지를 한참 들여다본다. 귀가 한 번 뒤로 젖혀진다.</p><p>키리엔 — “네 글씨로 쓴 편지라. 쓴 기억은 없고. 웃기네. 하나도 안 웃긴데.”</p>':'<p>키리엔 — “말하기 싫으면 말아. 다들 그래.”</p>')+
-   `<p>키리엔 — “아무튼 이 사람 머릿속은 재로 꽉 찼어. 누가 이렇게 만들었는지 알아내야 의뢰가 끝나.”</p><p>키리엔 — “너도 뭘 찾는 중이잖아. 당분간 붙어 다닐게. 싫다고 해도.”</p><p class="m">키리엔이 함께하기로 했다. 교단 구역으로 가는 길이 열렸다.</p>`,
-   [['같이 가자',()=>aff('kirien',2)]],1)},
+   `<p>키리엔 — “아무튼 이 사람 머릿속은 재로 꽉 찼어. 누가 이렇게 만들었는지 알아내야 의뢰가 끝나.”</p><p>키리엔 — “너도 뭘 찾는 중이잖아. 같이 다니면 둘 다 빨리 찾을지도 몰라. 어때?”</p>`,
+   [['같이 가자',()=>{joinComp('kirien');aff('kirien',(S.kshow?6:0)+2);jr('점등꾼을 쫓던 여우 머리의 잉그라드 키리엔을 만났다. 함께 다니기로 했다.');SCENE.joined('kirien','키리엔 — “좋아. 대신 내 몫은 내가 챙겨.”','교단 구역으로 가는 길이 열렸다.')}],
+    ['혼자 하겠다',()=>SCENE.kirNo()]])},
+ kirNo:()=>{S.dec.kirien=1;jr('점등꾼을 쫓던 키리엔을 만났다. 함께 다니자는 말에 혼자 하겠다고 했다.');
+   ev('키리엔','<p>키리엔 — “그래. 억지로 붙을 생각은 없어.”</p><p>키리엔 — “마음 바뀌면 가스등 거리 초소 앞으로 와. 거기서 의뢰인을 기다리니까.”</p><p class="m">키리엔은 가스등 거리 쪽으로 사라졌다. 교단 구역으로 가는 길이 열렸다.</p>',[['고개를 끄덕인다',null]],1)},
+ kirAgain:()=>ev('키리엔','<p>초소 담벼락에 기대어 있던 키리엔이 귀를 세운다.</p><p>키리엔 — “또 왔네. 혼자 다니니까 어때?”</p>',
+   [['같이 가자',()=>{delete S.dec.kirien;joinComp('kirien');aff('kirien',(S.kshow?6:0));jr('가스등 거리 초소 앞에서 키리엔을 다시 만났다. 이번엔 함께 다니기로 했다.');SCENE.joined('kirien','키리엔 — “진작 그럴 것이지.”')}],['지나가던 길이다',null]]),
+ joined:(id,line,more)=>ev(cn(id),`<p>${line}</p><p class="m">${josa(cn(id),'이','가')} 함께하기로 했다.${more?' '+more:''}</p>`,[['좋다',null]],1),
  archive:()=>ev('대성당 뒤편',`<p>문서고 쪽에서 책 무더기가 쏟아지는 소리가 난다.</p><p>책장 사이에 붉은 구릿빛 비늘의 파볼릭이 서 있다. 두꺼운 장부를 품에 안았다. 그 앞을 회색 옷의 정화자가 막아선다.</p>
    <p>정화자 — “장부를 내려놓아라. 이름 없는 자.”</p><p>파볼릭 — “이름 없는 자라. 지운 건 당신들인데 말이지요.”</p>`,
    [['끼어든다',()=>{S.bstory='oswin';save();startBattle('fight','warden')}],['물러난다',null]]),
  oswinW:()=>ev('오스윈',`<p>파볼릭이 장부의 먼지를 턴다. 머리가 문틀에 닿을 듯하다.</p><p>오스윈 — “고맙다고 해야겠지요. 저는 오스윈입니다. 아니, 오스윈이었지요. 학술원 서류에는 이제 없는 이름이라서.”</p>`+
    (S.party==='kirien'?'<p>키리엔 — “말 많네.”</p><p>오스윈 — “칭찬으로 듣겠습니다.”</p>':''),[['장부에 뭐가 있느냐고 묻는다',()=>SCENE.osw2()]],1),
- osw2:()=>{joinComp('oswin');jr('대성당 문서고에서 학술원에서 쫓겨난 칼라쉬의 후예 오스윈을 만났다. 그가 훔친 장부에는 푸른 재가 된 사람들의 이름이 적혀 있었다.');
+ osw2:()=>{jr('대성당 문서고에서 학술원에서 쫓겨난 칼라쉬의 후예 오스윈을 만났다. 그가 훔친 장부에는 푸른 재가 된 사람들의 이름이 적혀 있었다.');
    ev('오스윈',`<p>오스윈 — “학술원이 교단에 넘긴 명단이지요. 가스등에 쓸 푸른 재를 어디서 얻는지 아십니까.”</p>
    <p>오스윈 — “사람에게서 얻습니다. 기억을 태운 재지요. 이 장부에는 그 사람들 이름이 적혀 있습니다. 적혀 있었다고 해야 맞겠군요. 반은 지워졌으니.”</p>
-   <p>오스윈 — “당신이 찾는 것도 여기 어딘가에 있을지 모릅니다. 저는 지워진 쪽을 찾고 있고요. 같이 다니는 편이 서로 덜 귀찮겠지요.”</p><p class="m">오스윈이 함께하기로 했다. 여관에 돌아가 쉴 곳을 의논해 보자.</p>`,
-   [['좋다',()=>aff('oswin',2)]],1)},
+   <p>오스윈 — “당신이 찾는 것도 여기 어딘가에 있을지 모릅니다. 저는 지워진 쪽을 찾고 있고요. 같이 다니는 편이 서로 덜 귀찮겠지요.”</p>`,
+   [['같이 가자',()=>{joinComp('oswin');aff('oswin',2);SCENE.joined('oswin','오스윈 — “그럼 짐을 싸지요. 장부는 제가 듭니다.”',S.comps.length>=2?'여관에 돌아가 쉴 곳을 의논해 보자.':'')}],
+    ['각자 갈 길을 간다',()=>SCENE.oswNo()]])},
+ oswNo:()=>{S.dec.oswin=1;
+   ev('오스윈','<p>오스윈 — “현명하십니다. 저와 엮이면 대개 서류에서 이름이 사라지거든요.”</p><p>오스윈 — “생각이 바뀌면 이 문서고로 오십시오. 정화자들이 다시 올 때까지는 여기 숨어 있을 테니.”</p>',[['돌아선다',null]],1)},
+ oswAgain:()=>ev('오스윈','<p>책장 사이에서 붉은 구릿빛 꼬리가 삐죽 나와 있다.</p><p>오스윈 — “또 뵙는군요. 정화자들이 저를 잊어 주질 않아서 여기 숨어 지냅니다.”</p>',
+   [['같이 가자',()=>{delete S.dec.oswin;joinComp('oswin');jr('대성당 문서고에서 오스윈을 다시 만났다. 이번엔 함께 다니기로 했다.');SCENE.joined('oswin','오스윈 — “마침 숨어 지내는 것도 지겨웠지요.”',S.comps.length>=2?'여관에 돌아가 쉴 곳을 의논해 보자.':'')}],['그냥 둔다',null]]),
  manorRumor:()=>{S.manor=1;jr('녹슨 닻 여관 주인에게서 노래가 들린다는 오르빌 저택 이야기를 들었다.');
    ev(LODGE,`<p>여관 주인이 셋을 번갈아 본다.</p><p>“방 하나에 셋은 무리야. 운하 따라 내려가면 오르빌 저택이 있어. 주인이 죽은 지 십 년이 넘었지.”</p>
    <p>“그런데 밤마다 노래가 들린대. 가사도 없이 이름 하나를 길게 늘여 부르는 소리가. 그것만 없으면 빈집이야.”</p><p class="m">지도에 오르빌 저택이 나타났다.</p>`,
@@ -543,10 +581,11 @@ function migrate(){
   S.inv=S.inv||{};S.disp=S.disp||[];S.vis=S.vis||{inn:1};S.log=S.log||[];S.jr=S.jr||[];
   if(!RACE[S.race])S.race='b';
   if(!S.st||S.st.length!==4)S.st=baseStats(S.race,S.tr||0,S.og||0);
-  S.comps=S.comps||[];if(S.party===undefined)S.party=null;S.aff=S.aff||{};S.cq=S.cq||{};S.talked=S.talked||{};if(S.rom===undefined)S.rom=null;
+  S.comps=S.comps||[];if(S.party===undefined)S.party=null;S.aff=S.aff||{};S.cq=S.cq||{};S.talked=S.talked||{};S.dec=S.dec||{};if(S.rom===undefined)S.rom=null;
   if(!S.sex)S.sex='x';S.comps=S.comps.filter(c=>COMP[c]);if(S.party&&!COMP[S.party])S.party=S.comps[0]||null;
   if(!ORIGIN[S.og])S.og=0;if(!S.letter0){S.letter0=1;if(!S.inv.letter)S.inv.letter=1}if(!PL[S.loc]||(PL[S.loc].hide&&PL[S.loc].hide(S)))S.loc='docks';
-  S.mhp=calcMhp(S.st);S.hp=Math.min(S.mhp,Math.max(0,S.hp|0));
+  S.lv=S.lv||1;S.xp=S.xp||0;S.sp=S.sp||0;S.skp=S.skp||0;S.sk=(S.sk||[]).filter(k=>SKL[k]);if(!S.sk.length)S.sk=[OSK[S.og]||'stance'];if(S.v<5)S.v=5;
+  S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,Math.max(0,S.hp|0));
 }
 const log=t=>{S.log.unshift(t);S.log=S.log.slice(0,40)};
 const jr=t=>{S.jr.unshift({t:Date.now(),x:t});S.jr=S.jr.slice(0,60)};
@@ -648,8 +687,8 @@ function create(){
    <h3>성별</h3><div class="seg">${SEX.map(([k,n])=>B('sex',n,{a:k,cls:C.sx===k?'on':''})).join('')}</div><p class="m">동료와 마음을 나누는 이야기에 쓰인다. 밝히지 않으면 성별과 상관없이 마음을 여는 동료와만 이어진다.</p></div>
   <div class="card"><h2>종족</h2><div class="seg">${Object.entries(RACE).map(([k,x])=>B('race',x.n,{a:k,cls:C.r===k?'on':''})).join('')}</div><p class="m">${r.d}</p>
    <h3>계통</h3><div class="tr-list">${r.t.map((x,i)=>B('trait',x[0],{a:i,cls:C.t===i?'on':''})).join('')}</div><p class="m">${T[1]}</p>
-  </div><div class="card"><h2>출신</h2><div class="tr-list">${ORIGIN.map((x,i)=>B('origin',x[0],{a:i,cls:C.o===i?'on':''})).join('')}</div><p class="m">${O[1]}</p></div>
-  <div class="card"><h2>능력치</h2><div class="stats">${SN.map((n,i)=>`<span>${n}</span>${bar(st[i],12)}<span>${st[i]}</span>`).join('')}</div><p class="m">체력 ${calcMhp(st)}</p></div>
+  </div><div class="card"><h2>출신</h2><div class="tr-list">${ORIGIN.map((x,i)=>B('origin',x[0],{a:i,cls:C.o===i?'on':''})).join('')}</div><p class="m">${O[1]}</p><p class="m">시작 기술 — <b class="g">${SKL[OSK[C.o]].n}</b>. ${SKL[OSK[C.o]].d}</p></div>
+  <div class="card"><h2>능력치</h2><div class="stats">${SN.map((n,i)=>`<span>${n}</span>${bar(st[i],12)}<span>${st[i]}</span>`).join('')}</div><p class="m">체력 ${calcMhp(st,1)}</p><div class="m">${SN.map((n,i)=>`${n} — ${SNE[i]}`).join('<br>')}</div></div>
   <div class="card"><details ${C.leg||C.legMsg?'open':''}><summary>1편의 기록이 있다면</summary>
    <p class="m">「칼셀바도르」 1편에서 만든 기록 코드를 붙여 넣으면, 그 여정의 흔적이 이 도시 어딘가에 조금 남는다. 힘의 차이는 없다.</p>
    <textarea id="legt" placeholder="KS1.로 시작하는 1편 기록 코드"></textarea>
@@ -662,13 +701,14 @@ function create(){
 }
 /* --- 게임 --- */
 function game(){
-  const tabs=[['place','장소'],['char','캐릭터'],['quest','임무'],['story','이야기']];
+  const tabs=[['place','장소'],['char','캐릭터'+(S.sp||S.skp?' <i class="hbn">✦</i>':'')],['quest','임무'],['story','이야기']];
   return `<div class="top"><div class="brand">칼셀바도르 <b>푸른 재</b></div><nav class="tabs">${tabs.map(([k,n])=>`<button class="tab${V===k?' on':''}" data-c="tab" data-a="${k}">${n}</button>`).join('')}</nav>${B('settings','설정',{cls:'sm'})}</div>
   <div class="grid"><aside class="L">${statusCard()}</aside><section class="M">${V==='place'?placeView():V==='char'?charView():V==='quest'?questView():storyView()}</section><aside class="Rr">${sideCards()}</aside></div>`;
 }
 function statusCard(){
   const r=RACE[S.race];
   return `<div class="card"><h2>${esc(S.name)}</h2><p class="m">${r.n} · ${r.t[S.tr][0]} · ${ORIGIN[S.og][0]}</p>
+  <div class="row"><span>레벨 ${S.lv}</span><span>${S.xp} / ${xpNeed(S.lv)}</span></div>${bar(S.xp,xpNeed(S.lv))}
   <div class="row"><span>체력</span><span>${S.hp} / ${S.mhp}</span></div>${bar(S.hp,S.mhp,'hp')}
   <div class="row"><span>동전</span><span>${S.coin}</span></div>
   <div class="row"><span>붕대</span><span>${S.inv.band||0}</span></div>
@@ -680,11 +720,31 @@ function actProg(){
   return `<div class="card prog"><div class="row"><span>${lbl}</span><span id="rm">${fmt((a.t0+a.d*1000-Date.now())/1000)}</span></div>
   <div class="bar"><i id="pb" style="width:${Math.min(100,(Date.now()-a.t0)/(a.d*10))}%"></i></div>${B('cancel','그만두기',{cls:'sm'})}</div>`;
 }
-/* 도시 지도 (1편처럼 점과 길) */
+/* 도시 지도 (1편처럼 점과 길). 확대·이동은 viewBox로: 버튼, 휠, 끌기, 두 손가락 */
+const MB={x:4,y:12,w:92,h:82},MZ=3.2; // 전체 범위, 최대 확대
+let MW={...MB},MDRAG=0;
+function mclamp(){MW.w=Math.max(MB.w/MZ,Math.min(MB.w,MW.w));MW.h=MW.w*MB.h/MB.w;MW.x=Math.max(MB.x,Math.min(MB.x+MB.w-MW.w,MW.x));MW.y=Math.max(MB.y,Math.min(MB.y+MB.h-MW.h,MW.y))}
+function mapply(){const sv=document.querySelector('.map');if(sv)sv.setAttribute('viewBox',`${MW.x} ${MW.y} ${MW.w} ${MW.h}`)}
+function mzoom(f,cx,cy){if(cx==null){cx=MW.x+MW.w/2;cy=MW.y+MW.h/2}const nw=Math.max(MB.w/MZ,Math.min(MB.w,MW.w/f)),k=nw/MW.w;MW.x=cx-(cx-MW.x)*k;MW.y=cy-(cy-MW.y)*k;MW.w=nw;mclamp();mapply()}
+function mcenter(){const [x,y]=mapPos();if(MW.w>=MB.w)MW.w=MB.w/1.8;MW.h=MW.w*MB.h/MB.w;MW.x=x-MW.w/2;MW.y=y-MW.h/2;mclamp();mapply()}
+function m2svg(cx,cy){const r=$('#mapw').getBoundingClientRect();return [MW.x+(cx-r.left)/r.width*MW.w,MW.y+(cy-r.top)/r.height*MW.h,r]}
+const MPT=new Map();let MD=null;
+document.addEventListener('pointerdown',e=>{const w=e.target.closest('#mapw');if(!w||e.target.closest('.mapc'))return;
+  MPT.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(MPT.size===1)MD={x:e.clientX,y:e.clientY,ox:MW.x,oy:MW.y,moved:0};
+  else if(MPT.size===2){const [a,b]=[...MPT.values()];MD={pinch:Math.hypot(a.x-b.x,a.y-b.y)||1,w0:MW.w,moved:1}}});
+document.addEventListener('pointermove',e=>{if(!MD||!MPT.has(e.pointerId))return;MPT.set(e.pointerId,{x:e.clientX,y:e.clientY});const w=$('#mapw');if(!w)return;
+  if(MD.pinch&&MPT.size>=2){const [a,b]=[...MPT.values()],d=Math.hypot(a.x-b.x,a.y-b.y)||1,[cx,cy]=m2svg((a.x+b.x)/2,(a.y+b.y)/2);mzoom((MW.w/(MD.w0*MD.pinch/d)),cx,cy);return}
+  if(MD.pinch)return;
+  const dx=e.clientX-MD.x,dy=e.clientY-MD.y;if(!MD.moved&&Math.hypot(dx,dy)<5)return;MD.moved=1;w.classList.add('drag');
+  const r=w.getBoundingClientRect();MW.x=MD.ox-dx/r.width*MW.w;MW.y=MD.oy-dy/r.height*MW.h;mclamp();mapply()});
+function mup(e){if(!MPT.has(e.pointerId))return;MPT.delete(e.pointerId);if(MD&&MD.moved)MDRAG=Date.now();if(!MPT.size){MD=null;const w=$('#mapw');if(w)w.classList.remove('drag')}}
+document.addEventListener('pointerup',mup);document.addEventListener('pointercancel',mup);
+document.addEventListener('wheel',e=>{const w=e.target.closest&&e.target.closest('#mapw');if(!w)return;e.preventDefault();const [cx,cy]=m2svg(e.clientX,e.clientY);mzoom(e.deltaY<0?1.15:1/1.15,cx,cy)},{passive:false});
 function mapPos(){const a=S.act;if(a&&a.t==='m'){const F=PL[a.fr],T=PL[a.to],q=Math.min(1,(Date.now()-a.t0)/(a.d*1000));return [F.x+(T.x-F.x)*q,F.y+(T.y-F.y)*q]}return [PL[S.loc].x,PL[S.loc].y]}
 function mapSvg(){
   const vis=k=>!(PL[k].hide&&PL[k].hide(S)),a=S.act,mv=a&&a.t==='m';
-  let o=`<svg class="map" viewBox="4 12 92 82" preserveAspectRatio="xMidYMid meet" role="img" aria-label="오렌하르트 지도">`;
+  let o=`<svg class="map" viewBox="${MW.x} ${MW.y} ${MW.w} ${MW.h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="오렌하르트 지도">`;
   o+=`<path d="M4 66 C18 60 30 68 44 64 S72 72 96 66" class="canal"/>`;
   ROAD.filter(([x,y])=>vis(x)&&vis(y)).forEach(([x,y])=>{const lk=(PL[x].u&&!PL[x].u(S))||(PL[y].u&&!PL[y].u(S));
     o+=`<line x1="${PL[x].x}" y1="${PL[x].y}" x2="${PL[y].x}" y2="${PL[y].y}" class="road${lk?' lk':''}"/>`});
@@ -703,7 +763,9 @@ function placeView(){
   h+=`<div class="card"><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
   const acts=[];
   if(S.loc==='base'&&!S.base)acts.push(B('manorIn','저택 안으로 들어간다',{sub:'위층에서 노래가 들린다',dis:busy}));
-  if(S.loc==='church'&&S.comps.includes('kirien')&&!S.comps.includes('oswin'))acts.push(B('archive','대성당 뒤편 문서고',{sub:'키리엔 — 교단 장부에 사라진 사람 이름이 있을지도 몰라',dis:busy}));
+  if(S.loc==='church'&&S.night>=3&&!S.comps.includes('oswin')&&!S.dec.oswin)acts.push(B('archive','대성당 뒤편 문서고',{sub:S.party==='kirien'?'키리엔 — 교단 장부에 사라진 사람 이름이 있을지도 몰라':'문서고 쪽이 소란스럽다',dis:busy}));
+  if(S.loc==='church'&&S.dec.oswin&&!S.comps.includes('oswin'))acts.push(B('oswAgain','문서고의 오스윈',{sub:'책장 사이에 숨어 지낸다',dis:busy}));
+  if(S.loc==='street'&&S.dec.kirien&&!S.comps.includes('kirien'))acts.push(B('kirAgain','초소 앞의 키리엔',{sub:'담벼락에 기대어 서 있다',dis:busy}));
   if(S.loc==='base'&&S.base){
     acts.push(B('rest','화로 곁에서 쉬기',{sub:S.hp>=S.mhp?'체력이 가득하다':'1분 · 체력을 모두 되찾는다',dis:busy||S.hp>=S.mhp}));
     if(S.pit)acts.push(B('board','파견 게시판',{sub:`${HELPER}에게 일을 맡긴다`}));
@@ -721,9 +783,9 @@ function placeView(){
   if(acts.length)h+=`<div class="acts">${acts.join('')}</div>`;
   const X=EXP[S.loc];
   if(X)h+=`<h3>탐사</h3><div class="acts">${X.map((x,i)=>B('explore',x.n,{a:i,sub:`${fmt(x.d*SEC())}${x.enc?' · 무언가와 마주칠 수 있다':''}`,dis:busy})).join('')}</div>`;
-  if(S.loc==='church')h+=`<p class="m">대성당 문 앞에 순례자들이 줄을 서 있다. 안쪽 깊은 곳에서 옛 불이 소리 없이 탄다.</p>${S.comps.includes('oswin')?'<p class="empty">— 이 구역의 다음 이야기는 아직 쓰이지 않았다 —</p>':''}`;
+  if(S.loc==='church')h+=`<p class="m">대성당 문 앞에 순례자들이 줄을 서 있다. 안쪽 깊은 곳에서 옛 불이 소리 없이 탄다.</p>${S.comps.includes('oswin')||S.dec.oswin?'<p class="empty">— 이 구역의 다음 이야기는 아직 쓰이지 않았다 —</p>':''}`;
   h+=`</div>`;
-  h+=`<div class="card"><h2>오렌하르트 <span class="m">${S.act&&S.act.t==='m'?PL[S.act.fr].n+' → '+PL[S.act.to].n:'지도의 장소를 누르면 그곳으로 간다'}</span></h2>${mapSvg()}</div>`;
+  h+=`<div class="card"><h2>오렌하르트 <span class="m">${S.act&&S.act.t==='m'?PL[S.act.fr].n+' → '+PL[S.act.to].n:'지도의 장소를 누르면 그곳으로 간다'}</span></h2><div class="mapw" id="mapw"><div class="mapc"><button class="btn" data-c="mapzoom" data-a="1.3" title="확대">＋</button><button class="btn" data-c="mapzoom" data-a="0.77" title="축소">－</button><button class="btn" data-c="mapcenter" title="현재 위치로">현재 위치로</button></div>${mapSvg()}</div></div>`;
   if(S.loc===(S.base?'base':'docks'))h+=`<div class="card"><details open><summary>가방</summary>${bagHtml()}</details></div>`;
   return h;
 }
@@ -739,15 +801,18 @@ function sideCards(){
 function charView(){
   const r=RACE[S.race];
   let h=`<div class="card"><h2>${esc(S.name)}</h2><p class="m">${(SEX.find(x=>x[0]===S.sex)||SEX[2])[1]}</p><p>${r.n} — ${r.d}</p><p class="m">계통: ${r.t[S.tr][0]} — ${r.t[S.tr][1]}</p><p class="m">출신: ${ORIGIN[S.og][0]} — ${ORIGIN[S.og][1]}</p>
-  <h3>능력치</h3><div class="stats">${SN.map((n,i)=>`<span>${n}</span>${bar(S.st[i],12)}<span>${S.st[i]}</span>`).join('')}</div>
-  <p class="m">체력 ${S.mhp} · 공격 배수 ${patk().toFixed(2)}</p></div>`;
+  <h3>레벨 ${S.lv} <span class="m">경험 ${S.xp} / ${xpNeed(S.lv)}</span></h3>
+  <h3>능력치${S.sp?` <span class="hbn">올릴 수 있는 점수 ${S.sp}</span>`:''}</h3><div class="stats st4">${SN.map((n,i)=>`<span>${n}</span>${bar(S.st[i],14)}<span>${S.st[i]}${S.sp?' '+B('statup','＋',{a:i,cls:'sm'}):''}</span><span class="m sne">${SNE[i]}</span>`).join('')}</div>
+  <p class="m">체력 ${S.mhp} · 공격 ${dAtk(S.st)} · 강타 ${dHeavy(S.st,0)}~${dHeavy(S.st,1)} · 되받아치기 ${dCounter(S.st,0)}</p></div>
+  <div class="card"><h2>기술 ${S.skp?'<span class="hbn">새 기술을 배울 수 있다</span>':''}</h2>${S.sk.map(k=>`<div class="ms"><b>${SKL[k].n}</b> <span class="m">기력 ${'◆'.repeat(SKL[k].c)}${SKL[k].item?' · '+IT[SKL[k].item][0]+' 1':''} · ${SN[SKL[k].st]}</span><div class="m">${SKL[k].d}</div></div>`).join('')}
+  ${S.skp?`<h3>배울 기술 고르기</h3><div class="acts">${Object.keys(SKL).filter(k=>!S.sk.includes(k)).map(k=>B('learn',SKL[k].n,{a:k,sub:`기력 ${SKL[k].c} · ${SN[SKL[k].st]} — ${SKL[k].d}`})).join('')}</div>`:''}</div>`;
   if(S.comps.length)h+=`<div class="card"><h2>동료</h2>${S.comps.map(id=>{const c=COMP[id];return `<div class="ms"><b>${c.n}</b> <span class="m">${c.k} · ${affTier(id)}</span><div class="m">${c.d}</div><div class="m">말투: ${c.sp}</div></div>`}).join('')}</div>`;
   if(S.legacy){const L=S.legacy;h+=`<div class="card"><h2>1편의 기억</h2><p>${esc(L.name)} · ${RACE1[L.race]}${L.og?' · '+esc(L.og):''}</p><p class="m">${L.end?'『'+END1[L.end]+'』의 끝을 본 여정':'끝을 보지 못한 여정'}</p></div>`}
   return h;
 }
 function questView(){
   let cur=MS.findIndex((m,i)=>i>0&&!m[2](S));if(cur<0)cur=MS.length-1;
-  return `<div class="card"><h2>첫 번째 밤</h2>${MS.map((m,i)=>`<div class="ms ${i<cur?'done':i===cur?'now':''}"><b>${i<cur?'◆':i===cur?'◇':'·'} ${m[0]}</b>${i<=cur?`<div class="m">${m[1]}</div>`:''}</div>`).join('')}</div>`;
+  return `<div class="card"><h2>첫 번째 밤</h2>${MS.map((m,i)=>`<div class="ms ${i<cur?'done':i===cur?'now':''}"><b>${i<cur?'◆':i===cur?'◇':'·'} ${m[0]}</b>${i<=cur?`<div class="m">${typeof m[1]==='function'?m[1](S):m[1]}</div>`:''}</div>`).join('')}</div>`;
 }
 function storyView(){
   let h='';
@@ -808,6 +873,8 @@ function tick(){
 /* ===================== 명령 ===================== */
 const CMD={
   tab:a=>{V=a;render()},
+  statup:a=>{if(!S.sp)return;const i=+a;S.st[i]++;S.sp--;const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp+=S.mhp-m0;log(SN[i]+'이(가) 올랐다.');save();render()},
+  learn:a=>{if(!S.skp||!SKL[a]||S.sk.includes(a))return;S.sk.push(a);S.skp--;log('새 기술 — '+SKL[a].n);save();render()},
   race:a=>{C.r=a;C.t=0;render()},sex:a=>{C.sx=a;render()},trait:a=>{C.t=+a;render()},origin:a=>{C.o=+a;render()},
   legread:async()=>{const t=($('#legt')||{}).value||'';try{C.leg=await legacyDecode(t);C.legMsg='1편의 여정을 읽었다.'}catch(e){C.leg=null;C.legMsg='코드를 읽지 못했다. 1편의 설정 → 기록에서 만든 코드를 처음부터 끝까지 붙여 넣었는지 확인하자.'}render()},
   legclear:()=>{C.leg=null;C.legMsg='';render()},
@@ -819,9 +886,10 @@ const CMD={
   talk:()=>{const id=S.party,c=COMP[id];if(!c)return;const line=c.talk[S.loc]||'…';const key=id+':'+S.loc;let gain='';
     if(!S.talked[key]){S.talked[key]=1;aff(id,4);gain='<p class="m">조금 가까워진 것 같다.</p>'}
     ev(cn(id),`<p>${cn(id)} — “${line}”</p>${gain}`,[['고개를 끄덕인다',null]],1)},
-  manorIn:()=>{if(!S.act)SCENE.manorIn()},archive:()=>{if(!S.act)SCENE.archive()},
+  manorIn:()=>{if(!S.act)SCENE.manorIn()},archive:()=>{if(!S.act)SCENE.archive()},kirAgain:()=>{if(!S.act)SCENE.kirAgain()},oswAgain:()=>{if(!S.act)SCENE.oswAgain()},
   rumor:()=>{const L=S.legacy;const pool=RU.concat(L&&L.end&&LEGRU[L.end]?[LEGRU[L.end]]:[]);ev(LODGE,`<p>여관 주인이 잔을 닦으며 말한다.</p><p>“${pool[Math.random()*pool.length|0]}”</p>`,[['고개를 끄덕인다',null]],1)},
-  mapsel:a=>{const p=PL[a];if(!p)return;if(a===S.loc&&!S.act){return}const ok=!p.u||p.u(S);
+  mapzoom:a=>mzoom(+a),mapcenter:()=>mcenter(),
+  mapsel:a=>{if(Date.now()-MDRAG<350)return;const p=PL[a];if(!p)return;if(a===S.loc&&!S.act){return}const ok=!p.u||p.u(S);
     if(!ok){ev(p.n,`<p class="m">${p.d}</p><p>${p.lk}</p>`,[['알겠다',null]],1);return}
     if(S.act){ev(p.n,`<p class="m">${p.d}</p><p>지금 하던 일이 있다.</p>`,[['알겠다',null]],1);return}
     ev(p.n,`<p class="m">${p.d}</p><p>${fmt(travelSec(S.loc,a)*SEC())} 걸린다.</p>`,[['간다',()=>CMD.go(a)],['그만둔다',null]])},
@@ -881,8 +949,12 @@ let G={on:false};
 const bfoe=()=>G.kind==='tut'?TUTF:FOES[G.foe];
 const btier=()=>{if(G.kind==='tut')return TIER[0];if(G.kind==='practice')return TIER[Math.min(3,1+S.night)];const F=bfoe();return TIER[G.ph===2&&F.tier2!=null?F.tier2:F.tier]};
 const bsafe=()=>G.kind!=='fight';
-const BW=()=>{const D=DF(),m=(G.guard?1.3:1)*btier().w;return{d:D.d*m,p:D.p*m,g:D.d*m*1.6}}; // g: 일찍 누르면 스침
-const patk=()=>1+(Math.max(S.st[0],S.st[1])-4)*.06;
+const BW=()=>{const D=DF(),m=(G.guard?1.3:1)*(G.wide?1.3:1)*btier().w*(1+(sv(2)-3)*.03);return{d:D.d*m,p:D.p*m*(G.stance?1.5:1),g:D.d*m*1.6}}; // g: 일찍 누르면 스침. 정신이 높을수록 판정이 넓다
+const sv=i=>G.kind==='fight'?S.st[i]:5; // 전투에서 쓰는 능력치(가르침·연습은 5로 고정)
+const dAtk=st=>5+st[0];
+const dHeavy=(st,perf)=>Math.round((10+1.6*st[0])*(perf?1.7:1));
+const dCounter=(st,stance)=>Math.round((3+.6*st[1])*(stance?2:1));
+const SV=()=>[sv(0),sv(1),sv(2),sv(3)];
 
 /* 소리 */
 let AC=null;
@@ -956,12 +1028,17 @@ function bfloat(sel,txt,cls){const bar=$(sel).parentNode;const s=document.create
 function bshake(){const a=$('#barena');a.classList.remove('shake');void a.offsetWidth;a.classList.add('shake')}
 function bacts(){
   const el=$('#bacts');el.className='';
-  if(G.st==='player'){
-    const tut=G.kind==='tut',can2=G.fp>=2&&!tut;
-    el.innerHTML=`<button class="btn" data-ba="atk">공격<small>타이밍 맞추면 더 아프게</small></button>`+
-      `<button class="btn" data-ba="heavy" ${can2?'':'disabled'}>강타 ◆◆<small>구간이 좁고 빠르다</small></button>`+
+  if(G.st==='player'&&G.menu==='skill'){
+    el.innerHTML=S.sk.map(k=>{const K=SKL[k],noItem=K.item&&(bsafe()||!(S.inv[K.item]>0)),ok=G.fp>=K.c&&!noItem&&G.kind!=='tut';
+      return `<button class="btn" data-ba="sk" data-k="${k}" ${ok?'':'disabled'}>${K.n} ${'◆'.repeat(K.c)}<small>${noItem?IT[K.item][0]+'이(가) 없다':K.d}</small></button>`}).join('')+
+      `<button class="btn" data-ba="back">돌아가기<small>다른 행동을 고른다</small></button>`;
+  }else if(G.st==='player'){
+    const tut=G.kind==='tut',can2=tut||G.fp>=2,st=SV();
+    el.innerHTML=`<button class="btn" data-ba="atk" ${tut?'disabled':''}>공격<small>바로 벤다 · 피해 ${dAtk(st)}</small></button>`+
+      `<button class="btn" data-ba="heavy" ${can2?'':'disabled'}>강타 ${tut?'':'◆◆'}<small>금빛에 맞추면 ${dHeavy(st,1)}</small></button>`+
+      `<button class="btn" data-ba="skill" ${tut?'disabled':''}>기술<small>${S.sk.map(k=>SKL[k].n).join(' · ')}</small></button>`+
       `<button class="btn" data-ba="guard" ${tut?'disabled':''}>자세 잡기<small>판정 넓게 · 기력 +1</small></button>`+
-      `<button class="btn" data-ba="band" ${G.band>0&&!bsafe()?'':'disabled'}>붕대 ${G.band}<small>체력 30 회복</small></button>`;
+      `<button class="btn wide" data-ba="band" ${G.band>0&&!bsafe()?'':'disabled'}>붕대 ${G.band}<small>체력 ${24+2*sv(3)} 회복</small></button>`;
   }else if(G.st==='enemy'){
     el.className='def';
     el.innerHTML=CFG.auto?`<button class="btn wide" disabled>자동 회피 중</button>`:`<button class="btn" data-p="dodge">회피<small><kbd>F</kbd> / <kbd>Space</kbd></small></button><button class="btn" data-p="parry">받아치기<small><kbd>J</kbd></small></button>`;
@@ -993,27 +1070,44 @@ function bpick(){
   let m;do{m=pool[Math.random()*pool.length|0]}while(m===G.last&&pool.length>1);G.last=m;return m;
 }
 function playerTurn(){G.st='player';G.turn++;if(G.turn>1)G.fp=Math.min(5,G.fp+1);G.guard=false;if(!G.next&&G.kind!=='tut')G.next=bpick();brender()}
-function bact(a){
-  ac();if(G.st!=='player')return;if(G.kind==='tut'&&a!=='atk')return;
-  if(a==='atk'||a==='heavy'){if(a==='heavy'){if(G.fp<2)return;G.fp-=2}startQte(a);return}
+function afterAct(){G.st='wait';G.menu=null;brender();setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650)}
+function bact(a,k){
+  ac();if(G.st!=='player')return;if(G.kind==='tut'&&a!=='heavy')return;
+  if(a==='skill'){G.menu='skill';brender();return}
+  if(a==='back'){G.menu=null;brender();return}
+  if(a==='sk'){useSkill(k);return}
+  if(a==='atk'){let d=dAtk(SV());if(G.open){d=Math.round(d*1.5);G.open=false}G.fx.push({k:'slash',t:now()});SND.slash();bjudge('일격','dodge');dmgFoe(d);blog('공격. '+d+' 피해.');afterAct();return}
+  if(a==='heavy'){if(G.kind!=='tut'){if(G.fp<2)return;G.fp-=2}G.menu=null;startQte('heavy');return}
   if(a==='guard'){G.guard=true;G.fp=Math.min(5,G.fp+1);blog('자세를 낮춘다. 다음 공격을 읽기 쉬워진다.');enemyTurn();return}
-  if(a==='band'){if(G.band<=0)return;G.band--;const h=Math.min(30,G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
+  if(a==='band'){if(G.band<=0)return;G.band--;const h=Math.min(24+2*sv(3),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
+}
+function useSkill(k){
+  const K=SKL[k];if(!K||!S.sk.includes(k)||G.kind==='tut'||G.fp<K.c)return;
+  if(K.item){if(bsafe()||!(S.inv[K.item]>0))return;add(K.item,-1)}
+  G.fp-=K.c;const st=SV();
+  if(k==='stance'){G.stance=1;bjudge('받아치기 자세','parry');blog('칼끝을 낮춘다. 다음 공격을 받아칠 준비를 한다.')}
+  if(k==='hamstring'){const d=4+st[3];G.slow=1;G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);bjudge('발목 긋기','dodge');blog('발목을 그었다. '+d+' 피해. 적이 느려진다.')}
+  if(k==='spirit'){const d=Math.round(10+2.4*st[1]);G.fx.push({k:'parry',t:now(),r:Math.random()});SND.parry();dmgFoe(d);bjudge('혼불','parry');blog('푸른 혼불이 적을 감싼다. '+d+' 피해.')}
+  if(k==='shock'){const d=Math.round(6+1.5*st[1]);G.wide=1;G.fx.push({k:'parry',t:now(),r:Math.random()});SND.perfect();dmgFoe(d);bjudge('방전','parry');blog('마력이 터진다. '+d+' 피해. 적의 움직임이 또렷이 보인다.')}
+  if(k==='mend'){const h=Math.min(8+3*st[2],G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');bjudge('숨 고르기','dodge');blog('숨을 고른다. 체력 '+h+' 회복.')}
+  if(k==='ash'){G.forget=1;bjudge('재 흩뿌리기','miss');blog('푸른 재를 뿌렸다. 적의 눈빛이 잠깐 흐려진다.')}
+  bbars();afterAct();
 }
 function startQte(kind){
-  G.st='qte';const hv=kind==='heavy',tut=G.kind==='tut',c=hv?.84:.78,h=(hv?.04:.08)*(tut?1.4:1);
-  G.q={kind,t0:now()+300,dur:(hv?620:820)*(tut?1.2:1),z:[c-h,c+h],done:false};
+  G.st='qte';const tut=G.kind==='tut',c=.80,h=(.07+sv(3)*.004)*(tut?1.3:1);
+  G.q={kind,t0:now()+300,dur:700*(tut?1.2:1),z:[c-h,Math.min(.97,c+h)],done:false};
   $('#bqz').style.left=G.q.z[0]*100+'%';$('#bqz').style.width=(G.q.z[1]-G.q.z[0])*100+'%';$('#bqm').style.left='0%';brender();
 }
 function qteHit(ts){const q=G.q;if(!q||q.done)return;const p=(ts+CFG.lat-q.t0)/q.dur;if(p<0)return;resolveQte(p>=q.z[0]&&p<=q.z[1])}
 function resolveQte(perfect){
-  const q=G.q;q.done=true;const hv=q.kind==='heavy';
-  let d=hv?(perfect?32:18):(perfect?16:10);if(G.kind==='fight')d=Math.round(d*patk());if(G.open){d=Math.round(d*1.5);G.open=false}
+  const q=G.q;q.done=true;const hv=true;
+  let d=dHeavy(SV(),perfect);if(G.open){d=Math.round(d*1.5);G.open=false}
   G.S.qte++;if(perfect)G.S.perf++;
   G.fx.push({k:'slash',t:now(),gold:perfect});perfect?SND.perfect():SND.slash();
-  bjudge(perfect?(hv?'정확한 강타':'정확한 일격'):(hv?'강타':'일격'),perfect?'parry':'dodge',null);
+  bjudge(perfect?'정확한 강타':'강타',perfect?'parry':'dodge');
   dmgFoe(d);G.st='wait';brender();
   if(G.kind==='tut'){if(perfect)G.tg++;else blog('모르텐 — “조금 더 기다리게. 금빛에 닿을 때.”');brender();setTimeout(()=>{if(G.on&&!tutCheck()){G.st='player';brender()}},650);return}
-  blog((hv?'강타':'공격')+(perfect?' — 빈 곳을 정확히 찔렀다. ':'. ')+d+' 피해.');
+  blog('강타'+(perfect?' — 빈 곳을 정확히 찔렀다. ':'. ')+d+' 피해.');
   setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650);
 }
 function dmgFoe(d){bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
@@ -1029,7 +1123,10 @@ function enemyTurn(){
   if(!G.on)return;
   if($('#sov').classList.contains('on')){G.cur=G.next;G.paused='enemy';return}
   const m=MV[G.next];G.cur=G.next;G.st='enemy';
-  const sp=DF().sp*btier().sp,bs=m.b.map(b=>({t:b.t*sp,a:b.a*sp,f:b.f&&b.f.map(x=>x*sp)}));
+  const sp=DF().sp*btier().sp*(G.slow?1.3:1),bs=m.b.map(b=>({t:b.t*sp,a:b.a*sp,f:b.f&&b.f.map(x=>x*sp)}));G.slow=0;
+  if(G.forget){G.forget=0;
+    if(bs.length>1){bs.shift();const t0=bs[0].t;bs.forEach(b=>b.t-=t0);blog(m.n+' — 첫 박자를 잊었다.')}
+    else{G.st='wait';G.beats=[];blog(m.n+' — 휘두르려다 멈춘다. 무엇을 하려던 건지 잊었다.');G.next=bpick();brender();setTimeout(()=>{if(G.on)playerTurn()},900);return}}
   const base=now()+650+Math.max(...bs.map(b=>b.a-b.t));
   G.beats=bs.map(b=>({T:base+b.t,a:b.a,f:b.f,res:null,warned:false}));
   G.res={dodge:0,parry:0,hit:0,graze:0};G.lock=0;brender();
@@ -1039,7 +1136,7 @@ function resolveBeat(b,kind,ofs,note){
   b.res=kind;const m=MV[G.cur],t=now(),dm=DF().dm*(G.guard?.5:1);
   if(ofs!=null)G.S.ofs.push(ofs);
   if(kind==='dodge'){G.S.dodge++;G.res.dodge++;G.fx.push({k:'dodge',t});SND.dodge();bjudge('회피','dodge',ofs)}
-  if(kind==='parry'){G.S.parry++;G.res.parry++;G.fx.push({k:'parry',t,r:Math.random()});SND.parry();bjudge('받아침','parry',ofs);G.fp=Math.min(5,G.fp+1);if(G.kind!=='tut')dmgFoe(6);bbars()}
+  if(kind==='parry'){G.S.parry++;G.res.parry++;G.fx.push({k:'parry',t,r:Math.random()});SND.parry();bjudge('받아침','parry',ofs);G.fp=Math.min(5,G.fp+1);if(G.kind!=='tut')dmgFoe(dCounter(SV(),G.stance));bbars()}
   if(kind==='graze'){G.S.graze++;G.res.graze++;G.fx.push({k:'dodge',t},{k:'hit',t});SND.dodge();bjudge('스침','miss',ofs);hurt(Math.max(1,Math.round(m.dmg*dm*.5)));bbars()}
   if(kind==='hit'){G.S.hit++;G.res.hit++;G.fx.push({k:'hit',t});SND.hit();bshake();bjudge(note||'맞음','hit',ofs);hurt(Math.round(m.dmg*dm));bbars()}
   if(G.kind==='tut'){const g=TS[G.tut].goal;if((g==='dodge'&&kind==='dodge')||(g==='parry'&&kind==='parry'))G.tg++;btele()}
@@ -1047,8 +1144,8 @@ function resolveBeat(b,kind,ofs,note){
 }
 function finishEnemy(){
   if(!G.on||G.st!=='enemy')return;
-  const m=MV[G.cur],n=m.b.length,r=G.res,full=r.parry===n;
-  G.beats=[];G.st='wait';
+  const n=G.beats.length,m=MV[G.cur],r=G.res,full=r.parry===n;
+  G.beats=[];G.st='wait';G.stance=0;G.wide=0;
   if(G.kind==='tut'){
     if(TS[G.tut].goal==='clean'){if(!r.hit&&!r.graze)G.tg++;else blog('모르텐 — “다시. 진한 고리만.”')}
     brender();if(!tutCheck()){G.next=bpick();brender();setTimeout(()=>{if(G.on&&G.st==='wait')enemyTurn()},900)}return;
@@ -1104,10 +1201,10 @@ function endBattle(res){
     if(res==='win'){
       const L=F.loot();if(XL){Object.entries(XL.i).forEach(([k,n])=>L.i[k]=(L.i[k]||0)+n);L.g+=XL.g}Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;
       const story=NIGHT[S.night]===G.foe;if(story)S.night++;
-      log(F.n+'을(를) 물리쳤다.');
+      log(F.n+'을(를) 물리쳤다.');const XPL=gainXp(F.xp||5);
       if(story&&G.foe==='lamp'){S.pend='kirien';jr('편지가 가리킨 사람을 쓰러뜨렸다. 꺼지지 않는 등불이 돌바닥을 굴렀다. 그 사람이 중얼거린 이름은 끝내 알아듣지 못했다. 잊은 것은 아직 찾지 못했다. 교단 구역으로 가는 길이 열렸다.');S.hp=Math.max(S.hp,1)}
       else if(story)jr(F.win);
-      pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([F.win,`<span class="m">${line}</span>`].concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[]))});
+      pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([F.win,`<span class="m">${line}</span>`]).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
     }else{
       S.hp=Math.ceil(S.mhp*.3);S.loc=S.base?'base':'docks';S.act=null;log(F.n+' 앞에서 쓰러졌다.');
       pop('쓰러졌다',{n:[F.n+' 앞에서 돌바닥이 차가웠다.',(S.base?'눈을 뜨니 본거지 화로 앞이다.':`눈을 뜨니 ${LODGE} 방이다.`)+' 누군가 끌고 와 준 모양이다. 체력이 조금 돌아왔다.',`<span class="m">${line}</span>`]});
@@ -1117,7 +1214,7 @@ function endBattle(res){
   save();render();
 }
 /* 전투 입력 */
-$('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-ba]');if(b&&!b.disabled){bact(b.dataset.ba);b.blur()}});
+$('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-ba]');if(b&&!b.disabled){bact(b.dataset.ba,b.dataset.k);b.blur()}});
 $('#bov').addEventListener('click',e=>{const b=e.target.closest('[data-bo]');if(!b)return;const o=b.dataset.bo;
   if(o==='fgo'){bovClose();blog(bfoe().intro);playerTurn()}if(o==='tgo')tutGo();if(o==='tnext'){G.tut++;tutStep()}});
 $('#bset').addEventListener('click',e=>{e.currentTarget.blur();settings()});
@@ -1134,7 +1231,7 @@ document.addEventListener('keydown',e=>{
   if(e.repeat){if(G.st==='enemy'||G.st==='qte')e.preventDefault();return}
   if(G.st==='qte'&&(k===' '||k==='f'||k==='j'||k==='enter')){e.preventDefault();press('qte',ts);return}
   if(G.st==='enemy'){if(k===' '||k==='f'){e.preventDefault();press('dodge',ts)}else if(k==='j'){e.preventDefault();press('parry',ts)}}
-  if(G.st==='player'){const m={'1':'atk','2':'heavy','3':'guard','4':'band'}[k];if(m){const btn=document.querySelector(`[data-ba="${m}"]`);if(btn&&!btn.disabled)bact(m)}}
+  if(G.st==='player'){const m={'1':'atk','2':'heavy','3':'skill','4':'guard','5':'band'}[k];if(m){const btn=document.querySelector(`[data-ba="${m}"]`);if(btn&&!btn.disabled)bact(m)}}
 });
 window.addEventListener('resize',()=>{if(G.on)sizeCv()});
 if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',readCols);
@@ -1179,7 +1276,7 @@ $('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-bdev]');if
 
 /* ===================== 시작 ===================== */
 // 테스트 손잡이(자동 테스트가 쓴다)
-window.__k2={COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>
