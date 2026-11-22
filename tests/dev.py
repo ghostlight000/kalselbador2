@@ -15,13 +15,11 @@ with sync_playwright() as p:
     pg.click('#devb');assert pg.is_visible('#dov .dev')
     pg.click('#dov [data-dv=coin]');pg.click('#dov [data-dv=band]');S=pg.evaluate('window.__k2.S');assert S['coin']==55 and S['inv']['band']==7
     pg.click('#dov [data-dv=leg]');assert pg.evaluate('window.__k2.S.legacy.end')=='k'
-    pg.click('#dov [data-dv=night][data-a="3"]');pg.click('#dov [data-dv=comp]');pg.click('#dov [data-dv=close]');pg.wait_for_timeout(800)
-    assert not pg.is_visible('#ov.on') and not pg.evaluate('window.__k2.S.base')
-    pg.click('#devb');pg.click('#dov [data-dv=comp]');pg.click('#dov [data-dv=close]');pg.wait_for_timeout(800)
-    assert not pg.is_visible('#ov.on') and not pg.evaluate('window.__k2.S.base')
+    pg.click('#dov [data-dv=comp]');pg.click('#dov [data-dv=comp]');pg.click('#dov [data-dv=aff]');pg.click('#dov [data-dv=close]');pg.wait_for_timeout(300)
+    s=pg.evaluate('window.__k2.S');assert s['comps']==['kirien','oswin'] and s['night']==3 and s['aff']['kirien']==30, s
     pg.click('#devb');pg.click('#dov [data-dv=base]');pg.wait_for_timeout(200)
-    assert '여우 모양 문진' in pg.inner_text('#ov');pg.click('#ov .btn.pri');assert pg.evaluate('window.__k2.S.base')==1
-    pg.click('#devb');pg.click('#dov [data-dv=pit]');pg.click('#dov [data-dv=close]');assert pg.evaluate('window.__k2.S.pit')==1;print('dev base/pit ok')
+    assert pg.inner_text('#ov h2')=='오르빌 저택' and '여우 모양 문진' in pg.inner_text('#ov');pg.click('#ov .btn.pri');assert pg.evaluate('window.__k2.S.base')==1
+    pg.click('#devb');pg.click('#dov [data-dv=pit]');pg.wait_for_timeout(200);assert pg.inner_text('#ov h2')=='피트';pg.click('#ov .btn.pri');assert pg.evaluate('window.__k2.S.pit')==1;print('dev comps/base/pit ok')
     # 즉시 완료: ?test에서는 이미 빠르니 끄고 켜는 표시만 확인
     pg.click('#devb');t=pg.inner_text('#dov [data-dv=fast]');print('fast btn:',t);pg.click('#dov [data-dv=close]')
     # 격노 직전 점등꾼 → 공격 한 번이면 격노 → 즉시 승리
@@ -32,6 +30,9 @@ with sync_playwright() as p:
     pg.wait_for_timeout(2600);pg.click('#bdev [data-bdev=win]');pg.wait_for_function('!window.__k2.G.on',timeout=5000)
     h=pg.inner_text('#ov h2');print('win ->',h);assert '점등꾼' in h;pg.click('#ov .btn.pri')
     # 즉시 패배
+    for f in ['warden','singer','rats']:
+        pg.click('#devb');pg.click(f'#dov [data-dv=fight][data-a={f}]');pg.click('#bov .btn.pri');pg.click('#bdev [data-bdev=win]');pg.wait_for_function('!window.__k2.G.on',timeout=5000);pg.click('#ov .btn.pri');pg.wait_for_timeout(100)
+    print('new foes ok')
     pg.click('#devb');pg.click('#dov [data-dv=fight][data-a=dog]');pg.click('#bov .btn.pri');pg.click('#bdev [data-bdev=lose]');pg.wait_for_function('!window.__k2.G.on',timeout=5000)
     assert pg.inner_text('#ov h2')=='쓰러졌다';pg.click('#ov .btn.pri')
     # 진행 중인 일 끝내기(빠른 모드 끄고)
