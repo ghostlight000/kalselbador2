@@ -28,7 +28,7 @@ with sync_playwright() as p:
     for i in range(4):
         pg.click('#pv .eo'); pg.click('#pv .eo'); pg.wait_for_timeout(50)
         t=pg.inner_text('#pv')
-        if i==1: assert '레아는' in t and '부두' in t, t   # 출신 1 = 부두 인부, 받침 없는 이름 → '는'
+        if i==1: assert '레아는' in t and '용 사냥꾼' in t, t   # 출신 1 = 용 사냥꾼 일족의 후예
         if i==2: assert '불지기' in t, t                     # 1편 엔딩 k의 소문
     pg.click('#pv .eo'); pg.click('#pv [data-pv=close]'); pg.wait_for_timeout(100)
     S=pg.evaluate('window.__k2.S'); print('made',S['name'],S['race'],S['og'],S['st'],S['loc'],S['pro']); assert S['pro']==99 and S['loc']=='street' and not S['base']
@@ -59,7 +59,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=go][data-a=church]'); pg.wait_for_function("window.__k2.S.loc==='church'",timeout=10000); pg.wait_for_timeout(600)
     pg.click('button[data-c=tab][data-a=quest]'); q=pg.inner_text('.M'); print('quest now:',[l for l in q.split('\n') if '◇' in l]); assert '뼈대는 여기까지' in q
     pg.click('button[data-c=tab][data-a=story]'); assert '테오르' in pg.inner_text('.M')
-    pg.click('button[data-c=tab][data-a=char]'); assert '부두 인부' in pg.inner_text('.M')
+    pg.click('button[data-c=tab][data-a=char]'); assert '용 사냥꾼 일족의 후예' in pg.inner_text('.M')
     # 기록 코드 왕복
     code=pg.evaluate('window.__k2.scode()'); assert code.startswith('KS2.')
     o=pg.evaluate('c=>window.__k2.sdecode(c)',code); assert o['night']==3 and o['name']=='레아'
