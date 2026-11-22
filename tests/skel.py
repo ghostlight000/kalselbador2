@@ -99,7 +99,7 @@ with sync_playwright() as p:
     s=S(pg); print('level',s['lv'],'xp',s['xp'],'sp',s['sp'],'skp',s['skp'],'sk',s['sk']); assert s['lv']>=3 and s['sp']>=2 and s['skp']>=1 and s['sk']==['hamstring']
     pg.click('button[data-c=tab][data-a=char]'); assert '✦' in pg.inner_text('.top')
     st0=s['st'][1]; m0=s['mhp']; pg.click('button[data-c=statup][data-a="1"]'); pg.click('button[data-c=statup][data-a="0"]'); s=S(pg); assert s['st'][1]==st0+1 and s['mhp']==m0+4
-    pg.click('button[data-c=learn][data-a=spirit]'); s=S(pg); assert 'spirit' in s['sk']; print('stats/skills ok',s['st'],s['sk'])
+    assert pg.locator('button[data-c=learn][data-a=spirit]').count()==0; pg.evaluate("()=>{window.__k2.S.mg=1;window.__k2.render()}"); pg.click('button[data-c=learn][data-a=spirit]'); s=S(pg); assert 'spirit' in s['sk']; print('stats/skills ok',s['st'],s['sk'])
     # 기술을 실전에서: 혼불·발목 긋기
     pg.click('button[data-c=tab][data-a=place]'); pg.evaluate("clearInterval(window.__bot)"); pg.evaluate("window.__k2.startBattle('fight','dog')"); pg.click('#bov .btn.pri'); pg.wait_for_function("window.__k2.G.st==='player'")
     pg.evaluate("window.__k2.G.fp=5"); pg.click('#bacts [data-ba=skill]'); assert pg.locator('#bacts [data-k=spirit]').count()==1
@@ -115,7 +115,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.hp=99999;delete s.vis;delete s.sex;delete s.aff;s.comps.push('임시 동료 1');localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
     s=S(pg); assert s['hp']==s['mhp'] and s['vis'] and s['sex']=='x' and s['aff']=={} and s['comps']==['kirien','oswin','ibre','kasimir']
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.v=1;delete s.base;delete s.pro;s.loc='inn';localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
-    s=S(pg); assert s['v']==9 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
+    s=S(pg); assert s['v']==10 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
     # ---- 패배: 본거지 없으면 여관에서 ----
     pg.evaluate("()=>{const K=window.__k2;K.S=null}"); pg.evaluate("window.__k2.render()")
     pg.fill('#cname','카인'); pg.click('button[data-c=start]'); pg.wait_for_timeout(100); pg.click('#pv [data-pv=skip]'); pg.click('#pv .eo'); pg.click('#pv [data-pv=close]')
