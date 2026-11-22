@@ -17,7 +17,7 @@ def setup(pg):
     pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("가르침은 건너뛴다")');pg.click('#ov.on .btn.pri')
     assert S(pg)['name']=='베렌'
     pg.evaluate("()=>{const K=window.__k2;K.S.night=3;K.S.tutd=1;K.joinComp('kirien');K.joinComp('oswin');K.grantBase()}");okpop(pg)
-    pg.evaluate("()=>{const K=window.__k2;K.S.pit=1;K.S.coin=50;K.S.loc='street';K.render()}")
+    pg.evaluate("()=>{const K=window.__k2;K.S.pit=1;K.S.coin=50;K.S.loc='street';K.S.dec.ibre=1;K.S.dec.kasimir=1;K.S.mort=2;K.render()}")
 results={}
 with sync_playwright() as p:
     b=p.chromium.launch()
@@ -48,12 +48,16 @@ with sync_playwright() as p:
             choose(pg,'사지 않는다');okpop(pg)
         assert S(pg)['kq']==3
         if end!='pour':assert pg.locator('button[data-c=kqbuy]').count()==1
-        pg.click('button[data-c=kq4]')
+        assert S(pg)['outs']==1;go(pg,'outskirts');pg.click('button[data-c=kqM]');assert '엄마를 잃어버렸구나' in pg.inner_text('#ov');choose(pg,'나도 손을');t=pg.inner_text('#ov');assert '네 게 아니구나' in t;okpop(pg);assert S(pg)['kq']==4
+        go(pg,'street');assert pg.locator('button[data-c=kqD][disabled]').count()==1
+        pg.click('button[data-c=tab][data-a=quest]');assert '이야기가 더 흘러야' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
+        pg.evaluate("()=>{const K=window.__k2;K.S.rev=1;K.render()}");pg.click('button[data-c=kqD]');assert '선생님. 늦으셨습니다' in pg.inner_text('#ov');okpop(pg);assert S(pg)['kq']==5
+        pg.click('button[data-c=kqC]')
         if end=='pour':choose(pg,'남의 기억을 부어 준다');assert '리나야' in pg.inner_text('#ov')
         elif end=='new':
             assert pg.locator('#ov button:has-text("남의 기억")').count()==0;choose(pg,'빈 채로');assert '…에다.' in pg.inner_text('#ov')
         else:choose(pg,'구호소');assert '내가 기억하면 돼요' in pg.inner_text('#ov')
-        okpop(pg);s=S(pg);assert s['kq']==4 and s['kqe']==end and s['cq']['kirien']=='done';results[end]=s['aff']['kirien']
+        okpop(pg);s=S(pg);assert s['kq']==6 and s['kqe']==end and s['cq']['kirien']=='done';results[end]=s['aff']['kirien']
         pg.click('button[data-c=tab][data-a=quest]');assert '◆ 끝' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
         if end=='new':
             # 저택 동료의 방: 누구와도 이야기, 오스윈의 자기 이야기, 표시에 관계 수치 없음

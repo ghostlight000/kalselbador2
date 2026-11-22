@@ -23,6 +23,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=oswAgain]');choose(pg,'같이 가자');assert '숨어 지내는 것도 지겨웠' in pg.inner_text('#ov');choose(pg,'좋다')
     s=S(pg);assert s['comps']==['oswin'] and s['party']=='oswin' and 'oswin' not in s['dec'];print('oswin re-recruited')
     # 둘이 안 되면 저택 소문 없음
+    pg.evaluate("()=>{window.__k2.S.dec.ibre=1}")
     go(pg,'docks');pg.wait_for_timeout(700);assert not pg.is_visible('#ov.on') and not S(pg).get('manor')
     pg.click('button[data-c=tab][data-a=quest]');assert '거절했던 사람을 다시 찾아가 볼까' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     # 다시 영입: 키리엔 → 둘이 되면 여관에서 저택 소문

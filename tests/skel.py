@@ -71,11 +71,15 @@ with sync_playwright() as p:
     choose(pg,'장부에 뭐가 있느냐고 묻는다'); assert pg.locator('#ov button:has-text("각자 갈 길을 간다")').count()==1; choose(pg,'여관으로 보낸다'); assert '여관 1층에서 기다린다' in pg.inner_text('#ov') and '털 날리는' not in pg.inner_text('#ov'); choose(pg,'좋다'); s=S(pg); assert s['comps']==['kirien','oswin'] and s['party']=='kirien'; print('oswin joined')
     assert '여관 1층에서 기다린다' in pg.inner_text('.Rr')
     # ---- 여관 주인 소문 → 저택 ----
-    go(pg,'docks'); pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='녹슨 닻 여관' and '오르빌 저택' in pg.inner_text('#ov'); choose(pg,'브리타를 찾아가 보기로 한다')
+    go(pg,'docks'); pg.wait_for_timeout(700); assert not pg.is_visible('#ov.on')
+    pg.click('button[data-c=ibreM]'); assert '무색 셋이 또 이겼다' in pg.inner_text('#ov'); choose(pg,'도전한다'); h=fight(pg); assert '무색 셋' in h
+    pg.wait_for_selector('#ov.on h2',timeout=5000); choose(pg,'이름이 뭐야?'); assert '그 이름을 물은 사람은 처음' in pg.inner_text('#ov'); choose(pg,'여관으로 보낸다'); choose(pg,'좋다'); assert 'ibre' in S(pg)['comps']; print('ibre joined')
+    go(pg,'street'); go(pg,'docks'); pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='녹슨 닻 여관' and '오르빌 저택' in pg.inner_text('#ov'); choose(pg,'브리타를 찾아가 보기로 한다')
     assert pg.locator('.map .node[data-a=base]').count()==0
     go(pg,'street'); pg.click('button[data-c=brita]'); assert '한 줄도 말이 안 돼' in pg.inner_text('#ov'); choose(pg,'주문이 사라졌다는 거야?'); assert '겨울 시대 노인들' in pg.inner_text('#ov'); choose(pg,'묘지로 가 보기로 한다')
     go(pg,'church'); pg.click('button[data-c=tomb]'); t=pg.inner_text('#ov'); assert '불을 거둔 이' in t; choose(pg,'열쇠를 챙긴다'); print('pre-manor story ok')
     assert pg.locator('.map .node[data-a=base]').count()==1
+    pg.click('button[data-c=kasM]'); t=pg.inner_text('#ov'); assert '어디서 뵌 것 같군요' in t; choose(pg,'누구냐고 묻는다'); assert '육십 년 전에 대가 끊겼는데요' in pg.inner_text('#ov') or '피 냄새' in pg.inner_text('#ov'); choose(pg,'여관으로 보낸다'); choose(pg,'좋다'); assert 'kasimir' in S(pg)['comps']; print('kasimir joined')
     go(pg,'base'); pg.click('button[data-c=manorIn]'); assert '노래 들려?' in pg.inner_text('#ov'); choose(pg,'위층으로 올라간다'); h=fight(pg); assert '노래하는 옛 주인' in h
     pg.wait_for_selector('#ov.on h2',timeout=5000); t=pg.inner_text('#ov'); assert '여관비는 아끼겠네' in t and '여우 모양 문진' in t; choose(pg,'짐을 옮긴다')
     s=S(pg); assert s['base']==1 and s['inv'].get('relic')==1 and not s['pit']; print('base ok')
@@ -106,10 +110,10 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=story]'); assert '테오르' in pg.inner_text('.M') and '오르빌 저택' in pg.inner_text('.M')
     pg.click('button[data-c=tab][data-a=place]')
     # ---- 기록 코드 · 새로고침 · 저장 이전 ----
-    code=pg.evaluate('window.__k2.scode()'); o=pg.evaluate('c=>window.__k2.sdecode(c)',code); assert o['base']==1 and o['comps']==['kirien','oswin']
+    code=pg.evaluate('window.__k2.scode()'); o=pg.evaluate('c=>window.__k2.sdecode(c)',code); assert o['base']==1 and o['comps']==['kirien','oswin','ibre','kasimir']
     pg.reload(); pg.wait_for_timeout(300); assert S(pg)['loc']=='base' and S(pg)['party']=='oswin'
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.hp=99999;delete s.vis;delete s.sex;delete s.aff;s.comps.push('임시 동료 1');localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
-    s=S(pg); assert s['hp']==s['mhp'] and s['vis'] and s['sex']=='x' and s['aff']=={} and s['comps']==['kirien','oswin']
+    s=S(pg); assert s['hp']==s['mhp'] and s['vis'] and s['sex']=='x' and s['aff']=={} and s['comps']==['kirien','oswin','ibre','kasimir']
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.v=1;delete s.base;delete s.pro;s.loc='inn';localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
     s=S(pg); assert s['v']==9 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
     # ---- 패배: 본거지 없으면 여관에서 ----

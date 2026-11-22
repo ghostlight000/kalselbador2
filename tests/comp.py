@@ -27,8 +27,8 @@ with sync_playwright() as p:
     print('companion attacks ok')
     # 공격 끊기: 확률을 억지로 맞춘다
     pg.wait_for_function("window.__k2.G.st==='player'",timeout=10000)
-    E(pg,"()=>{const K=window.__k2;K.S.cl.kirien.r.cut=3;K._r=Math.random;Math.random=()=>0.01}")
-    E(pg,"window.__k2.bact('guard')");pg.wait_for_timeout(1000);assert '끼어들어 끊었다' in pg.inner_text('#blog');E(pg,"()=>{Math.random=window.__k2._r}")
+    E(pg,"()=>{const K=window.__k2;K.S.cl.kirien.r.cut=3;K._r=Math.random;K.G.cut=1}")
+    E(pg,"window.__k2.bact('guard')");pg.wait_for_function("document.querySelector('#blog').innerText.includes('끼어들어 끊었다')",timeout=5000);E(pg,"()=>{Math.random=window.__k2._r}")
     pg.wait_for_function("window.__k2.G.st==='player'",timeout=5000);print('cut ok')
     # 약점 짚기: 다음 내 공격 +15%
     E(pg,"()=>{const K=window.__k2;K.G.mark=1}");h0=E(pg,"window.__k2.G.fhp");E(pg,"window.__k2.bact('atk')");pg.wait_for_timeout(50);h1=E(pg,"window.__k2.G.fhp")
