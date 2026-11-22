@@ -26,7 +26,7 @@ with sync_playwright() as p:
     go(pg,'docks');pg.wait_for_timeout(700);assert not pg.is_visible('#ov.on') and not S(pg).get('manor')
     pg.click('button[data-c=tab][data-a=quest]');assert '거절했던 사람을 다시 찾아가 볼까' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     # 다시 영입: 키리엔 → 둘이 되면 여관에서 저택 소문
-    go(pg,'street');pg.click('button[data-c=kirAgain]');choose(pg,'같이 가자');assert '진작 그럴 것이지' in pg.inner_text('#ov');choose(pg,'좋다')
+    go(pg,'street');pg.click('button[data-c=kirAgain]');choose(pg,'여관으로 보낸다');assert '진작 그럴 것이지' in pg.inner_text('#ov');choose(pg,'좋다')
     s=S(pg);assert s['comps']==['oswin','kirien'] and s['party']=='oswin';print('kirien re-recruited')
     go(pg,'docks');pg.wait_for_selector('#ov.on h2',timeout=5000);assert '오르빌 저택' in pg.inner_text('#ov');print('manor rumor after two ok')
     b.close()

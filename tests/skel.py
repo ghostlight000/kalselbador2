@@ -62,7 +62,7 @@ with sync_playwright() as p:
     # ---- 교단 문서고 → 오스윈 ----
     go(pg,'church'); pg.click('button[data-c=archive]'); choose(pg,'끼어든다'); h=fight(pg); assert '정화자' in h
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='오스윈'; assert '말 많네' in pg.inner_text('#ov')
-    choose(pg,'장부에 뭐가 있느냐고 묻는다'); assert pg.locator('#ov button:has-text("각자 갈 길을 간다")').count()==1; choose(pg,'같이 가자'); choose(pg,'좋다'); s=S(pg); assert s['comps']==['kirien','oswin'] and s['party']=='kirien'; print('oswin joined')
+    choose(pg,'장부에 뭐가 있느냐고 묻는다'); assert pg.locator('#ov button:has-text("각자 갈 길을 간다")').count()==1; choose(pg,'여관으로 보낸다'); assert '여관 1층에서 기다린다' in pg.inner_text('#ov') and '털 날리는' not in pg.inner_text('#ov'); choose(pg,'좋다'); s=S(pg); assert s['comps']==['kirien','oswin'] and s['party']=='kirien'; print('oswin joined')
     assert '여관 1층에서 기다린다' in pg.inner_text('.Rr')
     # ---- 여관 주인 소문 → 저택 ----
     go(pg,'docks'); pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='녹슨 닻 여관' and '오르빌 저택' in pg.inner_text('#ov'); choose(pg,'가 보기로 한다')
@@ -102,7 +102,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.hp=99999;delete s.vis;delete s.sex;delete s.aff;s.comps.push('임시 동료 1');localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
     s=S(pg); assert s['hp']==s['mhp'] and s['vis'] and s['sex']=='x' and s['aff']=={} and s['comps']==['kirien','oswin']
     pg.evaluate("()=>{const s=JSON.parse(localStorage.getItem('kalsel2'));s.v=1;delete s.base;delete s.pro;s.loc='inn';localStorage.setItem('kalsel2',JSON.stringify(s))}"); pg.reload(); pg.wait_for_timeout(300)
-    s=S(pg); assert s['v']==5 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
+    s=S(pg); assert s['v']==6 and s['base']==1 and s['pro']==99 and s['loc']=='base' and s['pit']==1 and not pg.is_visible('#pv .eo'); print('migrate ok')
     # ---- 패배: 본거지 없으면 여관에서 ----
     pg.evaluate("()=>{const K=window.__k2;K.S=null}"); pg.evaluate("window.__k2.render()")
     pg.fill('#cname','카인'); pg.click('button[data-c=start]'); pg.wait_for_timeout(100); pg.click('#pv [data-pv=skip]'); pg.click('#pv .eo'); pg.click('#pv [data-pv=close]')
