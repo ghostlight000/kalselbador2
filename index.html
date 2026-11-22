@@ -9,17 +9,17 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@700;800&display=swap">
 <style>
 /* ===== 테마: 1편 팔레트(양피지/숯빛) ===== */
-:root{--bg:#cbbfa5;--c:#e5dac3;--c2:#d9ccb0;--t:#2b241c;--m:#64584a;--a:#7a5a2c;--al:rgba(122,90,44,.45);--b:rgba(70,52,30,.20);--bad:#8e3b2b;--g:rgba(110,80,40,.09);--kw:#b8782c;--gauge:rgba(70,52,30,.14);
+:root{--k0:#2e261d;--k1:#463a2c;--k2:#5f5141;--k3:#7a6b58;--k4:#978871;--k5:#b4a68d;--k6:#cfc3aa;--k7:#e8dec8;--bg:#cbbfa5;--c:#e5dac3;--c2:#d9ccb0;--t:#2b241c;--m:#64584a;--a:#7a5a2c;--al:rgba(122,90,44,.45);--b:rgba(70,52,30,.20);--bad:#8e3b2b;--g:rgba(110,80,40,.09);--kw:#b8782c;--gauge:rgba(70,52,30,.14);
 --bo:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='5.21,0.50 26.79,0.50 31.50,5.21 31.50,26.79 26.79,31.50 5.21,31.50 0.50,26.79 0.50,5.21' fill='none' stroke='%237a5a2c' stroke-opacity='.7'/></svg>");
 --bf:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='5.21,0.50 26.79,0.50 31.50,5.21 31.50,26.79 26.79,31.50 5.21,31.50 0.50,26.79 0.50,5.21' fill='%23c3b08a' stroke='%237a5a2c'/></svg>");
 --pn:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='8.21,0.50 23.79,0.50 31.50,8.21 31.50,23.79 23.79,31.50 8.21,31.50 0.50,23.79 0.50,8.21' fill='%23e5dac3' stroke='%237a5a2c' stroke-opacity='.5'/><polygon points='9.86,4.50 22.14,4.50 27.50,9.86 27.50,22.14 22.14,27.50 9.86,27.50 4.50,22.14 4.50,9.86' fill='none' stroke='rgba(70,52,30,.13)'/></svg>");
 color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1c1a17;--c:#26231f;--c2:#2f2b26;--t:#e6dcc8;--m:#a89c86;--a:#b89a62;--al:rgba(184,154,98,.45);--b:rgba(200,180,140,.16);--bad:#bb5a40;--g:rgba(184,154,98,.08);--kw:#e3a65a;--gauge:rgba(0,0,0,.35);
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--k0:#0d0b08;--k1:#1a1611;--k2:#28221b;--k3:#383026;--k4:#453b2f;--k5:#564a3b;--k6:#706150;--k7:#958569;--bg:#1c1a17;--c:#26231f;--c2:#2f2b26;--t:#e6dcc8;--m:#a89c86;--a:#b89a62;--al:rgba(184,154,98,.45);--b:rgba(200,180,140,.16);--bad:#bb5a40;--g:rgba(184,154,98,.08);--kw:#e3a65a;--gauge:rgba(0,0,0,.35);
 --bo:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='5.21,0.50 26.79,0.50 31.50,5.21 31.50,26.79 26.79,31.50 5.21,31.50 0.50,26.79 0.50,5.21' fill='none' stroke='%23b89a62' stroke-opacity='.7'/></svg>");
 --bf:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='5.21,0.50 26.79,0.50 31.50,5.21 31.50,26.79 26.79,31.50 5.21,31.50 0.50,26.79 0.50,5.21' fill='%23463e32' stroke='%23b89a62'/></svg>");
 --pn:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='8.21,0.50 23.79,0.50 31.50,8.21 31.50,23.79 23.79,31.50 8.21,31.50 0.50,23.79 0.50,8.21' fill='%2326231f' stroke='%23b89a62' stroke-opacity='.5'/><polygon points='9.86,4.50 22.14,4.50 27.50,9.86 27.50,22.14 22.14,27.50 9.86,27.50 4.50,22.14 4.50,9.86' fill='none' stroke='rgba(200,180,140,.10)'/></svg>");
 color-scheme:dark}}
-:root[data-theme=dark]{--bg:#1c1a17;--c:#26231f;--c2:#2f2b26;--t:#e6dcc8;--m:#a89c86;--a:#b89a62;--al:rgba(184,154,98,.45);--b:rgba(200,180,140,.16);--bad:#bb5a40;--g:rgba(184,154,98,.08);--kw:#e3a65a;--gauge:rgba(0,0,0,.35);
+:root[data-theme=dark]{--k0:#0d0b08;--k1:#1a1611;--k2:#28221b;--k3:#383026;--k4:#453b2f;--k5:#564a3b;--k6:#706150;--k7:#958569;--bg:#1c1a17;--c:#26231f;--c2:#2f2b26;--t:#e6dcc8;--m:#a89c86;--a:#b89a62;--al:rgba(184,154,98,.45);--b:rgba(200,180,140,.16);--bad:#bb5a40;--g:rgba(184,154,98,.08);--kw:#e3a65a;--gauge:rgba(0,0,0,.35);
 --bo:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='5.21,0.50 26.79,0.50 31.50,5.21 31.50,26.79 26.79,31.50 5.21,31.50 0.50,26.79 0.50,5.21' fill='none' stroke='%23b89a62' stroke-opacity='.7'/></svg>");
 --bf:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='5.21,0.50 26.79,0.50 31.50,5.21 31.50,26.79 26.79,31.50 5.21,31.50 0.50,26.79 0.50,5.21' fill='%23463e32' stroke='%23b89a62'/></svg>");
 --pn:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon points='8.21,0.50 23.79,0.50 31.50,8.21 31.50,23.79 23.79,31.50 8.21,31.50 0.50,23.79 0.50,8.21' fill='%2326231f' stroke='%23b89a62' stroke-opacity='.5'/><polygon points='9.86,4.50 22.14,4.50 27.50,9.86 27.50,22.14 22.14,27.50 9.86,27.50 4.50,22.14 4.50,9.86' fill='none' stroke='rgba(200,180,140,.10)'/></svg>");
@@ -84,7 +84,15 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .empty{color:var(--m);font-size:13px;text-align:center;padding:10px 0}
 .disp{border-top:1px solid var(--b);padding:6px 0;font-size:13px}
 .ms{padding:6px 0;border-bottom:1px solid var(--b)}
-.csk{margin:6px 0 0 10px}.csk.off b{opacity:.55}
+.csk{margin:6px 0 0 10px}
+.scw{position:relative;margin:-2px 0 10px;border:1px solid var(--b);overflow:hidden;aspect-ratio:3/1;background:var(--k6)}
+.scs{display:block;width:100%;height:100%}
+.k0{fill:var(--k0)}.k1{fill:var(--k1)}.k2{fill:var(--k2)}.k3{fill:var(--k3)}.k4{fill:var(--k4)}.k5{fill:var(--k5)}.k6{fill:var(--k6)}.k7{fill:var(--k7)}.kw{fill:var(--kw)}.sft{opacity:.55}.lit{opacity:.9}
+.scs .moon{fill:var(--k7)}.scs .moonh{fill:var(--k7);opacity:.25}
+.av{display:inline-flex;width:34px;height:34px;flex:none;border:1px solid var(--b);border-radius:2px;background:var(--c2);align-items:center;justify-content:center;overflow:hidden;vertical-align:middle}
+.av svg{width:24px;height:24px}img.av{object-fit:cover;padding:0}
+.avs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.avs .btn{padding:2px}.avs .btn.on .av{border-color:var(--a);box-shadow:0 0 0 1px var(--a)}
+.nmrow{display:flex;align-items:center;gap:10px}.nmrow input{flex:1}.csk.off b{opacity:.55}
 .ms.done{color:var(--m)}
 .ms.now b{color:var(--a)}
 
@@ -358,6 +366,92 @@ let ENC_ON=!TEST;
 const roadFoe=a=>{if(!ENC_ON||!S.night||a.fr==='base'&&a.to==='docks'||a.to==='base'&&a.fr==='docks')return null;if(!['street','church'].includes(a.fr)&&!['street','church'].includes(a.to))return null;
   if(Math.random()>=(S.fix&&S.fix.coach?.08:.18))return null;return S.night>=2&&Math.random()<.5?'thief':'dog'};
 const LODGE='녹슨 닻 여관';
+/* ===== 장소 그림 (1편 방식: 면 톤만으로 겹친 실루엣, 가스등 불빛만 따뜻하게) ===== */
+const SCN=(()=>{
+const W=480,H=160,f=n=>(+n).toFixed(1);
+const P=(...p)=>'M'+p.map(q=>f(q[0])+' '+f(q[1])).join(' L')+'Z';
+const sh=(c,d,x)=>`<path class="${c}" d="${d}"${x?' '+x:''}/>`,q=(c,p,x)=>sh(c,P(...p),x);
+const rnd=seed=>{let x=seed%2147483647;if(x<=0)x+=2147483646;return()=>(x=x*16807%2147483647)/2147483647};
+const glow=(x,y,r,o)=>`<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="url(#sgl)" opacity="${o}"/>`;
+const mist=(y,h,o)=>`<rect x="-20" y="${f(y)}" width="${W+40}" height="${f(h)}" class="k7" opacity="${o}" filter="url(#sbl)"/>`;
+const rect=(c,x,y,w,h)=>q(c,[[x,y],[x+w,y],[x+w,y+h],[x,y+h]]);
+// 지붕 줄: 박공·평지붕·굴뚝
+function roofs(seed,base,h0,h1,c,o){o=o||{};const r=rnd(seed);let s='',x=-12;while(x<W+12){const w=16+r()*28,h=h0+r()*(h1-h0),t=r();
+  if(t<.45)s+=q(c,[[x,base],[x,base-h],[x+w/2,base-h-w*.45],[x+w,base-h],[x+w,base]]);else s+=rect(c,x,base-h,w,h);
+  if(o.ch&&r()<.45){const cx=x+w*(.2+r()*.5);s+=rect(c,cx,base-h-10-r()*8,4,14)}
+  if(o.win&&r()<.55){const n=1+(r()*3|0);for(let i=0;i<n;i++)if(r()<.5)s+=rect('kw lit',x+4+i*(w-8)/n,base-h+5+r()*(h-12),2.4,3.4)}
+  x+=w+(r()*3)}return s}
+function lamp(x,y,s,o){const h=34*s;return glow(x,y-h,16*s,o==null?.75:o)+rect('k0',x-.8*s,y-h,1.6*s,h)+q('k0',[[x-3*s,y-h],[x+3*s,y-h],[x+2*s,y-h-5*s],[x-2*s,y-h-5*s]])+rect('kw',x-1.6*s,y-h-4.4*s,3.2*s,3.6*s)}
+function smoke(x,y,s){return sh('k6 sft',`M${f(x)} ${f(y)} c${f(-6*s)} ${f(-8*s)} ${f(6*s)} ${f(-12*s)} ${f(-2*s)} ${f(-22*s)} c${f(-5*s)} ${f(-6*s)} ${f(4*s)} ${f(-10*s)} ${f(-3*s)} ${f(-18*s)}`,`style="fill:none;stroke-width:${f(5*s)}" stroke="var(--k6)" stroke-linecap="round"`)}
+function water(y,seed){const r=rnd(seed);let s=rect('k5',-10,y,W+20,H-y);for(let i=0;i<26;i++){const x=r()*W,yy=y+4+r()*(H-y-6),w=10+r()*30;s+=rect('k6 sft',x,yy,w,1.2)}return s}
+function barge(x,y,s){return q('k1',[[x-30*s,y],[x+30*s,y],[x+24*s,y+7*s],[x-26*s,y+7*s]])+rect('k1',x-12*s,y-9*s,16*s,9*s)+rect('k1',x+8*s,y-26*s,1.6*s,26*s)}
+const S={
+ docks(){let o=roofs(11,96,10,30,'k4',{ch:1})+mist(80,24,.5)+roofs(12,112,18,40,'k2',{ch:1,win:1});
+   o+=rect('k1',300,62,3,52)+q('k1',[[300,62],[360,62],[360,65],[303,66]])+rect('k1',356,65,1,22)+rect('k1',352,86,9,6);
+   o+=water(116,4)+barge(330,114,1.1)+barge(430,118,.8)+barge(200,121,.7);
+   o+=rect('k0',0,104,150,56)+q('k0',[[-4,104],[154,104],[140,86],[10,86]])+rect('kw lit',22,114,8,10)+rect('kw lit',58,114,8,10)+rect('kw lit',96,114,8,10);
+   o+=rect('k0',120,92,2,22)+q('k0',[[112,94],[134,94],[134,96],[112,96]])+sh('k0',`M117 98 a6 6 0 1 0 12 0 l-2 0 a4 4 0 1 1 -8 0Z M122 96 l0 6`)+glow(62,118,30,.45);
+   o+=lamp(176,140,1)+lamp(262,138,.8)+lamp(470,140,1);return o},
+ street(){let o=mist(70,30,.5);const V=[240,82];
+   for(let i=0;i<7;i++){const t=i/7,s=1-t*.85,xl=240-(260*s),xr=240+(260*s),y=82+78*s;
+     o+=q('k'+Math.min(3,1+(i>>1)),[[xl-40*s,y],[xl+18*s,y-6*s],[xl+18*s,y-90*s],[xl-40*s,y-100*s]]);
+     o+=q('k'+Math.min(3,1+(i>>1)),[[xr+40*s,y],[xr-18*s,y-6*s],[xr-18*s,y-90*s],[xr+40*s,y-100*s]]);
+     if(i<5){o+=rect('kw lit',xl+2*s,y-60*s,5*s,8*s)+rect('kw lit',xr-7*s,y-44*s,5*s,8*s)}}
+   o+=q('k2',[[0,H],[W,H],[V[0]+6,V[1]],[V[0]-6,V[1]]]);
+   for(let i=0;i<8;i++){const t=i/8,s=1.25-t*1.1;o+=lamp(240-150*s,82+70*s,s*.9)+lamp(240+150*s,82+70*s,s*.9)}
+   o+=glow(240,80,16,.9)+rect('k0',236,62,8,20)+rect('kw',238,58,4,4);
+   o+=rect('k0',380,116,34,44)+q('k0',[[376,116],[418,116],[397,104]])+rect('kw lit',392,126,8,8);return o},
+ church(){let o=roofs(21,118,8,22,'k4')+mist(96,24,.5);
+   o+=rect('k1',160,58,160,74)+q('k1',[[160,58],[240,30],[320,58]]);
+   [[178,10],[302,10]].forEach(([x])=>{o+=rect('k1',x-14,24,28,108)+q('k1',[[x-14,24],[x,-14],[x+14,24]])+rect('kw lit',x-3,60,6,14)});
+   o+=`<circle class="kw" cx="240" cy="70" r="11" opacity=".85"/>`+glow(240,70,34,.55)+sh('k1',`M240 59 L240 81 M229 70 L251 70`,`style="stroke-width:1.4" stroke="var(--k1)"`);
+   o+=q('k0',[[226,132],[254,132],[254,100],[240,90],[226,100]])+glow(240,120,22,.7)+q('kw',[[233,132],[247,132],[247,106],[240,100],[233,106]]);
+   o+=rect('k0',0,130,W,30);const r=rnd(5);for(let i=0;i<22;i++){const x=r()*W;if(Math.abs(x-240)<40)continue;const h=6+r()*8;o+=q('k0',[[x-3,130],[x+3,130],[x+3,130-h],[x,130-h-3],[x-3,130-h]])}
+   return o},
+ academy(){let o=roofs(31,104,6,16,'k5')+mist(84,20,.5);
+   o+=sh('k3',`M-20 ${H} L-20 110 C120 86 300 78 ${W+20} 96 L${W+20} ${H}Z`);
+   o+=rect('k2',150,72,170,30)+sh('k5 sft',`M170 72 A65 52 0 0 1 300 72Z`)+sh('k2',`M170 72 A65 52 0 0 1 300 72`,`style="fill:none;stroke-width:1.5" stroke="var(--k2)"`);
+   for(let i=1;i<6;i++){const a=Math.PI*i/6;o+=sh('k2',`M235 72 L${f(235-65*Math.cos(a))} ${f(72-52*Math.sin(a))}`,`style="stroke-width:1" stroke="var(--k2)"`)}
+   o+=glow(235,58,40,.35);for(let i=0;i<6;i++)o+=rect('kw lit',160+i*26,82,6,10);
+   o+=rect('k1',120,40,7,62)+rect('k1',340,46,6,56)+smoke(123,40,1)+smoke(343,46,.8);
+   o+=rect('k4',372,84,80,32)+q('k4',[[368,84],[456,84],[412,70]]);for(let i=0;i<4;i++){o+=rect('k1',380+i*18,92,8,12);for(let j=0;j<3;j++)o+=rect('k4',381+i*18+j*2.6,92,.8,12)}
+   o+=lamp(60,150,1)+lamp(420,152,.9);return o},
+ base(){const fx=(S0.fix||{});let o=roofs(41,100,8,20,'k4',{ch:1})+mist(80,22,.5);
+   o+=water(124,9)+sh('k1',`M30 124 C34 90 22 70 40 52 C60 70 50 96 56 124Z`)+sh('k1 sft',`M24 96 C14 110 10 120 8 124 M56 92 C66 104 70 116 72 124`,`style="fill:none;stroke-width:2" stroke="var(--k1)"`);
+   o+=rect('k0',150,56,190,70)+q('k0',[[142,58],[348,58],[322,26],[168,26]])+rect('k0',196,10,10,24)+rect('k0',286,12,10,22);
+   if(!fx.roof)o+=q('k3',[[230,26],[262,26],[252,40],[240,36]])+q('k3',[[300,34],[318,40],[312,48]]);
+   for(let i=0;i<5;i++)for(let j=0;j<2;j++){const lit=S0.base&&(fx.hearth||((i+j)%3===0));o+=rect(lit?'kw lit':'k2',166+i*36,72+j*26,12,16)}
+   o+=q('k0',[[232,126],[258,126],[258,104],[245,98],[232,104]]);if(S0.base)o+=glow(245,112,20,.55);
+   o+=lamp(380,140,1,S0.base?.75:.3);return o},
+ outskirts(){let o=roofs(51,108,4,10,'k5')+mist(90,20,.5)+rect('k3',-10,96,W+20,16);for(let i=0;i<12;i++)o+=rect('k3',i*42,90,14,8);
+   const tent=(x,y,s)=>q('k1',[[x-16*s,y],[x,y-26*s],[x+16*s,y]])+q('kw',[[x-2*s,y],[x,y-9*s],[x+2*s,y]])+glow(x,y-4*s,12*s,.4);
+   [[90,140,1.2],[180,132,.9],[300,136,1],[400,142,1.3],[240,128,.7]].forEach(a=>o+=tent(...a));return o},
+ works(){let o=mist(60,40,.55);const r=rnd(61);for(let i=0;i<8;i++){const x=20+i*60+r()*20,h=50+r()*50;o+=rect('k2',x,130-h,10,h)+smoke(x+5,130-h,1.2)}
+   for(let i=0;i<10;i++){const x=i*50-10;o+=q('k1',[[x,130],[x,104],[x+30,92],[x+30,104],[x+50,104],[x+50,130]])}
+   o+=glow(250,124,46,.6)+rect('kw',236,114,28,16)+rect('k0',0,130,W,30);return o}
+};
+let S0={};
+function scene(k,st){S0=st||{};const fn=S[k];if(!fn)return '';
+  return `<svg class="scs" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="ssk" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--k5)"/><stop offset=".8" style="stop-color:var(--k7)"/></linearGradient><radialGradient id="sgl"><stop offset="0" style="stop-color:var(--kw)" stop-opacity=".9"/><stop offset="1" style="stop-color:var(--kw)" stop-opacity="0"/></radialGradient><filter id="sbl" x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur stdDeviation="5"/></filter><linearGradient id="svg2" x1="0" x2="0" y1="0" y2="1"><stop offset=".55" style="stop-color:var(--k0)" stop-opacity="0"/><stop offset="1" style="stop-color:var(--k0)" stop-opacity=".35"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#ssk)"/><circle class="moon" cx="400" cy="26" r="9"/><circle class="moonh" cx="400" cy="26" r="28"/>${fn()}<rect width="${W}" height="${H}" fill="url(#svg2)"/></svg>`}
+return {scene}})();
+/* 초상: 선으로 그린 아이콘(1편 방식) 또는 사진 */
+const AVI=[
+ ['등불','M12 3v2M9 5h6l-1 2h-4zM8 7h8v9H8zM10 16v3h4v-3M12 10a1.5 2 0 1 0 0.01 0'],
+ ['여우','M4 5l4 4h8l4-4-1 8-7 7-7-7zM9 13h.01M15 13h.01M11 16h2'],
+ ['늑대','M5 4l3 5h8l3-5v9l-3 4-4 3-4-3-3-4zM9 12h.01M15 12h.01M10 16l2 1 2-1'],
+ ['비늘','M12 3c4 2 7 5 7 10 0 4-3 7-7 8-4-1-7-4-7-8 0-5 3-8 7-10zM8 11c2 1 6 1 8 0M8 15c2 1 6 1 8 0M12 7v12'],
+ ['까마귀','M4 14c3-1 5-4 6-8 1 3 4 5 9 5-2 1-3 2-3 4l-3 5-1-4-4 1zM14 9h.01'],
+ ['칼','M5 19l3-3M7 15l2 2M8 16L19 5l1-1-1 3L9 17'],
+ ['회중시계','M12 3v2M10 3h4M12 6a7 7 0 1 0 0.01 0M12 9v4l3 2'],
+ ['가면','M3 9c3-2 6-2 9 0 3-2 6-2 9 0 0 5-3 8-6 8-1 0-2-1-3-2-1 1-2 2-3 2-3 0-6-3-6-8zM7 11h3M14 11h3'],
+ ['열쇠','M8 13a4 4 0 1 1 4-4l8 8-2 2-1-1-1 1-1-1-1 1-3-3M8 9h.01'],
+ ['촛불','M12 3c1.5 2 1.5 3.5 0 5-1.5-1.5-1.5-3 0-5zM10 9h4v11h-4zM7 20h10'],
+ ['해골','M12 3a7 7 0 0 0-7 7c0 3 2 4 2 6h10c0-2 2-3 2-6a7 7 0 0 0-7-7zM9 11h.01M15 11h.01M10 16v3M14 16v3M12 13l-1 2h2z'],
+ ['깃펜','M19 4c-6 1-11 6-13 14l2-1c1-4 3-7 6-9-2 3-3 5-4 8 5-2 8-6 9-12zM5 20l2-3']
+];
+const avOk=x=>/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(String(x||''));
+const avSvg=x=>avOk(x)?`<img class="av" src="${x}" alt="">`:`<span class="av"><svg viewBox="0 0 24 24" fill="none" stroke="var(--a)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="${(AVI[+String(x||'i0').slice(1)]||AVI[0])[1]}"/></svg></span>`;
+
 // 탐사: 직접 둘러본다. d=초, enc=무언가와 맞닥뜨릴 확률, foes=맞닥뜨릴 수 있는 것
 const EXP={
  docks:[{n:'부두 창고 뒤지기',d:90,enc:.2,foes:s=>['dog'],loot:()=>({i:{scrap:R(1,2)},g:R(0,2)}),say:'젖은 나무 상자 사이에서 쓸 만한 쇠붙이를 건졌다.'}],
@@ -373,13 +467,21 @@ const IT={letter:['보낸 이 없는 편지','“오렌하르트로 가. 가스�
   mem:['남의 아버지의 기억','딸을 키운 사내의 기억 한 병. 꼬리표의 이름은 긁혀 있다.'],wick:['그을린 심지','점등꾼의 등불에서 나온 심지. 아직 따뜻하다.'],relic:['1편의 골동품','']};
 const itName=id=>id==='relic'&&S&&S.legacy&&RELIC[S.legacy.pa]?RELIC[S.legacy.pa][0]:(IT[id]||[id])[0];
 
-// 파견: 조수(동료가 아닌 심부름꾼)를 보낸다. 본거지와 피트가 모두 있어야 한다. d=초, risk=다쳐서 빈손일 확률
+// 파견: 동료가 아닌 심부름꾼 아이들을 보낸다. 본거지와 피트가 있어야 열린다. d=초, risk=다쳐서 빈손일 확률, far=먼 곳
 const DSP={
- dock:{n:'부두 잡동사니 줍기',d:180,risk:0,res:()=>({i:{scrap:R(1,3)},g:R(2,5)}),say:'부두 널판 밑에서 쓸 만한 쇠붙이를 주워 왔다.'},
- market:{n:'시장 심부름',d:300,risk:0,res:()=>({i:{band:1},g:R(3,6)}),say:'시장에서 붕대를 사 오고, 거스름돈을 조금 남겨 왔다.'},
- lamp:{n:'꺼진 가스등에서 재 긁기',d:600,risk:.25,res:()=>({i:{ash:R(1,2)},g:0}),say:'손끝이 파랗게 물든 채 돌아왔다. 무엇을 잊었는지는 모르겠다고 한다.',hurt:'가스등 기둥에서 떨어져 무릎이 까진 채 빈손으로 돌아왔다.'}
+ dock:{n:'부두 잡동사니 줍기',d:1200,risk:0,res:()=>({i:{scrap:R(1,3)},g:R(2,5)}),say:'부두 널판 밑에서 쓸 만한 쇠붙이를 주워 왔다.'},
+ market:{n:'시장 심부름',d:1800,risk:0,res:()=>({i:{band:1},g:R(3,6)}),say:'시장에서 붕대를 사 오고 거스름돈을 조금 남겨 왔다.'},
+ lamp:{n:'꺼진 가스등에서 재 긁기',d:2700,risk:.2,res:()=>({i:{ash:R(1,2)},g:0}),say:'손끝이 파랗게 물든 채 돌아왔다. 무엇을 잊었는지는 모르겠다고 한다.',hurt:'가스등 기둥에서 떨어져 무릎이 깨진 채 빈손으로 돌아왔다.'},
+ wall:{far:1,n:'성벽 바깥 폐허 뒤지기',d:7200,risk:.3,res:()=>({i:{scrap:R(3,6),band:R(0,1)},g:R(6,12)}),say:'성벽 너머 무너진 집터에서 자루 가득 주워 왔다. 겨울 시대 돌에 새긴 글자를 봤다고 한다. 아무도 못 읽는 글자였다고.',hurt:'성벽 바깥에서 들개에게 쫓겼다. 팔에 이빨 자국이 남은 채 빈손으로 돌아왔다.'},
+ works:{far:1,n:'공장 지대 고철 더미 뒤지기',d:10800,risk:.35,res:()=>({i:{scrap:R(4,8),ash:R(0,2)},g:R(4,9)}),say:'굴뚝 그늘의 고철 더미에서 한 짐을 해 왔다. 거기 일꾼들은 서로 이름을 안 부른다고 한다.',hurt:'고철 더미가 무너졌다. 다리를 절며 빈손으로 돌아왔다.'},
+ canal:{far:1,n:'운하 상류 난파선 뒤지기',d:14400,risk:.4,res:()=>({i:{scrap:R(2,4)},g:R(14,22)}),say:'상류에 가라앉은 짐배에서 젖은 동전 주머니를 건져 왔다.',hurt:'난파선 갑판이 꺼져 물에 빠졌다. 기침을 하며 빈손으로 돌아왔다.'}
 };
-const HELPER='심부름꾼 아이 피트';
+// 심부름꾼 아이들. 피트 다음은 1막이 끝난 뒤 동전을 주고 고용한다
+const KIDS={pit:{n:'피트',d:'하수구에서 구한 아이. 성은 모른다.'},nell:{n:'넬',cost:15,d:'부두에서 그물을 깁던 아이. 손이 빠르다.'},jos:{n:'조스',cost:25,d:'굴뚝 청소부 아이. 좁은 데를 잘 기어든다.'},adele:{n:'아델',cost:40,d:'글을 읽을 줄 아는 아이. 교단 구호소에서 자랐다.'}};
+const kid=k=>{S.kids=S.kids||{};return S.kids[k]};
+const kidOk=k=>{const K=kid(k);return K&&K.st==='ok'};
+const kidSt=k=>{const K=kid(k);if(!K)return '';if(K.st==='out')return '파견 중';if(K.st==='hurt')return '다쳤다 — 돌봐 줘야 한다';if(K.st==='care')return '저택에서 간호받으며 쉬는 중';if(K.st==='hosp')return '교단 구호소에서 쉬는 중';if(K.st==='lost')return '돌아오지 않았다';return '쉬고 있다'};
+const HELPER='심부름꾼 아이들';
 
 /* 저택 손보기: 지붕을 먼저 고치고 나머지를 고른다. 값은 시작할 때 치르고 그만두면 돌려받는다. d=초 */
 const FIX={
@@ -509,11 +611,11 @@ function applyTheme(){const r=document.documentElement;if(CFG.theme==='auto')r.r
 
 /* ===================== 상태 ===================== */
 let S=null,V='place',EV0=null,POP=null;
-let C={r:'p',t:0,o:0,sx:'x',n:'베렌',leg:null,legMsg:''}; // 만들기 화면
+let C={av:'i0',r:'p',t:0,o:0,sx:'x',n:'베렌',leg:null,legMsg:''}; // 만들기 화면
 
 function newGame(){
   const st=baseStats(C.r,C.t,C.o),mhp=calcMhp(st,1);
-  S={v:8,asked:{},tnew:{},cl:{},chd:{},kq:0,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'베렌').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
+  S={v:9,av:C.av||'i0',kids:{},asked:{},tnew:{},cl:{},chd:{},kq:0,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'베렌').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
      inv:{letter:1,band:2},loc:'docks',act:null,disp:[],comps:[],party:null,aff:{},cq:{},rom:null,talked:{},dec:{},fix:{},deco:{...DECO0},own:{},read:{},night:0,tutd:0,base:0,pit:0,pro:0,vis:{docks:1},log:[],jr:[],legacy:C.leg,t0:Date.now()};
   log('편지를 따라 오렌하르트에 닿았다. 운하 부두의 녹슨 닻 여관에 방을 얻었다.');
   save();V='place';try{window.scrollTo(0,0)}catch(e){}
@@ -759,16 +861,21 @@ const SCENE={
    ev('등불을 든 사람',E[1]+`<p>돌아가는 길에 키리엔이 말한다.</p><p>키리엔 — “그 사람 네 이름을 알았어. 딸 이름보다 먼저. 나 그거 안 잊을 거야. 언젠가 이유를 알아내자.”</p><p class="m">키리엔의 이야기 「등불을 든 사람」이 끝났다.</p>`,[['고개를 끄덕인다',null]],1)},
  sewer:()=>ev('하수구 입구',`<p>하수구 철창 너머에서 아이 비명이 들린다. 쥐 떼 우는 소리가 벽을 타고 번진다.</p>`,
    [['철창을 비틀어 연다',()=>{S.bstory='pit';save();startBattle('fight','rats')}],['못 들은 척한다',null]]),
- pitW:()=>{S.pit=1;log(`${HELPER}가 저택에서 지내게 되었다.`);jr('하수구에서 쥐 떼에 쫓기던 아이 피트를 구했다. 저택에서 심부름을 하며 지내기로 했다.');
-   ev('피트',`<p>철창 안쪽에서 흙투성이 아이가 기어 나온다. 열 살쯤 되어 보인다.</p><p>“피트. 성은 몰라. 하수구에서 쓸 만한 거 주워다 팔아.”</p><p>“…저택에 산다고? 심부름 시켜 줘. 뭐든 할게. 밥만 주면.”</p>`+
-   pline({kirien:'밥은 네가 해. 나는 못 해.',oswin:'글은 읽을 줄 압니까? 아니라면 가르치지요. 심부름꾼이 장부를 못 읽으면 곤란하니까.'})+
-   `<p class="m">${HELPER}가 저택에서 지내게 되었다. 본거지에서 파견을 맡길 수 있다.</p>`,
-   [['데려간다',null]],1)}
+ pitW:()=>ev('피트',`<p>철창 안쪽에서 흙투성이 아이가 기어 나온다. 열 살쯤 되어 보인다. 손에 녹슨 갈고리를 꼭 쥐었다.</p><p>아이 — “…쥐 떼보다 무서운 사람은 아니지?”</p>`,
+   [['이름이 뭐야?',()=>SCENE.pit2(0)],['다친 데는 없어?',()=>SCENE.pit2(1)]]),
+ pit2:c=>ev('피트',(c?'<p>아이가 무릎을 내려다본다. 피가 말라붙어 있다.</p><p>아이 — “이 정도는 맨날 나. 안 아파. …조금 아파.”</p><p>아이 — “피트야. 성은 몰라.”</p>':'<p>아이 — “피트. 성은 몰라. 성이 있었으면 하수구에 안 살았겠지.”</p>')+
+   '<p>피트 — “여기서 쓸 만한 거 주워다 팔아. 근데 요즘 쥐가 너무 많아.”</p>',[['왜 하수구에서 살아?',()=>SCENE.pit3(0)],['배고프지 않아?',()=>SCENE.pit3(1)]]),
+ pit3:c=>ev('피트',(c?'<p>피트의 배에서 대답 대신 꼬르륵 소리가 난다. 피트가 얼굴을 붉힌다.</p>':'<p>피트 — “위는 가스등이 너무 밝아. 오래 있으면 머리가 멍해져. 여긴 어두워서 괜찮아.”</p>')+
+   '<p>피트 — “…근데 너네 집 있어? 진짜 집? 지붕 있는 거?”</p>'+pline({kirien:'유령 나오던 집이지만 지붕은 있어. 반쯤.',oswin:'지붕은 있습니다. 비가 새는 지붕이지만요. 철학적으로는 지붕이지요.'}),
+   [['저택에서 같이 지내자',()=>SCENE.pitJoin()],['심부름을 해 주면 밥을 주겠다',()=>SCENE.pitJoin()]]),
+ pitJoin:()=>{S.pit=1;S.kids=S.kids||{};S.kids.pit=S.kids.pit||{st:'ok'};log('피트가 저택에서 지내게 되었다.');jr('하수구에서 쥐 떼에 쫓기던 아이 피트를 구했다. 저택에서 심부름을 하며 지내기로 했다.');
+   ev('피트',`<p>피트 — “진짜? 뭐든 할게. 밥만 주면.”</p>`+pline({kirien:'밥은 네가 해. 나는 못 해.',oswin:'글은 읽을 줄 압니까? 아니라면 가르치지요. 심부름꾼이 장부를 못 읽으면 곤란하니까.'})+
+   `<p class="m">피트가 저택에서 지내게 되었다. 본거지에서 파견을 맡길 수 있다.</p>`,[['데려간다',null]],1)}
 };
 function pending(){const k=S.pend;S.pend=null;save();if(SCENE[k])SCENE[k]()}
 /* 개발자 창용: 이야기를 건너뛰어 얻기 */
 function grantBase(){if(S.base)return;SCENE.manorW();save()}
-function grantPit(){if(S.pit)return;SCENE.pitW();save()}
+function grantPit(){if(S.pit)return;SCENE.pitJoin();save()}
 // 저장 이전: 구조를 바꾸면 여기서 옛 저장을 고친다(1편 원칙)
 function migrate(){
   if(!S.v)S.v=1;
@@ -784,7 +891,8 @@ function migrate(){
   S.lv=S.lv||1;S.xp=S.xp||0;S.sp=S.sp||0;S.skp=S.skp||0;S.sk=(S.sk||[]).filter(k=>SKL[k]);if(!S.sk.length)S.sk=[OSK[S.og]||'stance'];if(S.v<5)S.v=5;
   S.fix=S.fix||{};S.deco=Object.assign({},DECO0,S.deco||{});Object.keys(DECO).forEach(sl=>{if(decoO(sl,S.deco[sl])[0]!==S.deco[sl])S.deco[sl]=DECO0[sl]});S.own=S.own||{};S.read=S.read||{};if(S.v<6)S.v=6;
   S.chd=S.chd||{};S.kq=S.kq||0;if(S.v<7)S.v=7;
-  S.asked=S.asked||{};S.tnew=S.tnew||{};S.cl=S.cl||{};S.comps.forEach(cst);if(S.v<8)S.v=8; // v8: 호감 10단계, 질문 대화, 동료 전투 // v7: 동료 자기 이야기, 키리엔 퀘스트 // v6: 저택 손보기·꾸미기
+  S.asked=S.asked||{};S.tnew=S.tnew||{};S.cl=S.cl||{};S.comps.forEach(cst);if(S.v<8)S.v=8;
+  if(!S.av)S.av='i0';S.kids=S.kids||{};if(S.pit&&!S.kids.pit)S.kids.pit={st:S.disp.length?'out':'ok'};S.disp.forEach(d=>{if(!d.kid)d.kid='pit'});if(S.v<9)S.v=9; // v9: 아이들·먼 파견·간호 // v8: 호감 10단계, 질문 대화, 동료 전투 // v7: 동료 자기 이야기, 키리엔 퀘스트 // v6: 저택 손보기·꾸미기
   S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,Math.max(0,S.hp|0));
 }
 const log=t=>{S.log.unshift(t);S.log=S.log.slice(0,40)};
@@ -883,7 +991,9 @@ function create(){
   <h1>칼셀바도르</h1><p class="sub1">푸른 재</p>
   <p class="lead">겨울이 끝나고 운하가 열렸다. 가스등이 밤을 밝힌다. 그 불빛 아래에서 사람들은 조금씩 무언가를 잊어 간다.</p>
   <p class="lead m">한 구역 안에서 움직이는 데는 시간이 들지 않는다. 먼 길을 가거나 일을 맡길 때만 실제 시간이 흐른다.</p>
-  <div class="card"><h2>이름</h2><input type="text" id="cname" maxlength="12" placeholder="이름" value="${esc(C.n)}">
+  <div class="card"><h2>이름과 모습</h2><div class="nmrow">${avSvg(C.av)}<input type="text" id="cname" maxlength="12" placeholder="이름" value="${esc(C.n)}"></div>
+   <div class="avs">${AVI.map((x,i)=>`<button class="btn${C.av==='i'+i?' on':''}" data-c="cav" data-a="i${i}" title="${x[0]}">${avSvg('i'+i)}</button>`).join('')}</div>
+   <p class="m">또는 사진 올리기 <input type="file" accept="image/*" id="avup"></p>
    <h3>성별</h3><div class="seg">${SEX.map(([k,n])=>B('sex',n,{a:k,cls:C.sx===k?'on':''})).join('')}</div><p class="m">동료와 마음을 나누는 이야기에 쓰인다. 밝히지 않으면 성별과 상관없이 마음을 여는 동료와만 이어진다.</p></div>
   <div class="card"><h2>종족</h2><div class="seg">${Object.entries(RACE).map(([k,x])=>B('race',x.n,{a:k,cls:C.r===k?'on':''})).join('')}</div><p class="m">${r.d}</p>
    <h3>계통</h3><div class="tr-list">${r.t.map((x,i)=>B('trait',x[0],{a:i,cls:C.t===i?'on':''})).join('')}</div><p class="m">${T[1]}</p>
@@ -907,7 +1017,7 @@ function game(){
 }
 function statusCard(){
   const r=RACE[S.race];
-  return `<div class="card"><h2>${esc(S.name)}</h2><p class="m">${r.n} · ${r.t[S.tr][0]} · ${ORIGIN[S.og][0]}</p>
+  return `<div class="card"><h2 class="nmrow">${avSvg(S.av)}<span>${esc(S.name)}</span></h2><p class="m">${r.n} · ${r.t[S.tr][0]} · ${ORIGIN[S.og][0]}</p>
   <div class="row"><span>레벨 ${S.lv}</span><span>${S.xp} / ${xpNeed(S.lv)}</span></div>${bar(S.xp,xpNeed(S.lv))}
   <div class="row"><span>체력</span><span>${S.hp} / ${S.mhp}</span></div>${bar(S.hp,S.mhp,'hp')}
   <div class="row"><span>동전</span><span>${S.coin}</span></div>
@@ -960,7 +1070,7 @@ function mapSvg(){
 function placeView(){
   const P=PL[S.loc],busy=!!S.act;
   let h=actProg();
-  h+=`<div class="card"><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
+  h+=`<div class="card"><div class="scw">${SCN.scene(S.loc,S)}</div><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
   const acts=[];
   if(S.loc==='base'&&!S.base)acts.push(B('manorIn','저택 안으로 들어간다',{sub:'위층에서 노래가 들린다',dis:busy}));
   if(S.loc==='church'&&S.night>=3&&!S.comps.includes('oswin')&&!S.dec.oswin)acts.push(B('archive','대성당 뒤편 문서고',{sub:S.party==='kirien'?'키리엔 — 교단 장부에 사라진 사람 이름이 있을지도 몰라':'문서고 쪽이 소란스럽다',dis:busy}));
@@ -968,7 +1078,7 @@ function placeView(){
   if(S.loc==='street'&&S.dec.kirien&&!S.comps.includes('kirien'))acts.push(B('kirAgain','초소 앞의 키리엔',{sub:'담벼락에 기대어 서 있다',dis:busy}));
   if(S.loc==='base'&&S.base){
     const meal=mealOk();acts.push(B('rest','화로 곁에서 쉬기',{sub:(S.fix.hearth?'30초':'1분')+(meal?' · 다 같이 둘러앉는다':S.hp>=S.mhp?' · 체력이 가득하다':' · 체력을 모두 되찾는다'),dis:busy||S.hp>=S.mhp&&!meal}));
-    if(S.pit)acts.push(B('board','파견 게시판',{sub:`${HELPER}에게 일을 맡긴다`}));
+    if(S.pit)acts.push(B('board','파견 게시판',{sub:'아이들에게 일을 맡긴다'}),B('kids','아이들 방',{sub:Object.keys(S.kids||{}).some(k=>kid(k).st==='hurt')?'✦ 다친 아이가 있다':S.eda&&Object.keys(KIDS).some(k=>KIDS[k].cost&&!kid(k))?'일을 찾는 아이가 있다':'심부름꾼 아이들'}));
     const nf=FIXN.filter(k=>S.fix[k]).length;
     acts.push(B('fix','저택 손보기',{sub:nf<FIXN.length?`고친 곳 ${nf} / ${FIXN.length}`:'모두 고쳤다',dis:busy}),
       B('deco','거실 꾸미기',{sub:S.fix.hearth?`지금 저택은 ${comfortT()}`:'벽난로와 거실을 먼저 고쳐야 한다',dis:!S.fix.hearth}));
@@ -1004,14 +1114,14 @@ function bagHtml(){const e=Object.entries(S.inv).filter(([,n])=>n>0);return e.le
 function sideCards(){
   const P=COMP[S.party];
   let h=`<div class="card"><h2>동료</h2>${P?`<p><b class="g">${P.n}</b></p><p class="m">${compLine(S.party)}</p>${CSK[S.party]?`<p class="m">${Object.keys(CSK[S.party]).filter(k=>cst(S.party).r[k]).map(k=>CSK[S.party][k].n+' '+'◆'.repeat(cst(S.party).r[k])).join(' · ')||'기술을 아직 고르지 않았다'}${cst(S.party).cp?' · <span class="hbn">점수 '+cst(S.party).cp+'</span>':''}</p>`:''}${S.comps.length>1?`<p class="m">${S.comps.filter(x=>x!==S.party).map(cn).join(', ')} — ${S.base?'본거지에서 지낸다':'여관 1층에서 기다린다'}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
-  if(S.base&&S.pit)h+=`<div class="card"><h2>파견</h2>${S.disp.length?S.disp.map(d=>`<div class="disp">${HELPER} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`).join(''):`<p class="empty">${HELPER}가 여관 계단에 앉아 있다</p>`}</div>`;
+  if(S.base&&S.pit)h+=`<div class="card"><h2>파견</h2>${Object.keys(S.kids||{}).map(k=>{const d=S.disp.find(x=>(x.kid||'pit')===k);return d?`<div class="disp">${KIDS[k].n} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`:`<p class="m">${KIDS[k].n} — ${kidSt(k)}</p>`}).join('')}</div>`;
   if(!S.base)h+=`<div class="card"><h2>머무는 곳</h2><p class="m">운하 부두 ${LODGE} 이층 끝방. 하룻밤씩 값을 치른다. 짐을 둘 데도 사람을 들일 데도 없다.</p></div>`;
   h+=`<div class="card"><h2>기록</h2><div class="log">${S.log.slice(0,14).map(x=>`<div>${x}</div>`).join('')}</div></div>`;
   return h;
 }
 function charView(){
   const r=RACE[S.race];
-  let h=`<div class="card"><h2>${esc(S.name)}</h2><p class="m">${(SEX.find(x=>x[0]===S.sex)||SEX[2])[1]}</p><p>${r.n} — ${r.d}</p><p class="m">계통: ${r.t[S.tr][0]} — ${r.t[S.tr][1]}</p><p class="m">출신: ${ORIGIN[S.og][0]} — ${ORIGIN[S.og][1]}</p>
+  let h=`<div class="card"><h2 class="nmrow">${avSvg(S.av)}<span>${esc(S.name)}</span></h2><p class="m">${(SEX.find(x=>x[0]===S.sex)||SEX[2])[1]}</p><details><summary class="m">모습 바꾸기</summary><div class="avs">${AVI.map((x,i)=>`<button class="btn${S.av==='i'+i?' on':''}" data-c="sav" data-a="i${i}" title="${x[0]}">${avSvg('i'+i)}</button>`).join('')}</div><p class="m">또는 사진 올리기 <input type="file" accept="image/*" id="avup2"></p></details><p>${r.n} — ${r.d}</p><p class="m">계통: ${r.t[S.tr][0]} — ${r.t[S.tr][1]}</p><p class="m">출신: ${ORIGIN[S.og][0]} — ${ORIGIN[S.og][1]}</p>
   <h3>레벨 ${S.lv} <span class="m">경험 ${S.xp} / ${xpNeed(S.lv)}</span></h3>
   <h3>능력치${S.sp?` <span class="hbn">올릴 수 있는 점수 ${S.sp}</span>`:''}</h3><div class="stats st4">${SN.map((n,i)=>`<span>${n}</span>${bar(S.st[i],14)}<span>${S.st[i]}${S.sp?' '+B('statup','＋',{a:i,cls:'sm'}):''}</span><span class="m sne">${SNE[i]}</span>`).join('')}</div>
   <p class="m">체력 ${S.mhp} · 공격 ${dAtk(S.st)} · 강타 ${dHeavy(S.st,0)}~${dHeavy(S.st,1)} · 되받아치기 ${dCounter(S.st,0)}</p></div>
@@ -1074,13 +1184,15 @@ function resolveAct(){
   save();return true;
 }
 function resolveDisp(){
-  let changed=false;
+  let changed=false;S.kids=S.kids||{};
+  for(const k of Object.keys(S.kids)){const K=S.kids[k];if((K.st==='care'||K.st==='hosp')&&Date.now()>=K.until){K.st='ok';changed=true;log(`${KIDS[k].n}의 상처가 다 나았다.`)}}
   for(const d of [...S.disp]){
     if(Date.now()<d.t0+d.d*1000)continue;
-    S.disp=S.disp.filter(x=>x!==d);changed=true;const D=DSP[d.id];
-    if(D.risk&&Math.random()<D.risk){log(`${HELPER}가 다쳐서 돌아왔다.`);pop('파견에서 돌아왔다',{n:[`${HELPER} — ${D.n}`,D.hurt]});continue}
-    const r=D.res();Object.entries(r.i).forEach(([k,n])=>add(k,n));S.coin+=r.g;log(`${HELPER}가 ${D.n}에서 돌아왔다.`);
-    pop('파견에서 돌아왔다',{i:r.i,g:r.g,n:[`${HELPER} — ${D.n}`,D.say]});
+    S.disp=S.disp.filter(x=>x!==d);changed=true;const D=DSP[d.id],k=d.kid||'pit',N=KIDS[k].n,K=kid(k);if(K)K.st='ok';
+    if(k==='pit'&&D.far&&!S.pq&&S.eda&&Math.random()<.35){if(K)K.st='lost';S.pq=1;log('피트가 돌아오지 않았다.');jr(`${D.n}에 보낸 피트가 돌아오지 않았다.`);pop('돌아오지 않았다',{n:[`${D.n}에 보낸 피트가 해가 져도 돌아오지 않는다.`,'<span class="m">임무 탭에 「돌아오지 않은 아이」가 생겼다.</span>']});continue}
+    if(D.risk&&Math.random()<D.risk){if(K)K.st='hurt';log(`${N}가 다쳐서 돌아왔다.`);pop('파견에서 돌아왔다',{n:[`${N} — ${D.n}`,D.hurt,'<span class="m">다친 아이는 저택의 아이들 방에서 돌봐 줘야 다시 일할 수 있다.</span>']});continue}
+    const r=D.res();Object.entries(r.i).forEach(([x,n])=>add(x,n));S.coin+=r.g;log(`${N}가 ${D.n}에서 돌아왔다.`);
+    pop('파견에서 돌아왔다',{i:r.i,g:r.g,n:[`${N} — ${D.n}`,D.say]});
   }
   if(changed)save();return changed;
 }
@@ -1103,6 +1215,7 @@ const CMD={
   statup:a=>{if(!S.sp)return;const i=+a;S.st[i]++;S.sp--;const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp+=S.mhp-m0;log(SN[i]+'이(가) 올랐다.');save();render()},
   cskup:a=>{const [id,k]=(a||'').split(':');const K=CSK[id];if(!K||!K[k]||!S.comps.includes(id))return;const C=cst(id);if(!C.cp||(C.r[k]||0)>=3)return;C.r[k]=(C.r[k]||0)+1;C.cp--;log(`${cn(id)} — ${K[k].n} ${C.r[k]}단계`);save();render()},
   learn:a=>{if(!S.skp||!SKL[a]||S.sk.includes(a))return;S.sk.push(a);S.skp--;log('새 기술 — '+SKL[a].n);save();render()},
+  cav:a=>{if(/^i\d+$/.test(a)){C.av=a;render()}},sav:a=>{if(S&&/^i\d+$/.test(a)){S.av=a;save();render()}},
   race:a=>{C.r=a;C.t=0;render()},sex:a=>{C.sx=a;render()},trait:a=>{C.t=+a;render()},origin:a=>{C.o=+a;render()},
   legread:async()=>{const t=($('#legt')||{}).value||'';try{C.leg=await legacyDecode(t);C.legMsg='1편의 여정을 읽었다.'}catch(e){C.leg=null;C.legMsg='코드를 읽지 못했다. 1편의 설정 → 기록에서 만든 코드를 처음부터 끝까지 붙여 넣었는지 확인하자.'}render()},
   legclear:()=>{C.leg=null;C.legMsg='';render()},
@@ -1154,8 +1267,23 @@ const CMD={
   patrol:()=>{if(S.act)return;if(!S.tutd&&!S.tutAsk){S.tutAsk=1;ev('경비대 초소','<p>초소 앞에 서 있던 늙은 경비가 막대로 길을 막는다.</p><p>모르텐 — “밤길에 나가려면 박자부터 배우게. 오래 안 걸리네.”</p>',[['가르침을 받는다',()=>startBattle('tut')],['그냥 나간다',()=>startAct({t:'p',d:15})]]);return}startAct({t:'p',d:15})},
   cancel:()=>{const a=S.act;if(!a)return;S.act=null;if(a.t==='f'){S.coin+=FIX[a.k].coin;add('scrap',FIX[a.k].scrap)}log(a.t==='m'?'걸음을 돌렸다.':'하던 일을 그만두었다.');save();render()},
   tutor:()=>startBattle('tut'),practice:()=>startBattle('practice'),
-  board:()=>{if(!S.base||!S.pit)return;const full=S.disp.length>=1;ev('파견 게시판',`<p class="m">${HELPER}에게 일을 맡긴다. 지금은 한 번에 하나만 맡길 수 있다.</p>${Object.entries(DSP).map(([k,d])=>`<p><b>${d.n}</b> <span class="m">${fmt(d.d*SEC())}${d.risk?' · 다칠 수 있다':''}</span></p>`).join('')}${full?'<p class="m">피트가 이미 나가 있다.</p>':''}`,
-    full?[['닫기',null]]:Object.entries(DSP).map(([k,d])=>[d.n,()=>{S.disp.push({id:k,t0:Date.now(),d:d.d*SEC()});log(`${HELPER}를 ${d.n}에 보냈다.`);save()}]).concat([['닫기',null]]),1)},
+  board:()=>{if(!S.base||!S.pit)return;const free=Object.keys(S.kids||{}).filter(kidOk);
+    const L=(far)=>Object.entries(DSP).filter(([,d])=>!!d.far===far).map(([k,d])=>`<p><b>${d.n}</b> <span class="m">${fmt(d.d*SEC())}${d.risk?' · 다칠 수 있다':''}</span></p>`).join('');
+    ev('파견 게시판',`<p class="m">쉬고 있는 아이에게 일을 맡긴다. 지금 맡길 수 있는 아이 ${free.length}명.</p><h3>가까운 곳</h3>${L(false)}<h3>먼 곳</h3><p class="m">오래 걸리고 위험하지만 얻는 것이 많다.</p>${L(true)}`,
+      free.length?Object.entries(DSP).map(([k,d])=>[d.n,()=>CMD.dsend(k)]).concat([['닫기',null]]):[['닫기',null]],1)},
+  dsend:k=>{const D=DSP[k];if(!D)return;const free=Object.keys(S.kids||{}).filter(kidOk);if(!free.length)return;
+    const go=c=>{S.kids[c].st='out';S.disp.push({id:k,kid:c,t0:Date.now(),d:D.d*SEC()});log(`${KIDS[c].n}를 ${D.n}에 보냈다.`);save();render()};
+    if(free.length===1)go(free[0]);else ev(D.n,'<p class="m">누구를 보낼까.</p>',free.map(c=>[KIDS[c].n,()=>go(c)]).concat([['그만둔다',null]]))},
+  kids:()=>{if(!S.base||!S.pit)return;const ks=Object.keys(S.kids||{}),hire=S.eda?Object.keys(KIDS).filter(k=>KIDS[k].cost&&!kid(k)):[],btn=[];
+    ks.filter(k=>kid(k).st==='hurt').forEach(k=>{btn.push([`${KIDS[k].n} 간호하기 (붕대 1 · 오래 걸림)`,()=>CMD.kcare(k,'care')]);btn.push([`${KIDS[k].n} 구호소에 보내기 (동전 8)`,()=>CMD.kcare(k,'hosp')])});
+    if(hire[0])btn.push([`${KIDS[hire[0]].n} 고용하기 (동전 ${KIDS[hire[0]].cost})`,()=>CMD.khire(hire[0])]);
+    ev('아이들 방',ks.map(k=>`<p><b>${KIDS[k].n}</b> <span class="m">${kidSt(k)}</span></p><p class="m">${KIDS[k].d}</p>`).join('')+(hire[0]?`<p class="m">부두에 일을 찾는 아이가 있다. ${KIDS[hire[0]].n} — ${KIDS[hire[0]].d}</p>`:S.eda?'':'<p class="m">이야기가 더 진행되면 다른 아이들도 일을 찾아올 것이다.</p>'),btn.concat([['문을 닫는다',null]]))},
+  kcare:(k,how)=>{const K=kid(k);if(!K||K.st!=='hurt')return;
+    if(how==='care'){if(!(S.inv.band>0)){ev('아이들 방','<p>붕대가 없다.</p>',[['알겠다',null]],1);return}add('band',-1);K.st='care';K.until=Date.now()+5400e3*SEC();log(`${KIDS[k].n}를 간호했다. 한동안 쉬어야 한다.`);ev('아이들 방',`<p>상처를 씻고 붕대를 감아 준다. ${KIDS[k].n}가 이를 악물고 참는다.</p><p class="m">${fmt(5400*SEC())} 동안 쉬면 낫는다.</p>`,[['이불을 덮어 준다',null]],1)}
+    else{if(S.coin<8){ev('아이들 방','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=8;K.st='hosp';K.until=Date.now()+2700e3*SEC();log(`${KIDS[k].n}를 교단 구호소에 보냈다.`);ev('아이들 방',`<p>교단 구호소 수녀가 ${KIDS[k].n}를 데려간다.</p><p class="m">${fmt(2700*SEC())} 동안 쉬면 낫는다.</p>`,[['알겠다',null]],1)}
+    save()},
+  khire:k=>{const C=KIDS[k];if(!C||kid(k)||!S.eda)return;if(S.coin<C.cost){ev('아이들 방','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=C.cost;S.kids[k]={st:'ok'};log(`${C.n}를 심부름꾼으로 고용했다.`);jr(`${C.n}를 심부름꾼으로 고용했다. ${C.d}`);
+    ev(C.n,`<p>${C.n} — “${{nell:'일한 만큼만 주면 돼요. 떼먹으면 소문낼 거예요.',jos:'굴뚝보다 좁은 데는 없어요. 어디든 들어가요.',adele:'장부 정리도 할 줄 알아요. 수녀님들이 가르쳐 줬어요.'}[k]}”</p><p class="m">${C.n}가 저택에서 지내게 되었다.</p>`,[['좋다',null]],1);save()},
   rooms:()=>{const L=S.comps,inn=!S.base;if(inn&&S.loc!=='docks'||!inn&&S.loc!=='base')return;if(!L.length){CMD.rooms0();return}
     ev(inn?'여관 1층':'동료의 방',`<p class="m">${inn?'저택이 생기기 전까지는 여관에서 데리고 나갈 사람을 바꾼다.':'데리고 나갈 사람은 여기서만 바꿀 수 있다.'}</p>${L.map(id=>`<p><b>${cn(id)}</b> <span class="m">${compLine(id)}${S.party===id?' · 함께 걷는 중':''}</span></p>`).join('')}`,
       (inn?[]:L.map(id=>[josa(cn(id),'과','와')+' 이야기한다'+(chNext(id)?' ✦':''),()=>CMD.talk(id)])).concat(L.filter(id=>id!==S.party).map(id=>[josa(cn(id),'과','와')+' 나간다',()=>{S.party=id;log(josa(cn(id),'과','와')+' 함께 나서기로 했다.');save()}])).concat([['문을 닫는다',null]]))},
@@ -1169,6 +1297,9 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-c]');if(!b||b.disabled)return;
   const f=CMD[b.dataset.c];if(f){f(b.dataset.a);if(b.blur)b.blur()}
 });
+document.addEventListener('change',e=>{const id=e.target.id;if(id!=='avup'&&id!=='avup2')return;const fl=e.target.files&&e.target.files[0];if(!fl)return;const rd=new FileReader();
+  rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),m=Math.min(im.width,im.height);c.width=c.height=96;c.getContext('2d').drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,96,96);const u=c.toDataURL('image/jpeg',.82);
+    if(id==='avup')C.av=u;else if(S){S.av=u;save()}render()};im.src=rd.result};rd.readAsDataURL(fl)});
 document.addEventListener('input',e=>{if(e.target.id==='cname')C.n=e.target.value.replace(/[<>&"'`\\]/g,'')});
 
 /* ===================== 설정 창 ===================== */
@@ -1195,7 +1326,7 @@ $('#sov').addEventListener('click',async e=>{
   const k2=b.dataset.s2;
   if(k2==='close')closeSettings();
   if(k2==='copy'){try{SVD=await scode();$('#svd').value=SVD;try{await navigator.clipboard.writeText(SVD);SVM='✦ 기록 코드를 복사했다. 다른 기기에서 붙여 넣으면 된다.'}catch(e){SVM='복사가 막혀 있다. 칸의 코드를 길게 눌러 직접 복사하자.'}}catch(e){SVM='코드를 만들지 못했다.'}$('#svm').textContent=SVM}
-  if(k2==='reset'){try{localStorage.removeItem(K)}catch(e){}if(CL.st==='on'&&CL.ref){try{await CL.ref.delete()}catch(e){}}S=null;EV0=null;POP=null;C={r:'p',t:0,o:0,sx:'x',n:'베렌',leg:null,legMsg:''};closeSettings();V='place';render()}
+  if(k2==='reset'){try{localStorage.removeItem(K)}catch(e){}if(CL.st==='on'&&CL.ref){try{await CL.ref.delete()}catch(e){}}S=null;EV0=null;POP=null;C={av:'i0',r:'p',t:0,o:0,sx:'x',n:'베렌',leg:null,legMsg:''};closeSettings();V='place';render()}
 });
 document.addEventListener('input',e=>{if(e.target.id==='lat'){CFG.lat=+e.target.value;$('#latv').textContent=(CFG.lat>0?'+':'')+CFG.lat+'ms';saveCfg()}});
 
@@ -1525,7 +1656,7 @@ function devOpen(){
 }
 const DV={
   fast:()=>{FAST=!FAST;try{localStorage.setItem('k2fast',FAST?'1':'0')}catch(e){}},
-  finish:()=>{if(S.act)S.act.t0=Date.now()-S.act.d*1000-1;S.disp.forEach(d=>d.t0=Date.now()-d.d*1000-1);save()},
+  finish:()=>{if(S.act)S.act.t0=Date.now()-S.act.d*1000-1;S.disp.forEach(d=>d.t0=Date.now()-d.d*1000-1);Object.values(S.kids||{}).forEach(K=>{if(K.until)K.until=0});save()},
   night:a=>{S.night=+a;log('[개발] 밤 '+a);save()},
   heal:()=>{S.hp=S.mhp;save()},coin:()=>{S.coin+=50;save()},band:()=>{add('band',5);save()},
   tut:()=>{S.tutd=0;S.tutAsk=0;save()},scrap:()=>{add('scrap',10);save()},fixall:()=>{FIXN.forEach(k=>S.fix[k]=1);log('[개발] 저택을 모두 고쳤다');save()},enc:()=>{ENC_ON=!ENC_ON},
@@ -1548,7 +1679,7 @@ $('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-bdev]');if
 
 /* ===================== 시작 ===================== */
 // 테스트 손잡이(자동 테스트가 쓴다)
-window.__k2={QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>

@@ -54,6 +54,6 @@ with sync_playwright() as p:
     pg.evaluate("()=>{window.__k2.S.meal=Date.now()+1e9;window.__k2.render()}");assert pg.locator('button[data-c=rest][disabled]').count()==1;print('meal ok')
     # 저장 이전: v5 저장에 기본값
     pg.evaluate("()=>{const K=window.__k2;const o=JSON.parse(JSON.stringify(K.S));o.v=5;delete o.fix;delete o.deco;delete o.own;delete o.read;localStorage.setItem('kalsel2',JSON.stringify(o));K.load()}")
-    s=S(pg);assert s['v']==8 and s['fix']=={} and s['deco']['mantel']=='face';print('migrate v6 ok')
+    s=S(pg);assert s['v']==9 and s['fix']=={} and s['deco']['mantel']=='face';print('migrate v6 ok')
     b.close()
 print('errors',errs);assert not errs;print('ALL OK')
