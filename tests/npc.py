@@ -13,7 +13,7 @@ with sync_playwright() as p:
     choose(pg,'다른 것도 묻는다');t=pg.inner_text('#ov');assert '점등 장대' not in t
     choose(pg,'이야기를 그만둔다')
     # 동료: 다른 사람들 이야기
-    E(pg,"window.__k2.CMD.talk('kirien')");choose(pg,'다른 사람들 이야기');t=pg.inner_text('#ov');assert '오스윈' in t and '마그다' in t and '바르그' not in t,t
+    E(pg,"window.__k2.CMD.talk('kirien')");choose(pg,'다른 사람들 이야기');t=pg.inner_text('#ov');assert '오스윈' in t and '마그다' not in t and 'pit' not in t and '바르그' not in t,t
     choose(pg,'오스윈은 어때?');t=pg.inner_text('#ov');assert '끝까지 들으면' in t and '오스윈 이야기' in t,t
     choose(pg,'이야기를 그만둔다')
     # 하그·오델·아벨: 만난 뒤에만

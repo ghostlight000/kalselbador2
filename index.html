@@ -146,7 +146,7 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .say{margin:9px 0}.say b{display:block;font-size:12px;font-weight:700;color:var(--a);letter-spacing:.04em;margin-bottom:1px}.say.cont{margin-top:-3px}
 .pcard p.m{padding-left:10px;border-left:2px solid var(--b)}
 .pcard.tk{max-width:560px}.tkh{display:flex;align-items:center;gap:12px;padding-bottom:10px;margin-bottom:6px;border-bottom:1px solid var(--b)}
-.tkh .av{width:46px;height:46px}.tkh .av svg{width:32px;height:32px}.tkh b{display:block;font-size:19px;font-family:"Nanum Myeongjo",serif;color:var(--t)}.tkh span{display:block;font-size:12px;color:var(--m)}
+.tkh .av{width:46px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;padding:0}.tkh .av svg{width:32px;height:32px}.tkh b{display:block;font-size:19px;font-family:"Nanum Myeongjo",serif;color:var(--t)}.tkh span{display:block;font-size:12px;color:var(--m)}
 .tkh em{margin-left:auto;font-style:normal;font-size:13px;color:var(--a);text-align:right}
 .tkb{min-height:20px}.tq{display:flex;flex-direction:column;gap:5px;margin-top:12px}
 .tq .btn{text-align:left;padding-left:14px;min-height:40px}.tq .btn:before{content:"›";color:var(--a);margin-right:9px}
@@ -979,42 +979,36 @@ const CMT={
   ibre:['이브레랑 같이 걸으면 그늘이 생겨서 좋아.','처음엔 무서웠는데 비 오는 날 내 머리 위를 손으로 가려 주더라. 말도 없이.'],
   kasimir:['카시미르는 피 냄새가 나. 붉은 병 말이야.','웃는 얼굴이 너무 반듯해. 사람이 그렇게 오래 같은 얼굴로 웃을 수는 없어.'],
   eno:['에노는 물 냄새가 너무 많이 나. 근데 나쁜 사람 냄새는 아니야.','가끔 에노 안에서 우리 엄마 목소리가 날까 봐 무서워. …물어본 적은 없어.'],
-  magda:['마그다 아줌마는 사람 이름을 절대 안 까먹어. 이 도시에서 그게 제일 어려운 일인데.','남편 얘기는 하지 마. 아줌마가 먼저 꺼내기 전엔.'],
   pit:['피트? 쪼그만 게 나보다 발이 빨라.','처음 만났을 때 제 이름을 잘 못 댔잖아. 그래서 내가 매일 불러 줘. 피트. 피트.']},
  oswin:{kirien:['키리엔 양은 사람을 찾는 데 장부가 필요 없는 사람이지요. 부럽습니다.','다만 찾은 사람을 놓아주는 법은 아직 서툽니다. 저와 같아서 압니다.'],
   barg:['바르그 씨 이름은 해빙 전쟁 탈영병 명부에 있었습니다. 학술원에도 사본이 돌았지요.','그 줄이 아직 지워지지 않은 걸 보고 이상하게 안심했습니다. 쫓기는 사람은 적어도 있는 사람이니까요.'],
   ibre:['이브레 씨가 명부의 칸 이름을 하나씩 물어보시더군요. 비늘 색 칸에서 오래 멈추셨습니다.','그 칸은 제가 만든 게 아닙니다. 그래도 설명하는 동안 부끄러웠지요.'],
   kasimir:['카시미르 씨의 가문 이름은 족보에 있습니다. 문제는 날짜지요.','날짜가 맞지 않는 사람과 한 지붕 아래 사는 건 학자로서 꽤 흥미로운 일입니다.'],
   eno:['에노 씨는 학술원이 가장 갖고 싶어 할 표본입니다. 그러니 제가 가장 지켜야 할 사람이지요.','물론 본인 앞에서는 이런 말을 하지 않습니다. 부끄러우니까요.'],
-  magda:['마그다 부인은 장부 없이 여관을 꾸립니다. 손님 이름과 외상을 전부 외우시지요.','학술원 기록관 열 명보다 정확합니다. 저는 그분이 조금 무섭습니다.'],
   pit:['피트 군에게 글자를 가르치려다 거절당했습니다. 쥐 이름을 외우느라 바쁘답니다.','제 첫 제자를 쥐에게 빼앗겼군요. 기록해 두겠습니다.']},
  barg:{kirien:['여우 꼬마. 코가 좋다.','그 이름 말고 다른 건 안 묻더군. 사람 찾는 놈이라 아는 거지. 묻지 말아야 할 때를.'],
   oswin:['도마뱀 학자. 말이 많다.','그래도 학술원 놈들 중에 처음으로 미안하다고 한 놈이다. 그거면 됐다.'],
   ibre:['저 큰 녀석이 등 뒤에 서면 마음이 놓인다. 방패가 하나 더 생긴 것 같지.','무색이라고 깔보는 놈 있으면 내가 먼저 짖어 주마.'],
   kasimir:['붉은 물 마시는 귀족 놈. 기사단에선 그런 놈부터 죽었다.','…칼은 제대로 쓰더군. 그건 인정한다.'],
   eno:['물에서 건진 것 같은 놈. 밤에 우는 소리가 여러 개다.','내가 이름 부르는 소리랑 섞이면 시끄럽겠군. 상관없다.'],
-  magda:['여관 주인. 쫓기는 늙은 늑대한테도 국을 내준 사람이다.','그런 사람 하나 있으면 동네가 버틴다. 전쟁터에서도 그랬다.'],
   pit:['꼬마가 칼 쥐는 법을 가르쳐 달라더군.','안 가르친다. 칼 쥐는 손은 늦게 배울수록 좋다.']},
  ibre:{kirien:['키리엔 씨는 작습니다. 그런데 걸음이 제일 빠릅니다.','비가 오면 제 손 밑으로 들어옵니다. 말은 안 합니다. 저도 안 합니다.'],
   oswin:['오스윈 씨는 말을 길게 합니다. 끝까지 들으면 칭찬인 경우가 많습니다.','같은 파볼릭이지만 비늘 색이 있습니다. 그래도 저를 번호로 부른 적이 없습니다.'],
   barg:['바르그 씨는 등을 맡길 수 있습니다.','밤에 이름을 부를 때 저는 조용히 합니다. 결투장에서도 그렇게 합니다. 남이 기도할 때는.'],
   kasimir:['카시미르 씨는 결투 대리인입니다. 결투장에서 몇 번 봤습니다.','한 번도 진 적이 없습니다. 이긴 뒤에 웃은 적도 없습니다.'],
   eno:['에노 씨 안에 무색이 하나 있다고 합니다. 이름 없는 사람이.','그 사람 이름을 지어 주고 싶습니다. 에노 씨가 허락하면.'],
-  magda:['마그다 부인은 제 그릇을 세 개 내놓습니다. 묻지 않고.','그런 사람은 드뭅니다.'],
   pit:['피트는 제 어깨에 올라가고 싶어 합니다.','허락했습니다. 떨어지지 않게 꼬리로 받칩니다.']},
  kasimir:{kirien:['키리엔 양은 저를 싫어하시죠. 피 냄새가 난다고.','틀린 말씀은 아니라서 반박을 못 합니다. 그래서 더 좋아합니다.'],
   oswin:['오스윈 씨와는 말싸움이 즐겁죠. 둘 다 문장이 길어서 끝이 안 납니다.','다만 그분이 제 족보를 들여다보는 눈빛은 조금 무섭습니다.'],
   barg:['바르그 경은 기사죠. 진짜 기사. 요즘은 보기 드문 물건입니다.','맹세에 묶인 사람과 이름에 묶인 사람. 우리 둘이 어울리는 건 당연한 일이죠.'],
   ibre:['이브레 양은 결투장의 전설이죠. 판돈꾼들이 아직도 그분 이야기를 합니다.','한 번 겨뤄 달라고 했더니 거절하셨습니다. 제가 다칠까 봐서라더군요. 모욕인지 배려인지 아직 고민 중입니다.'],
   eno:['에노 씨 안에 오래된 목소리가 있다더군요.','언젠가 그분께 물어보고 싶습니다. 오래 사는 요령을요.'],
-  magda:['마그다 부인은 제 외상 장부를 따로 가지고 계시죠.','이 도시에서 저를 정확히 기억하는 몇 안 되는 분입니다. 두려운 일이죠.'],
   pit:['피트 군에게 춤을 가르쳐 줬습니다. 세 걸음 만에 제 발을 밟더군요.','재능이 있습니다. 결투에요.']},
  eno:{kirien:['키리엔은 날 싫어하는 척해요. 냄새 때문에.','근데 내가 젖어서 돌아오면 수건을 던져 줘. 얼굴은 안 보고.'],
   oswin:['오스윈은 내 안의 사람들 이름을 적어 주겠대요.','좋은 생각 같아. 근데 다들 적히는 걸 무서워해. 지워질까 봐.'],
   barg:['바르그 아저씨 안에는 한 사람만 있어. 이상하지? 나랑 반대야.','그 한 사람이 너무 커서 아저씨가 가끔 숨을 못 쉬어요.'],
   ibre:['이브레는 따뜻한 돌을 좋아해. 나는 차가운 물을 좋아하고.','둘이 같이 있으면 딱 미지근해. 그게 좋아요.'],
   kasimir:['카시미르의 붉은 물은 하수구로 안 흘러와. 이상하지?','다 마셔 버리는 거야. 한 방울도 안 남기고. …아까운 거겠지.'],
-  magda:['마그다 아줌마네 부엌 물은 국 맛이 나요. 하수구에서도 알아.','아줌마 남편 기억은 한 번도 안 흘러왔어. 아줌마가 꽉 붙들고 있나 봐.'],
   pit:['피트는 하수구에서 나랑 제일 오래 산 사람이야.','지금은 위에서 자. 가끔 내려와서 쥐들 안부를 물어요.']}};
 const CMTN={magda:'마그다',pit:'피트'};
 /* 대화 창 초상 */
@@ -1103,7 +1097,7 @@ function gainXp(n){if(S.lv>=LVMAX){S.xp=0;return []}const out=[`경험 +${n}`];S
     out.push(`<b class="g">레벨 ${S.lv}</b> — 능력치 점수 +1${skCan()?' · 새 기술을 배울 수 있다':''}${TLV.includes(S.lv)?' · 새 재능을 고를 수 있다':''}. 캐릭터 탭에서 고른다.`);log('레벨 '+S.lv+'에 올랐다.')}
   return out}
 function aff(id,n){if(n>0){if(stal('seas'))n++;if(lin('i',1)&&Math.random()<.25)n++}S.aff=S.aff||{};const t0=affTier(id);S.aff[id]=Math.max(0,Math.min(100,(S.aff[id]||0)+n));const t1=affTier(id);if(t1>t0){S.tnew=S.tnew||{};S.tnew[id]=t1}}
-const cn=id=>id==='morten'?'모르텐':COMP[id]?COMP[id].n:typeof NPCT!=='undefined'&&NPCT[id]?NPCT[id].n:id==='magda'?'마그다':id;
+const cn=id=>id==='morten'?'모르텐':COMP[id]?COMP[id].n:typeof NPCT!=='undefined'&&NPCT[id]?NPCT[id].n:id==='magda'?'마그다':id==='pit'?'피트':id;
 /* 미뤄 둔 이야기 장면: 결과 창이 닫힌 뒤 tick에서 연다 */
 const homeN=()=>S.base?'저택':'여관';
 const joinL=id=>S.party&&S.party!==id?'함께하자':'같이 가자';
