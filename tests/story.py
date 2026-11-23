@@ -28,15 +28,15 @@ with sync_playwright() as p:
             pg.click('button[data-c=tab][data-a=quest]');assert '◇ 등불을 든 사람의 딸' in pg.inner_text('.M') and '동료 이야기' not in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
             # 학술원 언덕은 아직 잠김
             assert '잠' in pg.evaluate("document.querySelector('.map .node[data-a=academy]').getAttribute('class')") or 'lk' in pg.evaluate("document.querySelector('.map .node[data-a=academy]').getAttribute('class')")
-        pg.click('button[data-c=eda]');choose(pg,'살아 있을 거라고');t=pg.inner_text('#ov');assert '‘베렌이 돌아오면' in t and '인기가 많습니다' in t,t
-        choose(pg,'아버지를 찾아 주겠다고');t=pg.inner_text('#ov');assert '1막' in t and '약속했어요' in t;okpop(pg)
+        pg.click('button[data-c=eda]');choose(pg,'살아 있을 거라고');t=pg.inner_text('#ov');assert '‘베렌이 돌아오면' in t and '네 이름이잖아' in t and '인기가 많습니다' not in t,t
+        choose(pg,'아버지를 찾아 주겠다고');pg.wait_for_selector('#pv .eo',timeout=5000);assert '약속했어요' in pg.inner_text('#pv');pg.click('#pv [data-pv=skip]');assert '꺼지지 않는 등불' in pg.inner_text('#pv');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');assert pg.locator('#pv .eo').count()==0
         s=S(pg);assert s['acad']==1 and s['eda']==1;print(end,'act1 end ok')
         # 언덕: 키리엔이 없으면 요양소가 막힌다
         pg.evaluate("()=>{const K=window.__k2;K.S.party='oswin';K.render()}")
         go(pg,'academy');assert pg.locator('button[data-c=kq1][disabled]').count()==1
         if end=='new':
             pg.evaluate("()=>{window.__k2.S.orx={kirien:1,oswin:1,ibre:1,kasimir:1}}");pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '연구실이 있던 자리' in t;choose(pg,'이야기를 그만둔다')
-            pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '동료 이야기' in q and '키리엔과 함께 다녀야' in q and '◆ 언덕 위 유리 지붕' in q;pg.click('button[data-c=tab][data-a=place]')
+            pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '동료들의 이야기' in q and '키리엔과 함께 다녀야' in q and '지나온 길' in q;pg.click('button[data-c=tab][data-a=place]')
         pg.evaluate("()=>{const K=window.__k2;K.S.party='kirien';K.render()}")
         pg.click('button[data-c=kq1]');assert '공급 대기' in pg.inner_text('#ov');okpop(pg);assert S(pg)['kq']==1
         pg.click('button[data-c=kq2]');choose(pg,'안으로 들어간다');assert pg.evaluate('window.__k2.G.foe')=='collector';win(pg)

@@ -23,7 +23,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.grantPit()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;K.S.eda=1;K.S.acad=1;K.S.mr=3;K.S.loc='street';K.S.hp=K.S.mhp;K.render()}")
     go(pg,'academy');assert pg.locator('button[data-c=aw1]').count()==1
-    pg.click('button[data-c=tab][data-a=quest]');assert '깨진 돔의 강의실' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
+    assert '깨진 돔의 강의실' in pg.inner_text('.M')
     # 강의실 → 싸움 → 격노에서 떠오르는 말
     pg.click('button[data-c=aw1]');t=pg.inner_text('#ov');assert '분필로 그린 원' in t and '학술원 심부름꾼' in t;choose(pg,'막아선다')
     pg.wait_for_function('window.__k2.G.on');assert E(pg,"window.__k2.G.foe")=='awc';pg.click('#bov .btn.pri')
@@ -40,7 +40,6 @@ with sync_playwright() as p:
     pg.wait_for_selector('#ov.on h2:has-text("처음 듣는 말")',timeout=5000);t=pg.inner_text('#ov');assert '가스등' in t and '정전기가 아닙니다' in t
     choose(pg,'손을 편다');t=pg.inner_text('#ov');assert '솔레' in t;choose(pg,'그래. 주문이다');t=pg.inner_text('#ov');assert '새 주문 — 방전' in t and '교단이 알 겁니다' in t;okpop(pg)
     s=E(pg,"window.__k2.S");assert s['mg']==1 and 'shock' in s['sk'] and s['mgh']=='open' and s['mgs'].get('oswin')
-    pg.click('button[data-c=tab][data-a=quest]');assert '깨진 돔의 강의실' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     assert pg.locator('button[data-c=aw1]').count()==0
     # 레벨 기술 고르기에 혼불이 나오고 받은 주문은 나오지 않는다
     pg.click('button[data-c=tab][data-a=char]');t=pg.inner_text('.M');assert '혼불' in t and '바람막이' not in t and '목소리에 실려' in t;pg.click('button[data-c=learn][data-a=spirit]');pg.click('button[data-c=tab][data-a=place]')

@@ -32,17 +32,24 @@ with sync_playwright() as p:
     start(pg)
     E(pg,"()=>{window.__k2.SCENE.sewer()}");t=pg.inner_text('#ov');assert '안내인' in t and '목소리가 문장 중간에 바뀐다' in t;choose(pg,'안내인을 따라간다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("피트")',timeout=5000);choose(pg,'이름이 뭐야?');choose(pg,'배고프지 않아?');choose(pg,'저택에서 같이 지내자');choose(pg,'데려간다')
-    pg.wait_for_selector('#ov.on h2:has-text("물길의 안내인")',timeout=5000);choose(pg,'길을 알려 줘서');t=pg.inner_text('#ov');assert '지하실' in t and '물 냄새' in t;choose(pg,'하수구가 더 어울린다');okpop(pg)
+    pg.wait_for_selector('#ov.on h2:has-text("물길의 안내인")',timeout=5000);choose(pg,'철창에 손을 넣는다');assert '셋까지 세면' in pg.inner_text('#ov');choose(pg,'길을 알려 줘서');t=pg.inner_text('#ov');assert '지도에 구멍' in t and '물소리' in t;choose(pg,'하수구가 더 어울린다');okpop(pg)
     assert E(pg,"window.__k2.S.dec.eno")==1
     pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '물길의 안내인' in q;pg.click('button[data-c=tab][data-a=place]')
     # 에다는 바르그·에노를 만나기 전엔 없다
     pg.click('button[data-c=enoAgain]');choose(pg,'함께하자');t=pg.inner_text('#ov');assert '키리엔과 계속 다닌다' in t and '에노와 다닌다' in t,t;choose(pg,'에노와 다닌다');assert E(pg,"window.__k2.S.party")=='eno' and 'kirien' in E(pg,"window.__k2.S.comps")
     t=pg.inner_text('.goalc');assert '여관 부엌의 요리사' in t,t
     # 여관 부엌 → 헌병과 싸운다 → 바르그
-    pg.click('button[data-c=bargM]');t=pg.inner_text('#ov');assert '탈영병 바르그' in t and '웅웅거려요' in t;choose(pg,'막아선다');assert E(pg,"window.__k2.G.foe")=='mp';win(pg)
-    pg.wait_for_selector('#ov.on h2:has-text("바르그")',timeout=5000);choose(pg,'도망친 사람을 넘기기 싫어서');assert '헌병들을 막아섰다' in E(pg,"JSON.stringify(window.__k2.S.jr)");choose(pg,'갈 길을 가라');okpop(pg)
+    pg.click('button[data-c=bargM]');choose(pg,'벽에 새긴 것을 본다');t=pg.inner_text('#ov');assert '이백 개다' in t;assert '탈영병 바르그' in t and '웅웅거려요' in t;choose(pg,'막아선다');assert E(pg,"window.__k2.G.foe")=='mp';win(pg)
+    pg.wait_for_selector('#ov.on h2:has-text("부엌 뒷문")',timeout=5000);choose(pg,'벽판을 뜯어 가자');choose(pg,'밤길로 나선다');assert '운하 다리' in pg.inner_text('#ov');choose(pg,'도망친 사람을 넘기기 싫어서');assert '헌병들을 막아섰다' in E(pg,"JSON.stringify(window.__k2.S.jr)");choose(pg,'갈 길을 가라');okpop(pg)
     pg.click('button[data-c=bargAgain]');choose(pg,'저택에서 지내라');choose(pg,'계속 다닌다');assert 'barg' in E(pg,"window.__k2.S.comps")
     go(pg,'street');assert pg.locator('button[data-c=eda]').count()==1;print('meet ok')
+    go(pg,'base');E(pg,"()=>{const K=window.__k2;K.S.party='barg';K.S.hp=5;K.render()}");pg.click('button[data-c=rest]');pg.wait_for_function('!window.__k2.S.act',timeout=20000);t=pg.inner_text('#ov');assert '널빤지' in t,t;okpop(pg)
+    # 파견 게시판: 한 줄짜리 목록에서 바로 보낸다
+    pg.click('button[data-c=board]');assert pg.locator('#ov.on .drow').count()>=6 and pg.locator('#ov.on .btn').count()==1;pg.locator('#ov.on .drow').first.click();assert len(E(pg,"window.__k2.S.disp"))==1;print('board ok')
+    # 메아리: 솔레·리세
+    E(pg,"()=>{const K=window.__k2;K.S.disp=[];K.S.kids.pit.st='ok';K.S.sole=1;K.S.acad=1;K.S.eda=1;K.S.mg=1;K.S.oq0=1;K.S.mgh='hide';K.S.oq=6;K.S.oqt=1;K.S.oqe='burn';K.S.party='oswin';K.render()}")
+    go(pg,'academy');pg.wait_for_selector('#ov.on h2:has-text("솔레")',timeout=5000);assert '혀를 깨물고' in pg.inner_text('#ov');okpop(pg)
+    go(pg,'base');pg.wait_for_selector('#ov.on h2:has-text("리세의 편지")',timeout=5000);t=pg.inner_text('#ov');assert '오빠에게' in t and '붉은 불' in t;okpop(pg);print('echo ok')
     # 바르그·에노 동료 전투
     for cid in ['barg','eno']:
         E(pg,f"()=>{{const K=window.__k2;K.S.party='{cid}';const C=K.S.cl['{cid}'];C.r={{cleave:1,stew:2,back:3,hook:2,read:3,voices:3}};K.S.hp=K.S.mhp-30;K.render()}}")

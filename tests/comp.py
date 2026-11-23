@@ -19,7 +19,7 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.aff.kirien")==14;print('talk choice ok')
     # 키리엔 기술 점수: 연속 베기 1단계
     pg.click('button[data-c=tab][data-a=char]');pg.click('button[data-c=cskup][data-a="kirien:flurry"]');assert E(pg,"window.__k2.S.cl.kirien.r.flurry")==1 and E(pg,"window.__k2.S.cl.kirien.cp")==0
-    assert pg.locator('button[data-c=cskup]').count()==0;pg.click('button[data-c=tab][data-a=place]')
+    assert pg.locator('button[data-c=cskup]').count()==0 and pg.locator('.ccard').count()>=1 and '여 ·' not in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     # 전투: 내 공격 뒤 키리엔이 두 번 벤다(3+1)*2=8
     E(pg,"()=>{window.__k2.startBattle('fight','thief')}");pg.click('#bov .btn.pri');assert pg.is_visible('#bcomp') and '키리엔' in pg.inner_text('#bcompn')
     h0=E(pg,"window.__k2.G.fhp");E(pg,"window.__k2.bact('atk')");pg.wait_for_function("window.__k2.G.st==='enemy'",timeout=5000)

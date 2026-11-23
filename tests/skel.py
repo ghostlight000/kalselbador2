@@ -103,13 +103,13 @@ with sync_playwright() as p:
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='하수구 입구'; choose(pg,'안내인을 따라간다'); h=fight(pg); assert '쥐 떼' in h
     pg.wait_for_selector('#ov.on h2',timeout=5000); t=pg.inner_text('#ov'); assert pg.inner_text('#ov h2')=='피트'; choose(pg,'이름이 뭐야?'); choose(pg,'배고프지 않아?'); assert '지붕은 있습니다' in pg.inner_text('#ov'); choose(pg,'저택에서 같이 지내자'); assert '글은 읽을 줄 압니까' in pg.inner_text('#ov'); choose(pg,'데려간다')
     assert S(pg)['pit']==1; print('pit ok')
-    pg.wait_for_selector('#ov.on h2:has-text("물길의 안내인")',timeout=5000); choose(pg,'그걸 왜 마셔?'); assert '할머니 목소리' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다')
+    pg.wait_for_selector('#ov.on h2:has-text("물길의 안내인")',timeout=5000); choose(pg,'네가 해 봐'); choose(pg,'그걸 왜 마셔?'); assert '할머니 목소리' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다')
     assert 'eno' in S(pg)['comps']
     if S(pg)['loc']!='docks': go(pg,'docks')
-    assert 'goal' in pg.get_attribute('button[data-c=bargM]','class'); pg.click('button[data-c=bargM]'); assert '북부 3연대' in pg.inner_text('#ov'); choose(pg,'둘러댄다'); choose(pg,'부엌 뒷문으로'); choose(pg,'국이 맛있어서'); choose(pg,'저택에서 지내라'); choose(pg,'계속 다닌다')
+    assert 'goal' in pg.get_attribute('button[data-c=bargM]','class'); pg.click('button[data-c=bargM]'); choose(pg,'국을 먹는다'); assert '북부 3연대' in pg.inner_text('#ov'); choose(pg,'둘러댄다'); choose(pg,'부엌으로 돌아간다'); choose(pg,'이름은 네가'); choose(pg,'밤길로'); choose(pg,'국이 맛있어서'); choose(pg,'저택에서 지내라'); choose(pg,'계속 다닌다')
     assert 'barg' in S(pg)['comps']; print('barg/eno ok')
     # ---- 파견 ----
-    go(pg,'base'); pg.click('button[data-c=board]'); choose(pg,'시장 심부름')
+    go(pg,'base'); pg.click('button[data-c=board]'); pg.click('#ov.on .drow:has-text("시장 심부름")')
     pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='파견에서 돌아왔다'",timeout=10000); okpop(pg); print('dispatch ok')
     # ---- 레벨·능력치·기술 ----
     s=S(pg); print('level',s['lv'],'xp',s['xp'],'sp',s['sp'],'skp',s['skp'],'sk',s['sk']); assert s['lv']>=3 and s['sp']>=2 and s['skp']>=1 and s['sk']==['hamstring']

@@ -12,7 +12,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const K=window.__k2;K.S.night=3;K.S.tutd=1;K.S.loc='street';K.render();K.SCENE.kirien()}")
     choose(pg,'못 알아들었다고');choose(pg,'말하지 않는다');choose(pg,'혼자 하겠다');assert '초소 앞으로 와' in pg.inner_text('#ov');choose(pg,'고개를 끄덕인다')
     s=S(pg);assert s['dec']['kirien']==1 and s['comps']==[];print('kirien declined')
-    pg.click('button[data-c=tab][data-a=quest]');assert '초소 앞에서 만날 수 있다' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
+    pg.click('button[data-c=tab][data-a=quest]');assert '초소 앞으로 와' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     # 오스윈 먼저: 키리엔 없이도 문서고에 간다
     go(pg,'church');assert '문서고 쪽이 소란스럽다' in pg.inner_text('.M');pg.click('button[data-c=archive]');choose(pg,'끼어든다')
     pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0}");pg.evaluate("window.__k2.bact('atk')")
