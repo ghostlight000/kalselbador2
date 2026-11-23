@@ -481,7 +481,7 @@ const EXP={
 const RU=['할아버지가 그러는데 옛날엔 주문이란 게 있었대. 근데 아무도 한 줄을 못 외워. 배운 사람들조차.','학술원이 노인들 꿈을 사 간다더라. 겨울 시대 꿈만 골라서.','가스등 불빛 아래 오래 서 있지 마. 집에 가는 길을 잊는다고들 해.','학술원 사람들이 요즘 밤마다 묘지를 돈다더군. 무얼 찾는지는 몰라.','공장 지대 갱도에서 미지근한 물이 올라온대. 겨울 내내 얼어 있던 곳인데.','부두 쪽 짐꾼 하나가 어제 제 이름을 못 댔다지. 오늘은 기억해 냈다던가.','대성당 정화자들이 또 장부를 고친대. 누구 이름이 빠졌는지는 아무도 몰라.'];
 
 // 아이템
-const IT={letter:['보낸 이 없는 편지','“오렌하르트로 가. 가스등 거리 끝에서 꺼지지 않는 등불을 든 사람을 찾아. 네가 잊은 것이 거기 있다.” 내 글씨다. 쓴 기억은 없다.'],band:['붕대','전투에서 체력 30을 되찾는다.'],scrap:['고철','공방이 열리면 쓸 수 있다.'],ash:['푸른 재','꺼진 가스등에서 긁어낸 재. 손에 묻으면 무언가를 잠깐 잊는다.'],
+const IT={moss:['서리이끼','교단 묘지 북쪽 비석에서 긁어 온 이끼. 손이 시리다.'],clap:['종추 조각','이름 없는 종의 청동 종추 조각. 묵직하다.'],vial:['꼬리표 붙은 유리관','운하 계단 가스등 버너에서 빼낸 유리관. 푸른 재가 반쯤 찼다.'],letter:['보낸 이 없는 편지','“오렌하르트로 가. 가스등 거리 끝에서 꺼지지 않는 등불을 든 사람을 찾아. 네가 잊은 것이 거기 있다.” 내 글씨다. 쓴 기억은 없다.'],band:['붕대','전투에서 체력 30을 되찾는다.'],scrap:['고철','공방이 열리면 쓸 수 있다.'],ash:['푸른 재','꺼진 가스등에서 긁어낸 재. 손에 묻으면 무언가를 잠깐 잊는다.'],
   grim:['빛바랜 주문책','하그의 주문책. 주문이 적혀 있던 자리만 하얗다.'],mstaff:['부러진 참나무 막대','모르텐의 막대 반쪽. 손잡이에 손때가 반들반들하다.'],mem:['남의 아버지의 기억','딸을 키운 사내의 기억 한 병. 꼬리표의 이름은 긁혀 있다.'],wick:['그을린 심지','점등꾼의 등불에서 나온 심지. 아직 따뜻하다.'],relic:['1편의 골동품','']};
 const itName=id=>id==='relic'&&S&&S.legacy&&RELIC[S.legacy.pa]?RELIC[S.legacy.pa][0]:(IT[id]||[id])[0];
 
@@ -1336,7 +1336,134 @@ const SCENE={
    ev('피트',`<p>피트 — “진짜? 뭐든 할게. 밥만 주면.”</p>`+pline({kirien:'밥은 네가 해. 나는 못 해.',oswin:'글은 읽을 줄 압니까? 아니라면 가르치지요. 심부름꾼이 장부를 못 읽으면 곤란하니까.'})+
    (met(S,'barg')?'':'<p>피트 — “근데 저택 부엌 비었지? 녹슨 닻 여관 부엌에 늑대 아저씨가 있어. 남은 국 잘 줘. 요즘 헌병들이 그 아저씨 찾아다니던데.”</p>')+`<p class="m">피트가 저택에서 지내게 되었다. 본거지에서 파견을 맡길 수 있다.</p>`,[['데려간다',()=>{if(!q&&!met(S,'eno'))SCENE.enoM()}]],1)}
 };
-function pending(){const k=S.pend;S.pend=null;save();if(SCENE[k])SCENE[k]()}
+/* ===== 곁가지 사건 (v024) — 사건을 파헤치거나 무언가를 구해 오거나 엇갈린 말 사이에서 고른다 =====
+   S.sx[id]={i:지금 단계,r:닿은 단계,e:결말}. 시작은 탐사 중 발견(hook.x) 또는 도착(hook.arr). 모으기 단계는 그 장소 탐사로 채운다 */
+const SXK={inv:'조사',get:'구하기',vs:'대립'};
+const sxQ=id=>(S.sx||{})[id];
+function sxStart(id){S.sx=S.sx||{};if(S.sx[id])return;S.sx[id]={i:0,r:0};const D=SX[id];log(`새 사건 — ${D.t}`);jr(D.j0);save();render()}
+function sxNext(id){const q=sxQ(id);q.i++;q.r=Math.max(q.r,q.i);save();render()}
+function sxEnd(id,k,rw){const q=sxQ(id),D=SX[id];q.e=k;q.r=Math.max(q.r,q.i);q.i=D.steps.length;
+  if(rw){if(rw.g)S.coin+=rw.g;Object.entries(rw.i||{}).forEach(([a,n])=>add(a,n));if(rw.a&&S.party)aff(S.party,rw.a)}
+  jr(`${D.t} — ${D.end[k]}`);log(`사건 마무리 — ${D.t}`);save();render()}
+const sxHave=(st)=>Math.min(st.col.n,(S.inv||{})[st.col.it]||0);
+const sxLead=(id,st)=>{const d=typeof st.d==='function'?st.d(S):st.d;return st.col?`${d} (${sxHave(st)}/${st.col.n})`:d};
+function sxActs(){const out=[];Object.entries(SX).forEach(([id,D])=>{const q=sxQ(id);if(!q||q.e)return;const st=D.steps[q.i];if(!st||!st.b||st.at!==S.loc)return;
+  const lock=st.need&&!st.need(S);out.push(B('sxa',st.b[0],{a:id,sub:lock?st.lock:st.b[1],dis:!!S.act||lock}))});return out}
+/* 탐사가 끝났을 때: 모으기 진행, 새 사건 발견. 돌려주는 값은 덧붙일 문장들 */
+function sxExplore(at){const notes=[];let started=false;const on=!TEST||S.sxon;
+  Object.entries(SX).forEach(([id,D])=>{const q=sxQ(id);
+    if(q&&!q.e){const st=D.steps[q.i];if(st&&st.col&&st.col.at===at&&sxHave(st)<st.col.n&&Math.random()<st.col.p){add(st.col.it,1);notes.push(st.col.say+` (${sxHave(st)}/${st.col.n})`);
+      if(sxHave(st)>=st.col.n){notes.push(st.col.done);sxNext(id)}}}
+    else if(on&&!q&&!started&&!S.pend&&D.hook.x===at&&D.hook.when(S)&&Math.random()<D.hook.p){started=true;S.pend='sx:'+id}});
+  return {notes,started}}
+function sxArrive(at){if(S.pend||TEST&&!S.sxon)return;for(const [id,D] of Object.entries(SX)){if(!sxQ(id)&&D.hook.arr===at&&D.hook.when(S)&&!(S.sxno||{})[id]){S.pend='sx:'+id;return}}}
+const sxNo=id=>{S.sxno=S.sxno||{};S.sxno[id]=1;save()};
+
+const SX={
+ /* 조사 — 운하 계단의 신발 */
+ shoe:{t:'운하의 신발',k:'inv',j0:'운하 계단 끝에 작은 신발 한 켤레가 가지런히 놓여 있었다. 안쪽에 반쯤 풀린 이름이 수놓여 있다.',
+  hook:{x:'docks',p:.45,when:s=>s.night>=3},
+  open:()=>ev('운하의 신발','<p>창고 뒤에서 나오는데 운하 계단 끝에 작은 신발 한 켤레가 놓여 있다. 가지런히. 코끝이 물 쪽을 향해 있다.</p><p class="m">신발 안쪽에 실로 이름이 수놓여 있다. 반쯤 풀려서 첫 글자만 읽힌다.</p>'+pline({kirien:'애 냄새야. 하루 지났어. 물 냄새에 섞여서 끊겨.',oswin:'신발을 벗어 두고 간 사람은 돌아올 생각이 있었던 겁니다. 대개는요.',ibre:'작습니다. 발이 아주 작습니다.',kasimir:'가지런하군요. 누가 일부러 놓아둔 것처럼.',barg:'…애 신발이다. 젠장.',eno:'물이 이 애 노래를 기억해요. 조금.'}),
+   [['신발을 챙긴다',()=>sxStart('shoe')],['못 본 척한다',null]]),
+  steps:[
+   {n:'계단의 증언',d:'신발 주인을 본 사람이 있을지 모른다. 운하 계단 사람들에게 물어보자.',at:'docks',b:['운하 계단 사람들에게 묻는다','그물 깁는 노파와 뱃사공'],
+    run:()=>ev('계단의 증언','<p>그물 깁는 노파 — “어젯밤 사내아이 하나가 노래를 하면서 물로 걸어 들어갔어. 내 눈으로 똑똑히 봤다고.”</p><p>뱃사공 — “애가 물에 들어가? 헛소리. 회색 마차가 계단 위에 섰어. 애는 마차에 실려 갔어.”</p><p>노파 — “네 눈이 삐었지. 물에 들어가는 걸 봤다니까.”</p><p class="m">둘 다 거짓말하는 얼굴이 아니다. 계단 위 가스등만 유난히 밝다. 새것처럼.</p>'+pline({kirien:'둘 다 진짜 본 걸 말하고 있어. 냄새가 그래.',oswin:'목격자 둘이 다른 것을 봤다면 둘 다 반쯤만 본 겁니다.',kasimir:'누가 거짓말쟁이인지 고르는 놀이군요. 저는 둘 다에 걸겠습니다.',barg:'…저 가스등. 새거다.',eno:'저 등 밑 물이 이상하게 조용해요.'}),
+     [['계단 가스등을 올려다본다',()=>{sxNext('shoe')}]],1)},
+   {n:'초소의 근무 일지',d:'“그 계단 가스등 말이지. 그날 누가 버너를 갈았다더군.” 경비대 초소 일지를 보자.',at:'street',b:['경비대 초소 일지','모르텐이 일지를 넘긴다'],
+    run:()=>ev('초소의 근무 일지','<p class="m">모르텐이 손때 묻은 일지를 넘긴다. 삐뚤빼뚤한 글씨다.</p><p class="m">“운하 계단 가스등. 학술원 인부 둘. 버너 교체. 사유 적지 않음.”</p><p>모르텐 — “새 버너를 달면 그 밑에 선 사람이 한동안 멍해지네. 노래만 흥얼거리지. 그러다 물가로 걸어가는 걸 몇 번 봤어.”</p><p>모르텐 — “그리고 꼭 그 뒤에 회색 마차가 오지.”</p><p class="m">노파도 뱃사공도 맞았다. 아이는 물로 걸어갔고 마차가 그 아이를 건졌다.</p>',
+     [['마차가 간 곳을 찾는다',()=>sxNext('shoe')]],1)},
+   {n:'계단 밑의 불',d:'버너가 무언가를 모으고 있다. 계단 가스등을 끄고 살펴보자.',at:'docks',b:['운하 계단 가스등','새 버너가 웅웅거린다'],
+    run:()=>ev('계단 밑의 불','<p>가스등 기둥을 오른다. 버너 안쪽에 손가락만 한 유리관이 끼워져 있다. 푸른 재가 반쯤 찼다.</p><p class="m">유리관을 비트는 순간 가스등 그림자가 길게 늘어나 일어선다.</p>',
+     [['맞선다',()=>{S.bstory='sxshoe';save();startBattle('fight','shade')}],['오늘은 물러난다',null]])},
+   {n:'방직소의 아이',d:'유리관 꼬리표에 하칸골이 적혀 있었다. 공장 지대로 가 보자.',at:'works',b:['하칸골 실 감는 아이들','작은 손들이 실패를 돌린다'],need:s=>!!s.fac,lock:'아직 공장 지대로 가는 길을 모른다',
+    run:()=>ev('방직소의 아이','<p>실패를 감는 아이들 사이에 맨발인 사내아이가 하나 있다. 노래를 흥얼거린다. 운하 계단에서 노파가 들었다던 그 노래다.</p><p>감독관 — “그놈? 마차가 놓고 갔어. 이름도 모르는 놈이야. 일은 잘해.”</p><p class="m">아이가 내 손의 신발을 본다. 실패가 멈춘다.</p>'+pline({kirien:'저 애야. 냄새가 맞아.',oswin:'유리관에는 마르코라고 적혀 있었지요. 일곱 살.',ibre:'신발을 신겨 주십시오. 발이 차갑습니다.',kasimir:'감독관에게 동전 몇 닢이면 되겠군요. 이런 곳은 늘 그렇죠.',barg:'…밥은 먹였냐. 저놈.',eno:'저 애 안에 아직 엄마 목소리가 남아 있어요. 작게.'}),
+     [['신발을 신겨 준다',()=>SCENE.sxshoeE('home')],['감독관에게 동전 10을 쥐여 준다',()=>{if(S.coin<10){ev('방직소의 아이','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=10;SCENE.sxshoeE('buy')}]])}
+  ],
+  end:{home:'신발을 신은 마르코가 천천히 제 이름을 기억해 냈다. 엄마가 수놓아 준 이름이었다. 천막촌에서 엄마를 찾았다.',buy:'감독관에게 동전을 쥐여 주고 마르코를 데리고 나왔다. 아이는 이름을 몰랐지만 손을 놓지 않았다. 교단 구호소에 맡겼다.'}},
+
+ /* 구하기 — 서리이끼 */
+ moss:{t:'서리이끼',k:'get',j0:'천막촌 약초상 마르타가 열병에 쓸 서리이끼를 부탁했다. 교단 묘지 북쪽 비석에 자란다고 한다.',
+  hook:{arr:'outskirts',when:s=>!!s.acad},
+  open:()=>ev('천막촌의 열병','<p>천막 하나에서 기침 소리가 이어진다. 앞치마에 풀물이 든 여자가 뛰어나온다.</p><p>마르타 — “거기 당신. 다리 성해 보이네. 부탁 하나만 하자.”</p><p>마르타 — “애들이 열이 안 내려. 서리이끼가 있으면 달일 수 있어. 교단 묘지 북쪽 오래된 비석에만 자라. 나는 묘지에 못 들어가. 천막 사람이라고 쫓겨나거든.”</p>'+pline({kirien:'여기 애들 다 아는 애들이야. 가자.',oswin:'묘지 이끼라. 학술원 약학 교재에 있던 이름입니다.',ibre:'제가 비석을 들어 드릴 수 있습니다.',kasimir:'묘지 산책이라. 제 단골 코스죠.',barg:'…애들이 아프다고. 가자.',eno:'이끼는 죽은 사람 이름을 먹고 자라요. 그래서 차가워.'}),
+   [['이끼를 구해 오겠다',()=>sxStart('moss')],['지금은 어렵다',()=>sxNo('moss')]]),
+  steps:[
+   {n:'묘지의 이끼',d:'교단 묘지를 둘러보며 북쪽 비석의 서리이끼를 모으자.',at:'church',col:{at:'church',it:'moss',n:3,p:.55,say:'이름 지워진 비석 그늘에서 서리이끼를 긁어냈다. 손끝이 시리다.',done:'서리이끼를 다 모았다. 마르타에게 가져가자.'}},
+   {n:'마르타의 천막',d:'서리이끼를 마르타에게 가져가자.',at:'outskirts',b:['마르타의 천막','서리이끼를 건넨다'],
+    run:()=>ev('마르타의 천막','<p>천막 앞에 회색 장갑을 낀 사내가 서 있다. 마르타와 언성이 높다.</p><p>사내 — “학술원이 서리이끼 한 줌에 동전 서른을 쳐 주지. 그걸로 진정제를 만들면 백 명이 편히 잔다고.”</p><p>마르타 — “그 진정제 먹은 사람들 다 멍해졌잖아. 우리 애들은 지금 열이 나.”</p><p class="m">사내가 내 손의 이끼 자루를 본다. 동전 주머니를 흔든다.</p>'+pline({kirien:'저 장갑. 요양소 뒷문에서 봤어.',oswin:'학술원 진정제라. 성분표를 본 적이 있습니다. 백 명이 편히 잔다는 말은 맞습니다. 다만 깨어나는 사람이 적지요.',ibre:'아이들이 먼저입니다.',kasimir:'서른 닢이면 꽤 큰돈이죠. 고민하는 척은 해 보시죠.',barg:'…돈 필요 없다. 애들 줘라.',eno:'저 사람 주머니에서 잠든 이름들 냄새가 나요.'}),
+     [['마르타에게 준다',()=>{add('moss',-3);sxEnd('moss','kids',{i:{band:2},a:2});ev('마르타의 천막','<p>마르타가 이끼를 솥에 넣는다. 천막 안 기침 소리가 그날 밤 처음으로 잦아든다.</p><p>마르타 — “붕대 받아. 돈은 없고 이건 있어.”</p><p class="m">회색 장갑 사내는 혀를 차고 언덕 쪽으로 사라졌다.</p>',[['천막을 나선다',null]],1)}],
+      ['사내에게 판다',()=>{add('moss',-3);sxEnd('moss','sell',{g:30});ev('마르타의 천막','<p>사내가 동전 서른 닢을 세어 내 손에 올린다. 마르타는 아무 말 없이 천막 안으로 들어간다.</p><p class="m">천막 안 기침 소리는 그날 밤 내내 이어졌다.</p>',[['돌아선다',null]],1)}]])}
+  ],
+  end:{kids:'마르타의 솥에서 서리이끼가 끓었다. 천막촌 아이들의 열이 내렸다.',sell:'서리이끼를 학술원 사내에게 팔았다. 동전 서른 닢. 천막촌 기침 소리는 오래 이어졌다.'}},
+
+ /* 대립 — 불탄 수레 */
+ cart:{t:'불탄 수레',k:'vs',j0:'가스등 거리의 군밤 수레가 밤새 탔다. 수레 주인 오토는 점등꾼 견습 니코가 불을 질렀다고 한다.',
+  hook:{arr:'street',when:s=>s.night>=3&&s.comps.length>=1},
+  open:()=>ev('불탄 수레','<p>가스등 거리 한복판에 숯이 된 수레가 서 있다. 군밤 냄새가 아직 난다.</p><p>뚱뚱한 사내가 비쩍 마른 소년의 멱살을 잡고 있다.</p><p>오토 — “네놈이 불 질렀지! 새벽에 내 수레 옆 가스등에 올라가 있던 거 다 봤어!”</p><p>니코 — “고치러 올라간 거예요! 저는 아무것도 안 했어요!”</p><p class="m">구경꾼들이 웅성거린다. 누구 편을 들지 눈치만 본다.</p>'+pline({kirien:'둘 다 겁먹은 냄새야. 화난 냄새보다 겁이 더 커.',oswin:'목격자는 많은데 본 사람은 없는 전형적인 경우군요.',ibre:'멱살을 놓아야 합니다. 아이가 숨을 못 쉽니다.',kasimir:'불구경 뒤엔 늘 재판이 열리죠. 판사는 누가 하나요.',barg:'…손 놔라. 애다.',eno:'타 버린 수레가 뭐라고 해요. 위에서 불이 떨어졌대.'}),
+   [['둘을 떼어 놓는다',()=>sxStart('cart')],['끼어들지 않는다',()=>sxNo('cart')]]),
+  steps:[
+   {n:'오토의 말',d:'수레 주인 오토의 이야기부터 듣자.',at:'street',b:['수레 주인 오토','숯이 된 수레 앞에 주저앉아 있다'],
+    run:()=>ev('오토의 말','<p>오토 — “이십 년이야. 이 수레로 이십 년을 먹고살았다고.”</p><p>오토 — “새벽에 저놈이 사다리를 들고 내 수레 옆 가스등에 올라갔어. 내려오고 얼마 안 돼서 불이 붙었지. 그게 우연이야?”</p><p>오토 — “점등꾼 놈들은 다 똑같아. 불 장난이 직업인 놈들이야.”</p><p class="m">오토의 손이 떨린다. 거짓말을 지어내는 손은 아니다.</p>',[['니코를 찾아간다',()=>sxNext('cart')]],1)},
+   {n:'니코의 말',d:'니코는 운하 부두 계단에 숨어 있다고 한다.',at:'docks',b:['점등꾼 견습 니코','부두 계단에 웅크리고 있다'],
+    run:()=>ev('니코의 말','<p>니코 — “가스등이 이상하게 웅웅거려서 올라간 거예요. 그 등 버너는 제가 단 게 아니에요. 전날 학술원 인부들이 갈았어요.”</p><p>니코 — “그리고… 오토 아저씨 빚이 많대요. 수레에 보험을 들었다는 소문도 있고요.”</p><p class="m">니코가 무릎을 끌어안는다. 손끝이 파랗게 물들어 있다.</p>'+pline({kirien:'저 애 손. 가스등 재야.',oswin:'보험 이야기는 소문입니다. 소문은 증거가 아니지요.',kasimir:'이제 이야기가 둘이 됐군요. 재미있어지는데요.',barg:'…빚 있는 놈이 제 밥줄을 태우진 않는다.',eno:'이 애 안에서 불이 무서워 떨고 있어요.'}),
+     [['오토 편을 든다',()=>SCENE.sxcartE('otto')],['니코 편을 든다',()=>SCENE.sxcartE('niko')],['불탄 수레를 더 살펴보겠다',()=>sxNext('cart')]])},
+   {n:'숯이 된 수레',d:'판단하기 전에 불탄 수레를 직접 살펴보자.',at:'street',b:['불탄 수레를 살핀다','숯이 된 바퀴와 녹은 쇠'],
+    run:()=>ev('숯이 된 수레','<p>수레 바닥 잿더미를 헤친다. 녹아 붙은 쇳덩이가 나온다. 돈궤다. 안에 녹은 동전이 엉겨 있다.</p><p class="m">보험금을 노린 사람이 돈궤를 두고 불을 지르진 않는다.</p><p>가스등 기둥을 올려다본다. 버너 아래쪽 쇠가 녹아 흘러내린 자국이 있다. 그 밑에 푸른 재가 끈적하게 엉겨 있다.</p><p class="m">새 버너가 달아올라 불붙은 재를 수레 위로 떨어뜨렸다. 니코는 그걸 고치러 올라갔다가 늦었다.</p>',
+     [['오토와 니코를 불러 보여 준다',()=>SCENE.sxcartE('truth')]],1)}
+  ],
+  end:{otto:'오토 편을 들었다. 니코는 점등꾼 조합에서 쫓겨났다. 그 뒤로 거리 끝 가스등 하나가 자주 꺼진다.',niko:'니코 편을 들었다. 오토는 사기꾼 소리를 들으며 거리를 떠났다. 나중에 잿더미에서 녹은 돈궤가 나왔다고 한다.',truth:'새 버너가 녹아내린 것이었다. 오토와 니코가 함께 새 수레를 짠다. 학술원 인부들은 그 거리에 다시 오지 않았다.'}},
+
+ /* 대립 — 한 병의 기억, 두 어머니 */
+ bottle:{t:'두 어머니',k:'vs',j0:'기억 전당포 앞에서 두 여자가 한 병의 기억을 두고 다퉜다. 저마다 제 아들의 기억이라고 했다.',
+  hook:{arr:'street',when:s=>!!s.acad},
+  open:()=>ev('두 어머니','<p>가스등 거리 뒷골목. 유리병이 쌓인 가게 앞에서 두 여자가 언성을 높인다.</p><p class="m">전당포 주인 오델이 병 하나를 높이 들고 있다. 꼬리표에 “사내아이. 여섯 살. 겨울 바닷가.”라고 적혀 있다.</p><p>한나 — “우리 요리야. 회색 마차가 데려간 우리 요리라고!” <span class="m">(천막촌 옷차림이다.)</span></p><p>클라라 — “에밀의 기억이에요. 우리는 겨울마다 바다에 갔어요. 이 여자는 바다 구경도 못 해 봤을 텐데.” <span class="m">(교단 구역의 비단 숄을 둘렀다.)</span></p><p>오델 — “먼저 값을 치르는 쪽 거야. 난 출처 따위 몰라.”</p>'+pline({kirien:'둘 다 진짜 엄마 냄새야. 둘 다 잃었어.',oswin:'기억에 주인 이름을 적지 않는 건 학술원 정리 상자의 버릇입니다.',ibre:'병은 하나입니다. 어머니는 둘입니다. 어렵습니다.',kasimir:'솔로몬 왕 놀이로군요. 칼은 제가 빌려 드릴까요.',barg:'…둘 다 애를 잃었군.',eno:'저 병 안에서 파도 소리가 나요. 그리고 두 사람 목소리가.'}),
+   [['내가 알아보겠다',()=>sxStart('bottle')],['끼어들지 않는다',()=>sxNo('bottle')]]),
+  steps:[
+   {n:'한나의 천막',d:'천막촌의 한나에게 아들 이야기를 듣자.',at:'outskirts',b:['한나의 천막','천막촌 끝 조개껍데기가 걸린 천막'],
+    run:()=>ev('한나의 천막','<p>천막 기둥에 조개껍데기 하나가 매달려 있다.</p><p>한나 — “요리가 가져온 거야. 바다에서 주웠대. 나는 바다를 못 가 봤어. 그래도 그 애는 늘 바다 이야기를 했어.”</p><p>한나 — “그해 겨울엔 일하던 집 주인 식구를 따라갔지. 짐 들어 주는 아이로.”</p><p class="m">한나는 그 집이 어디였는지 말하지 않는다. 손톱으로 조개껍데기를 문지를 뿐이다.</p>',[['클라라를 찾아간다',()=>sxNext('bottle')]],1)},
+   {n:'클라라의 집',d:'교단 구역 돌집에 사는 클라라를 찾아가자.',at:'church',b:['클라라의 집','교단 구역 돌집'],
+    run:()=>ev('클라라의 집','<p>벽난로 위에 소년의 초상화가 걸려 있다. 금발에 하얀 옷깃.</p><p>클라라 — “에밀은 두 해 전 겨울에 열병으로 갔어요. 남편이 빚을 갚느라 그 애 물건을 다 팔았죠. 기억까지 팔았을 줄은 몰랐어요.”</p><p>클라라 — “마지막으로 바다에 간 겨울엔 하녀 아이도 데려갔어요. 에밀이 같이 가자고 졸랐거든요.”</p><p class="m">초상화 아래 작은 조개껍데기가 놓여 있다. 한나의 천막에 걸린 것과 꼭 닮았다.</p>',[['전당포로 돌아간다',()=>sxNext('bottle')]],1)},
+   {n:'병 속의 바다',d:'두 이야기를 들었다. 전당포로 돌아가 병의 주인을 정하자.',at:'street',b:['기억 전당포','오델이 병을 쥐고 기다린다'],
+    run:()=>ev('병 속의 바다','<p>오델 — “그래서. 누구 거로 할 거야. 학술원 정리 상자에서 나온 물건이라 시끄러워지면 나도 곤란해.”</p><p class="m">한나와 클라라가 가게 양쪽 끝에 서 있다. 서로 눈을 마주치지 않는다.</p>',
+     [['한나에게 준다',()=>SCENE.sxbotE('hanna')],['클라라에게 준다',()=>SCENE.sxbotE('clara')],['병마개를 열어 본다',()=>SCENE.sxbotO()]])}
+  ],
+  end:{hanna:'병은 한나에게 갔다. 클라라는 말없이 돌집으로 돌아갔다.',clara:'병은 클라라에게 갔다. 한나는 조개껍데기를 떼어 운하에 던졌다고 한다.',both:'병 속 바다는 요리가 본 바다였다. 앞서 뛰어가는 에밀의 뒷모습까지. 두 어머니가 한 병을 반씩 나눠 마셨다.'}},
+
+ /* 구하기 — 이름 없는 종 */
+ bell:{t:'이름 없는 종',k:'get',j0:'대성당 종지기 아벨이 이름 없는 종의 종추를 찾아 달라고 했다. 천막촌 넝마상에 팔려 갔다고 한다.',
+  hook:{arr:'church',when:s=>s.night>=3},
+  open:()=>ev('이름 없는 종','<p>대성당 옆 낡은 종탑 아래. 허리가 굽은 노인이 빈 종을 올려다본다.</p><p>아벨 — “이 종은 이름이 지워질 때마다 울렸지. 교단에선 다들 싫어했어. 어느 날 종추가 사라졌어.”</p><p>아벨 — “천막촌 넝마상들이 쇳조각을 사 간다더군. 조각이라도 찾아 주면 내가 다시 이어 붙이지. 고철도 좀 있어야 하고.”</p>'+pline({kirien:'종소리 기억나. 어릴 때 밤마다 울렸어. 요즘은 안 울려.',oswin:'이름이 지워질 때마다 울리는 종이라. 그렇다면 요즘은 쉴 틈이 없었겠군요.',ibre:'종은 무겁습니다. 제가 달겠습니다.',kasimir:'교단이 싫어하는 종이라니 벌써 마음에 드는군요.',barg:'…전쟁 끝나고 한 달 내내 울렸다더군. 그 종.',eno:'종이 배고프대요. 소리를 못 내서.'}),
+   [['종추를 찾아오겠다',()=>sxStart('bell')],['지금은 어렵다',()=>sxNo('bell')]]),
+  steps:[
+   {n:'종추 조각',d:'천막촌 넝마 더미를 뒤져 종추 조각을 찾자.',at:'outskirts',col:{at:'outskirts',it:'clap',n:2,p:.5,say:'넝마 더미에서 묵직한 청동 조각이 나왔다. 종추의 일부다.',done:'종추 조각을 다 찾았다. 아벨에게 가져가자.'}},
+   {n:'종탑의 아벨',d:'종추 조각과 고철 다섯 개를 아벨에게 가져가자.',at:'church',b:['종탑의 아벨','종추 조각과 고철 다섯 개'],need:s=>(s.inv.scrap||0)>=5,lock:'고철 다섯 개가 있어야 한다',
+    run:()=>ev('종탑의 아벨','<p>아벨이 청동 조각을 맞춰 보고 고개를 끄덕인다. 그때 흰 옷의 사제가 종탑 계단을 올라온다.</p><p>사제 — “그 종은 녹이기로 정해졌습니다. 고철은 교단이 값을 쳐 드리지요. 동전 스물다섯.”</p><p>아벨 — “녹이면 이제 아무도 모르지. 누가 지워졌는지.”</p>'+pline({kirien:'종 달자. 엄마 이름 지워질 때도 울렸을 거야.',oswin:'장부가 지워지면 종이라도 남아야지요.',kasimir:'교단에 고철을 팔다니. 그것도 나름 우아한 복수죠.',barg:'…달아라. 울려야 한다.',eno:'종이 울리면 물속 이름들도 같이 떨려요.'}),
+     [['종을 단다',()=>{add('clap',-2);add('scrap',-5);sxEnd('bell','ring',{g:8,a:2});ev('종탑의 아벨','<p>아벨이 밤새 종추를 이어 붙인다. 새벽에 종이 한 번 운다. 낮고 길게.</p><p class="m">아랫마을 어딘가에서 누군가 창문을 연다. 또 한 번 운다.</p><p>아벨 — “오늘도 누가 지워졌군. 이제 적어도 듣는 사람은 있어.”</p>',[['종탑을 내려간다',null]],1)}],
+      ['사제에게 고철을 넘긴다',()=>{add('clap',-2);add('scrap',-5);sxEnd('bell','melt',{g:25});ev('종탑의 아벨','<p>사제가 동전을 세어 준다. 아벨은 빈 종을 오래 올려다본다.</p><p class="m">그 뒤로 종탑은 조용하다.</p>',[['종탑을 내려간다',null]],1)}]])}
+  ],
+  end:{ring:'이름 없는 종이 다시 울린다. 이름이 지워질 때마다 낮고 길게.',melt:'종은 녹았다. 종탑은 조용하다.'}}
+};
+Object.assign(SCENE,{
+ sxshoeW:()=>{add('vial',1);ev('계단 밑의 불','<p>그림자가 흩어지고 가스등이 꺼진다. 손바닥에 식은 유리관이 남는다.</p><p class="m">꼬리표가 붙어 있다. “운하 계단 · 마르코 · 일곱 살 · 하칸골 공급.”</p>'+pline({oswin:'공급이라. 요양소 장부에서 본 단어입니다.',kirien:'하칸골. 공장 지대야.',barg:'…일곱 살.'}),[['유리관을 챙긴다',()=>sxNext('shoe')]],1)},
+ sxshoeE:k=>{if(S.inv.vial)add('vial',-1);sxEnd('shoe',k,{a:3,g:k==='home'?6:0});ev('운하의 신발',k==='home'?'<p>신발을 신긴다. 꼭 맞는다. 아이가 신발 안쪽 실밥을 손가락으로 더듬는다.</p><p>아이 — “…마. 르. 코. 엄마가 수놓았어. 셋까지 세면서.”</p><p class="m">감독관이 뭐라 하기 전에 아이를 업고 나온다. 천막촌에서 아이 엄마가 맨발로 뛰어나왔다. 동전 몇 닢을 손에 쥐여 준다. 받지 않으려 했지만 놓지 않는다.</p>':'<p>감독관이 동전을 세고 어깨를 으쓱한다. 아이가 신발을 품에 안고 따라나선다. 아직 제 이름을 모른다.</p><p class="m">교단 구호소 수녀가 아이를 받아 든다. 아이는 신발을 놓지 않는다.</p>',[['돌아선다',null]],1)},
+ sxcartE:k=>{sxEnd('cart',k,k==='truth'?{g:10,a:2}:{g:3});ev('불탄 수레',{otto:'<p>니코가 고개를 떨군다. 경비대가 소년을 데려간다.</p><p>오토 — “봐. 내 말이 맞지.”</p><p class="m">오토는 동전 세 닢을 고맙다며 쥐여 준다. 손이 아직 떨린다.</p>',niko:'<p>구경꾼들이 오토를 향해 수군거린다. 사기꾼. 빚쟁이.</p><p>오토 — “…이십 년이었어.”</p><p class="m">니코가 동전 세 닢을 쥐여 준다. 점등꾼 견습의 한 주 품삯이다.</p>',truth:'<p>오토가 녹은 돈궤를 끌어안는다. 니코가 가스등 버너 자국을 가리킨다.</p><p>오토 — “…미안하다. 꼬마.”</p><p>니코 — “버너는 제가 갈게요. 옛날 걸로요.”</p><p class="m">경비대장이 사건을 정리해 줘서 고맙다며 동전 열 닢을 내민다.</p>'}[k],[['거리를 나선다',null]],1)},
+ sxbotE:k=>{sxEnd('bottle',k,{a:1});ev('병 속의 바다',k==='hanna'?'<p>한나가 병을 품에 안고 무릎을 꿇는다. 클라라는 숄을 여미고 돌아선다. 구두 소리가 골목 끝까지 들린다.</p>':'<p>클라라가 병을 받아 든다. 한나는 아무 말 없이 골목을 나간다. 천막촌 쪽으로.</p>',[['전당포를 나선다',null]],1)},
+ sxbotO:()=>ev('병 속의 바다','<p>병마개를 연다. 차가운 바다 냄새가 가게를 채운다.</p><p class="m">— 겨울 바닷가. 무거운 짐 가방. 앞에서 금발 소년이 파도를 향해 뛰어간다. “요리! 빨리 와!” 소년이 조개껍데기 두 개를 줍더니 하나를 내민다. —</p><p class="m">병 속 기억은 요리가 본 바다다. 그리고 그 바다엔 에밀이 있다.</p><p>한나 — “…요리야.”</p><p>클라라 — “에밀….”</p>'+pline({kirien:'둘 다 맞았어. 둘 다 거기 있었어.',oswin:'한 기억에 두 사람이 담기는 일은 드물지 않습니다. 장부는 그걸 하나로 셀 뿐이지요.',eno:'이 병 반으로 나눠도 안 깨져요. 기억은 원래 그래.',barg:'…둘이 나눠라.'}),
+   [['둘이 나누게 한다',()=>{sxEnd('bottle','both',{a:3});ev('병 속의 바다','<p>오델이 잔 두 개를 꺼낸다. 처음으로 값을 묻지 않는다.</p><p class="m">한나와 클라라가 나란히 앉아 잔을 비운다. 클라라가 숄을 벗어 한나의 어깨에 둘러 준다.</p>',[['가게를 나선다',null]],1)}],['한나에게 준다',()=>SCENE.sxbotE('hanna')],['클라라에게 준다',()=>SCENE.sxbotE('clara')]])
+});
+
+/* 탐사 중 작은 일들 — 반복 탐사에 우연을 섞는다 */
+const XEV=[
+ {at:['docks'],h:'젖은 편지',p:'<p>널빤지 사이에 젖은 편지 한 통이 끼어 있다. 봉투에 동전 무게가 느껴진다.</p>',b:[['뜯어 본다',()=>{S.coin+=3;pop('젖은 편지',{g:3,n:['“어머니께. 이번 달은 이것뿐이에요.” 받는 사람 주소는 번져서 읽을 수 없다.']})}],['그대로 둔다',()=>pop('젖은 편지',{n:['편지를 널빤지 사이에 다시 끼워 둔다. 누가 찾으러 올지도 모른다.']})]]},
+ {at:['street','church'],h:'길 잃은 노인',p:'<p>가스등 아래 노인이 같은 자리를 맴돌고 있다.</p><p>노인 — “우리 집이 이 근처였는데. 문 색깔이 뭐였더라.”</p>',b:[['집을 같이 찾아 준다',()=>{add('band',1);if(S.party)aff(S.party,1);pop('길 잃은 노인',{i:{band:1},n:['한참을 헤맨 끝에 파란 문 앞에서 노인이 멈춘다. 고맙다며 붕대 한 묶음을 쥐여 준다.']})}],['경비대에 맡긴다',()=>pop('길 잃은 노인',{n:['초소 경비가 노인을 데려간다. 노인은 끝내 문 색깔을 기억하지 못했다.']})]]},
+ {at:['academy','works'],h:'봉인된 상자',p:'<p>폐기물 더미 위에 학술원 봉인이 찍힌 작은 상자가 있다.</p>',b:[['봉인을 뜯는다',()=>{add('ash',1);add('scrap',1);pop('봉인된 상자',{i:{ash:1,scrap:1},n:['유리관 하나와 쇳조각이 들었다. 유리관 꼬리표는 지워져 있다.']})}],['건드리지 않는다',()=>pop('봉인된 상자',{n:['상자를 그대로 둔다. 다음에 와 보니 없어졌다.']})]]},
+ {at:['outskirts','docks'],h:'굶은 개',p:'<p>갈비뼈가 드러난 개 한 마리가 멀찍이서 따라온다.</p>',b:[['먹을 걸 나눠 준다',()=>{S.coin+=4;pop('굶은 개',{g:4,n:['개가 허겁지겁 먹고 나서 넝마 더미를 앞발로 판다. 흙 속에서 동전 몇 닢이 나온다.']})}],['쫓아낸다',()=>pop('굶은 개',{n:['개가 꼬리를 말고 물러난다.']})]]},
+ {at:['works'],h:'노래하는 굴뚝',p:'<p>식은 굴뚝 안에서 노랫소리가 흘러나온다. 여러 사람이 부르는 노래다.</p>',b:[['귀를 기울인다',()=>{add('ash',1);pop('노래하는 굴뚝',{i:{ash:1},n:['노래가 멎자 굴뚝 바닥에 푸른 재가 한 줌 쌓여 있다. 따뜻하다.']})}],['지나간다',()=>pop('노래하는 굴뚝',{n:['노래는 한참 뒤까지 들렸다.']})]]},
+ {at:['church'],h:'수녀의 질문',p:'<p>묘지 길에서 젊은 수녀가 다가온다.</p><p>수녀 — “이름을 여쭤도 될까요. 기도할 때 부르려고요.”</p>',b:[['이름을 알려 준다',()=>{add('band',1);pop('수녀의 질문',{i:{band:1},n:['수녀가 이름을 입속으로 몇 번 되뇐다. 구호소 붕대 하나를 건넨다.']})}],['웃으며 사양한다',()=>pop('수녀의 질문',{n:['수녀가 고개를 숙이고 물러난다.']})]]}
+];
+function xevRoll(at){if(S.pend||TEST&&!S.sxon)return false;const L=XEV.filter(e=>e.at.includes(at));if(!L.length||Math.random()>.2)return false;S.xev=XEV.indexOf(L[Math.random()*L.length|0]);S.pend='xev';return true}
+SCENE.xev=()=>{const e=XEV[S.xev];S.xev=null;if(!e)return;ev(e.h,e.p,e.b)};
+
+function pending(){const k=S.pend;S.pend=null;save();if(k&&k.startsWith('sx:')){const D=SX[k.slice(3)];if(D&&!sxQ(k.slice(3)))D.open();return}if(SCENE[k])SCENE[k]()}
 /* 개발자 창용: 이야기를 건너뛰어 얻기 */
 function grantBase(){if(S.base)return;SCENE.manorW();save()}
 function grantPit(){if(S.pit)return;SCENE.pitJoin(1);save()}
@@ -1354,7 +1481,7 @@ function migrate(){
   if(!ORIGIN[S.og])S.og=0;if(!S.letter0){S.letter0=1;if(!S.inv.letter)S.inv.letter=1}if(!PL[S.loc]||(PL[S.loc].hide&&PL[S.loc].hide(S)))S.loc='docks';
   S.lv=S.lv||1;S.xp=S.xp||0;S.sp=S.sp||0;S.skp=S.skp||0;S.sk=(S.sk||[]).filter(k=>SKL[k]);if(!S.sk.length)S.sk=[OSK[S.og]||'stance'];if(S.v<5)S.v=5;
   S.fix=S.fix||{};S.deco=Object.assign({},DECO0,S.deco||{});Object.keys(DECO).forEach(sl=>{if(decoO(sl,S.deco[sl])[0]!==S.deco[sl])S.deco[sl]=DECO0[sl]});S.own=S.own||{};S.read=S.read||{};if(S.v<6)S.v=6;
-  S.chd=S.chd||{};S.kq=S.kq||0;if(S.v<7)S.v=7;
+  S.chd=S.chd||{};S.sx=S.sx||{};S.kq=S.kq||0;if(S.v<7)S.v=7;
   S.asked=S.asked||{};S.tnew=S.tnew||{};S.cl=S.cl||{};S.comps.forEach(cst);if(S.v<8)S.v=8;
   if(!S.av)S.av='i0';if(S.mort==null)S.mort=S.night>=3?3:1;if(S.kqe&&S.kq===4)S.kq=6;if((S.kq||0)>=3)S.outs=1;if(S.manor&&!S.mr)S.mr=3;S.kids=S.kids||{};if(S.pit&&!S.kids.pit)S.kids.pit={st:S.disp.length?'out':'ok'};S.disp.forEach(d=>{if(!d.kid)d.kid='pit'});if(S.v<9)S.v=9;
   S.mgs=S.mgs||{};S.aev=S.aev||{};if(S.v<10){if(!S.mg){const old=S.sk.filter(k=>SKL[k].mg);if(old.length){S.sk=S.sk.filter(k=>!SKL[k].mg);if(old.includes(OSK0[S.og])){S.mgOld=[OSK0[S.og]];if(!S.sk.includes(OSK[S.og]))S.sk.push(OSK[S.og])}S.skp+=old.filter(k=>k!==OSK0[S.og]).length;if(!S.sk.length)S.sk=[OSK[S.og]]}}S.v=10} // v10: 주인공은 처음에 주문을 쓰지 못한다 // v9: 아이들·먼 파견·간호 // v8: 호감 10단계, 질문 대화, 동료 전투 // v7: 동료 자기 이야기, 키리엔 퀘스트 // v6: 저택 손보기·꾸미기
@@ -1603,6 +1730,7 @@ function placeView(){
       );
   }
   if(!S.party&&S.mort===1)acts.push(B('mtalk','모르텐과 이야기하기',{sub:'막대를 쥔 늙은 교관',dis:busy&&S.act.t==='m'}));
+  acts.push(...sxActs());
   if(S.party)acts.push(B('talk',josa(cn(S.party),'과','와')+' 이야기하기',{a:S.party,sub:talkSub(S.party),dis:busy&&S.act.t==='m'}));
   if(acts.length)h+=`<div class="acts">${acts.join('')}</div>`;
   const X=EXP[S.loc];
@@ -1676,6 +1804,8 @@ function questView(){
   const sq=[];
   if(S.pq)sq.push(['돌아오지 않은 아이',[['피트를 본 사람','먼 곳에 보낸 피트가 돌아오지 않았다. 운하 부두에서 본 사람을 찾아보자.'],['넝마 시장','피트는 변두리 넝마 시장 수레에 실려 갔다고 한다.']],S.pq-1,'피트를 구했다. 피트는 제 이름을 되찾았다.']);
   if(S.hq)sq.push(['주문을 외는 노인',[['사라진 주문책','변두리 천막 사이 어딘가에 하그의 주문책이 있다. 천막 사이를 뒤져 보자.'],['하그에게','찾은 주문책을 하그에게 돌려주자.']],S.hq-1,'주문책을 돌려주었다. 주문은 사람들 머릿속에만 남았다.']);
+  const sxl=Object.entries(SX).filter(([id])=>sxQ(id)).sort(([a],[b])=>(sxQ(a).e?1:0)-(sxQ(b).e?1:0));
+  sxl.forEach(([id,D])=>{const q=sxQ(id),T=`${D.t} <span class="m">${SXK[D.k]}</span>`;if(q.e)sq.push([T,[],0,D.end[q.e]]);else sq.push([T,D.steps.slice(0,q.r+2).map(st=>[st.n,sxLead(id,st)]),q.i,''])});
   const sqo=!F0.sq;const sc=sq.length?`<div class="card"><h2 class="fold" data-c="fold" data-a="sq"><span class="fi">${sqo?'▾':'▸'}</span>곁가지 이야기</h2>${!sqo?'':sq.map(([t,L,i,end])=>`<p><b>${t}</b></p>${L.map((x,j)=>`<div class="ms ${j<i?'done':j===i?'now':''}"><b>${j<i?'◆':j===i?'◇':'·'} ${x[0]}</b>${j===i?`<div class="m">${x[1]}</div>`:''}</div>`).join('')}${i>=L.length?`<div class="ms done"><b>◆ 끝</b><div class="m">${end}</div></div>`:''}`).join('')}</div>`:'';
   const F=S.fold||{},fh=(k,open,t,extra)=>`<h2 class="fold" data-c="fold" data-a="${k}"><span class="fi">${open?'▾':'▸'}</span>${t}${extra||''}</h2>`,step=(m,i)=>`<div class="ms ${i<cur?'done':i===cur?'now':''}"><b>${i<cur?'◆':i===cur?'◇':'·'} ${m[0]}</b>${i<=cur?`<div class="m">${i===cur&&msSrc(m)?`<span class="src">${msSrc(m)}</span> — `:''}${msTxt(m)}</div>`:''}</div>`;
   const curAct=MS[cur][4]||1;let mh='';
@@ -1709,9 +1839,10 @@ function resolveAct(){
   if(a.t==='x'){const X=EXP[a.at][a.i],L=X.loot();Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;log(X.n+'.');
     if(a.at==='outskirts'&&S.hq===1){add('grim',1);S.hq=2;jr('천막 사이 넝마 더미에서 하그의 주문책을 찾았다.');pop(X.n,{i:Object.assign({grim:1},L.i),g:L.g,n:[X.say,'넝마 더미 바닥에서 가죽 표지 책 한 권이 나왔다. 하그의 주문책이다.']});save();return true}
     if(S.base&&!S.pit&&(a.at==='docks'||a.at==='street')){pop(X.n,{i:L.i,g:L.g,n:[X.say]});S.pend='sewer';save();return true}
-    if(Math.random()<X.enc){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:X.say};save();startBattle('fight',foe);return true}
-    pop(X.n,{i:L.i,g:L.g,n:[X.say]})}
-  if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='docks'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='docks'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(S.mg&&!S.oq0&&S.comps.includes('oswin')&&!S.pend)S.pend='oq0';if(a.to==='academy'&&S.sole&&(S.oq||0)>=2&&!S.solv&&!S.pend)S.pend='soleV';if(a.to==='base'&&S.oq===6&&!S.lisL&&!S.pend)S.pend='liseL';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
+    const SXR=sxExplore(a.at),say=[X.say,...SXR.notes];if(!SXR.started)xevRoll(a.at);
+    if(!S.pend&&Math.random()<X.enc){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:say.join(' ')};save();startBattle('fight',foe);return true}
+    pop(X.n,{i:L.i,g:L.g,n:say})}
+  if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='docks'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='docks'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(S.mg&&!S.oq0&&S.comps.includes('oswin')&&!S.pend)S.pend='oq0';if(a.to==='academy'&&S.sole&&(S.oq||0)>=2&&!S.solv&&!S.pend)S.pend='soleV';if(a.to==='base'&&S.oq===6&&!S.lisL&&!S.pend)S.pend='liseL';sxArrive(a.to);if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
     const rf=!S.pend&&roadFoe(a);if(rf){save();SCENE.road(rf,a);return true}
 }
   if(a.t==='r'){S.hp=S.mhp;const b=S.loc==='base';log(b?'화로 곁에서 쉬었다. 몸이 풀렸다.':'여관 방에서 쉬었다.');const n=[b?'장작이 타는 소리를 듣다 깜박 잠들었다. 체력을 모두 되찾았다.':'창밖 가스등이 밤새 깜박였다. 그래도 눈을 붙였다. 체력을 모두 되찾았다.'];
@@ -1795,7 +1926,7 @@ const CMD={
   mtalk:()=>{if(S.mort!==1)return;S.masked=S.masked||{};const back=[['다른 이야기를 한다',()=>CMD.mtalk()],['이야기를 그만둔다',null]];
     const N=MTQ.filter(n=>!S.masked[n[0]]&&(!n[1]||S.masked[n[1]])).slice(0,3),L=N.length?N:MTQ.filter(n=>S.masked[n[0]]);
     ev('모르텐','<p class="m">모르텐이 막대에 몸을 기댄다.</p>'+(N.length?'':'<p class="m">더 묻고 싶은 건 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>'),L.map(([id,,q,Ls])=>[q,()=>{S.masked[id]=1;seq('morten','모르텐',typeof Ls==='function'?Ls():Ls,h=>ev('모르텐',h,back))}]).concat([['이야기를 그만둔다',null]]))},
-  talk:a=>{const id=a||S.party;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.asked=S.asked||{};S.tnew=S.tnew||{};
+  talk:a=>{const id=a||S.party;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.sx=S.sx||{};S.asked=S.asked||{};S.tnew=S.tnew||{};
     let top='';const tn=S.tnew[id];if(tn){delete S.tnew[id];const L=(TIERL[id]||{})[tn];if(L)top=tln(id,[L])}
     const back=[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]],T=cn(id);S.orx=S.orx||{};
     if(S.orx[id]){const ae=aevFor(id);if(ae){if(tn)S.tnew[id]=tn;S.aevK=ae;SCENE.aev();return}}
@@ -1832,6 +1963,7 @@ const CMD={
   patrol:()=>{if(S.act)return;if(!S.tutd&&!S.tutAsk&&!S.mort){S.tutAsk=1;ev('경비대 초소','<p>초소 앞에 서 있던 늙은 경비가 막대로 길을 막는다.</p><p>모르텐 — “밤길에 나가려면 박자부터 배우게. 오래 안 걸리네.”</p>',[['가르침을 받는다',()=>startBattle('tut')],['그냥 나간다',()=>startAct({t:'p',d:15})]]);return}startAct({t:'p',d:15})},
   cancel:()=>{const a=S.act;if(!a)return;S.act=null;if(a.t==='f'){S.coin+=FIX[a.k].coin;add('scrap',FIX[a.k].scrap)}log(a.t==='m'?'걸음을 돌렸다.':'하던 일을 그만두었다.');save();render()},
   tutor:()=>startBattle('tut'),practice:()=>startBattle('practice'),
+  sxa:a=>{if(S.act)return;const q=sxQ(a),D=SX[a];if(!q||q.e)return;const st=D.steps[q.i];if(!st||!st.run||st.at!==S.loc||(st.need&&!st.need(S)))return;st.run()},
   board:()=>{if(!S.base||!S.pit)return;const free=Object.keys(S.kids||{}).filter(kidOk),ok=free.length>0;
     const L=(far)=>'<div class="dlist">'+Object.entries(DSP).filter(([,d])=>!!d.far===far).map(([k,d])=>`<button class="drow"${ok?` data-c="dpick" data-a="${k}"`:' disabled'}><b>${d.n}</b><span class="m">${fmt(d.d*SEC())}${d.risk?' · 위험':''}</span></button>`).join('')+'</div>';
     ev('파견 게시판',`<p class="m">${ok?`맡길 수 있는 아이 ${free.length}명. 일을 고르면 바로 보낸다.`:'지금은 쉬고 있는 아이가 없다.'}</p><h3>가까운 곳</h3>${L(false)}<h3>먼 곳 <span class="m">오래 걸리고 위험하지만 얻는 것이 많다</span></h3>${L(true)}`,[['닫기',null]],1)},
@@ -2328,7 +2460,7 @@ $('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-bdev]');if
 
 /* ===================== 시작 ===================== */
 // 테스트 손잡이(자동 테스트가 쓴다)
-window.__k2={AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>
