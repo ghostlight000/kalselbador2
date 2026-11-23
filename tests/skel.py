@@ -96,7 +96,7 @@ with sync_playwright() as p:
     s=S(pg); assert s['base']==1 and s['inv'].get('relic')==1 and not s['pit']; print('base ok')
     assert pg.locator('button[data-c=board]').count()==0
     # 동료의 방: 데려갈 동료 바꾸기
-    pg.click('button[data-c=rooms]'); choose(pg,'오스윈과 나간다'); assert S(pg)['party']=='oswin'; assert '본거지에서 지낸다' in pg.inner_text('.Rr')
+    pg.click('button[data-c=rooms]'); assert pg.locator('#ov.on button').count()==3; choose(pg,'함께 나갈 동료를 고른다'); choose(pg,'오스윈과 나간다'); assert S(pg)['party']=='oswin'; assert '본거지에서 지낸다' in pg.inner_text('.Rr')
     # ---- 하수구의 아이 → 피트 ----
     go(pg,'docks'); pg.click('button[data-c=explore][data-a="0"]')
     pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='부두 창고 뒤지기'",timeout=10000); okpop(pg)

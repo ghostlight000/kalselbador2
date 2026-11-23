@@ -23,7 +23,7 @@ with sync_playwright() as p:
     # 여관에서 바꾸기 (여관 소문 창이 먼저 뜰 수 있다)
     pg.wait_for_timeout(700)
     if pg.is_visible('#ov.on'):choose(pg,'브리타를 찾아가')
-    pg.click('button[data-c=rooms]');assert '여관 1층' in pg.inner_text('#ov h2');choose(pg,'오스윈과 나간다');assert S(pg)['party']=='oswin';print('inn swap ok')
+    pg.click('button[data-c=rooms]');assert '여관 1층' in pg.inner_text('#ov h2');assert pg.locator('#ov.on button').count()==2;choose(pg,'함께 나갈 동료를 고른다');choose(pg,'오스윈과 나간다');assert S(pg)['party']=='oswin';print('inn swap ok')
     # 길 위 마주침
     pg.evaluate("()=>{const K=window.__k2;K.ENC_ON=true;K._r=Math.random;Math.random=()=>0.01}")
     go(pg,'street');pg.wait_for_selector('#ov.on h2:has-text("길 위에서")',timeout=5000);assert '지름길이' in pg.inner_text('#ov')

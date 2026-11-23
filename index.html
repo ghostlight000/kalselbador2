@@ -1745,7 +1745,9 @@ const CMD={
     ev(C.n,`<p>${C.n} — “${{nell:'일한 만큼만 주면 돼요. 떼먹으면 소문낼 거예요.',jos:'굴뚝보다 좁은 데는 없어요. 어디든 들어가요.',adele:'장부 정리도 할 줄 알아요. 수녀님들이 가르쳐 줬어요.'}[k]}”</p><p class="m">${C.n}가 저택에서 지내게 되었다.</p>`,[['좋다',null]],1);save()},
   rooms:()=>{const L=S.comps,inn=!S.base;if(inn&&S.loc!=='docks'||!inn&&S.loc!=='base')return;if(!L.length){CMD.rooms0();return}
     ev(inn?'여관 1층':'동료의 방',`<p class="m">${inn?'저택이 생기기 전까지는 여관에서 데리고 나갈 사람을 바꾼다.':'데리고 나갈 사람은 여기서만 바꿀 수 있다.'}</p>${L.map(id=>`<p><b>${cn(id)}</b> <span class="m">${compLine(id)}${S.party===id?' · 함께 걷는 중':''}</span></p>`).join('')}`,
-      (inn?[]:L.map(id=>[josa(cn(id),'과','와')+' 이야기한다'+(chNext(id)?' ✦':''),()=>CMD.talk(id)])).concat(L.filter(id=>id!==S.party).map(id=>[josa(cn(id),'과','와')+' 나간다',()=>{S.party=id;log(josa(cn(id),'과','와')+' 함께 나서기로 했다.');save()}])).concat([['문을 닫는다',null]]))},
+      (inn?[]:[['동료와 이야기한다'+(L.some(id=>chNext(id)||aevFor(id))?' ✦':''),()=>CMD.roomTalk()]]).concat(L.length>1?[['함께 나갈 동료를 고른다',()=>CMD.roomPick()]]:[]).concat([['문을 닫는다',null]]))},
+  roomTalk:()=>{const L=S.comps;ev('동료의 방','<p class="m">누구와 이야기할까.</p>',L.map(id=>[josa(cn(id),'과','와')+' 이야기한다'+(chNext(id)||aevFor(id)?' ✦':''),()=>CMD.talk(id)]).concat([['돌아간다',()=>CMD.rooms()]]))},
+  roomPick:()=>{const L=S.comps,inn=!S.base;ev(inn?'여관 1층':'동료의 방',`<p class="m">지금은 ${josa(cn(S.party),'과','와')} 함께 걷고 있다. 누구와 나갈까.</p>`,L.filter(id=>id!==S.party).map(id=>[josa(cn(id),'과','와')+' 나간다',()=>{S.party=id;log(josa(cn(id),'과','와')+' 함께 나서기로 했다.');save()}]).concat([['돌아간다',()=>CMD.rooms()]]))},
   rooms0:()=>ev('동료의 방','<p>복도를 따라 빈 방 네 칸. 침대 틀만 남아 있다.</p><p class="m">함께 걸을 사람을 만나면 여기서 지내게 된다. 데리고 나갈 사람도 여기서만 바꿀 수 있다.</p>',[['문을 닫는다',null]]),
   evb:a=>{const f=EV0&&EV0.b[+a][1];EV0=null;if(f)f();if(S)save();render()},
   popok:()=>{POP=null;render()},
