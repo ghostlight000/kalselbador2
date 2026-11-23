@@ -5,10 +5,24 @@ ROOT=pathlib.Path(__file__).resolve().parent.parent;url=(ROOT/'index.html').as_u
 errs=[]
 def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=10000);pg.click(f'#ov.on button:has-text("{t}")');pg.wait_for_timeout(60)
 def okpop(pg):pg.wait_for_selector('#ov.on .btn.pri',timeout=10000);pg.click('#ov.on .btn.pri');pg.wait_for_timeout(60)
+def clear(pg):
+    for _ in range(10):
+        pg.wait_for_timeout(120)
+        if E(pg,"window.__k2.G.on"):win(pg);continue
+        if pg.locator('#ov.on').count():
+            if pg.locator('#ov.on .btn.pri').count():okpop(pg)
+            else:pg.locator('#ov.on button').last.click()
+            continue
+        break
 def go(pg,k):
-    pg.wait_for_timeout(150)
-    if pg.locator('#ov.on').count():print('DBGgo',pg.inner_text('#ov.on')[:200],E(pg,'JSON.stringify(window.__k2.S.act)'))
-    pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650)
+    clear(pg)
+    pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다')
+    for _ in range(100):
+        if E(pg,f"window.__k2.S.loc==='{k}'&&!window.__k2.S.act"):break
+        if E(pg,"window.__k2.G.on"):win(pg)
+        pg.wait_for_timeout(100)
+    assert E(pg,f"window.__k2.S.loc==='{k}'"),k
+    pg.wait_for_timeout(650)
 def win(pg):
     pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{window.__k2.G.fhp=0}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg)
@@ -31,7 +45,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
     E(pg,"()=>{const K=window.__k2;K.S.night=3;K.S.mort=2;K.joinComp('kirien');K.joinComp('oswin');K.S.party='kirien';K.grantBase()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;K.grantPit()}");okpop(pg)
-    E(pg,"()=>{const K=window.__k2;K.S.eda=1;K.S.acad=1;K.S.fac=1;K.S.outs=1;K.S.mr=3;K.S.manor=1;K.S.coin=50;K.S.inv.scrap=6;K.S.loc='docks';K.S.hp=K.S.mhp;K.S.sxno={moss:1,cart:1,bottle:1,bell:1};K.S.sxon=1;K.render()}")
+    E(pg,"()=>{const K=window.__k2;K.S.eda=1;K.S.acad=1;K.S.fac=1;K.S.outs=1;K.S.mr=3;K.S.manor=1;K.S.coin=50;K.S.inv.scrap=6;K.S.loc='docks';K.S.hp=K.S.mhp;K.S.sxno={moss:1,cart:1,bottle:1,bell:1,mort:1};K.S.sxon=1;K.render()}")
     # 1) 운하의 신발 — 탐사 중 발견
     E(pg,"()=>{window.__k2.SX.shoe.hook.p=1}")
     pg.click('button[data-c=explore]');pg.wait_for_function('!window.__k2.S.act',timeout=20000)
@@ -64,6 +78,16 @@ with sync_playwright() as p:
     for i in range(2):explore(pg)
     go(pg,'church');E(pg,"()=>{const K=window.__k2;K.S.inv.scrap=6;K.render()}");sxa(pg,'bell');choose(pg,'종을 단다');okpop(pg);assert E(pg,"window.__k2.S.sx.bell.e")=='ring' and E(pg,"window.__k2.S.inv.scrap")==1;print('bell ok')
     pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '다시 울린다' in q and '나눠 마셨다' in q;pg.click('button[data-c=tab][data-a=place]')
+    # 6) 연계: 모르텐의 열쇠 — 1막에 시작, 깨어나야 2단계, 3막에야 문
+    E(pg,"()=>{const K=window.__k2;delete K.S.sxno.mort;K.S.mort=2;K.S.mg=0;K.S.rev=0;K.S.a3=0;K.render()}");go(pg,'docks');go(pg,'street');pg.wait_for_selector('#ov.on h2:has-text("빈 초소")',timeout=5000);assert '일곱째 문' in pg.inner_text('#ov');choose(pg,'수첩과 열쇠를 챙긴다')
+    go(pg,'church');sxa(pg,'mort');assert '대정화자' in pg.inner_text('#ov');choose(pg,'열쇠를 다시')
+    go(pg,'outskirts');b0=pg.locator('button[data-c=sxa][data-a=mort]');assert b0.is_disabled() and '잠들어' in b0.inner_text()
+    E(pg,"()=>{const K=window.__k2;K.S.mg=1;K.S.oq0=1;K.render()}");sxa(pg,'mort');assert '모르야' in pg.inner_text('#ov');choose(pg,'수첩을 덮는다')
+    go(pg,'church');b0=pg.locator('button[data-c=sxa][data-a=mort]');assert b0.is_disabled() and '경비' in b0.inner_text()
+    pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '모르텐의 열쇠' in q and '연계' in q and '교단 경비' in q,q;pg.click('button[data-c=tab][data-a=place]')
+    E(pg,"()=>{const K=window.__k2;K.S.rev=1;K.S.a3=1;K.render()}");sxa(pg,'mort');choose(pg,'맞선다');win(pg)
+    pg.wait_for_selector('#ov.on h2:has-text("일곱째 문")',timeout=5000);assert '경비대 모르텐' in pg.inner_text('#ov');choose(pg,'병들을 열어');assert '자네는 서 있게' in pg.inner_text('#ov');okpop(pg)
+    assert E(pg,"window.__k2.S.sx.mort.e")=='free' and not E(pg,"window.__k2.S.inv.mkey");print('mort ok')
     # 탐사 중 작은 일
     E(pg,"()=>{const K=window.__k2;K.S.pend=null;K.S.xev=0;K.SCENE.xev()}");choose(pg,'뜯어 본다');okpop(pg);print('xev ok')
     b.close()
