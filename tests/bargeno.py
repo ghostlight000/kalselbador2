@@ -1,4 +1,4 @@
-"""바르그·에노: 하수구 안내인 → 에노, 여관 부엌 헌병 → 바르그, 거절과 다시 영입, 에다 조건, 동료 전투, 자료 빠짐 검사"""
+"""바르그·에노: 하수구 안내인 → 에노, 회색 마차의 밤 → 바르그, 거절과 다시 영입, 에다 조건, 동료 전투, 자료 빠짐 검사"""
 import pathlib
 from playwright.sync_api import sync_playwright
 ROOT=pathlib.Path(__file__).resolve().parent.parent;url=(ROOT/'index.html').as_uri()+'?test'
@@ -37,13 +37,13 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '물길의 안내인' in q;pg.click('button[data-c=tab][data-a=place]')
     # 에다는 바르그·에노를 만나기 전엔 없다
     pg.click('button[data-c=enoAgain]');choose(pg,'함께하자');t=pg.inner_text('#ov');assert '키리엔과 계속 다닌다' in t and '에노와 다닌다' in t,t;choose(pg,'에노와 다닌다');assert E(pg,"window.__k2.S.party")=='eno' and 'kirien' in E(pg,"window.__k2.S.comps")
-    t=pg.inner_text('.goalc');assert '여관 부엌의 요리사' in t,t
+    t=pg.inner_text('.goalc');assert '회색 마차의 늑대' in t,t
     # 여관 부엌 → 헌병과 싸운다 → 바르그
-    pg.click('button[data-c=bargM]');choose(pg,'벽에 새긴 것을 본다');t=pg.inner_text('#ov');assert '이백 개다' in t;assert '탈영병 바르그' in t and '웅웅거려요' in t;choose(pg,'막아선다');assert E(pg,"window.__k2.G.foe")=='mp';win(pg)
-    pg.wait_for_selector('#ov.on h2:has-text("부엌 뒷문")',timeout=5000);choose(pg,'벽판을 뜯어 가자');choose(pg,'밤길로 나선다');assert '운하 다리' in pg.inner_text('#ov');choose(pg,'도망친 사람을 넘기기 싫어서');assert '헌병들을 막아섰다' in E(pg,"JSON.stringify(window.__k2.S.jr)");choose(pg,'갈 길을 가라');okpop(pg)
+    pg.click('button[data-c=bargM]');choose(pg,'자루를 연다');t=pg.inner_text('#ov');assert '이번에도 아니다' in t;assert '탈영병 바르그' in t and '무서운 걸 다 써 버렸대' in t;choose(pg,'늑대 옆에 선다');assert E(pg,"window.__k2.G.foe")=='mp';win(pg)
+    pg.wait_for_selector('#ov.on h2:has-text("운하 계단")',timeout=5000);choose(pg,'같이 알아보자');choose(pg,'밤길로 나선다');assert '맹세했다' in pg.inner_text('#ov');choose(pg,'도망친 사람을 넘기기 싫어서');assert '헌병들을 막아섰다' in E(pg,"JSON.stringify(window.__k2.S.jr)");choose(pg,'갈 길을 가라');okpop(pg)
     pg.click('button[data-c=bargAgain]');choose(pg,'저택에서 지내라');choose(pg,'계속 다닌다');assert 'barg' in E(pg,"window.__k2.S.comps")
     go(pg,'street');assert pg.locator('button[data-c=eda]').count()==1;print('meet ok')
-    go(pg,'base');E(pg,"()=>{const K=window.__k2;K.S.party='barg';K.S.hp=5;K.render()}");pg.click('button[data-c=rest]');pg.wait_for_function('!window.__k2.S.act',timeout=20000);t=pg.inner_text('#ov');assert '널빤지' in t,t;okpop(pg)
+    go(pg,'base');E(pg,"()=>{const K=window.__k2;K.S.party='barg';K.S.hp=5;K.render()}");pg.click('button[data-c=rest]');pg.wait_for_function('!window.__k2.S.act',timeout=20000);t=pg.inner_text('#ov');assert '꼬리표' in t,t;okpop(pg)
     # 파견 게시판: 한 줄짜리 목록에서 바로 보낸다
     pg.click('button[data-c=board]');assert pg.locator('#ov.on .drow').count()>=6 and pg.locator('#ov.on .btn').count()==1;pg.locator('#ov.on .drow').first.click();assert len(E(pg,"window.__k2.S.disp"))==1;print('board ok')
     # 메아리: 솔레·리세
@@ -57,7 +57,7 @@ with sync_playwright() as p:
         f0=E(pg,"window.__k2.G.fhp");E(pg,"window.__k2.bact('guard')");pg.wait_for_timeout(900)
         log=pg.inner_text('#blog');assert ('바르그' if cid=='barg' else '에노') in log,log
         assert E(pg,"window.__k2.G.fhp")<f0
-        if cid=='barg':assert '국이 힘이 된다' in log
+        if cid=='barg':assert '내가 서 있다' in log
         E(pg,"()=>{const K=window.__k2;K.endBattle('win')}");okpop(pg)
     # 출신 반응·종족 질문
     E(pg,"()=>{const K=window.__k2;K.S.party='eno';K.render()}");pg.click('button[data-c=talk]');assert '병사가 하나' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
