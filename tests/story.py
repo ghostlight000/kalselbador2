@@ -40,7 +40,7 @@ with sync_playwright() as p:
         pg.evaluate("()=>{const K=window.__k2;K.S.party='kirien';K.render()}")
         pg.click('button[data-c=kq1]');assert '공급 대기' in pg.inner_text('#ov');okpop(pg);assert S(pg)['kq']==1
         pg.click('button[data-c=kq2]');choose(pg,'안으로 들어간다');assert pg.evaluate('window.__k2.G.foe')=='collector';win(pg)
-        t=pg.inner_text('#ov');assert '토벤 — “…베렌.”' in t,t;okpop(pg);assert S(pg)['kq']==2
+        t=pg.inner_text('#ov');assert '토벤\n“…베렌.”' in t,t;okpop(pg);assert S(pg)['kq']==2
         go(pg,'street');pg.click('button[data-c=kq3]');t=pg.inner_text('#ov');assert '미라의 딸' in t
         if end=='pour':
             choose(pg,'산다');assert S(pg)['inv'].get('mem')==1 and S(pg)['coin']<50;okpop(pg)

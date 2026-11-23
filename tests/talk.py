@@ -35,7 +35,7 @@ with sync_playwright() as p:
     # 동료: 출신 반응(재의 정화자) → 질문 묶음
     E(pg,"()=>{const K=window.__k2;K.S.night=3;K.S.mort=2;K.joinComp('oswin');K.S.party='oswin';K.render()}")
     pg.click('button[data-c=talk]');t=pg.inner_text('#ov');assert '제 이름도 그렇게 지워졌습니다' in t;choose(pg,'다른 이야기를 한다')
-    q=btns(pg);assert len(q)<=5 and '물어보고 싶은 게 있어' in q,q
+    q=btns(pg);assert len(q)<=6 and '물어보고 싶은 게 있어' in q,q
     choose(pg,'물어보고 싶은 게 있어');q=[x for x in btns(pg) if x!='다른 이야기를 한다'];assert 2<=len(q)<=3,q
     first=q[0];choose(pg,first)
     if pg.locator('#ov.on button:has-text("말없이 듣는다")').count():choose(pg,'말없이 듣는다')
