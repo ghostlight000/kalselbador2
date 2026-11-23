@@ -133,6 +133,7 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .stats .bar{margin:0}
 .stats.st4{grid-template-columns:auto 1fr auto}
 .stats.st4 .sne{grid-column:1/-1;margin:-2px 0 6px}
+.lin{margin:6px 0}.lin p{margin:3px 0}
 .stats .btn.sm{min-height:26px;padding:0 4px;margin-left:4px}
 
 /* ===== 창 ===== */
@@ -297,7 +298,7 @@ const RACE={
      ['하칸 광산 씨족','하칸골 제철소의 화부와 제련공을 대대로 낸다.',[0,0,0,1]],
      ['해안 눈보라 씨족','항구 부두를 쥔 뱃사람 씨족. 의심은 깊지만 신뢰는 평생 간다.',[1,0,0,0]],
      ['검붉은 늑대 씨족','지하 결투장을 주관하는 씨족.',[1,0,0,0]],
-     ['푸른 눈 은둔 씨족','드물게 마력을 지닌 아이가 나는 고원 씨족. 학술원이 아이를 사 간다는 소문이 있다.',[0,1,0,0]]]}
+     ['푸른 눈 은둔 씨족','드물게 마력을 지닌 아이가 나는 고원 씨족. 학술원이 아이를 사 간다는 소문이 있다.',[0,2,0,0]]]}
 };
 // 출신: 이 도시에서 어떻게 살아왔는가. 종족과 상관없이 고른다. [이름, 설명, 능력치 보정(합 3), 시작 연출의 한 줄, 잊은 것]
 const ORIGIN=[
@@ -330,7 +331,7 @@ const baseStats=(r,t,o)=>RACE[r].s.map((v,i)=>v+RACE[r].t[t][2][i]+ORIGIN[o][2][
 // 받침에 따라 조사 고르기: @name:은/는@
 const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1);return w+(c>=44032&&c<=55203&&(c-44032)%28?a:b)};
 const tx=t=>t.replace(/@name:(.)\/(.)@/g,(m,a,b)=>josa(S.name,a,b)).replace(/@name@/g,S.name);
-const calcMhp=(st,lv)=>70+st[0]*4+st[2]*2+((lv||1)-1)*6;
+const calcMhp=(st,lv)=>70+st[0]*4+st[2]*2+((lv||1)-1)*6+(typeof mhpB==='function'?mhpB():0);
 // 능력치가 전투에서 하는 일
 const SNE=['칼을 휘두르는 팔과 쓰러지지 않는 몸','몸 안 어딘가에 고여 있는 무엇','박자를 읽는 눈과 흔들리지 않는 숨','빈틈을 찌르는 손끝과 상처를 감는 손'];
 // 기술: c=기력, st=기대는 능력치, item=필요한 물건
@@ -695,7 +696,7 @@ let C={av:'i0',r:'p',t:0,o:0,sx:'x',n:'베렌',leg:null,legMsg:''}; // 만들기
 
 function newGame(){
   const st=baseStats(C.r,C.t,C.o),mhp=calcMhp(st,1);
-  S={v:10,mgs:{},aev:{},mort:0,av:C.av||'i0',kids:{},asked:{},tnew:{},cl:{},chd:{},kq:0,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'베렌').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5,
+  S={v:11,mgs:{},aev:{},mort:0,av:C.av||'i0',kids:{},asked:{},tnew:{},cl:{},chd:{},kq:0,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'베렌').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5+(C.r==='p'&&C.t===1?30:0),tl:[],
      inv:{letter:1,band:2},loc:'docks',act:null,disp:[],comps:[],party:null,aff:{},cq:{},rom:null,talked:{},dec:{},fix:{},deco:{...DECO0},own:{},read:{},night:0,tutd:0,base:0,pit:0,pro:0,vis:{docks:1},log:[],jr:[],legacy:C.leg,t0:Date.now()};
   log('편지를 따라 오렌하르트에 닿았다. 운하 부두의 녹슨 닻 여관에 방을 얻었다.');
   save();V='place';try{window.scrollTo(0,0)}catch(e){}
@@ -967,12 +968,12 @@ const affTier=id=>{const a=(S.aff||{})[id]||0;let t=1;AFT.forEach(([n],i)=>{if(a
 const affName=id=>(S.rom||'')===id?'마음':AFT[affTier(id)-1][1];
 const romOK=id=>{const c=COMP[id];if(!c||!c.rom)return false;if(c.rom==='any')return true;return c.rom===S.sex}; // 지향이 맞는가
 const romReady=id=>romOK(id)&&!S.rom&&((S.aff||{})[id]||0)>=70&&(!COMP[id].demi||(S.cq||{})[id]==='done'); // 고르는 장면이 열릴 수 있는가
-function gainXp(n){const out=[`경험 +${n}`];S.xp+=n;
-  while(S.xp>=xpNeed(S.lv)){S.xp-=xpNeed(S.lv);S.lv++;S.sp++;if(SKILL_LV.includes(S.lv))S.skp++;
+function gainXp(n){if(S.lv>=LVMAX){S.xp=0;return []}const out=[`경험 +${n}`];S.xp+=n;
+  while(S.lv<LVMAX&&S.xp>=xpNeed(S.lv)){S.xp-=xpNeed(S.lv);S.lv++;S.sp++;if(SKILL_LV.includes(S.lv))S.skp++;if(S.lv>=LVMAX)S.xp=0;
     const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,S.hp+(S.mhp-m0));
-    out.push(`<b class="g">레벨 ${S.lv}</b> — 능력치 점수 +1${skCan()?' · 새 기술을 배울 수 있다':''}. 캐릭터 탭에서 고른다.`);log('레벨 '+S.lv+'에 올랐다.')}
+    out.push(`<b class="g">레벨 ${S.lv}</b> — 능력치 점수 +1${skCan()?' · 새 기술을 배울 수 있다':''}${TLV.includes(S.lv)?' · 새 재능을 고를 수 있다':''}. 캐릭터 탭에서 고른다.`);log('레벨 '+S.lv+'에 올랐다.')}
   return out}
-function aff(id,n){S.aff=S.aff||{};const t0=affTier(id);S.aff[id]=Math.max(0,Math.min(100,(S.aff[id]||0)+n));const t1=affTier(id);if(t1>t0){S.tnew=S.tnew||{};S.tnew[id]=t1}}
+function aff(id,n){if(n>0){if(stal('seas'))n++;if(lin('i',1)&&Math.random()<.25)n++}S.aff=S.aff||{};const t0=affTier(id);S.aff[id]=Math.max(0,Math.min(100,(S.aff[id]||0)+n));const t1=affTier(id);if(t1>t0){S.tnew=S.tnew||{};S.tnew[id]=t1}}
 const cn=id=>id==='morten'?'모르텐':COMP[id]?COMP[id].n:id;
 /* 미뤄 둔 이야기 장면: 결과 창이 닫힌 뒤 tick에서 연다 */
 const homeN=()=>S.base?'저택':'여관';
@@ -1023,9 +1024,9 @@ const SCENE={
  enoM:()=>ev('물길의 안내인',`<p>하수구를 나서려는데 아까 그 안내인이 물길 가장자리에 쪼그려 앉아 있다. 손바닥으로 푸르스름한 물을 떠서 마신다.</p><p class="m">물 위에 푸른 재 찌꺼기가 기름처럼 떠 있다.</p>
    <p>안내인 — “아 이거요? 걱정 마. 맛은 없어.”</p><p>안내인 — “에노라고 해요. 이 아래 물길 지도를 그려.”</p><p class="m">에노가 철창 쪽을 가리킨다. 물살에 밀린 무언가가 창살에 걸려 있다. 재가 뭉친 주먹만 한 덩어리다. 그 안에서 희미하게 자장가가 울린다.</p><p>에노 — “저거 누가 버린 기억이야. 내 팔은 안 닿아. 좀 꺼내 줄래? 많이 차가워.”</p>`,
    [['철창에 손을 넣는다',()=>SCENE.enoV(1)],['네가 해 봐',()=>SCENE.enoV(0)]]),
- enoV:c=>ev('물길의 안내인',(c?'<p class="m">손끝이 얼어붙는다. 눈앞이 잠깐 하얘진다.</p><p class="m">— 작은 부엌. 누군가의 손이 빵 반죽을 접는다. “셋까지 세면 잠드는 거야. 하나. 둘.” —</p><p class="m">덩어리가 손바닥 위에서 물처럼 풀려 흘러내린다.</p><p>에노 — “봤죠? 누구 엄마였을 거야. 셋을 다 못 세고 버려졌네.”</p>':'<p class="m">에노가 창살 사이로 몸을 반쯤 밀어 넣는다. 팔이 이상한 각도로 꺾인다. 덩어리를 쥔 손을 빼더니 그대로 입에 털어 넣는다.</p><p>에노 — “셋까지 세면 잠드는 거야. 하나. 둘.”</p><p class="m">늙은 여자의 목소리다. 에노가 눈을 깜박인다.</p><p>에노 — “…아. 방금 건 내 목소리가 아니었지.”</p>')+
+ enoV:c=>(c&&(S.enoH=1),ev('물길의 안내인',(c?'<p class="m">손끝이 얼어붙는다. 눈앞이 잠깐 하얘진다.</p><p class="m">— 작은 부엌. 누군가의 손이 빵 반죽을 접는다. “셋까지 세면 잠드는 거야. 하나. 둘.” —</p><p class="m">덩어리가 손바닥 위에서 물처럼 풀려 흘러내린다.</p><p>에노 — “봤죠? 누구 엄마였을 거야. 셋을 다 못 세고 버려졌네.”</p>':'<p class="m">에노가 창살 사이로 몸을 반쯤 밀어 넣는다. 팔이 이상한 각도로 꺾인다. 덩어리를 쥔 손을 빼더니 그대로 입에 털어 넣는다.</p><p>에노 — “셋까지 세면 잠드는 거야. 하나. 둘.”</p><p class="m">늙은 여자의 목소리다. 에노가 눈을 깜박인다.</p><p>에노 — “…아. 방금 건 내 목소리가 아니었지.”</p>')+
    '<p>에노 — “나는 이런 걸 떠 마셔요. 그러면 내 안에서 조금 더 살아. 주인을 찾으면 돌려주기도 하고.”</p>'+pline({kirien:'물 냄새 엄청 나. …나쁜 사람 냄새는 아니야.',oswin:'재 찌꺼기를 마신다고요. 학술원이 알면 이 사람부터 데려가겠군요.',ibre:'차가운 걸 꺼냈습니다. 손이 괜찮습니까.',kasimir:'하수구의 시인이라. 동행이 점점 재미있어지는군요.',barg:'…그런 걸 마시고도 서 있군. 질긴 놈이다.'}),
-   [['그걸 왜 마셔?',()=>SCENE.eno2(1)],['길을 알려 줘서 고맙다',()=>SCENE.eno2(0)]]),
+   [['그걸 왜 마셔?',()=>SCENE.eno2(1)],['길을 알려 줘서 고맙다',()=>SCENE.eno2(0)]])),
  eno2:c=>{jr('하수구에서 피트를 구할 때 길을 알려 준 안내인 에노를 만났다. 에노는 물길에 흘러든 푸른 재 찌꺼기를 떠 마셨다. 말투가 문장마다 바뀌었다.');
    ev('에노',(c?'<p>에노 — “버리면 다 사라지니까. 누가 한 번은 기억해 줘야지.”</p><p>에노 — “나도 버려졌거든. 학술원 뒷문에서. …아. 지금 그 말은 할머니 목소리였지. 미안해요. 가끔 섞여.”</p>':'<p>에노 — “내가 구한 건 아니야. 나는 길만 알려 줬어요. 길 알려 주는 건 공짜.”</p>')+
    '<p class="m">에노가 젖은 지도를 펼친다. 하수구 물길이 거미줄처럼 그려져 있다. 오르빌 저택 아래에서 선 하나가 끊겨 있다.</p><p>에노 — “여기. 너희 집 밑이지? 물길이 지나가는데 지도에 구멍이 났어. …같이 가도 될까요. 위에서 지내 본 지 오래돼서.”</p>'+pline({kirien:'지하실 물소리 나는 거 맞아. 밤에 들었어.',oswin:'지도가 끊긴 곳이 저택 밑이라니. 우연은 아니겠지요.',ibre:'길을 알려 줬습니다. 좋은 사람입니다.',kasimir:'하수구 지도라. 집값이 오르겠군요.',barg:'…데려가자. 지붕 밑에서 자는 건 나 하나면 충분하다.'}),
@@ -1119,7 +1120,7 @@ const SCENE={
    [[`${josa(P,'과','와')} 계속 다닌다`,()=>{log(`${josa(P,'과','와')} 계속 다닌다. ${josa(N,'은','는')} ${home}.`);save()}],[`${josa(N,'과','와')} 다닌다`,()=>{S.party=id;log(`${josa(N,'과','와')} 다니기로 했다. ${josa(P,'은','는')} ${home}.`);save()}]])},
  road:(foe,a)=>ev('길 위에서',`<p>${PL[a.fr].n}에서 ${PL[a.to].n}(으)로 가는 길. 가스등 하나가 꺼진 골목 앞에서 무언가 길을 막는다.</p><p class="m">${FOES[foe].intro}</p>`+
    pline({kirien:foe==='dog'?'배고픈 애야. 물리기 전에 쫓아 버려.':'저 칼 든 손 낯익은데.',oswin:'지름길이 늘 짧은 건 아니지요.'}),
-   [['맞선다',()=>startBattle('fight',foe)],['돌아서 달아난다',()=>{const l=Math.min(S.coin,R(1,3));S.coin-=l;log('길 위에서 달아났다'+(l?'. 동전 '+l+'개를 흘렸다.':'.'));if(l)pop('달아났다',{n:['뛰다가 주머니에서 동전이 쏟아졌다.'],g:0,i:{}});save()}]]),
+   [['맞선다',()=>startBattle('fight',foe)],['돌아서 달아난다',()=>{const l=tal('night')?0:Math.min(S.coin,R(1,3));S.coin-=l;log('길 위에서 달아났다'+(l?'. 동전 '+l+'개를 흘렸다.':'.'));if(l)pop('달아났다',{n:['뛰다가 주머니에서 동전이 쏟아졌다.'],g:0,i:{}});save()}]]),
  archive:()=>ev('대성당 뒤편',`<p>문서고 쪽에서 책 무더기가 쏟아지는 소리가 난다.</p><p>책장 사이에 붉은 구릿빛 비늘의 파볼릭이 서 있다. 두꺼운 장부를 품에 안았다. 그 앞을 회색 옷의 정화자가 막아선다.</p>
    <p>정화자 — “장부를 내려놓아라. 이름 없는 자.”</p><p>파볼릭 — “이름 없는 자라. 지운 건 당신들인데 말이지요.”</p>`,
    [['끼어든다',()=>{S.bstory='oswin';save();startBattle('fight','warden')}],['물러난다',null]]),
@@ -1512,7 +1513,7 @@ const XEV=[
  {at:['works'],h:'노래하는 굴뚝',p:'<p>식은 굴뚝 안에서 노랫소리가 흘러나온다. 여러 사람이 부르는 노래다.</p>',b:[['귀를 기울인다',()=>{add('ash',1);pop('노래하는 굴뚝',{i:{ash:1},n:['노래가 멎자 굴뚝 바닥에 푸른 재가 한 줌 쌓여 있다. 따뜻하다.']})}],['지나간다',()=>pop('노래하는 굴뚝',{n:['노래는 한참 뒤까지 들렸다.']})]]},
  {at:['church'],h:'수녀의 질문',p:'<p>묘지 길에서 젊은 수녀가 다가온다.</p><p>수녀 — “이름을 여쭤도 될까요. 기도할 때 부르려고요.”</p>',b:[['이름을 알려 준다',()=>{add('band',1);pop('수녀의 질문',{i:{band:1},n:['수녀가 이름을 입속으로 몇 번 되뇐다. 구호소 붕대 하나를 건넨다.']})}],['웃으며 사양한다',()=>pop('수녀의 질문',{n:['수녀가 고개를 숙이고 물러난다.']})]]}
 ];
-function xevRoll(at){if(S.pend||TEST&&!S.sxon)return false;const L=XEV.filter(e=>e.at.includes(at));if(!L.length||Math.random()>.2)return false;S.xev=XEV.indexOf(L[Math.random()*L.length|0]);S.pend='xev';return true}
+function xevRoll(at){if(S.pend||TEST&&!S.sxon)return false;const L=XEV.filter(e=>e.at.includes(at));if(!L.length||Math.random()>(stal('dig')?.3:.2))return false;S.xev=XEV.indexOf(L[Math.random()*L.length|0]);S.pend='xev';return true}
 SCENE.xev=()=>{const e=XEV[S.xev];S.xev=null;if(!e)return;ev(e.h,e.p,e.b)};
 
 function pending(){const k=S.pend;S.pend=null;save();if(k&&k.startsWith('sx:')){const D=SX[k.slice(3)];if(D&&!sxQ(k.slice(3)))D.open();return}if(SCENE[k])SCENE[k]()}
@@ -1537,6 +1538,7 @@ function migrate(){
   S.asked=S.asked||{};S.tnew=S.tnew||{};S.cl=S.cl||{};S.comps.forEach(cst);if(S.v<8)S.v=8;
   if(!S.av)S.av='i0';if(S.mort==null)S.mort=S.night>=3?3:1;if(S.kqe&&S.kq===4)S.kq=6;if((S.kq||0)>=3)S.outs=1;if(S.manor&&!S.mr)S.mr=3;S.kids=S.kids||{};if(S.pit&&!S.kids.pit)S.kids.pit={st:S.disp.length?'out':'ok'};S.disp.forEach(d=>{if(!d.kid)d.kid='pit'});if(S.v<9)S.v=9;
   S.mgs=S.mgs||{};S.aev=S.aev||{};if(S.v<10){if(!S.mg){const old=S.sk.filter(k=>SKL[k].mg);if(old.length){S.sk=S.sk.filter(k=>!SKL[k].mg);if(old.includes(OSK0[S.og])){S.mgOld=[OSK0[S.og]];if(!S.sk.includes(OSK[S.og]))S.sk.push(OSK[S.og])}S.skp+=old.filter(k=>k!==OSK0[S.og]).length;if(!S.sk.length)S.sk=[OSK[S.og]]}}S.v=10} // v10: 주인공은 처음에 주문을 쓰지 못한다 // v9: 아이들·먼 파견·간호 // v8: 호감 10단계, 질문 대화, 동료 전투 // v7: 동료 자기 이야기, 키리엔 퀘스트 // v6: 저택 손보기·꾸미기
+  S.tl=(S.tl||[]).filter(k=>TAL[k]);if(S.v<11){if(S.race==='p'&&S.tr===1)S.coin+=30;if(S.race==='b'&&S.tr===4)S.st[1]++;if(S.tutd)S.tutF=1;S.v=11} // v11: 종족 능력·재능
   S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,Math.max(0,S.hp|0));
 }
 const log=t=>{S.log.unshift(t);S.log=S.log.slice(0,40)};
@@ -1622,6 +1624,71 @@ function msync(o,n){const oc=[...o.childNodes],nc=[...n.childNodes];nc.forEach((
 function mattr(a,b){for(const x of [...a.attributes])if(!b.hasAttribute(x.name))a.removeAttribute(x.name);for(const x of b.attributes)if(a.getAttribute(x.name)!==x.value)a.setAttribute(x.name,x.value);if((a.nodeName=='INPUT'||a.nodeName=='TEXTAREA')&&a!==document.activeElement&&a.type!='file'&&a.value!==(b.getAttribute('value')||''))a.value=b.getAttribute('value')||'';if(a.nodeName=='DETAILS')a.open=b.hasAttribute('open')}
 
 const B=(c,label,o={})=>`<button class="btn${o.cls?' '+o.cls:''}${GK.includes(c)&&!o.dis?' goal':''}" data-c="${c}"${o.a!=null?` data-a="${esc(o.a)}"`:''}${o.dis?' disabled':''}>${label}${o.sub?`<small>${o.sub}</small>`:''}</button>`;
+
+/* ===== 종족·계통 설정 (v029, 설정 확장안: 참고 문서의 종족 항목 분량) ===== */
+const RX={
+ p:{h:'키 2.6~3.2미터 · 수명 120~160년',o:['용의 핏줄을 이었다고 전해지는 거인종이다. 다 자라면 어깨와 목덜미부터 꼬리 끝까지 비늘이 덮는다. 비늘이 없는 곳은 손바닥과 얼굴 가운데 정도라 멀리서 보면 사람보다 갑옷 입은 짐승에 가깝다. 마흔이 넘어야 비늘 색이 자리 잡는다.','겨울 시대에 파볼릭은 칼라쉬(마력을 다루는 이들)를 가장 많이 낸 종족이었다. 비늘 색이 마력의 결을 드러낸다고 믿었기에 왕정은 비늘 색으로 신분을 나눴다. 겨울이 끝나고 마력이 옅어진 뒤에도 그 법은 사라지지 않았다. 오렌하르트 시민 명부에는 지금도 이름 옆에 비늘 색을 적는 칸이 있다.','도시에서 파볼릭은 둘로 갈린다. 의회와 학술원의 높은 자리를 지키는 색 있는 집안들, 그리고 부두와 공장에서 몸으로 버티는 무색과 몰락한 방계다. 다른 종족은 학술원 강단의 파볼릭과 짐을 지는 파볼릭만 기억한다. 실제로는 그 사이에 훨씬 많은 삶이 있다.'],
+  c:'길고 각진 얼굴과 눈 위로 튀어나온 비늘 능선. 세로로 갈라진 동공. 손가락은 넷에 마디가 길다. 꼬리는 몸길이의 3분의 1쯤이고 감정이 실리면 끝이 먼저 움직인다.',
+  t:[['비늘이 잘고 촘촘하다. 깊은 남색에서 배 쪽으로 갈수록 흰빛이 섞인다. 숨을 내쉬면 추운 날이 아닌데도 김이 서린다.','은색 · 옅은 하늘색','해빙 뒤 운하와 수문을 맡아 온 집안들이다. 얼음이 녹는 속도를 재고 물길을 트는 일이 대대로 이어졌다. 운하 관리청 직원과 수문지기 가운데 절반이 이 계통이다.','부두 사람들은 서리비늘을 \'물 읽는 사람\'이라 부르며 믿는다. 학술원은 이들의 숨에 남은 냉기를 겨울 마력의 잔재로 보고 연구하고 싶어 한다.'],
+     ['검은 비늘 가장자리에 금빛 테가 돈다. 나이가 들수록 테가 넓어진다. 뿔이 작게 돋는 경우가 많다.','금색 · 호박색','겨울 시대 왕가의 먼 방계다. 왕정이 의회로 바뀐 뒤에도 옛 작위를 놓지 않는다. 대부분 땅과 돈은 잃었고 이름과 예법만 남았다. 저택은 크지만 겨울에 불을 다 지피지 못한다.','의회 의석 몇 개를 여전히 쥐고 있다. 젊은 흑금들은 이름을 팔아 상회에 사위로 들어가거나 이름을 버리고 사라진다.'],
+     ['비늘에 색소가 없다. 빛이 비늘을 그대로 통과해 속살이 희미하게 비친다. 햇빛 아래에서는 젖은 유리처럼 보인다.','회색 · 거의 흰색','비늘 색 법 아래 명부에 오르지 못한 이들이다. 학교와 길드에 들어갈 수 없어 공장 지대와 부두와 지하 결투장에서 일한다. 이름 대신 번호로 불리는 일이 흔하다.','학술원이 \'징수\'라는 이름으로 가장 먼저 데려가는 쪽이다. 서로의 이름을 지어 주는 풍습이 남몰래 이어진다.'],
+     ['붉은 구릿빛 비늘. 화가 나거나 놀라면 비늘 사이로 정전기가 튄다. 겨울 시대에는 이 불꽃이 진짜 번개였다고 한다.','구리색 · 녹색','겨울 시대 칼라쉬의 주류였다. 지금은 비늘에 남은 마력 찌꺼기 때문에 학술원 실험에 가장 많이 불려 간다. 학자로 들어가 실험하는 쪽이 되거나 표본으로 들어가 실험받는 쪽이 된다. 두 길의 거리가 생각보다 가깝다.','학술원 서류에 가장 많이 등장하고 가장 많이 지워지는 계통이다.'],
+     ['비늘이 두껍고 흙빛과 회색이 얼룩진다. 여자 쪽 덩치가 남자보다 크다. 목덜미 비늘에 가문 문양을 새긴다.','갈색 · 짙은 회색','옛 성벽을 지키던 모계 집안이다. 성벽이 허물어진 뒤에는 시 경비대를 이끈다. 가장은 늘 맏딸이 잇고 아들들은 경비대 하급직이나 수문지기로 나간다.','헌병대와 사이가 나쁘다. 경비대는 거리를 지키고 헌병대는 의회를 지킨다는 말이 있다.']]},
+ i:{h:'키 1.5~2.1미터 · 수명 60~90년',o:['짐승의 머리를 한 이들이다. 여우·늑대·부엉이·사슴·까마귀처럼 머리 모양은 부족과 핏줄에 따라 다르지만 목 아래는 사람과 같다. 다른 두 종족보다 수명이 짧고 그만큼 빨리 자란다.','오래된 노래에서는 \'칼셀바도르가 잉그라드를 사람으로 만들었다\'고 한다. 겨울 시대 이전에는 짐승이었고 긴 겨울을 함께 건너며 사람이 되었다는 뜻이다. 그래서 잉그라드는 겨울을 원망하지 않는다. 겨울이 끝나자 부족들은 유랑을 멈추고 성벽 바깥 변두리에 천막과 판잣집으로 공동체를 이뤘다.','잉그라드는 이름을 무척 무겁게 여긴다. 부족 안에서는 아이가 일곱 살이 되어야 이름을 지어 준다. 기억을 태워 불을 켜는 도시에서 잉그라드가 가장 먼저 분노한 것도 이 때문이다.'],
+  c:'짐승의 머리와 귀에 사람의 몸과 손. 대부분 꼬리가 있고 털은 머리에서 목덜미까지 이어진다. 감정은 얼굴보다 귀와 꼬리에 먼저 드러난다. 냄새와 소리에 다른 종족보다 훨씬 예민하다.',
+  t:[['늑대와 개 머리가 많다. 겨울털이 두껍고 은회색이며 목에 갈기가 진다.','금색 · 옅은 노랑','도시 밖 사냥터를 지키다 성문 안으로 들어온 부락이다. 사냥이 금지된 뒤로 경비와 호위와 짐꾼 일을 한다. 해빙 전쟁 때 가장 많은 병사를 냈다.','무뚝뚝하고 의리가 깊다는 평이다. 보름마다 지붕 위에서 우는 소리가 들리면 다들 서리갈기 노인이라고 짐작한다.'],
+     ['까마귀와 여우 머리가 섞여 있다. 털 끝이 잿빛으로 물든 사람이 많다.','검은색 · 짙은 붉은 갈색','죽은 자를 부른다는 소문 때문에 변두리 끝에 산다. 실제로는 장례와 점을 맡아 온 부족이다. 신탁 상점의 점쟁이 상당수가 이 부족 출신이다.','교단은 이들의 점을 \'불을 훔치는 일\'이라며 금한다. 그래도 밤이 되면 귀부인들이 마차를 타고 이들의 천막을 찾는다.'],
+     ['부엉이와 사슴 머리가 많다. 깃털이나 털에 줄무늬가 있다.','호박색 · 녹색','이름 부르기 축일의 노래를 지금도 지킨다. 아이에게 이름을 지어 줄 때 그 이름이 들어간 노래를 새로 짓는다. 그래서 부족 노인들은 수백 곡을 외운다.','거리의 악사와 성가대에 이 부족 사람이 많다. 학술원은 이들의 노래가 기억을 붙들어 둔다고 보고 채집하러 다닌다.'],
+     ['머리 모양이 제각각이다. 여러 부족이 섞여 생긴 부족이라서다. 귀에 놋쇠 고리를 단다.','제각각','이주민 공동체의 장로를 내는 부족이다. 다른 부족들의 다툼을 중재하고 도시 관청과 협상한다. 글을 읽고 쓰는 잉그라드 가운데 다수가 이 부족 출신이다.','의회는 변두리와 이야기할 때 이 부족 장로만 상대한다. 그래서 다른 부족들은 이들을 반쯤 믿고 반쯤 의심한다.'],
+     ['오소리와 담비 머리가 많다. 손이 크고 마디가 굵다. 팔에 문양을 새긴다.','짙은 갈색','공장에서 나온 강철에도 옛 문양을 새기는 장인 부락이다. 하칸골 제철소의 장식공과 대장장이 일을 한다. 문양 하나에 집안 내력이 담겨 있다.','이들이 새긴 문양이 있는 칼은 값이 두 배다. 학술원은 문양이 마력의 흔적이라 의심한다.']]},
+ b:{h:'키 1.6~1.9미터 · 수명 70~100년',o:['북부에서 내려온 사람들이다. 어깨가 넓고 손이 투박하다. 털도 비늘도 없어 추위에 약할 것 같지만 겨울 시대를 가장 오래 버틴 종족이 벨데인이다. 북부 씨족들은 지금도 아이가 태어나면 눈 속에 한 번 묻었다 꺼낸다.','겨울이 끝나자 벨데인은 가장 먼저 남쪽 도시로 쏟아져 들어왔다. 부두와 공장과 광산을 채운 것도 이들이고 해빙 전쟁의 장교와 사병 대부분도 이들이다. 오렌하르트에서 \'보통 사람\'이라고 하면 대개 벨데인을 떠올린다. 그래서 다른 두 종족이 겪는 일을 잘 보지 못한다는 비판도 받는다.','벨데인은 마력이 거의 없다. 대신 씨족과 맹세를 무겁게 여긴다. 씨족마다 비석이나 문장이 있고 그 앞에서 한 맹세는 대를 넘겨 이어진다. 도망친 자를 용서하지 않는 문화도 여기서 나왔다.'],
+  c:'넓은 이마와 짙은 눈썹. 겨울빛 피부는 희거나 붉게 튼다. 머리칼은 짚색·잿빛·검정·붉은색. 씨족 표시로 귀나 손등에 작은 문신을 하는 경우가 많다.',
+  t:[['키가 크고 마른 편이다. 머리칼은 잿빛이 많다. 손등에 비석 문양 문신.','회색 · 옅은 파랑','북부에서 검은 비석을 지키던 씨족이다. 도시로 내려와서는 교단 묘지를 지킨다. 묘지기와 장의사와 교단의 하급 정화자가 많다.','탈영병 수배 전단을 붙이고 다니는 것도 대개 이 씨족이다.'],
+     ['땅딸막하고 팔뚝이 굵다. 손과 목에 쇳가루 화상 자국이 있다.','갈색 · 짙은 초록','하칸골 제철소의 화부와 제련공을 대대로 낸다. 갱도 깊은 곳의 미지근한 물과 옛 노래를 가장 많이 아는 씨족이다. 노인들은 깊은 층에 내려가지 말라고 하면서 이유는 말하지 않는다.','공장 노동조합의 중심이다. 무색 파볼릭과 같은 작업장에서 일하며 가까워졌다.'],
+     ['피부가 바닷바람에 거칠고 붉다. 머리칼은 짚색과 붉은색. 귀에 은고리를 단다.','바다색 · 회녹색','항구 부두를 쥔 뱃사람 씨족이다. 짐배와 기중기와 창고를 거의 다 가지고 있다. 의심은 깊지만 한 번 믿으면 평생 간다는 말을 듣는다.','부두 여관 주인 대부분이 이 씨족이다. 회색 마차가 어느 부두에서 무엇을 싣는지 가장 잘 알면서 가장 말이 없다.'],
+     ['몸이 단단하고 흉터가 많다. 검은 머리칼에 붉은 물을 들인다.','짙은 갈색 · 검정','지하 결투장을 주관하는 씨족이다. 명예 결투와 대리 결투를 중개하고 판돈을 맡는다. 결투의 규칙은 이 씨족이 정하고 이 씨족이 지킨다.','귀족들은 이들을 천하게 여기면서도 결투 대리인을 구할 때는 이들을 찾는다.'],
+     ['피부가 아주 희고 머리칼이 은빛이다. 손끝이 차다.','짙은 푸른색','드물게 마력을 지닌 아이가 태어나는 고원 씨족이다. 학술원이 그런 아이를 사 간다는 소문이 있다. 그래서 고원에서 내려오지 않으려 하고 내려온 사람은 출신을 숨긴다.','손끝이 푸른 사람을 회색 마차가 데려간다는 소문과 겹쳐 가장 두려움을 사는 씨족이다.']]}};
+/* 종족 능력: 만들 때 붙는다. [이름, 설명, 계통별 덧붙는 효과 다섯] */
+const RAB={
+ p:['비늘','싸움마다 처음 맞는 공격의 피해가 절반으로 줄어든다.',['싸움이 시작되면 적의 첫 공격이 30% 느려진다','처음에 동전 30을 더 가지고 시작한다','붕대 회복 +6','주문 피해 +15%','받아치기 판정 +10%']],
+ i:['짐승의 감각','속임 동작(◇)의 판정이 15% 넓어진다.',['최대 체력 +8','동료 호감이 오를 때 25% 확률로 1 더 오른다','주문 기력 −1 (최소 1)','저택 고치기·꾸미기와 아이 고용 값 −10%','강타 금빛 구간 +20%']],
+ b:['씨족의 맹세','싸움마다 처음으로 체력이 절반 아래로 떨어지면 기력 +2.',['되받아치는 피해 +3','탐사에서 고철이 나오면 1개 더','탐사에서 얻는 동전 +2','공격·강타 피해 +2','마력 +1']]};
+const lin=(r,t)=>!!S&&S.race===r&&S.tr===t;
+/* ===== 재능 (v029): 레벨 3·6·9·12에 하나씩 고른다. 이야기 재능은 선택의 결과로 저절로 붙는다 ===== */
+const LVMAX=12,TLV=[3,6,9,12];
+const TAL={
+ hide:['굳은살','최대 체력 +12'],
+ eye:['빠른 눈','회피 판정 +10%'],
+ beat:['박자 읽기','받아치기 판정 +8%'],
+ sew:['상처 꿰매기','붕대 회복 +8'],
+ gold:['금빛 손끝','강타 금빛 구간 +20%'],
+ breath:['숨 고르기 달인','자세 잡기를 하면 체력 4 회복'],
+ ashh:['재 다루기','재 흩뿌리기에 푸른 재를 쓰지 않을 확률 50%'],
+ first:['먼저 친다','싸움의 내 첫 차례에 주는 피해 +50%'],
+ cback:['동료의 등','데리고 다니는 동료의 기술 발동 확률 +5%p'],
+ count:['셈 빠른 손','저택 고치기·꾸미기와 아이 고용 값 −10%, 탐사에서 얻는 동전 +1'],
+ night:['밤길에 익숙함','길 위 마주침에서 달아날 때 동전을 흘리지 않는다'],
+ voice:['깨어난 목소리','주문 피해 +15% (목소리가 깨어난 뒤에만 고를 수 있다)']};
+const tal=k=>!!S&&(S.tl||[]).includes(k);
+const tlCan=()=>!!S&&TLV.filter(l=>l<=S.lv).length>(S.tl||[]).length;
+const tlAvail=()=>Object.keys(TAL).filter(k=>!tal(k)&&(k!=='voice'||S.mg));
+/* 이야기 재능: [키, 이름, 어디서, 효과, 조건] — 얻은 것만 보인다 */
+const STAL=[
+ ['teach','모르텐의 가르침','모르텐에게 가르침을 끝까지 받았다','싸움마다 첫 받아치기 판정 +10%',s=>s.tutF],
+ ['stand','서 있는 사람','모르텐의 열쇠 · 병들을 놓아주었다','싸움마다 한 번 쓰러질 공격을 체력 1로 버틴다',s=>(s.sx&&s.sx.mort||{}).e==='free'],
+ ['post','초소의 불','모르텐의 열쇠 · 모르텐의 병을 초소로 가져갔다','가스등 거리 순찰에서 얻는 경험 +20%',s=>(s.sx&&s.sx.mort||{}).e==='watch'],
+ ['ledger','장부를 아는 손','오스윈과 장부의 이름을 하나씩 돌려주기로 했다','교단 정화자·추적자에게 주는 피해 +15%',s=>s.oqe==='return'],
+ ['three','셋까지 세는 노래','하수구 철창에서 기억 덩어리를 직접 꺼냈다','쉬는 시간 −20%',s=>s.enoH],
+ ['seas','두 바다','두 어머니가 병 속의 바다를 나눠 마시게 했다','동료 호감이 오를 때 1 더 오른다',s=>(s.sx&&s.sx.bottle||{}).e==='both'],
+ ['dig','끝까지 판 사람','불탄 수레의 진실을 밝혔다','탐사 중 작은 일이 일어날 확률 20% → 30%',s=>(s.sx&&s.sx.cart||{}).e==='truth'],
+ ['oath','맹세를 받은 자','바르그의 두 번째 맹세를 받았다','바르그와 함께 다닐 때 받는 피해 −10%',s=>(s.aev||{}).barg>=8],
+ ['fire','깨어난 불','깨진 돔의 강의실에서 목소리가 깨어났다','주문 기술을 배울 수 있다',s=>s.mg]];
+const stal=k=>{if(!S)return false;const e=STAL.find(x=>x[0]===k);return !!(e&&e[4](S))};
+/* 능력·재능이 바꾸는 값 */
+const mhpB=()=>!S?0:(tal('hide')?12:0)+(lin('i',0)?8:0);
+const priceK=()=>(tal('count')?.9:1)*(lin('i',3)?.9:1);
+const px=n=>Math.max(1,Math.round(n*priceK()));
+const skC=k=>{const K=SKL[k];return K.mg&&lin('i',2)?Math.max(1,K.c-1):K.c};
 const bar=(v,m,cls)=>`<div class="bar ${cls||''}"><i style="width:${Math.max(0,Math.min(100,v/m*100))}%"></i></div>`;
 
 function render(){
@@ -1629,6 +1696,16 @@ function render(){
   if(S&&$('#mapw'))mcenter();
   renderOv();
 }
+
+/* 종족·계통 글 (만들기 화면과 캐릭터 탭이 함께 쓴다) */
+function raceHtml(rk,open){const r=RACE[rk],X=RX[rk];return `<details${open?' open':''}><summary class="m">${r.n} 이야기 · ${X.h}</summary>${X.o.map(x=>`<p class="m">${x}</p>`).join('')}<p class="m"><b>생김새</b> — ${X.c}</p></details>`}
+function linHtml(rk,ti){const T=RACE[rk].t[ti],X=RX[rk].t[ti],A=RAB[rk];return `<div class="lin"><p class="m"><b>생김새</b> — ${X[0]}</p><p class="m"><b>눈</b> — ${X[1]}</p><p class="m"><b>삶</b> — ${X[2]}</p><p class="m"><b>도시에서</b> — ${X[3]}</p></div>
+ <div class="ms"><b>종족 능력 — ${A[0]}</b><div class="m">${A[1]}</div><div class="m">${T[0]} — ${A[2][ti]}</div></div>`}
+function talentCard(){const can=tlCan(),av=tlAvail(),st=STAL.filter(x=>x[4](S)),nx=TLV.find(l=>l>S.lv);
+ return `<div class="card"><h2>재능 ${can?'<span class="hbn">새 재능을 고를 수 있다</span>':''}</h2>
+ ${(S.tl||[]).length?(S.tl||[]).map(k=>`<div class="ms"><b>${TAL[k][0]}</b><div class="m">${TAL[k][1]}</div></div>`).join(''):'<p class="m">아직 고른 재능이 없다.</p>'}
+ ${can?`<h3>고를 재능</h3><div class="acts">${av.map(k=>B('tpick',TAL[k][0],{a:k,sub:TAL[k][1]})).join('')}</div>`:`<p class="m">${nx?`레벨 ${TLV.join('·')}에 하나씩 고른다. 다음은 레벨 ${nx}.`:'고를 수 있는 재능을 모두 골랐다.'}</p>`}
+ ${st.length?`<h3>이야기 재능</h3>${st.map(x=>`<div class="ms"><b>${x[1]}</b> <span class="m">${x[2]}</span><div class="m">${x[3]}</div></div>`).join('')}`:''}</div>`}
 /* --- 만들기 --- */
 function create(){
   const r=RACE[C.r],T=r.t[C.t],O=ORIGIN[C.o],st=baseStats(C.r,C.t,C.o);
@@ -1640,8 +1717,8 @@ function create(){
    <div class="avs">${AVI.map((x,i)=>`<button class="btn${C.av==='i'+i?' on':''}" data-c="cav" data-a="i${i}" title="${x[0]}">${avSvg('i'+i)}</button>`).join('')}</div>
    <p class="m">또는 사진 올리기 <input type="file" accept="image/*" id="avup"></p>
    <h3>성별</h3><div class="seg">${SEX.map(([k,n])=>B('sex',n,{a:k,cls:C.sx===k?'on':''})).join('')}</div><p class="m">동료와 마음을 나누는 이야기에 쓰인다. 밝히지 않으면 성별과 상관없이 마음을 여는 동료와만 이어진다.</p></div>
-  <div class="card"><h2>종족</h2><div class="seg">${Object.entries(RACE).map(([k,x])=>B('race',x.n,{a:k,cls:C.r===k?'on':''})).join('')}</div><p class="m">${r.d}</p>
-   <h3>계통</h3><div class="tr-list">${r.t.map((x,i)=>B('trait',x[0],{a:i,cls:C.t===i?'on':''})).join('')}</div><p class="m">${T[1]}</p>
+  <div class="card"><h2>종족</h2><div class="seg">${Object.entries(RACE).map(([k,x])=>B('race',x.n,{a:k,cls:C.r===k?'on':''})).join('')}</div><p class="m">${r.d}</p>${raceHtml(C.r,false)}
+   <h3>계통</h3><div class="tr-list">${r.t.map((x,i)=>B('trait',x[0],{a:i,cls:C.t===i?'on':''})).join('')}</div><p>${T[1]}</p>${linHtml(C.r,C.t)}
   </div><div class="card"><h2>출신</h2><div class="tr-list">${ORIGIN.map((x,i)=>B('origin',x[0],{a:i,cls:C.o===i?'on':''})).join('')}</div><p class="m">${O[1]}</p><p class="m">시작 기술 — <b class="g">${SKL[OSK[C.o]].n}</b>. ${SKL[OSK[C.o]].d}</p></div>
   <div class="card"><h2>능력치</h2><div class="stats">${SN.map((n,i)=>`<span>${n}</span>${bar(st[i],12)}<span>${st[i]}</span>`).join('')}</div><p class="m">체력 ${calcMhp(st,1)}</p><div class="m">${SN.map((n,i)=>`${n} — ${SNE[i]}`).join('<br>')}</div></div>
   <div class="card"><details ${C.leg||C.legMsg?'open':''}><summary>1편의 기록이 있다면</summary>
@@ -1656,14 +1733,14 @@ function create(){
 }
 /* --- 게임 --- */
 function game(){
-  const tabs=[['place','장소'],['char','캐릭터'+(S.sp||skCan()?' <i class="hbn">✦</i>':'')],['quest','임무'],['story','이야기']];
+  const tabs=[['place','장소'],['char','캐릭터'+(S.sp||skCan()||tlCan()?' <i class="hbn">✦</i>':'')],['quest','임무'],['story','이야기']];
   return `<div class="top"><div class="brand">칼셀바도르 <b>푸른 재</b></div><nav class="tabs">${tabs.map(([k,n])=>`<button class="tab${V===k?' on':''}" data-c="tab" data-a="${k}">${n}</button>`).join('')}</nav>${B('settings','설정',{cls:'sm'})}</div>
   <div class="grid"><aside class="L">${statusCard()}</aside><section class="M">${V==='place'?placeView():V==='char'?charView():V==='quest'?questView():storyView()}</section><aside class="Rr">${sideCards()}</aside></div>`;
 }
 function statusCard(){
   const r=RACE[S.race];
   return `<div class="card"><h2 class="nmrow">${avSvg(S.av)}<span>${esc(S.name)}</span></h2><p class="m">${r.n} · ${r.t[S.tr][0]} · ${ORIGIN[S.og][0]}</p>
-  <div class="row"><span>레벨 ${S.lv}</span><span>${S.xp} / ${xpNeed(S.lv)}</span></div>${bar(S.xp,xpNeed(S.lv))}
+  <div class="row"><span>레벨 ${S.lv}</span><span>${S.lv>=LVMAX?'상한':`${S.xp} / ${xpNeed(S.lv)}`}</span></div>${bar(S.lv>=LVMAX?1:S.xp,S.lv>=LVMAX?1:xpNeed(S.lv))}
   <div class="row"><span>체력</span><span>${S.hp} / ${S.mhp}</span></div>${bar(S.hp,S.mhp,'hp')}
   <div class="row"><span>동전</span><span>${S.coin}</span></div>
   <div class="row"><span>붕대</span><span>${S.inv.band||0}</span></div>
@@ -1804,13 +1881,13 @@ function sideCards(){
 }
 function charView(){
   const r=RACE[S.race];
-  let h=`<div class="card"><h2 class="nmrow">${avSvg(S.av)}<span>${esc(S.name)}</span></h2><p class="m">${(SEX.find(x=>x[0]===S.sex)||SEX[2])[1]}</p><details><summary class="m">모습 바꾸기</summary><div class="avs">${AVI.map((x,i)=>`<button class="btn${S.av==='i'+i?' on':''}" data-c="sav" data-a="i${i}" title="${x[0]}">${avSvg('i'+i)}</button>`).join('')}</div><p class="m">또는 사진 올리기 <input type="file" accept="image/*" id="avup2"></p></details><p>${r.n} — ${r.d}</p><p class="m">계통: ${r.t[S.tr][0]} — ${r.t[S.tr][1]}</p><p class="m">출신: ${ORIGIN[S.og][0]} — ${ORIGIN[S.og][1]}</p>
-  <h3>레벨 ${S.lv} <span class="m">경험 ${S.xp} / ${xpNeed(S.lv)}</span></h3>
+  let h=`<div class="card"><h2 class="nmrow">${avSvg(S.av)}<span>${esc(S.name)}</span></h2><p class="m">${(SEX.find(x=>x[0]===S.sex)||SEX[2])[1]}</p><details><summary class="m">모습 바꾸기</summary><div class="avs">${AVI.map((x,i)=>`<button class="btn${S.av==='i'+i?' on':''}" data-c="sav" data-a="i${i}" title="${x[0]}">${avSvg('i'+i)}</button>`).join('')}</div><p class="m">또는 사진 올리기 <input type="file" accept="image/*" id="avup2"></p></details><p>${r.n} — ${r.d}</p>${raceHtml(S.race,false)}<p class="m">계통: ${r.t[S.tr][0]} — ${r.t[S.tr][1]}</p><details><summary class="m">${r.t[S.tr][0]} 이야기와 종족 능력</summary>${linHtml(S.race,S.tr)}</details><p class="m">출신: ${ORIGIN[S.og][0]} — ${ORIGIN[S.og][1]}</p>
+  <h3>레벨 ${S.lv} <span class="m">${S.lv>=LVMAX?'레벨 상한':`경험 ${S.xp} / ${xpNeed(S.lv)}`}</span></h3>
   <h3>능력치${S.sp?` <span class="hbn">올릴 수 있는 점수 ${S.sp}</span>`:''}</h3><div class="stats st4">${SN.map((n,i)=>`<span>${n}</span>${bar(S.st[i],14)}<span>${S.st[i]}${S.sp?' '+B('statup','＋',{a:i,cls:'sm'}):''}</span><span class="m sne">${i===1&&S.mg?'목소리에 실려 나오는 불':SNE[i]}</span>`).join('')}</div>
   <p class="m">체력 ${S.mhp} · 공격 ${dAtk(S.st)} · 강타 ${dHeavy(S.st,0)}~${dHeavy(S.st,1)} · 되받아치기 ${dCounter(S.st,0)}</p></div>
   <div class="card"><h2>기술 ${skCan()?'<span class="hbn">새 기술을 배울 수 있다</span>':''}</h2>${S.sk.map(k=>`<div class="ms"><b>${SKL[k].n}</b>${SKL[k].mg?' <span class="m">주문</span>':''} <span class="m">기력 ${'◆'.repeat(SKL[k].c)}${SKL[k].item?' · '+IT[SKL[k].item][0]+' 1':''} · ${SN[SKL[k].st]}</span><div class="m">${SKL[k].d}</div></div>`).join('')}
   ${!skCan()&&skAvail().length?`<p class="m">레벨 2부터 6까지 오를 때마다 하나씩 배운다.</p>${skAvail().map(k=>`<div class="ms csk off"><b>${SKL[k].n}</b> <span class="m">기력 ${'◆'.repeat(SKL[k].c)} · ${SN[SKL[k].st]}</span><div class="m">${SKL[k].d}</div></div>`).join('')}`:''}
-  ${skCan()?`<h3>배울 기술 고르기</h3><div class="acts">${skAvail().map(k=>B('learn',SKL[k].n,{a:k,sub:`기력 ${SKL[k].c} · ${SN[SKL[k].st]} — ${SKL[k].d}`})).join('')}</div>`:''}</div>`;
+  ${skCan()?`<h3>배울 기술 고르기</h3><div class="acts">${skAvail().map(k=>B('learn',SKL[k].n,{a:k,sub:`기력 ${SKL[k].c} · ${SN[SKL[k].st]} — ${SKL[k].d}`})).join('')}</div>`:''}</div>`+talentCard();
   if(S.comps.length){const sel=S.comps.includes(CSEL)?CSEL:S.comps.includes(S.party)?S.party:S.comps[0],K=CSK[sel],C=K&&cst(sel);
     const cards=S.comps.map(id=>{const k=CSK[id],c=k&&cst(id);return `<button class="ccard${id===sel?' sel':''}" data-c="csel" data-a="${id}"><b>${cn(id)}${c&&c.cp?' <span class="hbn">✦</span>':''}</b><span class="m">${COMP[id].k}</span><span class="m">${c?'레벨 '+c.lv:''}${S.party===id?' · 함께 걷는 중':''}</span></button>`}).join('');
     const det=K?`<div class="cdet"><p><b>${cn(sel)}</b> <span class="m">레벨 ${C.lv}</span></p><div class="m">경험 ${C.xp} / ${xpNeed(C.lv)}${C.cp?` · <span class="hbn">기술 점수 ${C.cp}</span>`:''}</div>`+Object.keys(K).map(k=>{const r=C.r[k]||0;return `<div class="csk${r?'':' off'}"><b>${K[k].n}</b> ${'◆'.repeat(r)}${'◇'.repeat(3-r)} ${C.cp&&r<3?B('cskup','＋',{a:sel+':'+k,cls:'sm'}):''}<div class="m">${K[k].d(r||0)}</div></div>`}).join('')+'</div>':'';
@@ -1888,7 +1965,7 @@ function startAct(a){S.act=Object.assign({t0:Date.now()},a);a.d=a.d*SEC();S.act.
 function resolveAct(){
   const a=S.act;if(!a||Date.now()<a.t0+a.d*1000)return false;
   S.act=null;
-  if(a.t==='x'){const X=EXP[a.at][a.i],L=X.loot();Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;log(X.n+'.');
+  if(a.t==='x'){const X=EXP[a.at][a.i],L=X.loot();L.g+=(tal('count')?1:0)+(lin('b',2)?2:0);if(L.i.scrap&&lin('b',1))L.i.scrap++;Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;log(X.n+'.');
     if(a.at==='outskirts'&&S.hq===1){add('grim',1);S.hq=2;jr('천막 사이 넝마 더미에서 하그의 주문책을 찾았다.');pop(X.n,{i:Object.assign({grim:1},L.i),g:L.g,n:[X.say,'넝마 더미 바닥에서 가죽 표지 책 한 권이 나왔다. 하그의 주문책이다.']});save();return true}
     if(S.base&&!S.pit&&(a.at==='docks'||a.at==='street')){pop(X.n,{i:L.i,g:L.g,n:[X.say]});S.pend='sewer';save();return true}
     const SXR=sxExplore(a.at),say=[X.say,...SXR.notes];if(!SXR.started)xevRoll(a.at);
@@ -1910,7 +1987,7 @@ function resolveAct(){
   if(a.t==='b'){S.read=S.read||{};let i=BOOK.findIndex((b,j)=>!S.read[j]);const first=i>=0;if(!first)i=Math.random()*BOOK.length|0;S.read[i]=1;
     const n=[`<b>『${BOOK[i][0]}』</b>`,first?BOOK[i][1]:'다시 펴 보니 처음엔 못 본 여백의 낙서가 눈에 띈다.'].concat(gainXp(first?8:3));log(`『${BOOK[i][0]}』을(를) 읽었다.`);if(first)jr(`서재에서 『${BOOK[i][0]}』을(를) 읽었다. ${BOOK[i][1]}`);
     pop('서재',{n})}
-  if(a.t==='p'){save();const foe=S.night<NIGHT.length?NIGHT[S.night]:(Math.random()<.5?'dog':'thief');startBattle('fight',foe);return true}
+  if(a.t==='p'){save();const foe=S.night<NIGHT.length?NIGHT[S.night]:(Math.random()<.5?'dog':'thief');startBattle('fight',foe);G.pat=1;return true}
   save();return true;
 }
 function resolveDisp(){
@@ -1944,6 +2021,7 @@ const CMD={
   tab:a=>{V=a;render()},
   statup:a=>{if(!S.sp)return;const i=+a;S.st[i]++;S.sp--;const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp+=S.mhp-m0;log(SN[i]+'이(가) 올랐다.');save();render()},
   cskup:a=>{const [id,k]=(a||'').split(':');const K=CSK[id];if(!K||!K[k]||!S.comps.includes(id))return;const C=cst(id);if(!C.cp||(C.r[k]||0)>=3)return;C.r[k]=(C.r[k]||0)+1;C.cp--;log(`${cn(id)} — ${K[k].n} ${C.r[k]}단계`);save();render()},
+  tpick:a=>{if(!tlCan()||!tlAvail().includes(a))return;S.tl=S.tl||[];S.tl.push(a);const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp+=S.mhp-m0;log('새 재능 — '+TAL[a][0]);save();render()},
   learn:a=>{if(!S.skp||!skAvail().includes(a))return;S.sk.push(a);S.skp--;log('새 기술 — '+SKL[a].n);save();render()},
   cav:a=>{if(/^i\d+$/.test(a)){C.av=a;render()}},sav:a=>{if(S&&/^i\d+$/.test(a)){S.av=a;save();render()}},
   race:a=>{C.r=a;C.t=0;render()},sex:a=>{C.sx=a;render()},trait:a=>{C.t=+a;render()},origin:a=>{C.o=+a;render()},
@@ -1952,14 +2030,14 @@ const CMD={
   start:()=>{newGame()},
   import2:()=>{ev('기록 코드로 이어 하기',`<p class="m">다른 기기에서 만든 2편 기록 코드(KS2.)를 붙여 넣는다.</p><textarea id="imp2"></textarea><p class="m" id="impm"></p>`,[['불러오기',()=>doImport()],['닫기',null]])},
   go:a=>{if(S.act)return;const p=PL[a];if(p.u&&!p.u(S))return;startAct({t:'m',fr:S.loc,to:a,d:travelSec(S.loc,a)})},
-  rest:()=>{if(S.act)return;startAct({t:'r',d:S.loc==='base'?(S.fix.hearth?30:60):120})},
+  rest:()=>{if(S.act)return;startAct({t:'r',d:Math.round((S.loc==='base'?(S.fix.hearth?30:60):120)*(stal('three')?.8:1))})},
   fix:()=>{if(S.loc!=='base'||!S.base)return;
     ev('저택 손보기',`<p class="m">값은 시작할 때 치른다. 그만두면 돌려받는다. 가진 것 — 동전 ${S.coin} · 고철 ${S.inv.scrap||0}</p>`+FIXN.map(k=>{const F=FIX[k],done=S.fix[k],ok=fixOk(k);
-      return `<div class="ms"><b>${done?'◆':'◇'} ${F.n}</b> <span class="m">${done?'고쳤다':ok?`동전 ${F.coin} · 고철 ${F.scrap} · ${fmt(F.d*SEC())}`:FIX[F.need].n+'부터 고쳐야 한다'}</span><div class="m">${done?F.f:F.b}</div><div class="m">${F.e}</div></div>`}).join(''),
+      return `<div class="ms"><b>${done?'◆':'◇'} ${F.n}</b> <span class="m">${done?'고쳤다':ok?`동전 ${px(F.coin)} · 고철 ${F.scrap} · ${fmt(F.d*SEC())}`:FIX[F.need].n+'부터 고쳐야 한다'}</span><div class="m">${done?F.f:F.b}</div><div class="m">${F.e}</div></div>`}).join(''),
       FIXN.filter(fixOk).map(k=>[FIX[k].n+' 고치기',()=>CMD.fixgo(k)]).concat([['닫기',null]]),1)},
   fixgo:k=>{const F=FIX[k];if(!F||!fixOk(k)||S.act)return;
-    if(S.coin<F.coin||(S.inv.scrap||0)<F.scrap){ev(F.n,`<p>${F.coin>S.coin?'동전':'고철'}이 모자라다.</p><p class="m">고철은 부두 창고를 뒤지거나 ${HELPER}에게 잡동사니 줍기를 맡겨 모은다.</p>`,[['알겠다',null]],1);return}
-    S.coin-=F.coin;add('scrap',-F.scrap);startAct({t:'f',k,d:F.d})},
+    if(S.coin<px(F.coin)||(S.inv.scrap||0)<F.scrap){ev(F.n,`<p>${px(F.coin)>S.coin?'동전':'고철'}이 모자라다.</p><p class="m">고철은 부두 창고를 뒤지거나 ${HELPER}에게 잡동사니 줍기를 맡겨 모은다.</p>`,[['알겠다',null]],1);return}
+    S.coin-=px(F.coin);add('scrap',-F.scrap);startAct({t:'f',k,d:F.d,pc:px(F.coin)})},
   deco:()=>{if(S.loc!=='base'||!S.fix.hearth)return;
     ev('거실 꾸미기',`<p class="m">한 번 들인 것은 다시 걸 때 값을 치르지 않는다. 아늑하다에 이르면 저택에서 쉴 때 동료들이 가까워진다(30분에 한 번). 지금 저택은 <b>${comfortT()}</b>. 가진 동전 ${S.coin}</p>`+
       Object.keys(DECO).map(sl=>`<p><b>${DECO[sl].n}</b> <span class="m">${decoO(sl,S.deco[sl])[0]==='relic'?itName('relic'):decoO(sl,S.deco[sl])[1]}</span></p>`).join(''),
@@ -1967,9 +2045,9 @@ const CMD={
   decoSl:sl=>{const D=DECO[sl];if(!D)return;
     const L=D.o.filter(o=>o[0]!=='relic'||S.inv.relic);
     ev(D.n,`<p class="m">가진 동전 ${S.coin}</p>`,L.map(o=>{const nm=o[0]==='relic'?itName('relic'):o[1],cur=S.deco[sl]===o[0],own=!o[2]||S.own[sl+':'+o[0]];
-      return [nm+(cur?' — 지금 이것':own?'':' — 동전 '+o[2]),()=>CMD.decoSet(sl,o[0])]}).concat([['그대로 둔다',null]]))},
+      return [nm+(cur?' — 지금 이것':own?'':' — 동전 '+px(o[2])),()=>CMD.decoSet(sl,o[0])]}).concat([['그대로 둔다',null]]))},
   decoSet:(sl,id)=>{const o=decoO(sl,id);if(o[0]!==id||S.deco[sl]===id)return;const key=sl+':'+id;
-    if(o[2]&&!S.own[key]){if(S.coin<o[2]){ev(DECO[sl].n,'<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=o[2];S.own[key]=1}
+    if(o[2]&&!S.own[key]){if(S.coin<px(o[2])){ev(DECO[sl].n,'<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=px(o[2]);S.own[key]=1}
     S.deco[sl]=id;const nm=id==='relic'?itName('relic'):o[1];log(`거실 ${DECO[sl].n} — ${nm}.`);
     const say=S.party&&(DECOSAY[S.party]||{})[id];
     ev('거실',`<p class="m">${DECO[sl].n}을(를) ${nm}(으)로 바꿨다. 지금 저택은 <b>${comfortT()}</b>.</p>`+(say?`<p>${cn(S.party)} — “${say}”</p>`:''),[['좋다',null]],1);save()},
@@ -2018,7 +2096,7 @@ const CMD={
     if(S.act){ev(p.n,`<p class="m">${p.d}</p><p>지금 하던 일이 있다.</p>`,[['알겠다',null]],1);return}
     ev(p.n,`<p class="m">${p.d}</p><p>${fmt(travelSec(S.loc,a)*SEC())} 걸린다.</p>`,[['간다',()=>CMD.go(a)],['그만둔다',null]])},
   patrol:()=>{if(S.act)return;if(!S.tutd&&!S.tutAsk&&!S.mort){S.tutAsk=1;ev('경비대 초소','<p>초소 앞에 서 있던 늙은 경비가 막대로 길을 막는다.</p><p>모르텐 — “밤길에 나가려면 박자부터 배우게. 오래 안 걸리네.”</p>',[['가르침을 받는다',()=>startBattle('tut')],['그냥 나간다',()=>startAct({t:'p',d:15})]]);return}startAct({t:'p',d:15})},
-  cancel:()=>{const a=S.act;if(!a)return;S.act=null;if(a.t==='f'){S.coin+=FIX[a.k].coin;add('scrap',FIX[a.k].scrap)}log(a.t==='m'?'걸음을 돌렸다.':'하던 일을 그만두었다.');save();render()},
+  cancel:()=>{const a=S.act;if(!a)return;S.act=null;if(a.t==='f'){S.coin+=a.pc!=null?a.pc:FIX[a.k].coin;add('scrap',FIX[a.k].scrap)}log(a.t==='m'?'걸음을 돌렸다.':'하던 일을 그만두었다.');save();render()},
   tutor:()=>startBattle('tut'),practice:()=>startBattle('practice'),
   sxa:a=>{if(S.act)return;const q=sxQ(a),D=SX[a];if(!q||q.e)return;const st=D.steps[q.i];if(!st||!st.run||st.at!==S.loc||(st.need&&!st.need(S)))return;st.run()},
   board:()=>{if(!S.base||!S.pit)return;const free=Object.keys(S.kids||{}).filter(kidOk),ok=free.length>0;
@@ -2030,13 +2108,13 @@ const CMD={
     if(free.length===1)go(free[0]);else ev(D.n,'<p class="m">누구를 보낼까.</p>',free.map(c=>[KIDS[c].n,()=>go(c)]).concat([['그만둔다',null]]))},
   kids:()=>{if(!S.base||!S.pit)return;const ks=Object.keys(S.kids||{}),hire=S.eda?Object.keys(KIDS).filter(k=>KIDS[k].cost&&!kid(k)):[],btn=[];
     ks.filter(k=>kid(k).st==='hurt').forEach(k=>{btn.push([`${KIDS[k].n} 간호하기 (붕대 1 · 오래 걸림)`,()=>CMD.kcare(k,'care')]);btn.push([`${KIDS[k].n} 구호소에 보내기 (동전 8)`,()=>CMD.kcare(k,'hosp')])});
-    if(hire[0])btn.push([`${KIDS[hire[0]].n} 고용하기 (동전 ${KIDS[hire[0]].cost})`,()=>CMD.khire(hire[0])]);
+    if(hire[0])btn.push([`${KIDS[hire[0]].n} 고용하기 (동전 ${px(KIDS[hire[0]].cost)})`,()=>CMD.khire(hire[0])]);
     ev('아이들 방',ks.map(k=>`<p><b>${KIDS[k].n}</b> <span class="m">${kidSt(k)}</span></p><p class="m">${KIDS[k].d}</p>`).join('')+(hire[0]?`<p class="m">부두에 일을 찾는 아이가 있다. ${KIDS[hire[0]].n} — ${KIDS[hire[0]].d}</p>`:S.eda?'':'<p class="m">이야기가 더 진행되면 다른 아이들도 일을 찾아올 것이다.</p>'),btn.concat([['문을 닫는다',null]]))},
   kcare:(k,how)=>{const K=kid(k);if(!K||K.st!=='hurt')return;
     if(how==='care'){if(!(S.inv.band>0)){ev('아이들 방','<p>붕대가 없다.</p>',[['알겠다',null]],1);return}add('band',-1);K.st='care';K.until=Date.now()+5400e3*SEC();log(`${KIDS[k].n}를 간호했다. 한동안 쉬어야 한다.`);ev('아이들 방',`<p>상처를 씻고 붕대를 감아 준다. ${KIDS[k].n}가 이를 악물고 참는다.</p><p class="m">${fmt(5400*SEC())} 동안 쉬면 낫는다.</p>`,[['이불을 덮어 준다',null]],1)}
     else{if(S.coin<8){ev('아이들 방','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=8;K.st='hosp';K.until=Date.now()+2700e3*SEC();log(`${KIDS[k].n}를 교단 구호소에 보냈다.`);ev('아이들 방',`<p>교단 구호소 수녀가 ${KIDS[k].n}를 데려간다.</p><p class="m">${fmt(2700*SEC())} 동안 쉬면 낫는다.</p>`,[['알겠다',null]],1)}
     save()},
-  khire:k=>{const C=KIDS[k];if(!C||kid(k)||!S.eda)return;if(S.coin<C.cost){ev('아이들 방','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=C.cost;S.kids[k]={st:'ok'};log(`${C.n}를 심부름꾼으로 고용했다.`);jr(`${C.n}를 심부름꾼으로 고용했다. ${C.d}`);
+  khire:k=>{const C=KIDS[k];if(!C||kid(k)||!S.eda)return;if(S.coin<px(C.cost)){ev('아이들 방','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=px(C.cost);S.kids[k]={st:'ok'};log(`${C.n}를 심부름꾼으로 고용했다.`);jr(`${C.n}를 심부름꾼으로 고용했다. ${C.d}`);
     ev(C.n,`<p>${C.n} — “${{nell:'일한 만큼만 주면 돼요. 떼먹으면 소문낼 거예요.',jos:'굴뚝보다 좁은 데는 없어요. 어디든 들어가요.',adele:'장부 정리도 할 줄 알아요. 수녀님들이 가르쳐 줬어요.'}[k]}”</p><p class="m">${C.n}가 저택에서 지내게 되었다.</p>`,[['좋다',null]],1);save()},
   rooms:()=>{const L=S.comps,inn=!S.base;if(inn&&S.loc!=='docks'||!inn&&S.loc!=='base')return;if(!L.length){CMD.rooms0();return}
     ev(inn?'여관 1층':'동료의 방',`<p class="m">${inn?'저택이 생기기 전까지는 여관에서 데리고 나갈 사람을 바꾼다.':'데리고 나갈 사람은 여기서만 바꿀 수 있다.'}</p>${L.map(id=>`<p><b>${cn(id)}</b> <span class="m">${compLine(id)}${S.party===id?' · 함께 걷는 중':''}</span></p>`).join('')}`,
@@ -2096,11 +2174,12 @@ let G={on:false};
 const bfoe=()=>G.kind==='tut'?TUTF:FOES[G.foe];
 const btier=()=>{if(G.kind==='tut')return TIER[0];if(G.kind==='practice')return TIER[Math.min(3,1+S.night)];const F=bfoe();return TIER[G.ph===2&&F.tier2!=null?F.tier2:F.tier]};
 const bsafe=()=>G.kind!=='fight';
-const BW=()=>{const D=DF(),m=(G.guard?1.3:1)*(G.wide?1.3:1)*btier().w*(1+(sv(2)-3)*.03);return{d:D.d*m,p:D.p*m*(G.stance?1.5:1),g:D.d*m*1.6}}; // g: 일찍 누르면 스침. 정신이 높을수록 판정이 넓다
-const sv=i=>G.kind==='fight'?S.st[i]:5; // 전투에서 쓰는 능력치(가르침·연습은 5로 고정)
-const dAtk=st=>5+st[0];
-const dHeavy=(st,perf)=>Math.round((10+1.6*st[0])*(perf?1.7:1));
-const dCounter=(st,stance)=>Math.round((3+.6*st[1])*(stance?2:1));
+const BW=()=>{const D=DF(),m=(G.guard?1.3:1)*(G.wide?1.3:1)*btier().w*(1+(sv(2)-3)*.03),f=G.kind==='fight',dm=f&&tal('eye')?1.1:1,pm=f?(tal('beat')?1.08:1)*(lin('p',4)?1.1:1)*(stal('teach')&&!G.S.parry?1.1:1):1;return{d:D.d*m*dm,p:D.p*m*(G.stance?1.5:1)*pm,g:D.d*m*dm*1.6}}; // g: 일찍 누르면 스침. 정신이 높을수록 판정이 넓다
+const sv=i=>G.kind==='fight'?S.st[i]:5;
+const fkW=b=>b&&b.f&&G.kind==='fight'&&S.race==='i'?1.15:1; // 짐승의 감각 // 전투에서 쓰는 능력치(가르침·연습은 5로 고정)
+const dAtk=st=>5+st[0]+(lin('b',3)&&G.kind==='fight'?2:0);
+const dHeavy=(st,perf)=>Math.round((10+1.6*st[0])*(perf?1.7:1))+(lin('b',3)&&G.kind==='fight'?2:0);
+const dCounter=(st,stance)=>Math.round((3+.6*st[1])*(stance?2:1))+(lin('b',0)&&G.kind==='fight'?3:0);
 const SV=()=>[sv(0),sv(1),sv(2),sv(3)];
 
 /* 소리 */
@@ -2181,8 +2260,8 @@ function bshake(){const a=$('#barena');a.classList.remove('shake');void a.offset
 function bacts(){
   const el=$('#bacts');el.className='';
   if(G.st==='player'&&G.menu==='skill'){
-    el.innerHTML=S.sk.map(k=>{const K=SKL[k],noItem=K.item&&(bsafe()||!(S.inv[K.item]>0)),ok=G.fp>=K.c&&!noItem&&G.kind!=='tut';
-      return `<button class="btn" data-ba="sk" data-k="${k}" ${ok?'':'disabled'}>${K.n} ${'◆'.repeat(K.c)}<small>${noItem?IT[K.item][0]+'이(가) 없다':K.d}</small></button>`}).join('')+
+    el.innerHTML=S.sk.map(k=>{const K=SKL[k],noItem=K.item&&(bsafe()||!(S.inv[K.item]>0)),ok=G.fp>=skC(k)&&!noItem&&G.kind!=='tut';
+      return `<button class="btn" data-ba="sk" data-k="${k}" ${ok?'':'disabled'}>${K.n} ${'◆'.repeat(skC(k))}<small>${noItem?IT[K.item][0]+'이(가) 없다':K.d}</small></button>`}).join('')+
       `<button class="btn" data-ba="back">돌아가기<small>다른 행동을 고른다</small></button>`;
   }else if(G.st==='player'){
     const tut=G.kind==='tut',can2=tut||G.fp>=2,st=SV();
@@ -2209,7 +2288,7 @@ function startBattle(kind,foe){
   G={on:true,kind,foe:foe||(kind==='practice'?'drill':null),st:'wait',hp:kind==='fight'?S.hp:100,mhp:kind==='fight'?S.mhp:100,fp:2,band:kind==='fight'?(S.inv.band||0):0,
      fhp:0,ph:1,guard:false,open:false,next:null,cur:null,beats:[],fx:[],lock:0,turn:0,tg:0,tut:kind==='tut'?0:null,last:null,q:null,
      S:{dodge:0,parry:0,hit:0,graze:0,whiff:0,full:0,ofs:[],perf:0,qte:0}};
-  G.fhp=bfoe().hp;
+  G.fhp=bfoe().hp;if(kind==='fight'&&lin('p',0))G.slow=1;
   $('#bt').classList.add('on');$('#blog').innerHTML='';sizeCv();readCols();
   $('#bstop').hidden=kind==='fight'||(kind==='tut'&&!S.tutd);$('#bstop').textContent=kind==='tut'?'가르침 건너뛰기':'연습 끝내기';
   if(kind==='tut'){brender();tutStep()}
@@ -2222,23 +2301,23 @@ function bpick(){
   const F=bfoe(),pool=G.ph===2&&F.pool2?F.pool2:F.pool;
   let m;do{m=pool[Math.random()*pool.length|0]}while(m===G.last&&pool.length>1);G.last=m;return m;
 }
-function playerTurn(){G.st='player';G.cDone=false;G.turn++;if(G.turn>1)G.fp=Math.min(5,G.fp+1);G.guard=false;if(!G.next&&G.kind!=='tut')G.next=bpick();brender()}
-function afterAct(){G.st='wait';G.menu=null;brender();setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650)}
+function playerTurn(){G.st='player';G.cDone=false;G.turn++;G.first=G.turn===1&&G.kind==='fight'&&tal('first');if(G.turn>1)G.fp=Math.min(5,G.fp+1);G.guard=false;if(!G.next&&G.kind!=='tut')G.next=bpick();brender()}
+function afterAct(){G.first=0;G.spell=0;G.st='wait';G.menu=null;brender();setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650)}
 function bact(a,k){
   ac();if(G.st!=='player')return;if(G.kind==='tut'&&a!=='heavy')return;
   if(a==='skill'){G.menu='skill';brender();return}
   if(a==='back'){G.menu=null;brender();return}
   if(a==='sk'){useSkill(k);return}
-  if(a==='aw'){if(!G.awk||G.awu)return;G.awu=1;S.awu=1;const d=Math.round(70+4*sv(1));G.fx.push({k:'parry',t:now(),r:Math.random()});SND.perfect();dmgFoe(d);bjudge('처음 듣는 말','parry');blog('입이 먼저 움직인다. 강의실의 가스등이 한꺼번에 꺼지고 희고 깊은 불이 수거인을 감싼다. '+d+' 피해.');afterAct();return}
+  if(a==='aw'){if(!G.awk||G.awu)return;G.awu=1;G.spell=1;S.awu=1;const d=Math.round(70+4*sv(1));G.fx.push({k:'parry',t:now(),r:Math.random()});SND.perfect();dmgFoe(d);bjudge('처음 듣는 말','parry');blog('입이 먼저 움직인다. 강의실의 가스등이 한꺼번에 꺼지고 희고 깊은 불이 수거인을 감싼다. '+d+' 피해.');afterAct();return}
   if(a==='atk'){let d=dAtk(SV());if(G.open){d=Math.round(d*1.5);G.open=false}if(G.mark){d=Math.round(d*(1+.15*G.mark));G.mark=0}G.fx.push({k:'slash',t:now()});SND.slash();bjudge('일격','dodge');dmgFoe(d);blog('공격. '+d+' 피해.');afterAct();return}
   if(a==='heavy'){if(G.kind!=='tut'){if(G.fp<2)return;G.fp-=2}G.menu=null;startQte('heavy');return}
-  if(a==='guard'){G.guard=true;G.fp=Math.min(5,G.fp+1);blog('자세를 낮춘다. 다음 공격을 읽기 쉬워진다.');enemyTurn();return}
-  if(a==='band'){if(G.band<=0)return;G.band--;const h=Math.min(24+2*sv(3),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
+  if(a==='guard'){G.first=0;G.guard=true;G.fp=Math.min(5,G.fp+1);let gh='';if(tal('breath')&&G.kind==='fight'){const h=Math.min(4,G.mhp-G.hp);if(h>0){G.hp+=h;bfloat('#bphp','+'+h,'heal');gh=' 체력 '+h+' 회복.'}}blog('자세를 낮춘다. 다음 공격을 읽기 쉬워진다.'+gh);enemyTurn();return}
+  if(a==='band'){if(G.band<=0)return;G.band--;G.first=0;const h=Math.min(24+2*sv(3)+(G.kind==='fight'?(tal('sew')?8:0)+(lin('p',2)?6:0):0),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
 }
 function useSkill(k){
-  const K=SKL[k];if(!K||!S.sk.includes(k)||G.kind==='tut'||G.fp<K.c)return;
-  if(K.item){if(bsafe()||!(S.inv[K.item]>0))return;add(K.item,-1)}
-  G.fp-=K.c;const st=SV();
+  const K=SKL[k];if(!K||!S.sk.includes(k)||G.kind==='tut'||G.fp<skC(k))return;
+  if(K.item){if(bsafe()||!(S.inv[K.item]>0))return;if(!(k==='ash'&&tal('ashh')&&Math.random()<.5))add(K.item,-1);else blog('재를 아껴 뿌렸다. 주머니의 재가 줄지 않았다.')}
+  G.fp-=skC(k);G.spell=K.mg?1:0;const st=SV();
   if(k==='stance'){G.stance=1;bjudge('받아치기 자세','parry');blog('칼끝을 낮춘다. 다음 공격을 받아칠 준비를 한다.')}
   if(k==='hamstring'){const d=4+st[3];G.slow=1;G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);bjudge('발목 긋기','dodge');blog('발목을 그었다. '+d+' 피해. 적이 느려진다.')}
   if(k==='spirit'){const d=Math.round(10+2.4*st[1]);G.fx.push({k:'parry',t:now(),r:Math.random()});SND.parry();dmgFoe(d);bjudge('혼불','parry');blog('푸른 혼불이 적을 감싼다. '+d+' 피해.')}
@@ -2251,7 +2330,7 @@ function useSkill(k){
   bbars();afterAct();
 }
 function startQte(kind){
-  G.st='qte';const tut=G.kind==='tut',c=.80,h=(.07+sv(3)*.004)*(tut?1.3:1);
+  G.st='qte';const tut=G.kind==='tut',c=.80,h=(.07+sv(3)*.004)*(tut?1.3:1)*(G.kind==='fight'?(tal('gold')?1.2:1)*(lin('i',4)?1.2:1):1);
   G.q={kind,t0:now()+300,dur:700*(tut?1.2:1),z:[c-h,Math.min(.97,c+h)],done:false};
   $('#bqz').style.left=G.q.z[0]*100+'%';$('#bqz').style.width=(G.q.z[1]-G.q.z[0])*100+'%';$('#bqm').style.left='0%';brender();
 }
@@ -2262,12 +2341,12 @@ function resolveQte(perfect){
   G.S.qte++;if(perfect)G.S.perf++;
   G.fx.push({k:'slash',t:now(),gold:perfect});perfect?SND.perfect():SND.slash();
   bjudge(perfect?'정확한 강타':'강타',perfect?'parry':'dodge');
-  dmgFoe(d);G.st='wait';brender();
+  dmgFoe(d);G.first=0;G.st='wait';brender();
   if(G.kind==='tut'){if(perfect)G.tg++;else blog('모르텐 — “조금 더 기다리게. 금빛에 닿을 때.”');brender();setTimeout(()=>{if(G.on&&!tutCheck()){G.st='player';brender()}},650);return}
   blog('강타'+(perfect?' — 빈 곳을 정확히 찔렀다. ':'. ')+d+' 피해.');
   setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650);
 }
-function dmgFoe(d){bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
+function dmgFoe(d){if(G.kind==='fight'){let m=1;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;d=Math.round(d*m)}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
 function maybePhase(then){
   if(G.ph===1&&bfoe().boss&&G.fhp<=bfoe().hp/2&&!bsafe()){
     G.ph=2;G.next=bpick();G.st='wait';brender();
@@ -2339,22 +2418,23 @@ function aevNext(where){const cand=where==='base'?(S.base?S.comps:[]):[S.party].
   return null}
 function mgSee(){const c=bcomp();if(!c||!MGB[c]||(S.mgs||{})[c]||G.mgsee)return;G.mgsee=c;blog(MGB[c])}
 function bcomp(){if(S.party&&CSK[S.party])return S.party;if(S.mort===1&&!S.party&&!G.mdown)return 'morten';return null}
+const cpr=()=>Math.random()-(tal('cback')?.05:0);
 function compAct(){
-  if(bcomp()==='morten'){const d=6;dmgFoe(d);G.fx.push({k:'slash',t:now()});SND.slash();blog(`모르텐 — 막대로 내리친다. ${d} 피해.`);if(!G.ward&&Math.random()<.3){G.ward=1;G.wardT='모르텐이 함께 받아';blog('모르텐 — “내 뒤로 붙게.” 다음에 맞는 공격을 함께 받아 준다.')}bbars();return}
+  if(bcomp()==='morten'){const d=6;dmgFoe(d);G.fx.push({k:'slash',t:now()});SND.slash();blog(`모르텐 — 막대로 내리친다. ${d} 피해.`);if(!G.ward&&cpr()<.3){G.ward=1;G.wardT='모르텐이 함께 받아';blog('모르텐 — “내 뒤로 붙게.” 다음에 맞는 공격을 함께 받아 준다.')}bbars();return}
   const id=S.party,C=cst(id),r=C.r;let d=0;
-  if(id==='kirien'){const n=1+(r.flurry||0),e=3+C.lv;d=n*e;G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`키리엔 — ${n>1?n+'번 벤다':'벤다'}. ${d} 피해.`);if(r.mark)G.mark=r.mark;if(r.cut&&Math.random()<.12*r.cut)G.cut=1}
+  if(id==='kirien'){const n=1+(r.flurry||0),e=3+C.lv;d=n*e;G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`키리엔 — ${n>1?n+'번 벤다':'벤다'}. ${d} 피해.`);if(r.mark)G.mark=r.mark;if(r.cut&&cpr()<.12*r.cut)G.cut=1}
   else if(id==='oswin'){if(r.mend&&G.hp<G.mhp/2&&G.turn>=(G.mendT||0)){const h=Math.min(8*r.mend,G.mhp-G.hp);G.hp+=h;G.mendT=G.turn+3;bfloat('#bphp','+'+h,'heal');blog(`오스윈 — 상처를 돌본다. 체력 ${h} 회복.`)}
     else{d=5+2*C.lv+3*(r.bolt||0);G.fx.push({k:'parry',t:now(),r:Math.random()});SND.parry();dmgFoe(d);blog(`오스윈 — 번개를 떨군다. ${d} 피해.`)}
-    if(r.ward&&!G.ward&&Math.random()<.15*r.ward){G.ward=1;G.wardT='정전기 막이';blog('오스윈 — 정전기 막이 몸을 감싼다.')}}
+    if(r.ward&&!G.ward&&cpr()<.15*r.ward){G.ward=1;G.wardT='정전기 막이';blog('오스윈 — 정전기 막이 몸을 감싼다.')}}
   else if(id==='ibre'){d=6+3*C.lv+4*(r.smash||0);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`이브레 — 주먹으로 내려찍는다. ${d} 피해.`);
-    if(r.wall&&!G.wall&&Math.random()<.12*r.wall){G.wall=1;blog('이브레 — 앞을 막아 선다. 다음 공격은 이브레가 받는다.')}if(r.roar&&Math.random()<.15*r.roar){G.slow=true;blog('이브레 — 낮게 으르렁거린다. 적이 움츠러든다.')}}
-  else if(id==='kasimir'){if(G.bleedN>0){dmgFoe(G.bleedD);G.bleedN--;blog(`상처에서 피가 흐른다. ${G.bleedD} 피해.`)}const cr=Math.random()<.1+.12*(r.thrust||0);d=(4+2*C.lv)*(cr?2:1);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`카시미르 — ${cr?'급소를 ':''}찌른다. ${d} 피해.`);
-    if(r.bleed){G.bleedN=3;G.bleedD=2*r.bleed}if(r.feint&&Math.random()<.15*r.feint){G.wide=true;blog('카시미르 — 칼끝으로 적의 박자를 흐트러뜨린다.')}}
+    if(r.wall&&!G.wall&&cpr()<.12*r.wall){G.wall=1;blog('이브레 — 앞을 막아 선다. 다음 공격은 이브레가 받는다.')}if(r.roar&&cpr()<.15*r.roar){G.slow=true;blog('이브레 — 낮게 으르렁거린다. 적이 움츠러든다.')}}
+  else if(id==='kasimir'){if(G.bleedN>0){dmgFoe(G.bleedD);G.bleedN--;blog(`상처에서 피가 흐른다. ${G.bleedD} 피해.`)}const cr=cpr()<.1+.12*(r.thrust||0);d=(4+2*C.lv)*(cr?2:1);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`카시미르 — ${cr?'급소를 ':''}찌른다. ${d} 피해.`);
+    if(r.bleed){G.bleedN=3;G.bleedD=2*r.bleed}if(r.feint&&cpr()<.15*r.feint){G.wide=true;blog('카시미르 — 칼끝으로 적의 박자를 흐트러뜨린다.')}}
   else if(id==='barg'){if(r.stew&&!G.stewD){G.stewD=1;const h=Math.min(6*r.stew,G.mhp-G.hp);if(h>0){G.hp+=h;bfloat('#bphp','+'+h,'heal');blog(`바르그 — “버텨라. 내가 서 있다.” 체력 ${h} 회복.`)}}
     d=7+3*C.lv+3*(r.cleave||0);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`바르그 — 두꺼운 칼로 내리친다. ${d} 피해.`);
-    if(r.back&&!G.ward&&Math.random()<.15*r.back){G.ward=1;G.wardT='바르그가 등으로 함께 받아';blog('바르그 — 내 앞에 등을 들이민다.')}}
-  else if(id==='eno'){d=4+2*C.lv+2*(r.hook||0);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`에노 — 갈고리 장대로 걸어 당긴다. ${d} 피해.`);if(r.hook&&Math.random()<.1*r.hook)G.slow=true;
-    if(r.read&&Math.random()<.15*r.read){G.wide=true;blog('에노 — “다음은 왼쪽이에요.” 적의 움직임이 읽힌다.')}if(r.voices&&!G.forget&&Math.random()<.12*r.voices){G.forget=1;blog('에노 — 여러 목소리가 한꺼번에 적을 부른다. 적이 헷갈린다.')}}
+    if(r.back&&!G.ward&&cpr()<.15*r.back){G.ward=1;G.wardT='바르그가 등으로 함께 받아';blog('바르그 — 내 앞에 등을 들이민다.')}}
+  else if(id==='eno'){d=4+2*C.lv+2*(r.hook||0);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`에노 — 갈고리 장대로 걸어 당긴다. ${d} 피해.`);if(r.hook&&cpr()<.1*r.hook)G.slow=true;
+    if(r.read&&cpr()<.15*r.read){G.wide=true;blog('에노 — “다음은 왼쪽이에요.” 적의 움직임이 읽힌다.')}if(r.voices&&!G.forget&&cpr()<.12*r.voices){G.forget=1;blog('에노 — 여러 목소리가 한꺼번에 적을 부른다. 적이 헷갈린다.')}}
   else{d=4+C.lv;dmgFoe(d);blog(`${cn(id)} — ${d} 피해.`)}
   bbars()}
 function enemyTurn(){
@@ -2371,7 +2451,12 @@ function enemyTurn(){
   G.beats=bs.map(b=>({T:base+b.t,a:b.a,f:b.f,res:null,warned:false}));
   G.res={dodge:0,parry:0,hit:0,graze:0};G.lock=0;brender();
 }
-function hurt(d){if(bsafe())return;if(G.wall){G.wall=0;blog('이브레가 대신 맞는다. 꿈쩍도 하지 않는다.');return}if(G.ward){G.ward=0;d=Math.max(1,Math.round(d/2));blog((G.wardT||'정전기 막이')+' 충격을 반으로 줄였다.');G.wardT=null}G.hp-=d;bfloat('#bphp','-'+d,'hurt')}
+function hurt(d){if(bsafe())return;if(G.wall){G.wall=0;blog('이브레가 대신 맞는다. 꿈쩍도 하지 않는다.');return}if(G.ward){G.ward=0;d=Math.max(1,Math.round(d/2));blog((G.wardT||'정전기 막이')+' 충격을 반으로 줄였다.');G.wardT=null}
+  if(S.race==='p'&&!G.scale){G.scale=1;d=Math.max(1,Math.round(d/2));blog('비늘이 첫 공격을 받아 냈다. 피해가 절반으로 줄었다.')}
+  if(S.party==='barg'&&stal('oath'))d=Math.max(1,Math.round(d*.9));
+  if(d>=G.hp&&stal('stand')&&!G.stand){G.stand=1;d=G.hp-1;blog('쓰러질 뻔했다. 그래도 서 있다.')}
+  const half=G.hp>G.mhp/2;G.hp-=d;bfloat('#bphp','-'+d,'hurt');
+  if(S.race==='b'&&half&&G.hp>0&&G.hp<=G.mhp/2&&!G.oathB){G.oathB=1;G.fp=Math.min(5,G.fp+2);blog('씨족의 맹세가 떠오른다. 기력 +2.')}}
 function resolveBeat(b,kind,ofs,note){
   b.res=kind;const m=MV[G.cur],t=now(),dm=DF().dm*(G.guard?.5:1);
   if(ofs!=null)G.S.ofs.push(ofs);
@@ -2407,9 +2492,9 @@ function press(kind,ts){
   if(G.st==='qte'){qteHit(ts);return}
   if(G.st!=='enemy'||CFG.auto||kind==='qte')return;
   if(ts<G.lock)return;
-  const t=ts+CFG.lat,w=BW();let best=null,bo=1e9;
+  const t=ts+CFG.lat,w0=BW();let best=null,bo=1e9;
   for(const b of G.beats)if(!b.res){const o=t-b.T;if(Math.abs(o)<Math.abs(bo)){bo=o;best=b}}
-  const ab=Math.abs(bo);
+  const ab=Math.abs(bo),fk=fkW(best),w={d:w0.d*fk,p:w0.p*fk,g:w0.g*fk};
   if(kind==='dodge'){if(best&&ab<=w.d)return resolveBeat(best,'dodge',bo);if(best&&bo<0&&ab<=w.g)return resolveBeat(best,'graze',bo)}
   else if(best&&ab<=w.d)return ab<=w.p?resolveBeat(best,'parry',bo):resolveBeat(best,'hit',bo,'빗나간 받아침');
   G.lock=ts+250;G.S.whiff++;SND.whiff();bjudge('헛손','miss',best?bo:null);
@@ -2417,7 +2502,7 @@ function press(kind,ts){
 function bloop(){
   if(!G.on)return;
   const t=now();
-  if(G.st==='enemy'){const w=BW();for(const b of G.beats){if(b.res)continue;if(!b.warned&&t>=b.T-b.a){b.warned=true;SND.warn()}if(CFG.auto&&t>=b.T)resolveBeat(b,'dodge',null);else if(t+CFG.lat>b.T+w.d)resolveBeat(b,'hit',null,'맞음')}}
+  if(G.st==='enemy'){const w=BW();for(const b of G.beats){if(b.res)continue;if(!b.warned&&t>=b.T-b.a){b.warned=true;SND.warn()}if(CFG.auto&&t>=b.T)resolveBeat(b,'dodge',null);else if(t+CFG.lat>b.T+w.d*fkW(b))resolveBeat(b,'hit',null,'맞음')}}
   if(G.st==='qte'&&G.q&&!G.q.done){const p=(t-G.q.t0)/G.q.dur;$('#bqm').style.left=Math.max(0,Math.min(1,p))*100+'%';if(p>1.08)resolveQte(false)}
   draw();requestAnimationFrame(bloop);
 }
@@ -2428,7 +2513,7 @@ function bresume(){const f=G.paused;G.paused=null;if(f==='enemy'){G.next=G.cur;s
 function tutStep(){const s=TS[G.tut];G.tg=0;G.next=null;G.st='wait';brender();bov(`<h2>가르침 ${G.tut+1} / ${TS.length}</h2><p>모르텐 — “${s.say}”</p><p class="m">${s.key}</p>${bbtns([['tgo','해 보지',1]])}`)}
 function tutGo(){bovClose();const s=TS[G.tut];if(s.mv){G.next=s.mv;brender();setTimeout(enemyTurn,500)}else{G.turn=0;playerTurn()}}
 function tutCheck(){const s=TS[G.tut];if(G.tg<s.need)return false;G.st='wait';G.next=null;brender();
-  setTimeout(()=>{if(!G.on)return;if(G.tut===TS.length-1)endBattle('tut');else bov(`<p>모르텐 — “${s.ok}”</p>${bbtns([['tnext','다음',1]])}`)},500);return true}
+  setTimeout(()=>{if(!G.on)return;if(G.tut===TS.length-1){S.tutF=1;endBattle('tut')}else bov(`<p>모르텐 — “${s.ok}”</p>${bbtns([['tnext','다음',1]])}`)},500);return true}
 /* 끝: 결과를 S에 반영하고 전투 화면을 닫는다 */
 function statLine(){const S2=G.S;return `회피 ${S2.dodge} · 받아침 ${S2.parry}${S2.full?' · 완전한 받아침 '+S2.full:''} · 스침 ${S2.graze} · 맞음 ${S2.hit}`}
 function endBattle(res){
@@ -2437,11 +2522,11 @@ function endBattle(res){
   G.on=false;G.beats=[];bovClose();$('#bt').classList.remove('on');
   if(kind==='fight'){
     S.hp=Math.max(0,G.hp);S.inv.band=G.band;if(!S.inv.band)delete S.inv.band;
-    const XL=S.xl;S.xl=null;const BS=S.bstory;S.bstory=null;if(res==='win'&&BS)S.pend=BS+'W';if(G.mgsee&&!S.pend){S.mgsId=G.mgsee;S.pend='mgs'}
+    const XL=S.xl;S.xl=null;const XPM=G.pat&&stal('post')?1.2:1;const BS=S.bstory;S.bstory=null;if(res==='win'&&BS)S.pend=BS+'W';if(G.mgsee&&!S.pend){S.mgsId=G.mgsee;S.pend='mgs'}
     if(res==='win'){
       const L=F.loot();if(XL){Object.entries(XL.i).forEach(([k,n])=>L.i[k]=(L.i[k]||0)+n);L.g+=XL.g}Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;
       const story=NIGHT[S.night]===G.foe;if(story)S.night++;
-      log(F.n+'을(를) 물리쳤다.');const XPL=gainXp(F.xp||5).concat(compXp(F.xp||5));
+      log(F.n+'을(를) 물리쳤다.');const XPL=gainXp(Math.round((F.xp||5)*XPM)).concat(compXp(F.xp||5));
       if(story&&G.foe==='lamp'){S.pend=S.mort===1&&!S.party?'mortDie':'kirien';jr('편지가 가리킨 사람을 쓰러뜨렸다. 꺼지지 않는 등불이 돌바닥을 굴렀다. 그 사람이 중얼거린 이름은 끝내 알아듣지 못했다. 잊은 것은 아직 찾지 못했다. 교단 구역으로 가는 길이 열렸다.');S.hp=Math.max(S.hp,1)}
       else if(story)jr(F.win);
       pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([F.win,`<span class="m">${line}</span>`]).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
@@ -2522,7 +2607,7 @@ $('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-bdev]');if
 
 /* ===================== 시작 ===================== */
 // 테스트 손잡이(자동 테스트가 쓴다)
-window.__k2={tln,isB,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>
