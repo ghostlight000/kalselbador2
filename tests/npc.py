@@ -19,7 +19,7 @@ with sync_playwright() as p:
     # 하그·오델·아벨: 만난 뒤에만
     E(pg,"()=>{const K=window.__k2;K.S.loc='outskirts';K.S.outs=1;K.S.hq=0;K.render()}");assert pg.locator('button[data-c=ntalk][data-a=hag]').count()==0
     E(pg,"()=>{const K=window.__k2;K.S.hq=3;K.S.hm=1;K.render()}");pg.click('button[data-c=ntalk][data-a=hag]');assert '부엉이 머리' in pg.inner_text('#ov');choose(pg,'겨울 시대는 어땠어?');assert '노래가 있었어' in pg.inner_text('#ov');choose(pg,'이야기를 그만둔다')
-    E(pg,"()=>{const K=window.__k2;K.S.loc='street';K.S.kq=3;K.render()}");pg.click('button[data-c=ntalk][data-a=odel]');choose(pg,'미라를 기억해?');assert '여우 귀' in pg.inner_text('#ov');choose(pg,'이야기를 그만둔다')
+    E(pg,"()=>{const K=window.__k2;K.S.loc='pawn';K.S.kq=3;K.render()}");pg.click('button[data-c=ntalk][data-a=odel]');choose(pg,'미라를 기억해?');assert '여우 귀' in pg.inner_text('#ov');choose(pg,'이야기를 그만둔다')
     E(pg,"()=>{const K=window.__k2;K.S.loc='church';K.S.sx.bell={i:1,r:1};K.render()}");pg.click('button[data-c=ntalk][data-a=abel]');t=pg.inner_text('#ov');assert '종지기' in t and '일곱째 문' not in t;choose(pg,'이야기를 그만둔다')
     # 일반 장면 말 줄 정리: 이름표
     h=E(pg,"window.__k2.sayFmt('<p>오델 — “하나.”</p><p>오델 — “둘.”</p><p class=\"m\">쉼</p><p>오델 — “셋.”</p>')");assert h.count('<b>오델</b>')==2,h

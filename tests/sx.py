@@ -71,7 +71,7 @@ with sync_playwright() as p:
     # 4) 두 어머니 — 병마개를 연다
     E(pg,"()=>{const K=window.__k2;delete K.S.sxno.bottle}");go(pg,'docks');go(pg,'street');pg.wait_for_selector('#ov.on h2:has-text("두 어머니")',timeout=5000);choose(pg,'내가 알아보겠다')
     go(pg,'outskirts');sxa(pg,'bottle');choose(pg,'클라라를 찾아간다');go(pg,'church');sxa(pg,'bottle');assert '하녀 아이' in pg.inner_text('#ov');choose(pg,'전당포로')
-    go(pg,'street');sxa(pg,'bottle');choose(pg,'병마개를 열어 본다');assert '요리! 빨리 와' in pg.inner_text('#ov');choose(pg,'둘이 나누게');okpop(pg);assert E(pg,"window.__k2.S.sx.bottle.e")=='both';print('bottle ok')
+    go(pg,'pawn');sxa(pg,'bottle');choose(pg,'병마개를 열어 본다');assert '요리! 빨리 와' in pg.inner_text('#ov');choose(pg,'둘이 나누게');okpop(pg);assert E(pg,"window.__k2.S.sx.bottle.e")=='both';print('bottle ok')
     # 5) 이름 없는 종 — 넝마 더미 + 고철
     E(pg,"()=>{const K=window.__k2;delete K.S.sxno.bell}");go(pg,'church');pg.wait_for_selector('#ov.on h2:has-text("이름 없는 종")',timeout=5000);choose(pg,'종추를 찾아오겠다')
     go(pg,'outskirts');E(pg,"()=>{const K=window.__k2;K.SX.bell.steps[0].col.p=1}")
@@ -83,7 +83,7 @@ with sync_playwright() as p:
     go(pg,'church');sxa(pg,'mort');assert '대정화자' in pg.inner_text('#ov');choose(pg,'열쇠를 다시')
     go(pg,'outskirts');b0=pg.locator('button[data-c=sxa][data-a=mort]');assert b0.is_disabled() and '잠들어' in b0.inner_text()
     E(pg,"()=>{const K=window.__k2;K.S.mg=1;K.S.oq0=1;K.render()}");sxa(pg,'mort');assert '모르야' in pg.inner_text('#ov');choose(pg,'수첩을 덮는다')
-    go(pg,'church');b0=pg.locator('button[data-c=sxa][data-a=mort]');assert b0.is_disabled() and '경비' in b0.inner_text()
+    go(pg,'stairs');b0=pg.locator('button[data-c=sxa][data-a=mort]');assert b0.is_disabled() and '경비' in b0.inner_text()
     pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '모르텐의 열쇠' in q and '연계' in q and '교단 경비' in q,q;pg.click('button[data-c=tab][data-a=place]')
     E(pg,"()=>{const K=window.__k2;K.S.rev=1;K.S.a3=1;K.render()}");sxa(pg,'mort');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("일곱째 문")',timeout=5000);assert '경비대 모르텐' in pg.inner_text('#ov');choose(pg,'병들을 열어');assert '자네는 서 있게' in pg.inner_text('#ov');okpop(pg)

@@ -108,6 +108,7 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .map .road.lk{opacity:.2}
 .map .route{stroke:var(--kw);stroke-width:3;stroke-dasharray:8 6;animation:rt 1.2s linear infinite}
 @keyframes rt{to{stroke-dashoffset:-14}}
+.map .node text.sm{font-size:12px}
 .map .node{cursor:pointer}
 .map .node rect{fill:var(--c);stroke:var(--a);stroke-width:2}
 .map .node:hover rect,.map .node:focus rect{fill:var(--c2);stroke-width:3}
@@ -376,6 +377,7 @@ const LEGRU={k:'대성당의 옛 불이 어젯밤 한 번 크게 일렁였다고
   w:'곧 이름 부르기 축일이다. 사람들은 성녀 세레인의 제단 앞에서 잊힌 이름을 하나씩 부른다.'};
 
 // 장소: x,y는 지도 좌표(0~100). 이동 시간은 좌표 거리로 잰다. u=열리는 조건, hide=지도에서 숨김
+const ROADS_SUB=[];
 const PL={
  docks:{n:'운하 부두',k:'구역',x:22,y:60,d:'짐배가 밤새 드나드는 부두. 생선 비린내와 석탄 연기가 섞여 있다. 부두 끝에 녹슨 닻 여관이 있다.'},
  street:{n:'가스등 거리',k:'구역',x:48,y:44,d:'푸른 가스등이 줄지어 선 돌길. 밤이 되면 등불 사이의 어둠이 길어진다. 골목 어귀에 경비대 초소가 있다.'},
@@ -383,14 +385,27 @@ const PL={
  academy:{n:'학술원 언덕',k:'구역',x:82,y:56,d:'유리 지붕을 인 강의동이 언덕을 덮고 있다. 밤에도 실험동 굴뚝에서 푸른 연기가 오른다. 언덕 끝에 창마다 쇠창살을 단 하얀 요양소가 있다.',u:s=>!!s.acad,lk:'아직 갈 이유가 없다.'},
  outskirts:{n:'변두리',k:'구역',x:14,y:26,d:'성벽 바깥에 이주민 천막과 신탁 상점이 모여 있다. 천막 사이로 넝마 시장이 선다. 가스등은 여기까지 오지 않는다.',u:s=>!!s.outs,lk:'아직 갈 이유가 없다.'},
  works:{n:'하칸골 공장 지대',k:'구역',x:46,y:84,d:'제철소 굴뚝이 하늘을 메운다. 방직소 베틀 소리가 밤낮없이 이어진다. 일꾼들은 같은 박자로 걷고 아무도 고개를 들지 않는다. 깊은 갱도에서 미지근한 물이 올라온다는 소문이 있다.',u:s=>!!s.fac,lk:'아직 갈 이유가 없다.'},
- base:{n:'오르빌 저택',get k(){return S&&S.base?'본거지':'소문 속 저택'},x:28,y:78,get d(){return S&&S.base?manorDesc():'운하 옆 옛 상인 저택. 주인이 죽은 지 십 년이 넘었다. 밤마다 노래가 들린다고 한다.'},hide:s=>!(s.base||s.manor)}
+ base:{n:'오르빌 저택',get k(){return S&&S.base?'본거지':'소문 속 저택'},x:28,y:78,get d(){return S&&S.base?manorDesc():'운하 옆 옛 상인 저택. 주인이 죽은 지 십 년이 넘었다. 밤마다 노래가 들린다고 한다.'},hide:s=>!(s.base||s.manor)},
+ /* 작은 장소 (v031, 사용자: 에다의 집처럼 퀘스트에 필요한 곳은 지도에 따로). sub = 곁에 붙은 구역. 알게 된 뒤에만 보인다 */
+ pawn:{n:'기억 전당포',k:'작은 장소',sub:'street',x:56,y:38,d:'뒷골목 끝 유리병이 천장까지 쌓인 가게. 병마다 꼬리표가 달려 있고 푸른 안개가 고여 있다.',hide:s=>!((s.kq||0)>=2||(s.sx&&s.sx.bottle))},
+ eda:{n:'에다의 집',k:'작은 장소',sub:'street',x:41,y:37,d:'가스등 거리 끝 골목의 작은 이층집. 창가에 꺼진 등잔이 놓여 있다.',hide:s=>!((s.kq||0)>=2)},
+ sanat:{n:'하얀 요양소',k:'작은 장소',sub:'academy',x:91,y:63,d:'언덕 끝 창마다 쇠창살을 단 하얀 건물. 뒷문으로 회색 마차가 드나든다.',hide:s=>!s.acad},
+ dome:{n:'깨진 돔의 강의실',k:'작은 장소',sub:'academy',x:90,y:48,d:'돔 지붕이 깨진 옛 강의동. 바닥에 분필 원이 남아 있다.',hide:s=>!s.acad},
+ pres:{n:'학술원 보존실',k:'작은 장소',sub:'academy',x:76,y:63,d:'강의동 지하의 보존실. 약품 냄새와 오래된 종이 냄새가 섞여 있다.',hide:s=>!(s.mg&&s.comps.includes('oswin'))},
+ vault:{n:'학술원 금서고',k:'작은 장소',sub:'academy',x:83,y:46,d:'강의동 꼭대기의 철문 너머. 열쇠 없이는 아무도 들어가지 못한다.',hide:s=>!((s.oq||0)>=4)},
+ mtent:{n:'엄마의 천막',k:'작은 장소',sub:'outskirts',x:7,y:20,d:'천막촌 끝의 낡은 천막. 점을 보던 등불이 꺼진 채 걸려 있다.',hide:s=>!((s.kq||0)>=3)},
+ rag:{n:'넝마 시장',k:'작은 장소',sub:'outskirts',x:20,y:18,d:'천막 사이로 서는 시장. 헌 옷과 고철 사이에 꿈을 판다는 뒷천막이 있다.',hide:s=>!((s.pq||0)>=2)},
+ mill:{n:'3번 방직소',k:'작은 장소',sub:'works',x:38,y:90,d:'베틀 소리가 담장 밖까지 들리는 방직소. 일꾼들이 같은 박자로 북을 던진다.',hide:s=>!((s.oq||0)>=3)},
+ stairs:{n:'대성당 아래 계단',k:'작은 장소',sub:'church',x:79,y:16,d:'대성당 뒤편에서 땅 밑으로 내려가는 돌계단. 교단 경비가 지키고 있다.',hide:s=>!(s.sx&&s.sx.mort&&s.sx.mort.i>=2)}
 };
-const ROAD=[['docks','street'],['street','church'],['street','academy'],['street','outskirts'],['docks','works'],['works','academy'],['docks','base'],['church','academy']];
+Object.entries(PL).forEach(([k,p])=>{if(p.sub)ROADS_SUB.push([k,p.sub])});
+const ROAD=ROADS_SUB.concat([['docks','street'],['street','church'],['street','academy'],['street','outskirts'],['docks','works'],['works','academy'],['docks','base'],['church','academy']]);
 // 걸어서 8~20분쯤(v023, 사용자: 아직 짧다). 저택 마차 창고를 고치면 40% 준다
-const travelSec=(a,b)=>Math.round(Math.max(480,Math.hypot(PL[a].x-PL[b].x,PL[a].y-PL[b].y)*25)*(S&&S.fix&&S.fix.coach?.6:1));
+const pk=k=>PL[k].sub||k;
+const travelSec=(a,b)=>{const A=pk(a),B=pk(b);if(A===B)return 90;return Math.round((Math.max(480,Math.hypot(PL[A].x-PL[B].x,PL[A].y-PL[B].y)*25)+(A!==a?90:0)+(B!==b?90:0))*(S&&S.fix&&S.fix.coach?.6:1))};
 // 길 위의 마주침: 첫 번째 밤을 하나라도 넘긴 뒤, 가스등 거리나 교단 구역을 지나는 길에서. 테스트 모드에서는 꺼 둔다
 let ENC_ON=!TEST;
-const roadFoe=a=>{if(ENC_ON&&(a.to==='works'||a.fr==='works')&&Math.random()<.25)return Math.random()<.5?'halfw':'slag';if(ENC_ON&&S.hunt&&a.to!=='base'&&a.fr!=='base'&&Math.random()<.2)return 'hunter';if(ENC_ON&&(a.to==='outskirts'||a.fr==='outskirts'))return Math.random()<.25?(Math.random()<.5?'mutt':'hollow'):null;if(!ENC_ON||!S.night||a.fr==='base'&&a.to==='docks'||a.to==='base'&&a.fr==='docks')return null;if(!['street','church'].includes(a.fr)&&!['street','church'].includes(a.to))return null;
+const roadFoe=a0=>{if(pk(a0.fr)===pk(a0.to))return null;const a={fr:pk(a0.fr),to:pk(a0.to)};if(ENC_ON&&(a.to==='works'||a.fr==='works')&&Math.random()<.25)return Math.random()<.5?'halfw':'slag';if(ENC_ON&&S.hunt&&a.to!=='base'&&a.fr!=='base'&&Math.random()<.2)return 'hunter';if(ENC_ON&&(a.to==='outskirts'||a.fr==='outskirts'))return Math.random()<.25?(Math.random()<.5?'mutt':'hollow'):null;if(!ENC_ON||!S.night||a.fr==='base'&&a.to==='docks'||a.to==='base'&&a.fr==='docks')return null;if(!['street','church'].includes(a.fr)&&!['street','church'].includes(a.to))return null;
   if(Math.random()>=(S.fix&&S.fix.coach?.08:.18))return null;if(S.mgh==='open'&&Math.random()<.4)return 'hunter';return S.night>=2&&Math.random()<.5?'thief':'dog'};
 const LODGE='녹슨 닻 여관';
 /* ===== 장소 그림 (1편 방식: 면 톤만으로 겹친 실루엣, 가스등 불빛만 따뜻하게) ===== */
@@ -1030,7 +1045,7 @@ const NPCT={
    ['겨울 시대는 어땠어?',null,['춥고 배고팠지. 그래도 노래가 있었어.','*하그의 반쯤 감긴 눈이 조금 더 감긴다.','잉그라드는 겨울에 사람이 됐다고들 하지. 나는 그 말이 맞다고 생각해. 굶는 남을 보고 제 몫을 나누는 게 사람이니까.','지금 도시는 밝고 따뜻해. 그런데 노래는 다 어디 갔는지 모르겠어.']],
    ['변두리에 도는 소문은?',null,['넝마 시장에서 아이들 꿈을 판다는 소문이 있어. 깔때기로 들이켠다더군.','*하그가 부리를 딱 소리 나게 닫는다.','점쟁이 천막 쪽도 요즘 조용해. 미라네 천막에 손님이 끊긴 지 오래야.','손님이 끊긴 점쟁이는 남의 앞날 대신 제 기억을 팔지. 슬픈 일이야.']],
    ['주문을 다시 쓸 수 있을까?',s=>s.mg,['너는 쓰잖아.','*하그가 두 눈을 다 뜬다. 드문 일이다.','종이가 너를 기억하는 것처럼 굴던 걸 봤어. 잉크가 숨을 한 번 쉬었지.','그러니 질문이 틀렸어. 다시 쓸 수 있냐가 아니라 누구 목소리로 쓰냐겠지.']]]},
- odel:{n:'오델',sub:'기억 전당포 주인',at:'street',met:s=>(s.kq||0)>=3||!!(s.sx&&s.sx.bottle),busy:s=>false,
+ odel:{n:'오델',sub:'기억 전당포 주인',at:'pawn',met:s=>(s.kq||0)>=3||!!(s.sx&&s.sx.bottle),busy:s=>false,
   look:'유리병이 천장까지 쌓인 가게 안쪽에 작은 노파가 앉아 있다. 한쪽 눈에 놋쇠 돋보기를 끼웠다. 손가락마다 꼬리표 끈이 감겨 있어 손을 들면 실이 흔들린다. 병 속 푸른 안개가 그 얼굴을 아래에서 비춘다.',
   g:['오델이 돋보기 너머로 이쪽을 본다. 병 하나를 닦던 손이 멈춘다.','오델이 꼬리표 끈을 감던 손가락을 펴며 고개를 든다.'],
   t:[['기억은 어떻게 맡겨?',null,['병에 숨을 세 번 불어 넣으면 돼. 잊고 싶은 걸 떠올리면서.','*오델이 빈 병 하나를 들어 가스등에 비춘다.','숨이 푸르게 고이면 그게 기억이야. 꼬리표에 이름과 날짜를 적고 동전을 주지.','찾으러 오면 돌려줘. 대부분은 안 오지만. 잊고 싶어서 맡긴 걸 기억할 리가 없잖아.']],
@@ -1572,7 +1587,7 @@ const SX={
     run:()=>ev('한나의 천막','<p>천막 기둥에 조개껍데기 하나가 매달려 있다.</p><p>한나 — “요리가 가져온 거야. 바다에서 주웠대. 나는 바다를 못 가 봤어. 그래도 그 애는 늘 바다 이야기를 했어.”</p><p>한나 — “그해 겨울엔 일하던 집 주인 식구를 따라갔지. 짐 들어 주는 아이로.”</p><p class="m">한나는 그 집이 어디였는지 말하지 않는다. 손톱으로 조개껍데기를 문지를 뿐이다.</p>',[['클라라를 찾아간다',()=>sxNext('bottle')]],1)},
    {n:'클라라의 집',d:'교단 구역 돌집에 사는 클라라를 찾아가자.',at:'church',b:['클라라의 집','교단 구역 돌집'],
     run:()=>ev('클라라의 집','<p>벽난로 위에 소년의 초상화가 걸려 있다. 금발에 하얀 옷깃.</p><p>클라라 — “에밀은 두 해 전 겨울에 열병으로 갔어요. 남편이 빚을 갚느라 그 애 물건을 다 팔았죠. 기억까지 팔았을 줄은 몰랐어요.”</p><p>클라라 — “마지막으로 바다에 간 겨울엔 하녀 아이도 데려갔어요. 에밀이 같이 가자고 졸랐거든요.”</p><p class="m">초상화 아래 작은 조개껍데기가 놓여 있다. 한나의 천막에 걸린 것과 꼭 닮았다.</p>',[['전당포로 돌아간다',()=>sxNext('bottle')]],1)},
-   {n:'병 속의 바다',d:'두 이야기를 들었다. 전당포로 돌아가 병의 주인을 정하자.',at:'street',b:['기억 전당포','오델이 병을 쥐고 기다린다'],
+   {n:'병 속의 바다',d:'두 이야기를 들었다. 전당포로 돌아가 병의 주인을 정하자.',at:'pawn',b:['기억 전당포','오델이 병을 쥐고 기다린다'],
     run:()=>ev('병 속의 바다','<p>오델 — “그래서. 누구 거로 할 거야. 학술원 정리 상자에서 나온 물건이라 시끄러워지면 나도 곤란해.”</p><p class="m">한나와 클라라가 가게 양쪽 끝에 서 있다. 서로 눈을 마주치지 않는다.</p>',
      [['한나에게 준다',()=>SCENE.sxbotE('hanna')],['클라라에게 준다',()=>SCENE.sxbotE('clara')],['병마개를 열어 본다',()=>SCENE.sxbotO()]])}
   ],
@@ -1615,7 +1630,7 @@ Object.assign(SX,{
    {n:'비어 있는 마지막 장',d:s=>s.mg?'수첩 마지막 장이 미지근하다. 변두리의 하그는 하얀 쪽을 읽는 법을 안다.':'수첩 마지막 장은 비어 있다. 아무리 들여다봐도 아무것도 보이지 않는다.',at:'outskirts',b:['부엉이 머리 하그','수첩 마지막 장을 펼쳐 보인다'],need:s=>!!s.mg,lock:'하그가 빈 장을 보고 고개를 젓는다. “아직은 네 목소리가 잠들어 있구나.”',
     run:()=>ev('비어 있는 마지막 장','<p>하그가 수첩을 받아 들고 빈 장에 부리를 가까이 댄다.</p><p>하그 — “하얗지. 내 주문책처럼. 그런데 너는 소리를 낼 수 있잖니. 읽어 봐라. 거기 없는 걸.”</p><p class="m">빈 장을 내려다보며 입을 연다. 목 안쪽이 뜨거워진다. 처음 보는 말이 혀끝에서 저절로 나온다.</p><p class="m">잉크가 숨 한 번만큼 떠오른다. 아이 글씨다. “모르야. 겨울 노래 첫 줄은 이거야. 엄마가 못 불러도 너는 기억해.”</p><p class="m">글씨는 곧 다시 하얗게 가라앉는다. 주머니 속 열쇠가 따뜻해진다.</p><p>하그 — “그 아이 어미 목소리다. 그 목소리는 아직 어딘가에 있어. 갇혀서.”</p>'+pline({kirien:'모르. …모르텐 어릴 때 이름이었나 봐.',oswin:'방금 그 글자는 제 눈에도 보였습니다. 기록이 아니라 기억이 쓴 글자지요.',ibre:'열쇠가 따뜻합니까. 문이 부르는 겁니다.',kasimir:'어머니가 남긴 첫 줄이라. 저는 그런 걸 받아 본 적이 없군요.',barg:'…모르라. 그 영감도 꼬마였던 적이 있었군.',eno:'방금 그 목소리 내 안에도 조금 있어요. 같은 노래.'}),
      [['수첩을 덮는다',()=>{if(S.party)aff(S.party,1);sxNext('mort')}]],1)},
-   {n:'옛 불 아래',d:s=>actN()>=3?'옛 불이 흔들린다. 대성당 아래 계단을 지키던 경비가 자리를 비웠다.':'열쇠는 늘 따뜻하다. 대성당 아래 계단은 교단 경비가 지키고 있다.',at:'church',b:['대성당 아래 계단','일곱째 문으로 내려간다'],need:s=>actN()>=3,lock:'교단 경비가 계단 앞을 막고 서 있다. 지금은 내려갈 수 없다.',
+   {n:'옛 불 아래',d:s=>actN()>=3?'옛 불이 흔들린다. 대성당 아래 계단을 지키던 경비가 자리를 비웠다.':'열쇠는 늘 따뜻하다. 대성당 아래 계단은 교단 경비가 지키고 있다.',at:'stairs',b:['대성당 아래 계단','일곱째 문으로 내려간다'],need:s=>actN()>=3,lock:'교단 경비가 계단 앞을 막고 서 있다. 지금은 내려갈 수 없다.',
     run:()=>ev('옛 불 아래','<p>계단은 생각보다 깊다. 내려갈수록 옛 불의 열기가 돌벽을 타고 스민다.</p><p class="m">일곱째 문 앞에 회색 옷 하나가 서 있다. 향로 사슬이 바닥을 긁는다.</p><p>정화자 — “여기까지 올 줄 알았다. 그 열쇠의 주인들도 늘 여기까지는 왔지.”</p>',
      [['맞선다',()=>{S.bstory='sxmort';save();startBattle('fight','warden')}],['물러난다',null]])}
   ],
@@ -1913,8 +1928,7 @@ function mapSvg(){
   if(mv)o+=`<line x1="${MX(PL[a.fr].x)}" y1="${MY(PL[a.fr].y)}" x2="${MX(PL[a.to].x)}" y2="${MY(PL[a.to].y)}" class="route"/>`;
   Object.entries(PL).filter(([k])=>vis(k)).forEach(([k,p])=>{const ok=!p.u||p.u(S),here=k===S.loc&&!mv,dest=mv&&a.to===k,gl=!here&&!dest&&GOALAT===k,x=MX(p.x),y=MY(p.y);
     o+=`<g class="node${ok?'':' lk'}${here?' here':''}${dest?' dest':''}${gl?' goal':''}" data-c="mapsel" data-a="${k}"><title>${p.n}${ok?'':' — '+p.lk}</title>
-      <rect x="${x-11}" y="${y-11}" width="22" height="22" transform="rotate(45 ${x} ${y})"/>
-      <text x="${x}" y="${y+34}">${p.n}</text>${here?`<text class="hr" x="${x}" y="${y+50}">현재 위치</text>`:''}</g>`});
+      ${p.sub?`<rect x="${x-7}" y="${y-7}" width="14" height="14" transform="rotate(45 ${x} ${y})"/><text class="sm" x="${x}" y="${y+24}">${p.n}</text>`:`<rect x="${x-11}" y="${y-11}" width="22" height="22" transform="rotate(45 ${x} ${y})"/><text x="${x}" y="${y+34}">${p.n}</text>`}${here?`<text class="hr" x="${x}" y="${y+50}">현재 위치</text>`:''}</g>`});
   const [mx,my]=mapPos();
   o+=`<circle id="mk" cx="${mx}" cy="${my}" r="7" class="mk"/></svg>`;
   return o;
@@ -1924,7 +1938,7 @@ function placeView(){
   let h=actProg();
   const GO=S.pro===99?goalNow():null;GOALAT=GO&&GO.at;GK=GO&&(!GO.at||GO.at===S.loc)?GO.k:[];
   if(GO)h+=`<div class="goalc"><div><span class="g">◆ ${GO.t}</span>${GO.src?` <span class="m">— ${GO.src}</span>`:''}</div><div class="gq">${GO.d}</div>${GO.at&&GO.at!==S.loc&&PL[GO.at]?`<div class="m">→ ${PL[GO.at].n}</div>`:''}</div>`;
-  h+=`<div class="card"><div class="scw">${SCN.scene(S.loc,S)}</div><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
+  h+=`<div class="card"><div class="scw">${SCN.scene(pk(S.loc),S)}</div><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
   const acts=[];
   if(S.loc==='base'&&!S.base)acts.push(B('manorIn','저택 안으로 들어간다',{sub:met(S,'kasimir')?'위층에서 노래가 들린다':'납골당 계단의 남자가 마음에 걸린다',dis:busy||!met(S,'kasimir')}));
   if(S.loc==='church'&&S.night>=3&&!S.comps.includes('oswin')&&!S.dec.oswin)acts.push(B('archive','대성당 뒤편 문서고',{sub:S.party==='kirien'?'키리엔 — 교단 장부에 사라진 사람 이름이 있을지도 몰라':'문서고 쪽이 소란스럽다',dis:busy}));
@@ -1952,32 +1966,32 @@ function placeView(){
   if(S.loc==='street'&&S.mr===1&&!S.manor)acts.push(B('brita','늙은 점등꾼 브리타',{sub:'오르빌 저택을 안다는 노파',dis:busy}));
   if(S.loc==='church'&&S.mr===2&&!S.manor)acts.push(B('tomb','오르빌 가문의 무덤',{sub:'묘지 북쪽 끝',dis:busy}));
   if(S.loc==='docks'&&S.pq===1)acts.push(B('pqask','부두 짐꾼에게 묻는다',{sub:'피트를 본 사람이 있을까',dis:busy}));
-  if(S.loc==='outskirts'&&S.pq===2)acts.push(B('pqtent','넝마 시장 뒷천막',{sub:'아이들 울음소리가 난다',dis:busy}));
+  if(S.loc==='rag'&&S.pq===2)acts.push(B('pqtent','넝마 시장 뒷천막',{sub:'아이들 울음소리가 난다',dis:busy}));
   if(S.loc==='outskirts'&&(S.hq||0)!==1&&(S.hq||0)<3)acts.push(B('hag','주문을 외는 노인',{sub:S.hq===2?'주문책을 돌려준다':'천막 앞에서 뭔가를 중얼거린다',dis:busy}));
   if(S.loc==='docks'&&S.pit&&!met(S,'eno'))acts.push(B('enoM','하수구 입구',{sub:'물길 지도를 펼친 사람이 있다',dis:busy}));
   if(S.loc==='docks'&&S.dec.eno&&!S.comps.includes('eno'))acts.push(B('enoAgain','하수구 입구의 에노',{sub:'철창 옆에서 지도를 그린다',dis:busy}));
   if(S.loc==='docks'&&S.pit&&met(S,'eno')&&!met(S,'barg'))acts.push(B('bargM','회색 마차의 밤',{sub:'운하 계단 앞에 회색 마차가 서 있다',dis:busy}));
   if(S.loc==='docks'&&S.dec.barg&&!S.comps.includes('barg'))acts.push(B('bargAgain','부두 창고의 바르그',{sub:'지붕 그늘에서 마차를 기다린다',dis:busy}));
   if(S.loc==='street'&&S.pit&&met(S,'barg')&&met(S,'eno')&&!S.eda)acts.push(B('eda','초소 앞의 아이',{sub:'꺼진 등잔을 안고 누군가를 기다린다',dis:busy}));
-  if(S.loc==='street'&&S.kq===2)acts.push(B('kq3','기억 전당포',{sub:kirSub('뒷골목에 유리병이 쌓인 가게'),dis:busy||!kir}));
-  if(S.loc==='outskirts'&&S.kq===3)acts.push(B('kqM','엄마의 천막',{sub:kirSub('천막촌 끝 낡은 천막'),dis:busy||!kir}));
-  if(S.loc==='street'&&S.kq===4)acts.push(B('kqD','에다의 집',{sub:actN()<2.5?'토벤이 아직 그림을 다 그리지 못했다':kirSub('토벤이 그림을 다 그렸다고 한다'),dis:busy||!kir||actN()<2.5}));
-  if(S.loc==='street'&&S.kq===5)acts.push(B('kqC','에다의 집 — 에다의 선택',{sub:kirSub('토벤을 어떻게 할지 정한다'),dis:busy||!kir}));
-  if(S.loc==='street'&&S.kq>=3&&S.kq<6&&!S.inv.mem)acts.push(B('kqbuy','기억 전당포',{sub:'남의 아버지의 기억 한 병 · 동전 20',dis:busy}));
-  if(S.loc==='academy'&&S.eda&&!S.mg)acts.push(B('aw1',S.awl?'깨진 돔의 강의실 — 분필 원':'깨진 돔의 강의실',{sub:S.awl?'아무도 없다. 목 안쪽이 뜨겁다':'돔 지붕이 깨진 옛 강의동',dis:busy}));
+  if(S.loc==='pawn'&&S.kq===2)acts.push(B('kq3','기억 전당포',{sub:kirSub('뒷골목에 유리병이 쌓인 가게'),dis:busy||!kir}));
+  if(S.loc==='mtent'&&S.kq===3)acts.push(B('kqM','엄마의 천막',{sub:kirSub('천막촌 끝 낡은 천막'),dis:busy||!kir}));
+  if(S.loc==='eda'&&S.kq===4)acts.push(B('kqD','에다의 집',{sub:actN()<2.5?'토벤이 아직 그림을 다 그리지 못했다':kirSub('토벤이 그림을 다 그렸다고 한다'),dis:busy||!kir||actN()<2.5}));
+  if(S.loc==='eda'&&S.kq===5)acts.push(B('kqC','에다의 집 — 에다의 선택',{sub:kirSub('토벤을 어떻게 할지 정한다'),dis:busy||!kir}));
+  if(S.loc==='pawn'&&S.kq>=3&&S.kq<6&&!S.inv.mem)acts.push(B('kqbuy','기억 전당포',{sub:'남의 아버지의 기억 한 병 · 동전 20',dis:busy}));
+  if(S.loc==='dome'&&S.eda&&!S.mg)acts.push(B('aw1',S.awl?'깨진 돔의 강의실 — 분필 원':'깨진 돔의 강의실',{sub:S.awl?'아무도 없다. 목 안쪽이 뜨겁다':'돔 지붕이 깨진 옛 강의동',dis:busy}));
   if(S.loc==='street'&&S.mg&&(S.mr||0)>=2&&S.bm!==1)acts.push(B('britaM','늙은 점등꾼 브리타',{sub:S.mgh==='open'&&!S.bm?'나를 찾고 있었다고 한다':'초소 맞은편 가스등 아래',dis:busy}));
   if(S.loc==='outskirts'&&S.mg&&S.hq===3&&S.hm!==1)acts.push(B('hagM','잉그라드 하그',{sub:'하얀 주문책을 무릎에 펴 두었다',dis:busy}));
   if(S.loc==='base'&&S.mg&&S.pit&&S.pm!==1&&S.kids&&S.kids.pit&&['ok','hurt','care'].includes(S.kids.pit.st))acts.push(B('pitM','벽난로 앞의 피트',{sub:'젖은 장작과 씨름하고 있다',dis:busy}));
   const osw=S.party==='oswin';
-  if(S.loc==='academy'&&S.mg&&!S.oq&&S.comps.includes('oswin'))acts.push(B('oq1','학술원 보존실',{sub:osw?'강의동 지하. 오스윈이 일하던 곳':'오스윈과 함께 와야 한다',dis:busy||!osw}));
+  if(S.loc==='pres'&&S.mg&&!S.oq&&S.comps.includes('oswin'))acts.push(B('oq1','학술원 보존실',{sub:osw?'강의동 지하. 오스윈이 일하던 곳':'오스윈과 함께 와야 한다',dis:busy||!osw}));
   if(S.loc==='base'&&S.oq===2)acts.push(B('oq2','서재의 장부',{sub:'오스윈이 약병을 들고 기다린다',dis:busy}));
-  if(S.loc==='works'&&S.oq===3)acts.push(B('oq3','하칸골 3번 방직소',{sub:osw?'베틀 소리가 담장 밖까지 들린다':'오스윈과 함께 와야 한다',dis:busy||!osw}));
-  if(S.loc==='academy'&&S.oq===4)acts.push(B('oq4','학술원 금서고',{sub:osw?'강의동 꼭대기의 철문':'오스윈과 함께 와야 한다',dis:busy||!osw}));
-  if(S.loc==='academy'&&S.rev&&!S.revd)acts.push(B('revOut','언덕길의 정화자들',{sub:'회색 옷들이 길을 막고 있다',dis:busy}));
+  if(S.loc==='mill'&&S.oq===3)acts.push(B('oq3','하칸골 3번 방직소',{sub:osw?'베틀 소리가 담장 밖까지 들린다':'오스윈과 함께 와야 한다',dis:busy||!osw}));
+  if(S.loc==='vault'&&S.oq===4)acts.push(B('oq4','학술원 금서고',{sub:osw?'강의동 꼭대기의 철문':'오스윈과 함께 와야 한다',dis:busy||!osw}));
+  if(pk(S.loc)==='academy'&&S.rev&&!S.revd)acts.push(B('revOut','언덕길의 정화자들',{sub:'회색 옷들이 길을 막고 있다',dis:busy}));
   if(S.loc==='base'&&S.oq===5)acts.push(B('oq5','장부의 끝',{sub:'오스윈이 서재에서 기다린다',dis:busy}));
   if(S.loc==='works')acts.push(B('hboard','하칸골 게시판',{sub:S.facn?'징수 명단이 붙어 있다':'공장 문 앞 게시판에 종이가 빽빽하다',dis:busy}));
-  if(S.loc==='academy'&&!S.kq)acts.push(B('kq1','하얀 요양소',{sub:kirSub('창마다 쇠창살을 단 건물'),dis:busy||!kir}));
-  if(S.loc==='academy'&&S.kq===1)acts.push(B('kq2','밤의 요양소',{sub:kirSub('회색 마차가 드나드는 뒷문'),dis:busy||!kir}));
+  if(S.loc==='sanat'&&!S.kq)acts.push(B('kq1','하얀 요양소',{sub:kirSub('창마다 쇠창살을 단 건물'),dis:busy||!kir}));
+  if(S.loc==='sanat'&&S.kq===1)acts.push(B('kq2','밤의 요양소',{sub:kirSub('회색 마차가 드나드는 뒷문'),dis:busy||!kir}));
   if(S.loc==='street'){
     acts.push(B('patrol','밤길 순찰',{sub:S.night<3?`15초 · ${S.night===0?'무언가 돌아다닌다':S.night===1?'칼을 든 누군가가 있다':'거리 끝의 등불'}`:'15초 · 남은 것들을 쫓는다',dis:busy}),
       B('tutor',S.mort===2?'빈 초소 — 모르텐의 가르침을 떠올린다':'경비대 초소 — 모르텐',{sub:S.mort===2?'그가 가르쳐 준 박자를 되짚는다':S.tutd?'가르침을 다시 받는다':'싸우는 법을 배운다',dis:busy})
@@ -2039,8 +2053,8 @@ const MTQ=[
 const GOAL={'가스등 거리를 순찰한다':['street',['patrol']],'칼을 든 도둑':['street',['patrol']],'꺼지지 않는 등불을 든 사람':['street',['patrol']],'여우 머리의 여자':['street',['kirAgain']],
  '대성당 문서고':['church',['archive','oswAgain']],'부두의 내기 결투장':['docks',['ibreM','ibreAgain']],'쉴 곳':[s=>s.comps.length>=2?'docks':null,['rumor']],'노래를 들은 사람':['street',['brita']],
  '오르빌 가문의 무덤':['church',['tomb']],'납골당의 남자':['church',['kasM','kasAgain']],'노래하는 저택':['base',['manorIn']],'하수구의 아이':['docks',['explore']],'물길의 안내인':['docks',['enoM','enoAgain']],'회색 마차의 늑대':['docks',['bargM','bargAgain']],
- '등불을 든 사람의 딸':['street',['eda']],'언덕 위 유리 지붕':['academy',[]],'깨진 돔의 강의실':['academy',['aw1']],'보존실의 약':[s=>s.comps.includes('oswin')?'academy':'church',['oq1','oswAgain']],'되살아난 이름':['base',['oq2']],'3번 방직소':['works',['oq3']],'금서고':['academy',['oq4']],'언덕길의 정화자들':['academy',['revOut']]};
-const KQAT=[['academy','kq1'],['academy','kq2'],['street','kq3'],['outskirts','kqM'],['street','kqD'],['street','kqC']];
+ '등불을 든 사람의 딸':['street',['eda']],'언덕 위 유리 지붕':['academy',[]],'깨진 돔의 강의실':['dome',['aw1']],'보존실의 약':[s=>s.comps.includes('oswin')?'pres':'church',['oq1','oswAgain']],'되살아난 이름':['base',['oq2']],'3번 방직소':['mill',['oq3']],'금서고':['vault',['oq4']],'언덕길의 정화자들':['academy',['revOut']]};
+const KQAT=[['sanat','kq1'],['sanat','kq2'],['pawn','kq3'],['mtent','kqM'],['eda','kqD'],['eda','kqC']];
 function goalNow(){const i=MS.findIndex(m=>!m[2](S));if(i<0)return null;const m=MS[i],g=GOAL[m[0]];
   const need=/^(보존실의 약|3번 방직소|금서고)$/.test(m[0])&&S.comps.includes('oswin')&&S.party!=='oswin'?' 오스윈과 함께 가야 한다.':'';
   if(g){const at=typeof g[0]==='function'?g[0](S):g[0];return{t:m[0],d:msTxt(m),src:msSrc(m)+need,at,k:g[1]}}
@@ -2193,7 +2207,7 @@ const CMD={
     const back=[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]],T=cn(id);S.orx=S.orx||{};
     if(S.orx[id]){const ae=aevFor(id);if(ae){if(tn)S.tnew[id]=tn;S.aevK=ae;SCENE.aev();return}}
     if(!S.orx[id]&&ORX[id]){S.orx[id]=1;aff(id,1);seq(id,T,ORX[id][S.og]||ORX[id][0],h=>tev(id,T,top+h,[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]]));return}
-    const loc=(TALK[id]||{})[S.loc],qs=[];
+    const loc=(TALK[id]||{})[S.loc]||(TALK[id]||{})[pk(S.loc)],qs=[];
     if(loc)qs.push(['이곳은 어때?',()=>{const key=id+':'+S.loc,first=!S.talked[key];S.talked[key]=1;if(first)aff(id,4);seq(id,T,loc,h=>tev(id,T,h,back))}]);
     qs.push(['요즘 어때?',()=>{const M=MOOD[id]||[['…']];tev(id,T,tln(id,M[Math.random()*M.length|0]),back)}]);
     const ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));if(ot.length)qs.push(['다른 사람들 이야기',()=>CMD.talkO(id)]);

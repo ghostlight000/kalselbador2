@@ -31,22 +31,22 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '2막 · 장부와 재' in t and '지나온 길' in t;assert t.index('2막')<t.index('1막');pg.click('button[data-c=tab][data-a=place]')
     go(pg,'street');pg.wait_for_selector('#ov.on h2:has-text("오스윈")',timeout=5000);assert '보존실' in pg.inner_text('#ov');choose(pg,'같이 가자')
     t=pg.inner_text('.goalc');assert '보존실의 약' in t and '오스윈의 말' in t,t
-    go(pg,'academy');pg.click('button[data-c=oq1]');choose(pg,'들어간다');assert E(pg,"window.__k2.G.foe")=='clock';win(pg)
+    go(pg,'pres');pg.click('button[data-c=oq1]');choose(pg,'들어간다');assert E(pg,"window.__k2.G.foe")=='clock';win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("보존실")',timeout=5000);choose(pg,'그 상자는 뭐야?');okpop(pg);assert E(pg,"window.__k2.S.oq")==2
     # 오스윈 없이 가면 못 들어간다는 표시
     go(pg,'street');go(pg,'docks');go(pg,'base');pg.click('button[data-c=oq2]');choose(pg,'배정지가 어디야?');assert '하칸골 3번 방직소' in pg.inner_text('#ov');choose(pg,'같이 가자');assert '공장 지대로 가는 길이 열렸다' in pg.inner_text('#ov');okpop(pg)
     assert E(pg,"window.__k2.S.fac")==1 and E(pg,"window.__k2.S.oq")==3
-    E(pg,"()=>{const K=window.__k2;K.S.party='kirien';K.render()}");go(pg,'docks');go(pg,'works')
+    E(pg,"()=>{const K=window.__k2;K.S.party='kirien';K.render()}");go(pg,'docks');go(pg,'mill')
     assert pg.get_attribute('button[data-c=oq3]','disabled') is not None and '오스윈과 함께' in pg.inner_text('button[data-c=oq3]')
     assert '오스윈과 함께 가야 한다' in pg.inner_text('.goalc')
-    pg.click('button[data-c=hboard]');assert '징수 명단' in pg.inner_text('#ov');okpop(pg)
+    go(pg,'works');pg.click('button[data-c=hboard]');assert '징수 명단' in pg.inner_text('#ov');okpop(pg)
     pg.click('button[data-c=talk]');assert '쇳물 냄새' in pg.inner_text('#ov') or '고개를 안 들어' in pg.inner_text('#ov') or pg.is_visible('#ov.on');pg.keyboard.press('Escape')
     E(pg,"()=>{const K=window.__k2;K.S.party='oswin';K.render()}")
     if pg.is_visible('#ov.on'):pg.click('#ov.on button >> nth=-1')
-    pg.click('button[data-c=oq3]');choose(pg,'그 노래 어디서');choose(pg,'오빠라고 말해 준다');t=pg.inner_text('#ov');assert '오빠가 있었으면' in t and '금서고' in t;okpop(pg)
+    go(pg,'mill');pg.click('button[data-c=oq3]');choose(pg,'그 노래 어디서');choose(pg,'오빠라고 말해 준다');t=pg.inner_text('#ov');assert '오빠가 있었으면' in t and '금서고' in t;okpop(pg)
     assert E(pg,"window.__k2.S.oq")==4;print('factory/liese ok')
     # 금서고 반전
-    go(pg,'docks');go(pg,'street');go(pg,'academy');pg.click('button[data-c=oq4]');choose(pg,'들어간다');win(pg)
+    go(pg,'docks');go(pg,'street');go(pg,'vault');pg.click('button[data-c=oq4]');choose(pg,'들어간다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("금서고")',timeout=5000);assert '푸른 재 정제 공정' in pg.inner_text('#ov');choose(pg,'서명을 본다')
     t=pg.inner_text('#ov');nm=E(pg,"window.__k2.S.name");assert nm in t and '편지와 같다' in t;choose(pg,'리세를 그렇게 만든 게 나였어?');drain(pg);choose(pg,'금서고를 나선다')
     s=E(pg,"window.__k2.S");assert s['rev']==1 and s['oq']==5 and E(pg,"window.__k2.actN()")==2.5

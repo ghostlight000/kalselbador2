@@ -41,23 +41,23 @@ with sync_playwright() as p:
         s=S(pg);assert s['acad']==1 and s['eda']==1;print(end,'act1 end ok')
         # 언덕: 키리엔이 없으면 요양소가 막힌다
         pg.evaluate("()=>{const K=window.__k2;K.S.party='oswin';K.render()}")
-        go(pg,'academy');assert pg.locator('button[data-c=kq1][disabled]').count()==1
+        go(pg,'sanat');assert pg.locator('button[data-c=kq1][disabled]').count()==1
         if end=='new':
-            pg.evaluate("()=>{window.__k2.S.orx={kirien:1,oswin:1,ibre:1,kasimir:1}}");pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '연구실이 있던 자리' in t;choose(pg,'이야기를 그만둔다')
-            pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '동료들의 이야기' in q and '키리엔과 함께 다녀야' in q and '지나온 길' in q;pg.click('button[data-c=tab][data-a=place]')
+            pg.evaluate("()=>{window.__k2.S.orx={kirien:1,oswin:1,ibre:1,kasimir:1};window.__k2.S.loc='sanat';window.__k2.render()}");pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '연구실이 있던 자리' in t;choose(pg,'이야기를 그만둔다')
+            pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '동료들의 이야기' in q and '키리엔과 함께 다녀야' in q;pg.click('button[data-c=tab][data-a=place]')
         pg.evaluate("()=>{const K=window.__k2;K.S.party='kirien';K.render()}")
         pg.click('button[data-c=kq1]');assert '공급 대기' in pg.inner_text('#ov');okpop(pg);assert S(pg)['kq']==1
         pg.click('button[data-c=kq2]');choose(pg,'안으로 들어간다');assert pg.evaluate('window.__k2.G.foe')=='collector';win(pg)
         t=pg.inner_text('#ov');assert '토벤\n“…베렌.”' in t,t;okpop(pg);assert S(pg)['kq']==2
-        go(pg,'street');pg.click('button[data-c=kq3]');t=pg.inner_text('#ov');assert '미라의 딸' in t
+        go(pg,'pawn');pg.click('button[data-c=kq3]');t=pg.inner_text('#ov');assert '미라의 딸' in t
         if end=='pour':
             choose(pg,'산다');assert S(pg)['inv'].get('mem')==1 and S(pg)['coin']<50;okpop(pg)
         else:
             choose(pg,'사지 않는다');okpop(pg)
         assert S(pg)['kq']==3
         if end!='pour':assert pg.locator('button[data-c=kqbuy]').count()==1
-        assert S(pg)['outs']==1;go(pg,'outskirts');pg.click('button[data-c=kqM]');assert '엄마를 잃어버렸구나' in pg.inner_text('#ov');choose(pg,'나도 손을');t=pg.inner_text('#ov');assert '네 게 아니구나' in t;okpop(pg);assert S(pg)['kq']==4
-        go(pg,'street');assert pg.locator('button[data-c=kqD][disabled]').count()==1
+        assert S(pg)['outs']==1;go(pg,'mtent');pg.click('button[data-c=kqM]');assert '엄마를 잃어버렸구나' in pg.inner_text('#ov');choose(pg,'나도 손을');t=pg.inner_text('#ov');assert '네 게 아니구나' in t;okpop(pg);assert S(pg)['kq']==4
+        go(pg,'eda');assert pg.locator('button[data-c=kqD][disabled]').count()==1
         pg.click('button[data-c=tab][data-a=quest]');assert '이야기가 더 흘러야' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
         pg.evaluate("()=>{const K=window.__k2;K.S.rev=1;K.render()}");pg.click('button[data-c=kqD]');assert '선생님. 늦으셨습니다' in pg.inner_text('#ov');okpop(pg);assert S(pg)['kq']==5
         pg.click('button[data-c=kqC]')

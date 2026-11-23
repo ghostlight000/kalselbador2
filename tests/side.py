@@ -23,12 +23,12 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=quest]');assert '돌아오지 않은 아이' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     go(pg,'docks');pg.click('button[data-c=pqask]');t=pg.inner_text('#ov');assert '넝마 시장' in t and '가장 역겨운 문장' in t;okpop(pg)
     assert E(pg,"window.__k2.S.outs")==1
-    go(pg,'street');go(pg,'outskirts');assert pg.locator('.scw svg').count()==1
+    go(pg,'street');go(pg,'rag');assert pg.locator('.scw svg').count()==1
     pg.click('button[data-c=pqtent]');choose(pg,'철창으로');assert E(pg,"window.__k2.G.foe")=='ashman';t=win(pg)
     pg.wait_for_selector('#ov.on h2',timeout=5000);assert '나 누구였더라' in pg.inner_text('#ov');choose(pg,'하수구에서 노래하던');t=pg.inner_text('#ov');assert '맞아. 피트' in t and '장부에 한 줄씩' in t;okpop(pg)
     s=E(pg,"window.__k2.S");assert s['pq']==3 and s['kids']['pit']['st']=='hurt';print('pit quest ok')
     # 주문을 외는 노인
-    pg.click('button[data-c=hag]');assert '말은 하나도 안 잊었어' in pg.inner_text('#ov');choose(pg,'찾아 주겠다고');assert E(pg,"window.__k2.S.hq")==1
+    go(pg,'outskirts');pg.click('button[data-c=hag]');assert '말은 하나도 안 잊었어' in pg.inner_text('#ov');choose(pg,'찾아 주겠다고');assert E(pg,"window.__k2.S.hq")==1
     assert pg.locator('button[data-c=hag]').count()==0
     E(pg,"()=>{const K=window.__k2;K.EXP.outskirts[0].enc=0}");pg.click('button[data-c=explore]');pg.wait_for_selector('#ov.on h2',timeout=10000);assert '하그의 주문책' in pg.inner_text('#ov');okpop(pg)
     assert E(pg,"window.__k2.S.hq")==2 and E(pg,"window.__k2.S.inv.grim")==1

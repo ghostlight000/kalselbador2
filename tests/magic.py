@@ -22,7 +22,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.night=3;K.joinComp('kirien');K.joinComp('oswin');K.S.party='oswin';K.grantBase()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;K.grantPit()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;K.S.eda=1;K.S.acad=1;K.S.mr=3;K.S.loc='street';K.S.hp=K.S.mhp;K.render()}")
-    go(pg,'academy');assert pg.locator('button[data-c=aw1]').count()==1
+    go(pg,'dome');assert pg.locator('button[data-c=aw1]').count()==1
     assert '깨진 돔의 강의실' in pg.inner_text('.M')
     # 강의실 → 싸움 → 격노에서 떠오르는 말
     pg.click('button[data-c=aw1]');t=pg.inner_text('#ov');assert '분필로 그린 원' in t and '학술원 심부름꾼' in t;choose(pg,'막아선다')
@@ -74,7 +74,7 @@ with sync_playwright() as p:
     # 삼키는 갈래: 아이를 놓치고 분필 원으로 혼자 깨어난다
     newgame(pg,0)
     E(pg,"()=>{const K=window.__k2;K.S.night=3;K.joinComp('ibre');K.S.party='ibre';K.grantBase()}");okpop(pg)
-    E(pg,"()=>{const K=window.__k2;K.S.pit=1;K.S.eda=1;K.S.acad=1;K.S.loc='academy';K.render()}")
+    E(pg,"()=>{const K=window.__k2;K.S.pit=1;K.S.eda=1;K.S.acad=1;K.S.loc='dome';K.render()}")
     pg.click('button[data-c=aw1]');choose(pg,'막아선다');pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.wait_for_function("window.__k2.G.st==='player'",timeout=10000)
     E(pg,"()=>{const K=window.__k2;K.G.fhp=0}");E(pg,"window.__k2.bact('atk')");pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg)
     pg.wait_for_selector('#ov.on button:has-text("삼킨다")',timeout=5000);choose(pg,'삼킨다');assert '회색 마차' in pg.inner_text('#ov');okpop(pg)
