@@ -72,7 +72,7 @@ with sync_playwright() as p:
     assert '여관 1층에서 기다린다' in pg.inner_text('.Rr')
     # ---- 여관 주인 소문 → 저택 ----
     go(pg,'docks'); pg.wait_for_selector('#ov.on h2',timeout=5000); assert '판돈꾼' in pg.inner_text('#ov'); choose(pg,'결투장으로 가 보기로 한다')
-    assert 'goal' in pg.get_attribute('button[data-c=ibreM]','class'); pg.click('button[data-c=ibreM]'); assert '무색 셋이 또 이겼다' in pg.inner_text('#ov') and '오르빌 저택 이야기도' in pg.inner_text('#ov'); choose(pg,'도전한다'); h=fight(pg); assert '무색 셋' in h
+    assert 'goal' in pg.get_attribute('button[data-c=ibreM]','class'); pg.click('button[data-c=ibreM]'); assert '무색 3번이 또 이겼다' in pg.inner_text('#ov') and '오르빌 저택 이야기도' in pg.inner_text('#ov'); choose(pg,'도전한다'); h=fight(pg); assert '무색 3번' in h
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert '브리타' in pg.inner_text('#ov'); choose(pg,'이름이 뭐야?'); assert '그 이름을 물은 사람은 처음' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다'); assert 'ibre' in S(pg)['comps']; print('ibre joined')
     assert pg.locator('.map .node[data-a=base]').count()==0
     go(pg,'street'); pg.click('button[data-c=brita]'); assert '한 줄도 말이 안 돼' in pg.inner_text('#ov'); choose(pg,'주문이 사라졌다는 거야?'); assert '겨울 시대 노인들' in pg.inner_text('#ov'); choose(pg,'묘지로 가 보기로 한다')
