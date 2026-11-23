@@ -45,7 +45,7 @@ with sync_playwright() as p:
     assert '모르텐' in pg.inner_text('.Rr'); pg.click('button[data-c=mtalk]'); choose(pg,'거리 끝의 그건 누구야?'); choose(pg,'그런데 왜 싸워?'); assert '레아 — “그런데 왜 싸워?”' in pg.inner_text('#ov') and '친구니까' in pg.inner_text('#ov'); choose(pg,'이야기를 그만둔다')
     s=S(pg); print('made',s['name'],s['sex'],s['race'],s['og'],s['loc']); assert s['sex']=='f' and s['loc']=='docks' and not s['base'] and s['inv'].get('letter')==1
     assert pg.locator('button[data-c=board]').count()==0 and pg.locator('.map .node[data-a=base]').count()==0
-    pg.click('button[data-c=rumor]'); assert '쉴 곳을 묻는다' not in pg.inner_text('#ov'); choose(pg,'요즘 도는 소문'); assert '여관 주인' in pg.inner_text('#ov'); choose(pg,'이야기를 그만둔다')
+    pg.click('button[data-c=rumor]'); assert '쉴 곳을 묻는다' not in pg.inner_text('#ov'); choose(pg,'근처의 소문'); assert '마그다' in pg.inner_text('#ov'); choose(pg,'이야기를 그만둔다')
     pg.evaluate("window.__k2.EXP.docks[0].enc=0"); pg.click('button[data-c=explore][data-a="0"]')
     pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='부두 창고 뒤지기'",timeout=10000); okpop(pg)
     pg.eval_on_selector('.map .node[data-a=church]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); assert '첫 번째 밤' in pg.inner_text('#ov'); okpop(pg)
