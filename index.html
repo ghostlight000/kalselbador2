@@ -548,17 +548,17 @@ const MS=[
  ['칼을 든 도둑','가스등을 훔치는 손이 있다.',s=>s.night>=2],
  ['꺼지지 않는 등불을 든 사람','편지가 가리킨 사람. 거리 끝에 서 있다고 한다.',s=>s.night>=3],
  ['여우 머리의 여자',s=>s.dec.kirien&&!s.comps.includes('kirien')?'키리엔과 함께 가지 않았다. 마음이 바뀌면 가스등 거리 초소 앞에서 만날 수 있다.':'점등꾼을 쫓던 사람이 있었다.',s=>s.comps.includes('kirien')||!!s.dec.kirien],
- ['대성당 문서고',s=>s.dec.oswin&&!s.comps.includes('oswin')?'오스윈과 함께 가지 않았다. 마음이 바뀌면 대성당 문서고에서 만날 수 있다.':'교단 구역 대성당 뒤편이 소란스럽다는 말이 있다.',s=>s.comps.includes('oswin')||!!s.dec.oswin],
- ['부두의 내기 결투장','운하 부두 창고 뒤에서 밤마다 내기 결투가 열린다고 한다. 무색 비늘의 거인이 한 번도 진 적이 없다고.',s=>met(s,'ibre')],
- ['쉴 곳',s=>s.comps.length>=2?'여관 방 하나로는 셋이 지낼 수 없다. 여관 주인에게 물어보자.':'함께 다닐 일행이 둘은 되어야 쉴 곳을 따로 구할 마음이 들 것 같다. 거절했던 사람을 다시 찾아가 볼까.',s=>!!s.mr||!!s.manor],
- ['노래를 들은 사람','여관 주인 말로는 가스등 거리의 늙은 점등꾼 브리타가 오르빌 저택을 안다고 한다.',s=>(s.mr||0)>=2||!!s.manor],
+ ['대성당 문서고',s=>s.dec.oswin&&!s.comps.includes('oswin')?'오스윈과 함께 가지 않았다. 마음이 바뀌면 대성당 문서고에서 만날 수 있다.':s.comps.includes('kirien')?'키리엔은 교단 문서고 장부에 사라진 사람들 이름이 남아 있을지 모른다고 했다. 마침 대성당 뒤편이 소란스럽다.':'교단 구역 대성당 뒤편이 소란스럽다는 말이 있다.',s=>s.comps.includes('oswin')||!!s.dec.oswin],
+ ['쉴 곳',s=>s.comps.length>=2?'여관 방 하나로는 셋이 지낼 수 없다. 여관 주인에게 쉴 곳을 물어보자.':'함께 다닐 일행이 둘은 되어야 쉴 곳을 따로 구할 마음이 들 것 같다. 거절했던 사람을 다시 찾아가 볼까.',s=>!!s.ring||met(s,'ibre')||!!s.mr||!!s.manor],
+ ['부두의 내기 결투장',s=>s.ring?'여관 주인 말로는 창고 뒤 판돈꾼이 오늘 판돈에 빈집 이야기를 얹었다. 무색 비늘의 거인을 이기면 들을 수 있다.':'운하 부두 창고 뒤에서 밤마다 내기 결투가 열린다고 한다. 무색 비늘의 거인이 한 번도 진 적이 없다고.',s=>met(s,'ibre')],
+ ['노래를 들은 사람','오르빌 저택 사정은 가스등 거리의 늙은 점등꾼 브리타가 잘 안다고 한다.',s=>(s.mr||0)>=2||!!s.manor],
  ['오르빌 가문의 무덤','오르빌 사람들은 교단 묘지 북쪽 끝에 묻혔다고 한다.',s=>!!s.manor],
  ['납골당의 남자','오르빌 가문 무덤 옆 납골당 계단에 젊은 귀족이 앉아 있었다.',s=>met(s,'kasimir')],
  ['노래하는 저택','밤마다 이름 하나를 부르는 노래가 들린다는 빈집.',s=>!!s.base],
- ['하수구의 아이','저택에 짐을 풀었다. 도시를 더 둘러보자.',s=>!!s.pit],
+ ['하수구의 아이','저택에 짐을 풀었다. 밤이면 부두 쪽 하수구에서 아이 울음소리가 들린다는 말이 돈다. 부두를 둘러보자.',s=>!!s.pit],
  ['물길의 안내인',s=>s.dec.eno&&!s.comps.includes('eno')?'에노와 함께 가지 않았다. 마음이 바뀌면 운하 부두 하수구 입구에서 만날 수 있다.':'하수구에서 길을 알려 준 사람이 있었다.',s=>met(s,'eno')],
- ['여관 부엌의 요리사',s=>s.dec.barg&&!s.comps.includes('barg')?'바르그와 함께 가지 않았다. 녹슨 닻 여관 부엌에 아직 있다.':'녹슨 닻 여관 주인이 부엌 일로 급히 찾는다고 한다.',s=>met(s,'barg')],
- ['등불을 든 사람의 딸','키리엔의 의뢰인이 가스등 거리 초소 앞에서 기다린다고 한다.',s=>!!s.eda],
+ ['여관 부엌의 요리사',s=>s.dec.barg&&!s.comps.includes('barg')?'바르그와 함께 가지 않았다. 녹슨 닻 여관 부엌에 아직 있다.':'피트 말로는 녹슨 닻 여관 부엌의 늑대 머리 아저씨가 아이들에게 남은 국을 나눠 준다고 한다. 요즘 헌병들이 그 사람을 찾는다고.',s=>met(s,'barg')],
+ ['등불을 든 사람의 딸',s=>s.comps.includes('kirien')||s.dec.kirien?'키리엔에게 의뢰인 에다의 연락이 왔다. 가스등 거리 초소 앞에서 기다린다고 한다.':'점등꾼의 딸이 가스등 거리 초소 앞에서 누군가를 기다린다고 한다.',s=>!!s.eda],
  ['언덕 위 유리 지붕','점등꾼은 사라지기 전날 밤 내 이름을 말했다. 학술원 언덕으로 가 보자.',s=>!!(s.vis&&s.vis.academy)],
  ['깨진 돔의 강의실',s=>s.awl?'회색 마차가 아이를 데려갔다. 목 안쪽의 말은 아직 가라앉지 않았다. 그 강의실의 분필 원이 떠오른다.':'학술원 옛 강의동의 돔 지붕이 깨진 채 비어 있다고 한다. 유리 지붕 아래.',s=>!!s.mg],
  ['— 2막은 여기서부터','동료들의 이야기를 따라가 보자. 메인 이야기의 다음 장은 아직 쓰이지 않았다.',s=>false]
@@ -935,9 +935,10 @@ const homeN=()=>S.base?'저택':'여관';
 const joinL=id=>S.party&&S.party!==id?'함께하자':'같이 가자';
 const pline=o=>o[S.party]?`<p>${cn(S.party)} — “${o[S.party]}”</p>`:'';
 const SCENE={
- ibreM:()=>ev('창고 뒤 내기 결투장',`<p>부두 창고 뒤편에 사람들이 둥글게 모여 있다. 동전이 오가고 고함이 터진다. 가운데에 무색 비늘의 거인이 서 있다. 키가 창고 처마에 닿는다.</p><p>판돈꾼 — “무색 셋이 또 이겼다! 도전자 없나? 이기면 판돈 전부!”</p><p class="m">아무도 나서지 않는다. 거인이 이쪽을 본다.</p>`+pline({kirien:'저 사람 진짜 세. 근데 눈이 슬퍼 보여.',oswin:'무색 파볼릭이군요. 명부에 없는 사람들. 여기 말고는 일할 데가 없지요.'}),
+ ibreM:()=>ev('창고 뒤 내기 결투장',`<p>부두 창고 뒤편에 사람들이 둥글게 모여 있다. 동전이 오가고 고함이 터진다. 가운데에 무색 비늘의 거인이 서 있다. 키가 창고 처마에 닿는다.</p><p>판돈꾼 — “무색 셋이 또 이겼다! 도전자 없나? 이기면 판돈 전부!”</p>${S.ring&&!S.mr?'<p>판돈꾼 — “오늘은 판돈에 오르빌 저택 이야기도 얹었다! 노래하는 빈집 말이야!”</p>':''}<p class="m">아무도 나서지 않는다. 거인이 이쪽을 본다.</p>`+pline({kirien:'저 사람 진짜 세. 근데 눈이 슬퍼 보여.',oswin:'무색 파볼릭이군요. 명부에 없는 사람들. 여기 말고는 일할 데가 없지요.'}),
    [['도전한다',()=>{S.bstory='ibre';save();startBattle('fight','ibreF')}],['구경만 한다',null]]),
- ibreW:()=>ev('무색 셋','<p>판돈꾼이 투덜대며 동전 주머니를 던진다. 거인이 일어나 먼지를 턴다.</p><p>무색 셋 — “잘 싸웠습니다.”</p>',[['이름이 뭐야?',()=>SCENE.ibre2(1)],['왜 여기서 싸워?',()=>SCENE.ibre2(0)]]),
+ ibreW:()=>{const tell=!S.mr&&!S.manor;if(tell){S.mr=1;jr('결투장 판돈꾼에게서 노래가 들린다는 오르빌 저택 이야기를 들었다. 그 집 사정은 가스등 거리 늙은 점등꾼 브리타가 잘 안다고 했다.')}
+   ev('무색 셋','<p>판돈꾼이 투덜대며 동전 주머니를 던진다.</p>'+(tell?'<p>판돈꾼 — “약속은 약속이지. 운하 따라 내려가면 오르빌 저택이 있어. 주인이 죽은 지 십 년이 넘었는데 밤마다 노래가 들려. 이름 하나를 길게 늘여 부르는 소리.”</p><p>판돈꾼 — “그 집 사정은 가스등 거리 늙은 점등꾼 브리타가 잘 알 거야.”</p>':'')+'<p>거인이 일어나 먼지를 턴다.</p><p>무색 셋 — “잘 싸웠습니다.”</p>',[['이름이 뭐야?',()=>SCENE.ibre2(1)],['왜 여기서 싸워?',()=>SCENE.ibre2(0)]])},
  ibre2:c=>{jr('부두 창고 뒤 내기 결투장에서 무색 비늘의 거인과 겨뤘다. 결투장에서는 그녀를 무색 셋이라고 불렀다. 스스로 지은 이름은 이브레였다.');
    ev('이브레',(c?'<p>거인이 눈을 크게 뜬다. 한참 말이 없다.</p><p>무색 셋 — “…이브레입니다. 제가 지었습니다. 그 이름을 물은 사람은 처음입니다.”</p>':'<p>무색 셋 — “명부에 없는 사람은 일을 못 구합니다. 여기는 명부를 묻지 않습니다.”</p><p>무색 셋 — “이브레입니다. 번호 말고 이름은 그겁니다.”</p>')+
    '<p>이브레 — “결투장의 규칙으로는 이긴 사람이 진 사람의 주인입니다. 저는 그 규칙이 싫습니다. 그래서 묻겠습니다.”</p><p>이브레 — “같이 가도 되겠습니까? 주인이 아니라 일행으로.”</p>',
@@ -1024,6 +1025,8 @@ const SCENE={
    ev('오스윈','<p>오스윈 — “현명하십니다. 저와 엮이면 대개 서류에서 이름이 사라지거든요.”</p><p>오스윈 — “생각이 바뀌면 이 문서고로 오십시오. 정화자들이 다시 올 때까지는 여기 숨어 있을 테니.”</p>',[['돌아선다',null]],1)},
  oswAgain:()=>ev('오스윈','<p>책장 사이에서 붉은 구릿빛 꼬리가 삐죽 나와 있다.</p><p>오스윈 — “또 뵙는군요. 정화자들이 저를 잊어 주질 않아서 여기 숨어 지냅니다.”</p>',
    [[joinL('oswin'),()=>{delete S.dec.oswin;joinComp('oswin');jr('대성당 문서고에서 오스윈을 다시 만났다. 이번엔 함께 다니기로 했다.');SCENE.joined('oswin','오스윈 — “마침 숨어 지내는 것도 지겨웠지요.”',S.comps.length>=2?'여관에 돌아가 쉴 곳을 의논해 보자.':'')}],['그냥 둔다',null]]),
+ innRing:()=>{S.ring=1;jr('녹슨 닻 여관 주인 말로는 빈집 이야기를 창고 뒤 결투장 판돈꾼이 쥐고 있다. 무색 비늘의 거인을 이기면 판돈과 함께 들을 수 있다.');
+   ev(LODGE,`<p>여관 주인이 일행을 번갈아 본다.</p><p>“방 하나에 그 인원은 무리야. 아는 빈집이 하나 있긴 한데….”</p><p>“그 집 이야기는 창고 뒤 결투장 판돈꾼이 쥐고 있어. 오늘 밤 판돈에 그 집 열쇠 이야기를 얹었다더군. 무색 비늘 거인을 이기면 다 가져가는 판이야. 아무도 못 이겼지만.”</p>`+pline({kirien:'결투로 집 얻기라. 나쁘지 않네.',oswin:'도박으로 거처를 구하는 학자라니. 서류에 안 남아서 다행입니다.',eno:'창고 뒤는 물길이 얕아요. 거기 거인 발소리 매일 들려.'}),[['결투장으로 가 보기로 한다',null]],1)},
  manorRumor:()=>{S.mr=1;jr('녹슨 닻 여관 주인에게서 노래가 들린다는 오르빌 저택 이야기를 들었다.');
    ev(LODGE,`<p>여관 주인이 셋을 번갈아 본다.</p><p>“방 하나에 셋은 무리야. 운하 따라 내려가면 오르빌 저택이 있어. 주인이 죽은 지 십 년이 넘었지.”</p>
    <p>“그런데 밤마다 노래가 들린대. 가사도 없이 이름 하나를 길게 늘여 부르는 소리가. 그것만 없으면 빈집이야.”</p><p>“그 집 사정은 가스등 거리 늙은 점등꾼 브리타가 잘 알 거야. 그 할멈은 이 도시가 어두웠던 때를 기억하거든.”</p>`,
@@ -1037,7 +1040,7 @@ const SCENE={
  tomb:()=>{S.manor=1;jr('교단 묘지에서 오르빌 가문의 무덤을 찾았다. 비문은 정으로 긁혀 있었다. “겨울이 끝난 해 … 불을 거둔 이 … 여기 잠들지 않는다.” 무덤 문 틈에 저택 열쇠가 끼워져 있었다.');
    ev('오르빌 가문의 무덤',`<p>묘지 북쪽 끝. 이끼 낀 가족묘에 오르빌 상회의 닻 문장이 새겨져 있다. 비문 대부분이 정으로 긁혀 나갔다.</p><p class="m">남은 글자 — “겨울이 끝난 해 … 불을 거둔 이 … 여기 잠들지 않는다.”</p>`+
    (S.party==='oswin'?'<p class="m">오스윈의 꼬리 끝에서 불꽃이 튄다. 비석에 가까이 갈수록 세게.</p>':pline({kirien:'누가 일부러 긁었어. 이름을 지우려고. 교단 장부처럼.'}))+(S.party==='oswin'?'<p>오스윈 — “이 돌은 뭔가를 기억하는군요. 저보다 오래.”</p>':'')+
-   `<p>무덤 문 틈에 녹슨 열쇠 하나가 끼워져 있다. 누가 두고 간 것처럼. 손잡이에 오르빌 저택의 문장이 있다.</p><p class="m">지도에 오르빌 저택이 나타났다. 옆 납골당 계단에 누군가 앉아 이쪽을 보고 있다.</p>`,[['열쇠를 챙긴다',null]],1)},
+   `<p>무덤 문 틈에 녹슨 열쇠 하나가 끼워져 있다. 누가 두고 간 것처럼. 손잡이에 오르빌 저택의 문장이 있다.</p><p class="m">지도에 오르빌 저택이 나타났다. 옆 납골당 계단에 누군가 앉아 이쪽을 보고 있다.</p>`,[['열쇠를 챙긴다',()=>{if(!met(S,'kasimir'))SCENE.kasM()}]],1)},
  manorIn:()=>S.mz&&S.mz.in?SCENE.mzHub():ev('오르빌 저택',`<p>현관문은 잠겨 있지 않다. 안은 바깥보다 차갑다.</p><p>위층에서 노래가 들린다. 가사는 없다. 이름 하나를 길게 늘여 부르는 소리다.</p>`+
    pline({kirien:'노래 들려? 나만 들리는 거 아니지?',oswin:'재에 먹힌 사람은 마지막으로 붙든 걸 끝까지 놓지 않지요. 이 집 주인은 이름을 붙든 모양입니다.'}),
    [['안으로 들어선다',()=>{S.mz=S.mz||{};S.mz.in=1;save();SCENE.mzHub()}],['오늘은 돌아간다',null]]),
@@ -1245,7 +1248,7 @@ const SCENE={
    [['저택에서 같이 지내자',()=>SCENE.pitJoin()],['심부름을 해 주면 밥을 주겠다',()=>SCENE.pitJoin()]]),
  pitJoin:q=>{S.pit=1;S.kids=S.kids||{};S.kids.pit=S.kids.pit||{st:'ok'};log('피트가 저택에서 지내게 되었다.');jr('하수구에서 쥐 떼에 쫓기던 아이 피트를 구했다. 저택에서 심부름을 하며 지내기로 했다.');
    ev('피트',`<p>피트 — “진짜? 뭐든 할게. 밥만 주면.”</p>`+pline({kirien:'밥은 네가 해. 나는 못 해.',oswin:'글은 읽을 줄 압니까? 아니라면 가르치지요. 심부름꾼이 장부를 못 읽으면 곤란하니까.'})+
-   `<p class="m">피트가 저택에서 지내게 되었다. 본거지에서 파견을 맡길 수 있다.</p>`,[['데려간다',()=>{if(!q&&!met(S,'eno'))SCENE.enoM()}]],1)}
+   (met(S,'barg')?'':'<p>피트 — “근데 저택 부엌 비었지? 녹슨 닻 여관 부엌에 늑대 아저씨가 있어. 남은 국 잘 줘. 요즘 헌병들이 그 아저씨 찾아다니던데.”</p>')+`<p class="m">피트가 저택에서 지내게 되었다. 본거지에서 파견을 맡길 수 있다.</p>`,[['데려간다',()=>{if(!q&&!met(S,'eno'))SCENE.enoM()}]],1)}
 };
 function pending(){const k=S.pend;S.pend=null;save();if(SCENE[k])SCENE[k]()}
 /* 개발자 창용: 이야기를 건너뛰어 얻기 */
@@ -1454,7 +1457,7 @@ function placeView(){
   const P=PL[S.loc],busy=!!S.act;
   let h=actProg();
   const GO=S.pro===99?goalNow():null;GOALAT=GO&&GO.at;GK=GO&&(!GO.at||GO.at===S.loc)?GO.k:[];
-  if(GO)h+=`<div class="goalc"><span class="g">◆ 지금 할 일</span> <b>${GO.t}</b><div class="m">${GO.d}${GO.at&&GO.at!==S.loc&&PL[GO.at]?` 지도에서 <b>${josa(PL[GO.at].n,'으로','로')}</b> 가자.`:''}</div></div>`;
+  if(GO)h+=`<div class="goalc"><span class="g">◆ 지금 할 일</span> <b>${GO.t}</b><div class="m">${GO.d}${GO.at&&GO.at!==S.loc&&PL[GO.at]?` <b>${josa(PL[GO.at].n,'으로','로')}</b> 가 보자.`:''}</div></div>`;
   h+=`<div class="card"><div class="scw">${SCN.scene(S.loc,S)}</div><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
   const acts=[];
   if(S.loc==='base'&&!S.base)acts.push(B('manorIn','저택 안으로 들어간다',{sub:met(S,'kasimir')?'위층에서 노래가 들린다':'납골당 계단의 남자가 마음에 걸린다',dis:busy||!met(S,'kasimir')}));
@@ -1603,7 +1606,7 @@ function resolveAct(){
     if(S.base&&!S.pit&&(a.at==='docks'||a.at==='street')){pop(X.n,{i:L.i,g:L.g,n:[X.say]});S.pend='sewer';save();return true}
     if(Math.random()<X.enc){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:X.say};save();startBattle('fight',foe);return true}
     pop(X.n,{i:L.i,g:L.g,n:[X.say]})}
-  if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='docks'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
+  if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='docks'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='docks'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
     const rf=!S.pend&&roadFoe(a);if(rf){save();SCENE.road(rf,a);return true}
 }
   if(a.t==='r'){S.hp=S.mhp;const b=S.loc==='base';log(b?'화로 곁에서 쉬었다. 몸이 풀렸다.':'여관 방에서 쉬었다.');const n=[b?'장작이 타는 소리를 듣다 깜박 잠들었다. 체력을 모두 되찾았다.':'창밖 가스등이 밤새 깜박였다. 그래도 눈을 붙였다. 체력을 모두 되찾았다.'];
@@ -1715,7 +1718,7 @@ const CMD={
     ev(T,`<p class="m">${GREET[id]||''}</p>`+note,L.concat([['다른 이야기를 한다',()=>CMD.talk(id)]]))},
   manorIn:()=>{if(!S.act&&met(S,'kasimir'))SCENE.manorIn()},ibreM:()=>{if(!S.act&&S.night>=3&&!met(S,'ibre'))SCENE.ibreM()},ibreAgain:()=>{if(!S.act&&S.dec.ibre)SCENE.ibreAgain()},kasM:()=>{if(!S.act&&S.manor&&!met(S,'kasimir'))SCENE.kasM()},kasAgain:()=>{if(!S.act&&S.dec.kasimir)SCENE.kasAgain()},kqM:()=>{if(!S.act&&S.kq===3&&S.party==='kirien')SCENE.kqM()},kqD:()=>{if(!S.act&&S.kq===4&&S.party==='kirien'&&actN()>=2.5)SCENE.kqD()},kqC:()=>{if(!S.act&&S.kq===5&&S.party==='kirien')SCENE.kqC()},eda:()=>{if(!S.act&&S.pit&&met(S,'barg')&&met(S,'eno')&&!S.eda)SCENE.eda()},enoM:()=>{if(!S.act&&S.pit&&!met(S,'eno'))SCENE.enoM()},enoAgain:()=>{if(!S.act&&S.dec.eno)SCENE.enoAgain()},bargM:()=>{if(!S.act&&S.pit&&!met(S,'barg'))SCENE.bargM()},bargAgain:()=>{if(!S.act&&S.dec.barg)SCENE.bargAgain()},brita:()=>{if(!S.act&&S.mr===1)SCENE.brita()},tomb:()=>{if(!S.act&&S.mr===2&&!S.manor)SCENE.tomb()},pqask:()=>{if(!S.act&&S.pq===1)SCENE.pqask()},pqtent:()=>{if(!S.act&&S.pq===2)SCENE.pqtent()},hag:()=>{if(!S.act&&S.outs)SCENE.hag()},kq1:()=>{if(!S.act&&!S.kq&&S.party==='kirien')SCENE.kq1()},aw1:()=>{if(!S.act&&S.eda&&!S.mg)SCENE.aw1()},britaM:()=>{if(!S.act&&S.mg&&S.bm!==1)SCENE.britaM()},hagM:()=>{if(!S.act&&S.mg&&S.hq===3&&S.hm!==1)SCENE.hagM()},pitM:()=>{if(!S.act&&S.mg&&S.pit&&S.pm!==1)SCENE.pitM()},kq2:()=>{if(!S.act&&S.kq===1&&S.party==='kirien')SCENE.kq2()},kq3:()=>{if(!S.act&&S.kq===2&&S.party==='kirien')SCENE.kq3()},kqbuy:()=>{if(!S.act&&S.kq>=3&&S.kq<6&&!S.inv.mem)SCENE.kqBuy(1)},archive:()=>{if(!S.act)SCENE.archive()},kirAgain:()=>{if(!S.act)SCENE.kirAgain()},oswAgain:()=>{if(!S.act)SCENE.oswAgain()},
   rumor:()=>{const back=[['다른 걸 묻는다',()=>CMD.rumor()],['이야기를 그만둔다',null]],O=[['요즘 도는 소문',()=>{const L=S.legacy;const pool=RU.concat(L&&L.end&&LEGRU[L.end]?[LEGRU[L.end]]:[]);ev(LODGE,`<p>여관 주인이 잔을 닦으며 말한다.</p><p>“${pool[Math.random()*pool.length|0]}”</p>`,back)}]];
-    if(!S.base&&!S.mr&&!S.manor&&S.comps.length>=2&&met(S,'ibre'))O.push(['쉴 곳을 묻는다',()=>SCENE.manorRumor()]);
+    if(!S.base&&!S.mr&&!S.manor&&S.comps.length>=2)O.push(['쉴 곳을 묻는다',()=>met(S,'ibre')?SCENE.manorRumor():SCENE.innRing()]);
     O.push(['이야기를 그만둔다',null]);ev(LODGE,'<p>여관 주인이 잔을 닦다가 고개를 든다.</p>',O)},
   mapzoom:a=>mzoom(+a),mapcenter:()=>mcenter(1),
   mapsel:a=>{if(Date.now()-MDRAG<350)return;const p=PL[a];if(!p)return;if(a===S.loc&&!S.act){return}const ok=!p.u||p.u(S);
