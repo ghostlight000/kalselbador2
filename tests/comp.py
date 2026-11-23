@@ -3,7 +3,15 @@ import pathlib
 from playwright.sync_api import sync_playwright
 ROOT=pathlib.Path(__file__).resolve().parent.parent;url=(ROOT/'index.html').as_uri()+'?test'
 errs=[]
-def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=10000);pg.click(f'#ov.on button:has-text("{t}")');pg.wait_for_timeout(60)
+def choose(pg,t,_to=10000):
+    sel=f'#ov.on button:has-text("{t}")'
+    if pg.locator(sel).count()==0 and pg.locator('#ov.on button:has-text("물어보고 싶은 게 있어")').count()>0 and t not in ('물어보고 싶은 게 있어',):
+        pg.click('#ov.on button:has-text("물어보고 싶은 게 있어")');pg.wait_for_timeout(60)
+    if pg.locator(sel).count()==0 and pg.locator('#ov.on button:has-text("너에 대해 이야기해 줘")').count()>0 and t not in ('너에 대해 이야기해 줘','다른 이야기를 한다','이야기를 그만둔다'):
+        pg.click('#ov.on button:has-text("너에 대해 이야기해 줘")');pg.wait_for_timeout(60)
+    if pg.locator(sel).count()==0 and t=='다른 이야기를 한다' and pg.locator('#ov.on button:has-text("다른 것도 묻는다")').count()>0:
+        sel='#ov.on button:has-text("다른 것도 묻는다")'
+    pg.wait_for_selector(sel,timeout=_to);pg.click(sel);pg.wait_for_timeout(60)
 E=lambda pg,x:pg.evaluate(x)
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))

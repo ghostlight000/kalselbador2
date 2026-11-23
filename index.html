@@ -35,9 +35,9 @@ h3{font-size:14px;margin:12px 0 6px;color:var(--m);letter-spacing:.05em}
 p{margin:6px 0}
 .m{color:var(--m);font-size:13px}
 b.g{color:var(--a)}
-.btn{font:inherit;color:var(--t);background:none;border:8px solid transparent;border-image:var(--bo) 6 / 8px stretch;padding:3px 10px;cursor:pointer;min-height:42px;touch-action:manipulation;user-select:none;-webkit-user-select:none;text-align:center}
-.btn:hover:not(:disabled),.btn:focus-visible{border-image:var(--bf) 6 fill / 8px stretch;outline:none}
-.btn.pri,.btn.on{border-image:var(--bf) 6 fill / 8px stretch}
+.btn{font:inherit;color:var(--t);background:none;border:6px solid transparent;border-image:var(--bo) 6 / 6px stretch;padding:1px 10px;cursor:pointer;min-height:34px;touch-action:manipulation;user-select:none;-webkit-user-select:none;text-align:center}
+.btn:hover:not(:disabled),.btn:focus-visible{border-image:var(--bf) 6 fill / 6px stretch;outline:none}
+.btn.pri,.btn.on{border-image:var(--bf) 6 fill / 6px stretch}
 .btn:disabled{opacity:.38;cursor:default}
 .btn.sm{min-height:34px;padding:0 6px;font-size:13px}
 .btn small{display:block;font-size:11px;color:var(--m);line-height:1.25}
@@ -70,6 +70,7 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .tab.on:after{content:"";position:absolute;left:50%;bottom:0;width:7px;height:7px;background:var(--a);transform:translateX(-50%) rotate(45deg)}
 .grid{display:grid;grid-template-columns:290px 1fr 270px;gap:14px;align-items:start}
 @media (max-width:900px){.grid{grid-template-columns:1fr}.grid .L{order:1}.grid .M{order:0}.grid .Rr{order:2}.tabs{order:3;flex-basis:100%}}
+#bacts .btn{min-height:42px}
 .acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;margin:6px 0}
 .acts .btn{text-align:left}
 .prog{margin:8px 0}
@@ -148,8 +149,8 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .pcard.tk{max-width:560px}.tkh{display:flex;align-items:center;gap:12px;padding-bottom:10px;margin-bottom:6px;border-bottom:1px solid var(--b)}
 .tkh .av{width:46px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;padding:0}.tkh .av svg{width:32px;height:32px}.tkh b{display:block;font-size:19px;font-family:"Nanum Myeongjo",serif;color:var(--t)}.tkh span{display:block;font-size:12px;color:var(--m)}
 .tkh em{margin-left:auto;font-style:normal;font-size:13px;color:var(--a);text-align:right}
-.tkb{min-height:20px}.tq{display:flex;flex-direction:column;gap:5px;margin-top:12px}
-.tq .btn{text-align:left;padding-left:14px;min-height:40px}.tq .btn:before{content:"›";color:var(--a);margin-right:9px}
+.tkb{min-height:20px}.tq{display:flex;flex-direction:column;gap:3px;margin-top:10px}
+.tq .btn{text-align:left;padding-left:12px;min-height:34px}.tq .btn:before{content:"›";color:var(--a);margin-right:9px}
 .tq0{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 18px;margin-top:2px}.tq0:empty{display:none}.tq .btn.q0{min-height:32px;font-size:13px;color:var(--m);border-image:none;border-color:transparent;padding:2px 12px}.tq .btn.q0:before{content:none}
 .tq .btn.q0:hover{color:var(--t)}
 .pcard:before,.pcard:after{content:"";position:absolute;left:50%;width:9px;height:9px;background:var(--a);transform:translateX(-50%) rotate(45deg)}
@@ -932,7 +933,7 @@ Object.assign(DEFL,{barg:[['…내 얘긴 나중에 해라.'],['할 얘기 다 �
 
 /* ===== v030 대사 다듬기: 질문 문구·대답 밀도·외형·다른 사람 이야기 ===== */
 Object.assign(QA,{
- kirien:QA.kirien.map((q,i)=>[['배 안 고파?','사람 찾는 일은 힘들지 않아?','편지가 또 오면 어떡하지?','요즘도 엄마 꿈을 꿔?','꼬리 만져 봐도 돼?'][i],q[1]]),
+ kirien:QA.kirien.map((q,i)=>i===0?null:[['배 안 고파?','사람 찾는 일은 힘들지 않아?','편지가 또 오면 어떡하지?','요즘도 엄마 꿈을 꿔?','꼬리 만져 봐도 돼?'][i],q[1]]),
  barg:QA.barg.map((q,i)=>[['그 대검은 어쩌다 부러졌어?','손잡이에 감은 푸른 끈은 뭐야?','헌병이 또 찾아오면 어떡해?','밤마다 부르는 이름은 누구야?','기사단은 왜 떠났어?'][i],q[1]]),
  oswin:[
   ['그 장부는 어디서 구했어?',['교단 문서고에서 훔쳤지요. 정확히는 원래 제 것이던 걸 되찾았습니다.','*오스윈이 장부 모서리의 그을음을 손톱으로 긁는다.','학술원 시절 제가 정리하던 명단입니다. 교단이 사 갔고 저는 서류에서 지워졌지요.','반쯤 지워진 이름들을 밤마다 한 줄씩 되살립니다. 글씨가 이렇게 흐린 건 제 눈 탓이 아닙니다.']],
@@ -2075,7 +2076,7 @@ function storyView(){
 
 /* --- 팝업: 선택 창 ev, 결과 창 pop --- */
 function ev(h,p,b,w){EV0={h,p,b,w};render()}
-let TK=null;
+let TK=null;const TG={},CHI={};
 function tev(id,h,p,b){ev(h,p,b,{k:id})} // 대화 창: 초상과 이름 머리, 질문 목록
 /* 말 줄 정리: 'X — “…”' 문단을 말한 사람 이름표와 말로 나눈다. 같은 사람이 이어 말하면 이름표를 다시 달지 않는다 */
 function sayFmt(h,own){let prev=null;return h.replace(/<p>([^<>“”—]{1,16}) — “([\s\S]*?)”<\/p>|<p class="m">/g,(m,who,t)=>{if(!who){prev=null;return m}const same=who===prev||who===own;prev=who;return `<p class="say${same?' cont':''}">${same?'':`<b>${who}</b>`}“${t}”</p>`})}
@@ -2084,8 +2085,7 @@ function pop(t,o){POP={t,i:o.i||{},g:o.g||0,n:o.n||[]};render()}
 function renderOv(){
   const o=$('#ov');let h='';
   if(EV0&&EV0.w&&EV0.w.k){const k=EV0.w.k,nm=cn(k),sub=COMP[k]?COMP[k].k:NPCT[k]?NPCT[k].sub:TSUB[k]||'',ti=String(EV0.h),sp=ti.indexOf(' — '),t2=sp>0?ti.slice(sp+3):(ti!==nm?ti:'');
-    const q0=x=>/그만둔다|다른 이야기를 한다|^됐다$|돌아간다/.test(x[0]);
-    h=`<div class="pcard tk"><div class="tkh">${avSvg(PORT[k]||'i0')}<div><b>${nm}</b><span>${sub}</span></div>${t2?`<em>${t2}</em>`:''}</div><div class="tkb">${sayFmt(EV0.p,nm)}</div><div class="tq">${EV0.b.map((x,i)=>q0(x)?'':`<button class="btn" data-c="evb" data-a="${i}">${x[0]}</button>`).join('')}<div class="tq0">${EV0.b.map((x,i)=>q0(x)?`<button class="btn q0" data-c="evb" data-a="${i}">${x[0]}</button>`:'').join('')}</div></div></div>`}
+    h=`<div class="pcard tk"><div class="tkh">${avSvg(PORT[k]||'i0')}<div><b>${nm}</b><span>${sub}</span></div>${t2?`<em>${t2}</em>`:''}</div><div class="tkb">${sayFmt(EV0.p,nm)}</div><div class="tq">${EV0.b.map((x,i)=>`<button class="btn" data-c="evb" data-a="${i}">${x[0]}</button>`).join('')}</div></div>`}
   else if(EV0){const two=EV0.b.length===2;h=`<div class="pcard${EV0.w?' w':''}"><h2>${EV0.h}</h2>${sayFmt(EV0.p)}<div class="btns${two?' two':''}">${EV0.b.map((x,i)=>`<button class="btn${EV0.b.length===1?' pri':''}" data-c="evb" data-a="${i}">${x[0]}</button>`).join('')}</div></div>`}
   else if(POP){const it=Object.entries(POP.i).filter(([,n])=>n);h=`<div class="pcard"><h2>${POP.t}</h2>${POP.n.map(x=>`<p>${x}</p>`).join('')}${it.length||POP.g?`<div class="items">${it.map(([k,n])=>`<span>${esc(itName(k))} ${n>0?'+':''}${n}</span>`).join('')}${POP.g?`<span>동전 +${POP.g}</span>`:''}</div>`:''}<div class="btns"><button class="btn pri" data-c="popok">확인</button></div></div>`}
   o.classList.toggle('on',!!h);
@@ -2190,35 +2190,36 @@ const CMD={
     tev('morten','모르텐','<p class="m">모르텐이 막대에 몸을 기댄다.</p>'+(N.length?'':'<p class="m">더 묻고 싶은 건 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>'),L.map(([id,,q,Ls])=>[q,()=>{S.masked[id]=1;seq('morten','모르텐',typeof Ls==='function'?Ls():Ls,h=>tev('morten','모르텐',h,back))}]).concat([['이야기를 그만둔다',null]]))},
   talk:a=>{const id=a||S.party;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.sx=S.sx||{};S.asked=S.asked||{};S.tnew=S.tnew||{};
     let top='';const tn=S.tnew[id];if(tn){delete S.tnew[id];const L=(TIERL[id]||{})[tn];if(L)top=tln(id,[L])}
-    const back=[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]],T=cn(id);S.orx=S.orx||{};
+    const back=[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]],T=cn(id);S.orx=S.orx||{};
     if(S.orx[id]){const ae=aevFor(id);if(ae){if(tn)S.tnew[id]=tn;S.aevK=ae;SCENE.aev();return}}
     if(!S.orx[id]&&ORX[id]){S.orx[id]=1;aff(id,1);seq(id,T,ORX[id][S.og]||ORX[id][0],h=>tev(id,T,top+h,[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]]));return}
     const loc=(TALK[id]||{})[S.loc],qs=[];
     if(loc)qs.push(['이곳은 어때?',()=>{const key=id+':'+S.loc,first=!S.talked[key];S.talked[key]=1;if(first)aff(id,4);seq(id,T,loc,h=>tev(id,T,h,back))}]);
     qs.push(['요즘 어때?',()=>{const M=MOOD[id]||[['…']];tev(id,T,tln(id,M[Math.random()*M.length|0]),back)}]);
     const ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));if(ot.length)qs.push(['다른 사람들 이야기',()=>CMD.talkO(id)]);
-    qs.push(['물어보고 싶은 게 있어',()=>CMD.ask(id)]);
-    qs.push(['너에 대해 이야기해 줘',()=>{const ch=chNext(id);
+    CHI[id]=(['지난 이야기를 들려줘',()=>{const ch=chNext(id);
       if(!ch){const D=DEFL[id]||[['…'],['…']];tev(id,T,tln(id,(S.chd[id]||0)>=(CH[id]||[]).length?D[1]:D[0]),back);return}
       const ci=S.chd[id]||0;
       seq(id,`${T} — ${ch.t}`,ch.p,h=>tev(id,`${T} — ${ch.t}`,h,ch.c.map(([l,g,r],k)=>[l,()=>{aff(id,g);S.chc=S.chc||{};(S.chc[id]=S.chc[id]||{})[ci]=k;S.chd[id]=(S.chd[id]||0)+1;jr(`${josa(T,'이','가')} 「${ch.t}」 이야기를 들려주었다.`);seq(id,`${T} — ${ch.t}`,r,h2=>tev(id,`${T} — ${ch.t}`,h2,back))}])))}]);
-    qs.push(['이야기를 그만둔다',null]);
-    tev(id,T,top+`<p class="m">${greet(id)}</p>`,qs)},
-  talkO:id=>{const T=cn(id),ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));tev(id,T,`<p class="m">${greet(id)}</p>`,ot.map(o=>[josa(cn(o),'은','는')+' 어때?',()=>tev(id,`${T} — ${cn(o)} 이야기`,tln(id,CMT[id][o]),[['다른 사람 이야기',()=>CMD.talkO(id)],['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]])]).concat([['다른 이야기를 한다',()=>CMD.talk(id)]]))},
+    qs.push(['너에 대해 이야기해 줘',()=>CMD.about(id)]);
+    TG[id]=qs;
+    tev(id,T,top+`<p class="m">${greet(id)}</p>`,[['물어보고 싶은 게 있어',()=>CMD.ask(id)],['이야기를 그만둔다',null]])},
+  talkO:id=>{const T=cn(id),ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));tev(id,T,`<p class="m">${greet(id)}</p>`,ot.map(o=>[josa(cn(o),'은','는')+' 어때?',()=>tev(id,`${T} — ${cn(o)} 이야기`,tln(id,CMT[id][o]),[['다른 사람 이야기',()=>CMD.talkO(id)],['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]])]).concat([['다른 것도 묻는다',()=>CMD.ask(id)]]))},
   ntalk:id=>{const N=NPCT[id];if(!N||!N.met(S))return;S.nmet=S.nmet||{};const first=!S.nmet[id];S.nmet[id]=1;S.nask=S.nask||{};
     const back=[['다른 것도 묻는다',()=>CMD.ntalk(id)],['이야기를 그만둔다',null]];
     const L=N.t.filter(x=>!x[1]||x[1](S)).map((x,i)=>[x[0]+(S.nask[id+':'+x[0]]?'':' <i class="hbn">✦</i>'),()=>{S.nask[id+':'+x[0]]=1;save();const Ls=typeof x[2]==='function'?x[2](S):x[2];seq(id,N.n,Ls,h=>tev(id,N.n,h,back))}]);
     tev(id,N.n,(first?`<p class="m">${N.look}</p>`:'')+`<p class="m">${N.g[Math.random()*N.g.length|0]}</p>`,L.concat([['이야기를 그만둔다',null]]))},
-  ask:id=>{const T=cn(id),Q=QA[id]||[],back=[['다른 것도 묻는다',()=>CMD.ask(id)],['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]];
+  ask:id=>{if(!TG[id]){CMD.talk(id);EV0=null}tev(id,cn(id),`<p class="m">${greet(id)}</p>`,(TG[id]||[]).concat([['이야기를 그만둔다',null]]))},
+  about:id=>{if(!TG[id]){CMD.talk(id);EV0=null}const T=cn(id),Q=QA[id]||[],back=[['다른 것도 묻는다',()=>CMD.about(id)],['이야기를 그만둔다',null]];
     const run=(key,L)=>{if(!S.asked[key]){S.asked[key]=1;aff(id,2)}seq(id,T,L,h=>tev(id,T,h,back))};
-    const open=[];for(let i=0;i<Q.length&&open.length<2;i++){if(S.asked[id+':'+i])continue;if(i>1&&!S.asked[id+':'+(i-1)])break;if(affTier(id)<QAT[Math.min(i,QAT.length-1)])break;open.push(i)}
+    const open=[];for(let i=0;i<Q.length&&open.length<2;i++){if(!Q[i]||S.asked[id+':'+i])continue;if(i>1&&Q[i-1]&&!S.asked[id+':'+(i-1)])break;if(affTier(id)<QAT[Math.min(i,QAT.length-1)])break;open.push(i)}
     let L=open.map(i=>[Q[i][0],()=>run(id+':'+i,typeof Q[i][1]==='function'?Q[i][1](S):Q[i][1])]);
     if(RCX[id]&&!S.asked[id+':r']&&affTier(id)>=2)L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)]);
     (CH[id]||[]).forEach((c,i)=>{const pick=((S.chc||{})[id]||{})[i];if(!c.fu||i>=(S.chd[id]||0)||pick===undefined||pick===0||S.asked[id+':f'+i])return;
       L.unshift([c.c[0][0].replace(/\.$/,''),()=>{S.asked[id+':f'+i]=1;aff(id,3);seq(id,T,['!'+c.c[0][0]].concat(c.c[0][2]),h=>tev(id,T,h,back))}])});
     let note='';
-    if(!L.length){note='<p class="m">지금은 더 묻고 싶은 게 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>';L=Q.map((x,i)=>[x,i]).filter(([,i])=>S.asked[id+':'+i]).map(([x,i])=>[x[0],()=>run(id+':'+i,typeof x[1]==='function'?x[1](S):x[1])]);if(RCX[id]&&S.asked[id+':r'])L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)])}
-    tev(id,T,`<p class="m">${greet(id)}</p>`+note,L.concat([['다른 이야기를 한다',()=>CMD.talk(id)]]))},
+    if(!L.length){note='<p class="m">지금은 더 묻고 싶은 게 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>';L=Q.map((x,i)=>[x,i]).filter(([x,i])=>x&&S.asked[id+':'+i]).map(([x,i])=>[x[0],()=>run(id+':'+i,typeof x[1]==='function'?x[1](S):x[1])]);if(RCX[id]&&S.asked[id+':r'])L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)])}
+    tev(id,`${T} — 너에 대해`,`<p class="m">${greet(id)}</p>`,(CHI[id]?[CHI[id]]:[]).concat(L,[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]]))},
   manorIn:()=>{if(!S.act&&met(S,'kasimir'))SCENE.manorIn()},ibreM:()=>{if(!S.act&&S.night>=3&&!met(S,'ibre'))SCENE.ibreM()},ibreAgain:()=>{if(!S.act&&S.dec.ibre)SCENE.ibreAgain()},kasM:()=>{if(!S.act&&S.manor&&!met(S,'kasimir'))SCENE.kasM()},kasAgain:()=>{if(!S.act&&S.dec.kasimir)SCENE.kasAgain()},kqM:()=>{if(!S.act&&S.kq===3&&S.party==='kirien')SCENE.kqM()},kqD:()=>{if(!S.act&&S.kq===4&&S.party==='kirien'&&actN()>=2.5)SCENE.kqD()},kqC:()=>{if(!S.act&&S.kq===5&&S.party==='kirien')SCENE.kqC()},eda:()=>{if(!S.act&&S.pit&&met(S,'barg')&&met(S,'eno')&&!S.eda)SCENE.eda()},enoM:()=>{if(!S.act&&S.pit&&!met(S,'eno'))SCENE.enoM()},enoAgain:()=>{if(!S.act&&S.dec.eno)SCENE.enoAgain()},bargM:()=>{if(!S.act&&S.pit&&!met(S,'barg'))SCENE.bargM()},bargAgain:()=>{if(!S.act&&S.dec.barg)SCENE.bargAgain()},brita:()=>{if(!S.act&&S.mr===1)SCENE.brita()},tomb:()=>{if(!S.act&&S.mr===2&&!S.manor)SCENE.tomb()},pqask:()=>{if(!S.act&&S.pq===1)SCENE.pqask()},pqtent:()=>{if(!S.act&&S.pq===2)SCENE.pqtent()},hag:()=>{if(!S.act&&S.outs)SCENE.hag()},kq1:()=>{if(!S.act&&!S.kq&&S.party==='kirien')SCENE.kq1()},oq1:()=>{if(!S.act&&S.mg&&!S.oq&&S.party==='oswin')SCENE.oq1()},oq2:()=>{if(!S.act&&S.oq===2)SCENE.oq2()},oq3:()=>{if(!S.act&&S.oq===3&&S.party==='oswin')SCENE.oq3()},oq4:()=>{if(!S.act&&S.oq===4&&S.party==='oswin')SCENE.oq4()},revOut:()=>{if(!S.act&&S.rev&&!S.revd)SCENE.revOut()},oq5:()=>{if(!S.act&&S.oq===5)SCENE.oq5()},hboard:()=>{if(!S.act)SCENE.board()},aw1:()=>{if(!S.act&&S.eda&&!S.mg)SCENE.aw1()},britaM:()=>{if(!S.act&&S.mg&&S.bm!==1)SCENE.britaM()},hagM:()=>{if(!S.act&&S.mg&&S.hq===3&&S.hm!==1)SCENE.hagM()},pitM:()=>{if(!S.act&&S.mg&&S.pit&&S.pm!==1)SCENE.pitM()},kq2:()=>{if(!S.act&&S.kq===1&&S.party==='kirien')SCENE.kq2()},kq3:()=>{if(!S.act&&S.kq===2&&S.party==='kirien')SCENE.kq3()},kqbuy:()=>{if(!S.act&&S.kq>=3&&S.kq<6&&!S.inv.mem)SCENE.kqBuy(1)},archive:()=>{if(!S.act)SCENE.archive()},kirAgain:()=>{if(!S.act)SCENE.kirAgain()},oswAgain:()=>{if(!S.act)SCENE.oswAgain()},
   rumor:()=>{const back=[['다른 걸 묻는다',()=>CMD.rumor()],['이야기를 그만둔다',null]],first=!S.magda;S.magda=1;
     const O=[['개인적인 이야기',()=>{const n=Math.min(MAGP.length-1,S.magp||0);S.magp=n+1;save();tev('magda','마그다',MAGP[n].map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:`<p>마그다 — “${x}”</p>`).join(''),back)}],

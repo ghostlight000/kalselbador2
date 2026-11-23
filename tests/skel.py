@@ -17,7 +17,14 @@ BOT="""()=>{const K=window.__k2;clearInterval(window.__bot);window.__bot=setInte
 def okpop(pg):
     pg.wait_for_selector('#ov.on .btn',timeout=20000); t=pg.inner_text('#ov h2'); pg.click('#ov.on .btn.pri'); return t
 def choose(pg,text):
-    pg.wait_for_selector(f'#ov.on button:has-text("{text}")',timeout=20000); pg.click(f'#ov.on button:has-text("{text}")'); pg.wait_for_timeout(60)
+    sel=f'#ov.on button:has-text("{text}")'
+    if pg.locator(sel).count()==0 and pg.locator('#ov.on button:has-text("물어보고 싶은 게 있어")').count()>0 and text!='물어보고 싶은 게 있어':
+        pg.click('#ov.on button:has-text("물어보고 싶은 게 있어")');pg.wait_for_timeout(60)
+    if pg.locator(sel).count()==0 and pg.locator('#ov.on button:has-text("너에 대해 이야기해 줘")').count()>0 and text not in ('너에 대해 이야기해 줘','다른 이야기를 한다','이야기를 그만둔다'):
+        pg.click('#ov.on button:has-text("너에 대해 이야기해 줘")');pg.wait_for_timeout(60)
+    if pg.locator(sel).count()==0 and text=='다른 이야기를 한다' and pg.locator('#ov.on button:has-text("다른 것도 묻는다")').count()>0:
+        sel='#ov.on button:has-text("다른 것도 묻는다")'
+    pg.wait_for_selector(sel,timeout=20000); pg.click(sel); pg.wait_for_timeout(60)
 def go(pg,k):
     pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); choose(pg,'간다'); pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000); pg.wait_for_timeout(650)
 def fight(pg):
@@ -61,9 +68,9 @@ with sync_playwright() as p:
     s=S(pg); assert s['comps']==['kirien'] and s['party']=='kirien' and s['aff']['kirien']==18, s['aff']; print('kirien joined, aff',s['aff'])
     assert pg.evaluate("window.__k2.romOK('kirien')") and not pg.evaluate("window.__k2.romOK('kasimir')")
     # 대화(이곳에 대해) → 호감 +4 한 번만
-    pg.click('button[data-c=talk]'); assert '없는 걸 쫓는' in pg.inner_text('#ov'); choose(pg,'다른 이야기를 한다'); assert '여우 머리' in pg.inner_text('#ov'); assert pg.locator('#ov.on button').count()<=6; choose(pg,'이곳은 어때?'); assert '이름을 붙인대' in pg.inner_text('#ov'); choose(pg,'다른 이야기를 한다'); assert '한 사람 자리만큼' in pg.inner_text('#ov')
-    choose(pg,'너에 대해 이야기해 줘'); assert '점쟁이의 딸' in pg.inner_text('#ov'); choose(pg,'점은 안 믿어'); t=pg.inner_text('#ov'); assert '틀린 적이 없었어' in t and '/ 4' not in t; choose(pg,'다른 이야기를 한다')
-    choose(pg,'물어보고 싶은 게 있어'); assert pg.locator('#ov.on button').count()<=4; choose(pg,'사람 찾는 일은 힘들지 않아?'); choose(pg,'이야기를 그만둔다'); assert S(pg)['aff']['kirien']==27 and S(pg)['chd']['kirien']==1, S(pg)['aff']
+    pg.click('button[data-c=talk]'); assert '없는 걸 쫓는' in pg.inner_text('#ov'); choose(pg,'다른 이야기를 한다'); assert '여우 머리' in pg.inner_text('#ov'); assert pg.locator('#ov.on button').count()<=6; choose(pg,'이곳은 어때?'); assert '이름을 붙인대' in pg.inner_text('#ov'); choose(pg,'다른 이야기를 한다'); assert '이곳은 어때?' in pg.inner_text('#ov')
+    choose(pg,'너에 대해 이야기해 줘'); choose(pg,'지난 이야기를 들려줘'); assert '점쟁이의 딸' in pg.inner_text('#ov'); choose(pg,'점은 안 믿어'); t=pg.inner_text('#ov'); assert '틀린 적이 없었어' in t and '/ 4' not in t; choose(pg,'다른 이야기를 한다')
+    choose(pg,'사람 찾는 일은 힘들지 않아?'); choose(pg,'이야기를 그만둔다'); assert S(pg)['aff']['kirien']==27 and S(pg)['chd']['kirien']==1, S(pg)['aff']
     assert pg.evaluate("window.__k2.affTier('kirien')")==3 and '성냥불' not in pg.inner_text('body')
     # ---- 교단 문서고 → 오스윈 ----
     go(pg,'church'); pg.click('button[data-c=archive]'); choose(pg,'끼어든다'); h=fight(pg); assert '정화자' in h

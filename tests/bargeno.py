@@ -3,7 +3,15 @@ import pathlib
 from playwright.sync_api import sync_playwright
 ROOT=pathlib.Path(__file__).resolve().parent.parent;url=(ROOT/'index.html').as_uri()+'?test'
 errs=[]
-def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=10000);pg.click(f'#ov.on button:has-text("{t}")');pg.wait_for_timeout(60)
+def choose(pg,t,_to=10000):
+    sel=f'#ov.on button:has-text("{t}")'
+    if pg.locator(sel).count()==0 and pg.locator('#ov.on button:has-text("물어보고 싶은 게 있어")').count()>0 and t not in ('물어보고 싶은 게 있어',):
+        pg.click('#ov.on button:has-text("물어보고 싶은 게 있어")');pg.wait_for_timeout(60)
+    if pg.locator(sel).count()==0 and pg.locator('#ov.on button:has-text("너에 대해 이야기해 줘")').count()>0 and t not in ('너에 대해 이야기해 줘','다른 이야기를 한다','이야기를 그만둔다'):
+        pg.click('#ov.on button:has-text("너에 대해 이야기해 줘")');pg.wait_for_timeout(60)
+    if pg.locator(sel).count()==0 and t=='다른 이야기를 한다' and pg.locator('#ov.on button:has-text("다른 것도 묻는다")').count()>0:
+        sel='#ov.on button:has-text("다른 것도 묻는다")'
+    pg.wait_for_selector(sel,timeout=_to);pg.click(sel);pg.wait_for_timeout(60)
 def okpop(pg):pg.wait_for_selector('#ov.on .btn.pri',timeout=10000);pg.click('#ov.on .btn.pri');pg.wait_for_timeout(60)
 def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650)
 def win(pg):
@@ -61,7 +69,7 @@ with sync_playwright() as p:
         E(pg,"()=>{const K=window.__k2;K.endBattle('win')}");okpop(pg)
     # 출신 반응·종족 질문
     E(pg,"()=>{const K=window.__k2;K.S.party='eno';K.render()}");pg.click('button[data-c=talk]');assert '병사가 하나' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
-    choose(pg,'물어보고 싶은 게 있어');assert '지도 좀 보여 줄래?' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다');choose(pg,'이야기를 그만둔다')
+    choose(pg,'물어보고 싶은 게 있어');choose(pg,'너에 대해 이야기해 줘');assert '지도 좀 보여 줄래?' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다');choose(pg,'이야기를 그만둔다')
     print('battle/talk ok')
     b.close()
 assert not errs,errs

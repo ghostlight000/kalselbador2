@@ -3,7 +3,15 @@ import pathlib
 from playwright.sync_api import sync_playwright
 ROOT=pathlib.Path(__file__).resolve().parent.parent;url=(ROOT/'index.html').as_uri()+'?test'
 errs=[]
-def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=10000);pg.click(f'#ov.on button:has-text("{t}")');pg.wait_for_timeout(60)
+def choose(pg,t,_to=10000):
+    sel=f'#ov.on button:has-text("{t}")'
+    if pg.locator(sel).count()==0 and pg.locator('#ov.on button:has-text("물어보고 싶은 게 있어")').count()>0 and t not in ('물어보고 싶은 게 있어',):
+        pg.click('#ov.on button:has-text("물어보고 싶은 게 있어")');pg.wait_for_timeout(60)
+    if pg.locator(sel).count()==0 and pg.locator('#ov.on button:has-text("너에 대해 이야기해 줘")').count()>0 and t not in ('너에 대해 이야기해 줘','다른 이야기를 한다','이야기를 그만둔다'):
+        pg.click('#ov.on button:has-text("너에 대해 이야기해 줘")');pg.wait_for_timeout(60)
+    if pg.locator(sel).count()==0 and t=='다른 이야기를 한다' and pg.locator('#ov.on button:has-text("다른 것도 묻는다")').count()>0:
+        sel='#ov.on button:has-text("다른 것도 묻는다")'
+    pg.wait_for_selector(sel,timeout=_to);pg.click(sel);pg.wait_for_timeout(60)
 def okpop(pg):pg.wait_for_selector('#ov.on .btn.pri',timeout=10000);pg.click('#ov.on .btn.pri');pg.wait_for_timeout(60)
 def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650)
 def win(pg):
@@ -63,10 +71,10 @@ with sync_playwright() as p:
             # 저택 동료의 방: 누구와도 이야기, 오스윈의 자기 이야기, 표시에 관계 수치 없음
             pg.evaluate("()=>{const K=window.__k2;K.S.aff.oswin=45;K.S.loc='base';K.render()}")
             assert '할 이야기가' in pg.inner_text('button[data-c=rooms]')
-            pg.click('button[data-c=rooms]');assert '레벨' in pg.inner_text('#ov') and '촛불' not in pg.inner_text('#ov');choose(pg,'동료와 이야기한다');choose(pg,'오스윈과 이야기한다');choose(pg,'너에 대해');assert '칼라쉬의 후예' in pg.inner_text('#ov');choose(pg,'책을 좋아하는구나');choose(pg,'다른 이야기를 한다')
-            choose(pg,'너에 대해');assert '지워진 아침' in pg.inner_text('#ov');choose(pg,'그래도 넌 여기 있어');choose(pg,'다른 이야기를 한다')
+            pg.click('button[data-c=rooms]');assert '레벨' in pg.inner_text('#ov') and '촛불' not in pg.inner_text('#ov');choose(pg,'동료와 이야기한다');choose(pg,'오스윈과 이야기한다');choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '칼라쉬의 후예' in pg.inner_text('#ov');choose(pg,'책을 좋아하는구나');choose(pg,'다른 이야기를 한다')
+            choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '지워진 아침' in pg.inner_text('#ov');choose(pg,'그래도 넌 여기 있어');choose(pg,'다른 이야기를 한다')
             s=S(pg);assert s['chd']['oswin']==2 and s['aff']['oswin']==52,s['aff']
-            choose(pg,'너에 대해');assert '각주가 너무 많습니다' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
+            choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '각주가 너무 많습니다' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
             choose(pg,'이곳은 어때?');assert '장부를 태우기' in pg.inner_text('#ov');choose(pg,'이야기를 그만둔다')
             pg.click('button[data-c=tab][data-a=char]');t=pg.inner_text('.M');assert '들은 이야기' not in t and '말투' not in t and '레벨' in t and '연속 베기' in t;pg.click('button[data-c=tab][data-a=place]')
             pg.click('button[data-c=tab][data-a=story]');assert '지워진 아침' in pg.inner_text('.M');print('chapters ok')
