@@ -43,15 +43,11 @@ with sync_playwright() as p:
     E(pg,"()=>{window.__k2.S.aff.oswin=25}");choose(pg,'다른 이야기를 한다');choose(pg,'물어보고 싶은 게 있어');q=btns(pg);assert '내가 어떻게 보여?' in q,q
     choose(pg,'내가 어떻게 보여?');t=pg.inner_text('#ov');race=E(pg,"window.__k2.S.race");assert {'p':'같은 파볼릭','i':'잉그라드시군요','b':'벨데인이시군요'}[race] in t,t
     print('companion q ok')
-    # 자기 이야기를 다시 듣고 다르게 대답할 수 있다
-    E(pg,"()=>{const K=window.__k2;K.S.chd.oswin=1;K.S.chg={oswin:{0:Math.min(...K.CH.oswin[0].c.map(x=>x[1]))}};K.S.aff.oswin=25;K.render()}")
+    # 자기 이야기에서 다른 대답을 골라도 '리세를 만나러 가자'는 나중에 꺼낼 수 있다
+    E(pg,"()=>{const K=window.__k2;K.S.chd.oswin=3;K.S.chc={oswin:{2:1}};K.S.aff.oswin=25;K.render()}")
     if pg.is_visible('#ov.on'):choose(pg,'이야기를 그만둔다')
-    pg.click('button[data-c=talk]');choose(pg,'너에 대해 이야기해 줘');assert '다시 듣기' in pg.inner_text('#ov');choose(pg,'다시 듣기')
-    for _ in range(6):
-        if pg.locator('#ov.on button:has-text("말없이 듣는다")').count():choose(pg,'말없이 듣는다')
-    hi=E(pg,"(()=>{const c=window.__k2.CH.oswin[0].c;return c.reduce((a,b)=>b[1]>a[1]?b:a)})()")
-    a0=E(pg,"window.__k2.S.aff.oswin");choose(pg,hi[0]);a1=E(pg,"window.__k2.S.aff.oswin");lo=E(pg,"Math.min(...window.__k2.CH.oswin[0].c.map(x=>x[1]))")
-    assert a1-a0==hi[1]-lo,(a0,a1,hi,lo);print('chapter re-answer ok')
+    pg.click('button[data-c=talk]');choose(pg,'물어보고 싶은 게 있어');assert '리세를 만나러 가자' in pg.inner_text('#ov');a0=E(pg,"window.__k2.S.aff.oswin");choose(pg,'리세를 만나러 가자')
+    assert '언젠가는요' in pg.inner_text('#ov') and E(pg,"window.__k2.S.aff.oswin")==a0+3;choose(pg,'다른 것도 묻는다');assert '리세를 만나러 가자' not in pg.inner_text('#ov');print('follow-up ok')
     b.close()
 assert not errs,errs
 print('ALL OK')
