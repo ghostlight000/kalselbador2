@@ -38,14 +38,14 @@ with sync_playwright() as p:
         pg.click('#pv .eo'); pg.click('#pv .eo'); pg.wait_for_timeout(50); t=pg.inner_text('#pv')
         if i==0: assert '레아는' in t and '용 사냥꾼' in t and '푸르다' in t, t
         if i==1: assert '레아의 것' in t and '아버지의 마지막 말' in t and '서두르지 않으면' in t, t
-        if i==3: assert '문을 거칠게' in t and '불지기' in t, t
+        if i==3: assert '문을 거칠게' in t and '불지기' in t and pg.evaluate('window.__k2.PV.kt.length')==1, t
     pg.click('#pv .eo'); pg.click('#pv [data-pv=close]'); pg.wait_for_timeout(100)
     assert '모르텐' in pg.inner_text('#ov') and '손끝이 푸르군' in pg.inner_text('#ov'); choose(pg,'막대를 쥔 노인을 따라간다'); choose(pg,'막대 앞에 선다'); pg.wait_for_function('window.__k2.G.on'); pg.evaluate(BOT)
     pg.wait_for_function('!window.__k2.G.on',timeout=120000); okpop(pg); assert S(pg)['tutd']==1 and S(pg)['mort']==1
     assert '모르텐' in pg.inner_text('.Rr'); pg.click('button[data-c=mtalk]'); choose(pg,'거리 끝의 그건 누구야?'); choose(pg,'그런데 왜 싸워?'); assert '레아 — “그런데 왜 싸워?”' in pg.inner_text('#ov') and '친구니까' in pg.inner_text('#ov'); choose(pg,'이야기를 그만둔다')
     s=S(pg); print('made',s['name'],s['sex'],s['race'],s['og'],s['loc']); assert s['sex']=='f' and s['loc']=='docks' and not s['base'] and s['inv'].get('letter')==1
     assert pg.locator('button[data-c=board]').count()==0 and pg.locator('.map .node[data-a=base]').count()==0
-    pg.click('button[data-c=rumor]'); choose(pg,'쉴 곳을 묻는다'); assert '이층 끝방' in pg.inner_text('#ov'); choose(pg,'다른 걸 묻는다'); choose(pg,'요즘 도는 소문'); assert '여관 주인' in pg.inner_text('#ov'); choose(pg,'이야기를 그만둔다')
+    pg.click('button[data-c=rumor]'); assert '쉴 곳을 묻는다' not in pg.inner_text('#ov'); choose(pg,'요즘 도는 소문'); assert '여관 주인' in pg.inner_text('#ov'); choose(pg,'이야기를 그만둔다')
     pg.evaluate("window.__k2.EXP.docks[0].enc=0"); pg.click('button[data-c=explore][data-a="0"]')
     pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='부두 창고 뒤지기'",timeout=10000); okpop(pg)
     pg.eval_on_selector('.map .node[data-a=church]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); assert '첫 번째 밤' in pg.inner_text('#ov'); okpop(pg)
@@ -80,7 +80,19 @@ with sync_playwright() as p:
     go(pg,'church'); pg.click('button[data-c=tomb]'); t=pg.inner_text('#ov'); assert '불을 거둔 이' in t; choose(pg,'열쇠를 챙긴다'); print('pre-manor story ok')
     assert pg.locator('.map .node[data-a=base]').count()==1
     pg.click('button[data-c=kasM]'); t=pg.inner_text('#ov'); assert '어디서 뵌 것 같군요' in t; choose(pg,'누구냐고 묻는다'); assert '육십 년 전에 대가 끊겼는데요' in pg.inner_text('#ov') or '피 냄새' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다'); assert 'kasimir' in S(pg)['comps']; print('kasimir joined')
-    go(pg,'base'); pg.click('button[data-c=manorIn]'); assert '노래 들려?' in pg.inner_text('#ov'); choose(pg,'위층으로 올라간다'); h=fight(pg); assert '노래하는 옛 주인' in h
+    go(pg,'base'); pg.click('button[data-c=manorIn]'); assert '노래 들려?' in pg.inner_text('#ov'); choose(pg,'안으로 들어선다')
+    choose(pg,'계단 위의 문'); assert '잠겼다' in pg.inner_text('#ov'); choose(pg,'내려간다')
+    choose(pg,'서재 (잠겨 있다)'); choose(pg,'다른 곳을 본다')
+    choose(pg,'응접실'); choose(pg,'악보받침'); assert '솔 · 미 · 레 · 도' in pg.inner_text('#ov'); choose(pg,'다른 곳을 본다')
+    choose(pg,'응접실'); choose(pg,'건반을 누른다')
+    for n in ['솔','미','레','도']: choose(pg,n)
+    assert '어긋난다' in pg.inner_text('#ov'); choose(pg,'처음부터 다시')
+    for n in ['도','레','미','솔']: pg.click(f'#ov.on button:text-is("{n}")'); pg.wait_for_timeout(50)
+    assert '서재' in pg.inner_text('#ov') and S(pg)['mz']['key']==1; choose(pg,'열쇠를 챙긴다')
+    choose(pg,'부엌'); choose(pg,'찬장을 뒤진다'); assert '세 시 십오 분' in pg.inner_text('#ov'); choose(pg,'다른 곳을 본다')
+    choose(pg,'서재'); choose(pg,'금고 바늘을'); pg.click('#ov.on button:text-is("4시")'); choose(pg,'15분'); choose(pg,'다시 맞춘다')
+    pg.click('#ov.on button:text-is("3시")'); choose(pg,'15분'); assert '대신 노래해 둘게' in pg.inner_text('#ov'); choose(pg,'열쇠를 챙긴다')
+    choose(pg,'계단 위의 문'); choose(pg,'문을 연다'); h=fight(pg); assert '노래하는 옛 주인' in h
     pg.wait_for_selector('#ov.on h2',timeout=5000); t=pg.inner_text('#ov'); assert '여관비는 아끼겠네' in t and '여우 모양 문진' in t; choose(pg,'짐을 옮긴다')
     s=S(pg); assert s['base']==1 and s['inv'].get('relic')==1 and not s['pit']; print('base ok')
     assert pg.locator('button[data-c=board]').count()==0
@@ -109,7 +121,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=place]'); pg.evaluate("clearInterval(window.__bot)"); pg.evaluate("window.__k2.startBattle('fight','dog')"); pg.click('#bov .btn.pri'); pg.wait_for_function("window.__k2.G.st==='player'")
     pg.evaluate("window.__k2.G.fp=5"); pg.click('#bacts [data-ba=skill]'); assert pg.locator('#bacts [data-k=spirit]').count()==1
     f0=pg.evaluate('window.__k2.G.fhp'); pg.click('#bacts [data-k=spirit]'); pg.wait_for_timeout(50); f1=pg.evaluate('window.__k2.G.fhp'); assert f0-f1==round(10+2.4*S(pg)['st'][1]) or f0-f1==int(10+2.4*S(pg)['st'][1]+.5), (f0,f1)
-    pg.wait_for_function("window.__k2.G.st==='enemy'",timeout=5000); pg.evaluate(BOT); pg.wait_for_function('!window.__k2.G.on',timeout=120000); okpop(pg); print('skill in battle ok')
+    pg.wait_for_function("window.__k2.G.st==='enemy'",timeout=5000); pg.evaluate(BOT); pg.wait_for_function('!window.__k2.G.on',timeout=120000); okpop(pg); pg.wait_for_selector('#ov.on .btns button',timeout=5000); pg.click('#ov.on .btns button >> nth=0'); okpop(pg); print('skill in battle ok')
     pg.click('button[data-c=tab][data-a=quest]'); q=pg.inner_text('.M'); assert '◇ 등불을 든 사람의 딸' in q
     pg.click('button[data-c=tab][data-a=char]'); c=pg.inner_text('.M'); assert '키리엔' in c and '오스윈' in c and '여' in c
     pg.click('button[data-c=tab][data-a=story]'); assert '테오르' in pg.inner_text('.M') and '오르빌 저택' in pg.inner_text('.M')

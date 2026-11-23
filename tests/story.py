@@ -53,10 +53,10 @@ with sync_playwright() as p:
         pg.click('button[data-c=tab][data-a=quest]');assert '이야기가 더 흘러야' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
         pg.evaluate("()=>{const K=window.__k2;K.S.rev=1;K.render()}");pg.click('button[data-c=kqD]');assert '선생님. 늦으셨습니다' in pg.inner_text('#ov');okpop(pg);assert S(pg)['kq']==5
         pg.click('button[data-c=kqC]')
-        if end=='pour':choose(pg,'남의 기억을 부어 준다');assert '리나야' in pg.inner_text('#ov')
+        if end=='pour':choose(pg,'남의 기억을 부어 준다');assert '되돌릴 수 없다' in pg.inner_text('#ov');choose(pg,'다시 생각한다');choose(pg,'남의 기억을 부어 준다');choose(pg,'이렇게 하기로');assert '리나야' in pg.inner_text('#ov')
         elif end=='new':
-            assert pg.locator('#ov button:has-text("남의 기억")').count()==0;choose(pg,'빈 채로');assert '…에다.' in pg.inner_text('#ov')
-        else:choose(pg,'구호소');assert '내가 기억하면 돼요' in pg.inner_text('#ov')
+            assert pg.locator('#ov button:has-text("남의 기억")').count()==0;choose(pg,'빈 채로');choose(pg,'이렇게 하기로');assert '…에다.' in pg.inner_text('#ov')
+        else:choose(pg,'구호소');choose(pg,'이렇게 하기로');assert '내가 기억하면 돼요' in pg.inner_text('#ov')
         okpop(pg);s=S(pg);assert s['kq']==6 and s['kqe']==end and s['cq']['kirien']=='done';results[end]=s['aff']['kirien']
         pg.click('button[data-c=tab][data-a=quest]');assert '◆ 끝' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
         if end=='new':
