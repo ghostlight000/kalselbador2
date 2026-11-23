@@ -14,7 +14,7 @@ with sync_playwright() as p:
     nb=pg.locator('.map .node[data-a=docks] rect').bounding_box();assert abs(nb['x']+nb['width']/2-(box['x']+box['width']/2))<4 and abs(nb['y']+nb['height']/2-(box['y']+box['height']/2))<4,(nb,box)
     pg.click('button[data-c=mapzoom][data-a="1.3"]');pg.click('button[data-c=mapzoom][data-a="1.3"]');m=MP();assert m['s']>1.6 and abs(float(tf().split('scale(')[1].rstrip(')'))-MP()['s'])<1e-3
     # 다시 그려도 유지
-    pg.click('button[data-c=rumor]');pg.click('#ov .btn.pri');assert abs(float(tf().split('scale(')[1].rstrip(')'))-MP()['s'])<1e-3 and MP()['x']==m['x']
+    pg.click('button[data-c=rumor]');pg.click('#ov button:has-text("이야기를 그만둔다")');assert abs(float(tf().split('scale(')[1].rstrip(')'))-MP()['s'])<1e-3 and MP()['x']==m['x']
     # 끌기: 장소 위에서 시작해도 끈 뒤에는 장소 창이 열리지 않는다
     cx,cy=box['x']+box['width']/2,box['y']+box['height']/2
     x0=MP()['x'];pg.mouse.move(cx,cy);pg.mouse.down();pg.mouse.move(cx-120,cy-60,steps=6);pg.mouse.up();pg.wait_for_timeout(50)

@@ -36,12 +36,12 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.dec.eno")==1
     pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '물길의 안내인' in q;pg.click('button[data-c=tab][data-a=place]')
     # 에다는 바르그·에노를 만나기 전엔 없다
-    pg.click('button[data-c=enoAgain]');choose(pg,'저택으로 보낸다');okpop(pg);assert 'eno' in E(pg,"window.__k2.S.comps")
+    pg.click('button[data-c=enoAgain]');choose(pg,'함께하자');t=pg.inner_text('#ov');assert '키리엔과 계속 다닌다' in t and '에노와 다닌다' in t,t;choose(pg,'에노와 다닌다');assert E(pg,"window.__k2.S.party")=='eno' and 'kirien' in E(pg,"window.__k2.S.comps")
     t=pg.inner_text('.goalc');assert '여관 부엌의 요리사' in t,t
     # 여관 부엌 → 헌병과 싸운다 → 바르그
-    pg.click('button[data-c=bargM]');t=pg.inner_text('#ov');assert '탈영병 바르그' in t and '안 싸워' in t;choose(pg,'막아선다');assert E(pg,"window.__k2.G.foe")=='mp';win(pg)
+    pg.click('button[data-c=bargM]');t=pg.inner_text('#ov');assert '탈영병 바르그' in t and '웅웅거려요' in t;choose(pg,'막아선다');assert E(pg,"window.__k2.G.foe")=='mp';win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("바르그")',timeout=5000);choose(pg,'도망친 사람을 넘기기 싫어서');assert '헌병들을 막아섰다' in E(pg,"JSON.stringify(window.__k2.S.jr)");choose(pg,'갈 길을 가라');okpop(pg)
-    pg.click('button[data-c=bargAgain]');choose(pg,'저택으로 보낸다');okpop(pg);assert 'barg' in E(pg,"window.__k2.S.comps")
+    pg.click('button[data-c=bargAgain]');choose(pg,'저택에서 지내라');choose(pg,'계속 다닌다');assert 'barg' in E(pg,"window.__k2.S.comps")
     go(pg,'street');assert pg.locator('button[data-c=eda]').count()==1;print('meet ok')
     # 바르그·에노 동료 전투
     for cid in ['barg','eno']:

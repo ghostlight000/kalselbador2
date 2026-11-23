@@ -373,8 +373,8 @@ const PL={
  base:{n:'오르빌 저택',get k(){return S&&S.base?'본거지':'소문 속 저택'},x:28,y:78,get d(){return S&&S.base?manorDesc():'운하 옆 옛 상인 저택. 주인이 죽은 지 십 년이 넘었다. 밤마다 노래가 들린다고 한다.'},hide:s=>!(s.base||s.manor)}
 };
 const ROAD=[['docks','street'],['street','church'],['street','academy'],['street','outskirts'],['docks','works'],['works','academy'],['docks','base'],['church','academy']];
-// 걸어서 1~3분. 저택 마차 창고를 고치면 40% 준다
-const travelSec=(a,b)=>Math.round(Math.max(60,Math.hypot(PL[a].x-PL[b].x,PL[a].y-PL[b].y)*4)*(S&&S.fix&&S.fix.coach?.6:1));
+// 걸어서 5~12분쯤(v020, 1편 감각). 저택 마차 창고를 고치면 40% 준다
+const travelSec=(a,b)=>Math.round(Math.max(300,Math.hypot(PL[a].x-PL[b].x,PL[a].y-PL[b].y)*15)*(S&&S.fix&&S.fix.coach?.6:1));
 // 길 위의 마주침: 첫 번째 밤을 하나라도 넘긴 뒤, 가스등 거리나 교단 구역을 지나는 길에서. 테스트 모드에서는 꺼 둔다
 let ENC_ON=!TEST;
 const roadFoe=a=>{if(ENC_ON&&(a.to==='outskirts'||a.fr==='outskirts'))return Math.random()<.25?(Math.random()<.5?'mutt':'hollow'):null;if(!ENC_ON||!S.night||a.fr==='base'&&a.to==='docks'||a.to==='base'&&a.fr==='docks')return null;if(!['street','church'].includes(a.fr)&&!['street','church'].includes(a.to))return null;
@@ -931,7 +931,7 @@ function aff(id,n){S.aff=S.aff||{};const t0=affTier(id);S.aff[id]=Math.max(0,Mat
 const cn=id=>id==='morten'?'모르텐':COMP[id]?COMP[id].n:id;
 /* 미뤄 둔 이야기 장면: 결과 창이 닫힌 뒤 tick에서 연다 */
 const homeN=()=>S.base?'저택':'여관';
-const joinL=id=>S.party&&S.party!==id?homeN()+'으로 보낸다':'같이 가자';
+const joinL=id=>S.party&&S.party!==id?'함께하자':'같이 가자';
 const pline=o=>o[S.party]?`<p>${cn(S.party)} — “${o[S.party]}”</p>`:'';
 const SCENE={
  ibreM:()=>ev('창고 뒤 내기 결투장',`<p>부두 창고 뒤편에 사람들이 둥글게 모여 있다. 동전이 오가고 고함이 터진다. 가운데에 무색 비늘의 거인이 서 있다. 키가 창고 처마에 닿는다.</p><p>판돈꾼 — “무색 셋이 또 이겼다! 도전자 없나? 이기면 판돈 전부!”</p><p class="m">아무도 나서지 않는다. 거인이 이쪽을 본다.</p>`+pline({kirien:'저 사람 진짜 세. 근데 눈이 슬퍼 보여.',oswin:'무색 파볼릭이군요. 명부에 없는 사람들. 여기 말고는 일할 데가 없지요.'}),
@@ -963,9 +963,9 @@ const SCENE={
  bargJ:c=>{jr('녹슨 닻 여관 부엌에서 국을 끓이던 탈영병 바르그를 만났다. 헌병들이 그를 찾고 있었다.'+(S.bargL?' 저택 요리사라고 둘러댔다.':' 헌병들을 막아섰다.'));
    ev('바르그',(c?'<p>바르그 — “…도망친 사람.”</p><p class="m">바르그가 그 말을 입 안에서 굴린다. 부정하지 않는다.</p><p>바르그 — “나 밤에 이름 불러. 시끄러울 거야.”</p>':'<p class="m">바르그의 꼬리가 한 번 흔들린다.</p><p>바르그 — “…응. 맛있지. 알아.”</p><p>바르그 — “나 밤에 이름 불러. 시끄러울 거야.”</p>')+
    '<p>바르그 — “그래도 부엌 있으면. 밥은 해 줄게. 매일.”</p>',
-   [[joinL('barg')==='같이 가자'?'저택에서 지내라':joinL('barg'),()=>{joinComp('barg');aff('barg',c?6:3);SCENE.joined('barg','…응. 부엌 어디야.')}],['갈 길을 가라',()=>{S.dec.barg=1;log('바르그와 함께 가지 않기로 했다.');ev('바르그','<p>바르그 — “…응. 여관 부엌에 있을게. 헌병 오기 전까지는.”</p><p class="m">바르그는 녹슨 닻 여관 부엌에 있다.</p>',[['돌아선다',null]],1);save()}]])},
+   [['저택에서 지내라',()=>{joinComp('barg');aff('barg',c?6:3);SCENE.joined('barg','…응. 부엌 어디야.')}],['갈 길을 가라',()=>{S.dec.barg=1;log('바르그와 함께 가지 않기로 했다.');ev('바르그','<p>바르그 — “…응. 여관 부엌에 있을게. 헌병 오기 전까지는.”</p><p class="m">바르그는 녹슨 닻 여관 부엌에 있다.</p>',[['돌아선다',null]],1);save()}]])},
  bargAgain:()=>ev('여관 부엌의 바르그','<p>바르그가 여전히 여관 부엌에서 솥을 젓고 있다. 나를 보고 그릇을 하나 꺼낸다.</p><p>바르그 — “…먹고 가. 그리고. 아직 그 저택 부엌 비어 있어?”</p>',
-   [[joinL('barg')==='같이 가자'?'저택에서 지내라':joinL('barg'),()=>{delete S.dec.barg;joinComp('barg');SCENE.joined('barg','…솥 챙길게.')}],['아직이다',null]]),
+   [['저택에서 지내라',()=>{delete S.dec.barg;joinComp('barg');SCENE.joined('barg','…솥 챙길게.')}],['아직이다',null]]),
  enoM:()=>ev('물길의 안내인',`<p>하수구를 나서려는데 아까 그 안내인이 물길 가장자리에 쪼그려 앉아 있다. 손바닥으로 푸르스름한 물을 떠서 마신다.</p><p class="m">물 위에 푸른 재 찌꺼기가 기름처럼 떠 있다.</p>
    <p>안내인 — “아 이거요? 걱정 마. 맛은 없어.”</p><p>안내인 — “에노라고 해요. 이 아래 물길 지도를 그려.”</p>`,
    [['그걸 왜 마셔?',()=>SCENE.eno2(1)],['길을 알려 줘서 고맙다',()=>SCENE.eno2(0)]]),
@@ -1000,9 +1000,11 @@ const SCENE={
    ev('키리엔','<p>키리엔 — “그래. 억지로 붙을 생각은 없어.”</p><p>키리엔 — “마음 바뀌면 가스등 거리 초소 앞으로 와. 거기서 의뢰인을 기다리니까.”</p><p class="m">키리엔은 가스등 거리 쪽으로 사라졌다. 교단 구역으로 가는 길이 열렸다.</p>',[['고개를 끄덕인다',null]],1)},
  kirAgain:()=>ev('키리엔','<p>초소 담벼락에 기대어 있던 키리엔이 귀를 세운다.</p><p>키리엔 — “또 왔네. 혼자 다니니까 어때?”</p>',
    [[joinL('kirien'),()=>{delete S.dec.kirien;joinComp('kirien');aff('kirien',(S.kshow?6:0));jr('가스등 거리 초소 앞에서 키리엔을 다시 만났다. 이번엔 함께 다니기로 했다.');SCENE.joined('kirien','키리엔 — “진작 그럴 것이지.”')}],['지나가던 길이다',null]]),
- joined:(id,line,more)=>{const away=S.party!==id,P=cn(S.party);
-   ev(cn(id),`<p>${line}</p>`+(away?`<p>${P} — “${(COMP[S.party].hello||{})[id]||'짐은 알아서 옮기라고 해.'}”</p>`:'')+
-   `<p class="m">${josa(cn(id),'이','가')} 함께하기로 했다.${away?` 지금은 ${josa(P,'과','와')} 다니고 있으니 ${josa(cn(id),'은','는')} ${S.base?'저택에서 지낸다':'여관 1층에서 기다린다'}. 데리고 나갈 사람은 ${S.base?'저택 동료의 방':'여관'}에서 바꿀 수 있다.`:''}${more?' '+more:''}</p>`,[['좋다',null]],1)},
+ joined:(id,line,more)=>{const away=S.party&&S.party!==id,P=cn(S.party),N=cn(id),home=S.base?'저택에서 지낸다':'여관 1층에서 기다린다';
+   if(!away){ev(N,`<p>${line}</p><p class="m">${josa(N,'이','가')} 함께하기로 했다.${more?' '+more:''}</p>`,[['좋다',null]],1);return}
+   ev(N,`<p>${line}</p><p>${P} — “${(COMP[S.party].hello||{})[id]||'짐은 알아서 옮기라고 해.'}”</p>`+
+   `<p class="m">${josa(N,'이','가')} 함께하기로 했다. 데리고 다닐 수 있는 사람은 한 명이다. 남는 사람은 ${home}.${more?' '+more:''}</p>`,
+   [[`${josa(P,'과','와')} 계속 다닌다`,()=>{log(`${josa(P,'과','와')} 계속 다닌다. ${josa(N,'은','는')} ${home}.`);save()}],[`${josa(N,'과','와')} 다닌다`,()=>{S.party=id;log(`${josa(N,'과','와')} 다니기로 했다. ${josa(P,'은','는')} ${home}.`);save()}]])},
  road:(foe,a)=>ev('길 위에서',`<p>${PL[a.fr].n}에서 ${PL[a.to].n}(으)로 가는 길. 가스등 하나가 꺼진 골목 앞에서 무언가 길을 막는다.</p><p class="m">${FOES[foe].intro}</p>`+
    pline({kirien:foe==='dog'?'배고픈 애야. 물리기 전에 쫓아 버려.':'저 칼 든 손 낯익은데.',oswin:'지름길이 늘 짧은 건 아니지요.'}),
    [['맞선다',()=>startBattle('fight',foe)],['돌아서 달아난다',()=>{const l=Math.min(S.coin,R(1,3));S.coin-=l;log('길 위에서 달아났다'+(l?'. 동전 '+l+'개를 흘렸다.':'.'));if(l)pop('달아났다',{n:['뛰다가 주머니에서 동전이 쏟아졌다.'],g:0,i:{}});save()}]]),
@@ -1427,7 +1429,7 @@ function placeView(){
     acts.push(B('locked','공방',{sub:'장인을 들여야 쓸 수 있다',dis:true}),B('rooms','동료의 방',{sub:S.comps.some(chNext)?'✦ 누군가 할 이야기가 있는 것 같다':S.comps.length?`${S.comps.length}명이 지낸다`:'빈 방 네 칸'}));
   }
   if(S.loc==='docks'&&!S.base){
-    acts.push(B('rest',`${LODGE}에서 쉬기`,{sub:S.hp>=S.mhp?'체력이 가득하다':'2분 · 체력을 모두 되찾는다',dis:busy||S.hp>=S.mhp}),B('rumor','여관 주인의 이야기',{sub:'요즘 도는 소문'}));
+    acts.push(B('rest',`${LODGE}에서 쉬기`,{sub:S.hp>=S.mhp?'체력이 가득하다':'2분 · 체력을 모두 되찾는다',dis:busy||S.hp>=S.mhp}),B('rumor','여관 주인과 이야기한다',{sub:'소문을 듣거나 묻고 싶은 걸 묻는다'}));
     if(S.comps.length>1)acts.push(B('rooms','여관 1층 — 기다리는 일행',{sub:'데리고 나갈 사람을 바꾼다',dis:busy}));
   }
   const kir=S.party==='kirien',kirSub=t=>kir?t:S.comps.includes('kirien')?'키리엔과 함께 와야 한다':'키리엔이 함께해야 한다';
@@ -1665,7 +1667,14 @@ const CMD={
     if(!L.length){note='<p class="m">지금은 더 묻고 싶은 게 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>';L=Q.map((x,i)=>[x,i]).filter(([,i])=>S.asked[id+':'+i]).map(([x,i])=>[x[0],()=>run(id+':'+i,typeof x[1]==='function'?x[1](S):x[1])]);if(RCX[id]&&S.asked[id+':r'])L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)])}
     ev(T,`<p class="m">${GREET[id]||''}</p>`+note,L.concat([['다른 이야기를 한다',()=>CMD.talk(id)]]))},
   manorIn:()=>{if(!S.act&&met(S,'kasimir'))SCENE.manorIn()},ibreM:()=>{if(!S.act&&S.night>=3&&!met(S,'ibre'))SCENE.ibreM()},ibreAgain:()=>{if(!S.act&&S.dec.ibre)SCENE.ibreAgain()},kasM:()=>{if(!S.act&&S.manor&&!met(S,'kasimir'))SCENE.kasM()},kasAgain:()=>{if(!S.act&&S.dec.kasimir)SCENE.kasAgain()},kqM:()=>{if(!S.act&&S.kq===3&&S.party==='kirien')SCENE.kqM()},kqD:()=>{if(!S.act&&S.kq===4&&S.party==='kirien'&&actN()>=2.5)SCENE.kqD()},kqC:()=>{if(!S.act&&S.kq===5&&S.party==='kirien')SCENE.kqC()},eda:()=>{if(!S.act&&S.pit&&met(S,'barg')&&met(S,'eno')&&!S.eda)SCENE.eda()},enoM:()=>{if(!S.act&&S.pit&&!met(S,'eno'))SCENE.enoM()},enoAgain:()=>{if(!S.act&&S.dec.eno)SCENE.enoAgain()},bargM:()=>{if(!S.act&&S.pit&&!met(S,'barg'))SCENE.bargM()},bargAgain:()=>{if(!S.act&&S.dec.barg)SCENE.bargAgain()},brita:()=>{if(!S.act&&S.mr===1)SCENE.brita()},tomb:()=>{if(!S.act&&S.mr===2&&!S.manor)SCENE.tomb()},pqask:()=>{if(!S.act&&S.pq===1)SCENE.pqask()},pqtent:()=>{if(!S.act&&S.pq===2)SCENE.pqtent()},hag:()=>{if(!S.act&&S.outs)SCENE.hag()},kq1:()=>{if(!S.act&&!S.kq&&S.party==='kirien')SCENE.kq1()},aw1:()=>{if(!S.act&&S.eda&&!S.mg)SCENE.aw1()},britaM:()=>{if(!S.act&&S.mg&&S.bm!==1)SCENE.britaM()},hagM:()=>{if(!S.act&&S.mg&&S.hq===3&&S.hm!==1)SCENE.hagM()},pitM:()=>{if(!S.act&&S.mg&&S.pit&&S.pm!==1)SCENE.pitM()},kq2:()=>{if(!S.act&&S.kq===1&&S.party==='kirien')SCENE.kq2()},kq3:()=>{if(!S.act&&S.kq===2&&S.party==='kirien')SCENE.kq3()},kqbuy:()=>{if(!S.act&&S.kq>=3&&S.kq<6&&!S.inv.mem)SCENE.kqBuy(1)},archive:()=>{if(!S.act)SCENE.archive()},kirAgain:()=>{if(!S.act)SCENE.kirAgain()},oswAgain:()=>{if(!S.act)SCENE.oswAgain()},
-  rumor:()=>{const L=S.legacy;const pool=RU.concat(L&&L.end&&LEGRU[L.end]?[LEGRU[L.end]]:[]);ev(LODGE,`<p>여관 주인이 잔을 닦으며 말한다.</p><p>“${pool[Math.random()*pool.length|0]}”</p>`,[['고개를 끄덕인다',null]],1)},
+  rumor:()=>{const back=[['다른 걸 묻는다',()=>CMD.rumor()],['이야기를 그만둔다',null]],O=[['요즘 도는 소문',()=>{const L=S.legacy;const pool=RU.concat(L&&L.end&&LEGRU[L.end]?[LEGRU[L.end]]:[]);ev(LODGE,`<p>여관 주인이 잔을 닦으며 말한다.</p><p>“${pool[Math.random()*pool.length|0]}”</p>`,back)}]];
+    if(!S.base)O.push(['쉴 곳을 묻는다',()=>{
+      if(!S.mr&&!S.manor&&S.comps.length>=2&&met(S,'ibre')){SCENE.manorRumor();return}
+      const t=S.mr||S.manor?'<p>여관 주인 — “아까 말한 오르빌 저택 말고는 없어. 노래가 들리는 집이라도 지붕은 있잖아.”</p>'+(S.mr===1?'<p>여관 주인 — “그 집 사정은 가스등 거리 늙은 점등꾼 브리타가 잘 알 거야.”</p>':''):
+        S.comps.length<2?'<p>여관 주인 — “혼자면 이층 끝방으로 충분하잖아. 일행이 늘면 그때 다시 물어봐. 아는 집이 하나 있긴 하니까.”</p>':
+        '<p>여관 주인 — “지금은 창고 뒤 내기판 구경꾼들 때문에 정신이 없어. 그 소란이 좀 가라앉으면 다시 와.”</p>';
+      ev(LODGE,t,back)}]);
+    O.push(['이야기를 그만둔다',null]);ev(LODGE,'<p>여관 주인이 잔을 닦다가 고개를 든다.</p>',O)},
   mapzoom:a=>mzoom(+a),mapcenter:()=>mcenter(1),
   mapsel:a=>{if(Date.now()-MDRAG<350)return;const p=PL[a];if(!p)return;if(a===S.loc&&!S.act){return}const ok=!p.u||p.u(S);
     if(!ok){ev(p.n,`<p class="m">${p.d}</p><p>${p.lk}</p>`,[['알겠다',null]],1);return}
