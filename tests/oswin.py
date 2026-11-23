@@ -46,7 +46,7 @@ with sync_playwright() as p:
     go(pg,'mill');pg.click('button[data-c=oq3]');choose(pg,'그 노래 어디서');choose(pg,'오빠라고 말해 준다');t=pg.inner_text('#ov');assert '오빠가 있었으면' in t and '금서고' in t;okpop(pg)
     assert E(pg,"window.__k2.S.oq")==4;print('factory/liese ok')
     # 금서고 반전
-    go(pg,'docks');go(pg,'street');go(pg,'vault');pg.click('button[data-c=oq4]');choose(pg,'들어간다');win(pg)
+    E(pg,"()=>{window.__k2.S.a2=6}");go(pg,'docks');go(pg,'street');go(pg,'vault');pg.click('button[data-c=oq4]');choose(pg,'들어간다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("금서고")',timeout=5000);assert '푸른 재 정제 공정' in pg.inner_text('#ov');choose(pg,'서명을 본다')
     t=pg.inner_text('#ov');nm=E(pg,"window.__k2.S.name");assert nm in t and '편지와 같다' in t;choose(pg,'리세를 그렇게 만든 게 나였어?');drain(pg);choose(pg,'금서고를 나선다')
     s=E(pg,"window.__k2.S");assert s['rev']==1 and s['oq']==5 and E(pg,"window.__k2.actN()")==2.5
