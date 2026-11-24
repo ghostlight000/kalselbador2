@@ -50,7 +50,7 @@ with sync_playwright() as p:
     xp0=S(pg)['xp']+S(pg)['lv']*1000;pg.click('button[data-c=read]');waitact(pg);t=pg.inner_text('#ov');assert '오르빌 상회 장부' in t;okpop(pg);assert S(pg)['read']['0']==1;print('read ok')
     # 함께 먹기: 체력 가득해도 쉴 수 있고, 호감 +2. 바로 다시는 없다
     a0=S(pg)['aff'];pg.click('button[data-c=rest]');waitact(pg);t=pg.inner_text('#ov');assert '수프' in t and '아늑한 거실' in t;okpop(pg)
-    a1=S(pg)['aff'];assert a1['kirien']==a0['kirien']+2 and a1['oswin']==a0['oswin']+2,(a0,a1)
+    a1=S(pg)['aff'];assert a1['kirien']==a0['kirien']+1 and a1['oswin']==a0['oswin']+1,(a0,a1)
     pg.evaluate("()=>{window.__k2.S.meal=Date.now()+1e9;window.__k2.render()}");assert pg.locator('button[data-c=rest][disabled]').count()==1;print('meal ok')
     # 저장 이전: v5 저장에 기본값
     pg.evaluate("()=>{const K=window.__k2;const o=JSON.parse(JSON.stringify(K.S));o.v=5;delete o.fix;delete o.deco;delete o.own;delete o.read;localStorage.setItem('kalsel2',JSON.stringify(o));K.load()}")

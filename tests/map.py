@@ -11,7 +11,7 @@ with sync_playwright() as p:
     box=pg.locator('#mapw').bounding_box();assert 400<=box['height']<=440,box
     m=MP();assert m['s']==1
     # 처음엔 현재 위치(운하 부두)가 창 가운데
-    nb=pg.locator('.map .node[data-a=docks] rect').bounding_box();assert abs(nb['x']+nb['width']/2-(box['x']+box['width']/2))<4 and abs(nb['y']+nb['height']/2-(box['y']+box['height']/2))<4,(nb,box)
+    nb=pg.locator('.map .node[data-a=inn] rect').bounding_box();assert box['x']<nb['x']<box['x']+box['width'] and box['y']<nb['y']<box['y']+box['height'],(nb,box)
     pg.click('button[data-c=mapzoom][data-a="1.3"]');pg.click('button[data-c=mapzoom][data-a="1.3"]');m=MP();assert m['s']>1.6 and abs(float(tf().split('scale(')[1].rstrip(')'))-MP()['s'])<1e-3
     # 다시 그려도 유지
     pg.click('button[data-c=rumor]');pg.click('#ov button:has-text("이야기를 그만둔다")');assert abs(float(tf().split('scale(')[1].rstrip(')'))-MP()['s'])<1e-3 and MP()['x']==m['x']

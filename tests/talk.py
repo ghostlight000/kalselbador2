@@ -55,7 +55,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.chd.oswin=3;K.S.chc={oswin:{2:1}};K.S.aff.oswin=25;K.render()}")
     if pg.is_visible('#ov.on'):choose(pg,'이야기를 그만둔다')
     pg.click('button[data-c=talk]');choose(pg,'물어보고 싶은 게 있어');choose(pg,'너에 대해 이야기해 줘');assert '리세를 만나러 가자' in pg.inner_text('#ov');a0=E(pg,"window.__k2.S.aff.oswin");choose(pg,'리세를 만나러 가자')
-    assert '언젠가는요' in pg.inner_text('#ov') and E(pg,"window.__k2.S.aff.oswin")==a0+3;choose(pg,'다른 것도 묻는다');assert '리세를 만나러 가자' not in pg.inner_text('#ov');print('follow-up ok')
+    assert '언젠가는요' in pg.inner_text('#ov') and E(pg,"window.__k2.S.aff.oswin")==a0+2;choose(pg,'다른 것도 묻는다');assert '리세를 만나러 가자' not in pg.inner_text('#ov');print('follow-up ok')
     b.close()
 assert not errs,errs
 print('ALL OK')
