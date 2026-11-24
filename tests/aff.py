@@ -15,7 +15,8 @@ with sync_playwright() as p:
     # 날 선 대답이 자기 이야기에 있다
     c=E(pg,"window.__k2.CH.kirien[0].c.map(x=>x[0])");assert '점 같은 걸 믿고 살았어?' in c,c
     # 내려가면 몸짓 한 줄, 0 아래로
-    E(pg,"window.__k2.aff('ibre',-40)");assert E(pg,"window.__k2.S.aff.ibre")<0
+    E(pg,"()=>{window.__k2.aff('eno',2);window.__k2.aff('eno',1)}");t=pg.inner_text('#aft');assert '에노 ▲ 호감 +3' in t,t
+    E(pg,"window.__k2.aff('ibre',-40)");assert E(pg,"window.__k2.S.aff.ibre")<0;assert '이브레 ▼ 호감 -40' in pg.inner_text('#aft')
     # 반감이면 같이 나가지 않는다
     pg.click('button[data-c=rooms]');choose(pg,'함께 나갈 동료를 고른다');choose(pg,'이브레와 나간다');assert '따라가지 않겠습니다' in pg.inner_text('#ov');assert E(pg,"window.__k2.S.party")=='kirien'
     choose(pg,'돌아간다');choose(pg,'문을 닫는다')

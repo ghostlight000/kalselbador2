@@ -238,7 +238,8 @@ body:has(#bt.on) #devb{display:none}
 .fl{position:absolute;right:0;top:-22px;font-weight:700;font-size:14px;animation:fl .9s forwards;pointer-events:none}
 @keyframes fl{0%{opacity:0;transform:translateY(4px)}20%{opacity:1}100%{opacity:0;transform:translateY(-12px)}}
 .fl.hurt{color:var(--bad)}.fl.gold{color:var(--kw)}.fl.heal{color:var(--a)}
-.drow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;width:100%;text-align:left;padding:7px 10px;border:1px solid var(--m);border-radius:6px;background:transparent;color:inherit;font:inherit;cursor:pointer}.drow:hover:not([disabled]){border-color:var(--a)}.drow[disabled]{opacity:.55;cursor:default}.dlist{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:4px 0 10px}@media(max-width:560px){.dlist{grid-template-columns:1fr}}</style>
+.drow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;width:100%;text-align:left;padding:7px 10px;border:1px solid var(--m);border-radius:6px;background:transparent;color:inherit;font:inherit;cursor:pointer}.drow:hover:not([disabled]){border-color:var(--a)}.drow[disabled]{opacity:.55;cursor:default}.dlist{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:4px 0 10px}@media(max-width:560px){.dlist{grid-template-columns:1fr}}#aft{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}#aft .af{font-size:13px;padding:5px 12px;border:1px solid var(--bo);border-radius:6px;background:var(--bg);color:var(--t);box-shadow:0 2px 10px rgba(0,0,0,.35);transition:opacity .4s}#aft .af.up{color:var(--a);border-color:var(--a)}#aft .af.dn{color:var(--bad);border-color:var(--bad)}#aft .af.out{opacity:0}
+</style>
 </head>
 <body>
 <div id="app"></div>
@@ -1127,7 +1128,13 @@ function gainXp(n){if(S.lv>=LVMAX){S.xp=0;return []}const out=[`경험 +${n}`];S
     out.push(`<b class="g">레벨 ${S.lv}</b> — 능력치 점수 +1${skCan()?' · 새 기술을 배울 수 있다':''}${TLV.includes(S.lv)?' · 새 재능을 고를 수 있다':''}. 캐릭터 탭에서 고른다.`);log('레벨 '+S.lv+'에 올랐다.')}
   return out}
 function aff(id,n){if(!id||!COMP[id])return;if(n>0){if(stal('seas'))n++;if(lin('i',1)&&Math.random()<.25)n++}S.aff=S.aff||{};const t0=affTier(id),b0=affBad(id);S.aff[id]=Math.max(-50,Math.min(100,(S.aff[id]||0)+n));const t1=affTier(id);if(t1>t0){S.tnew=S.tnew||{};S.tnew[id]=t1}
-  if(n<0&&met(S,id)){log(GES[id][Math.min(2,affBad(id))]);if(affBad(id)>=3&&b0<3&&!(S.left||{})[id]&&!S.pend)S.pend='leave:'+id}}
+  if(n&&met(S,id))affToast(id,n);if(n<0&&met(S,id)){log(GES[id][Math.min(2,affBad(id))]);if(affBad(id)>=3&&b0<3&&!(S.left||{})[id]&&!S.pend)S.pend='leave:'+id}}
+/* 선택 뒤 호감이 오르내린 것만 잠깐 보여 준다. 전체 값은 보이지 않는다 */
+const AFQ={};
+function affToast(id,n){if(typeof document==='undefined')return;let box=document.getElementById('aft');if(!box){box=document.createElement('div');box.id='aft';document.body.appendChild(box)}
+  const o=AFQ[id];if(o&&o.el.isConnected&&Date.now()-o.t<1800){o.n+=n;o.t=Date.now();clearTimeout(o.h)}else{const el=document.createElement('div');box.appendChild(el);AFQ[id]={el,n,t:Date.now()}}
+  const a=AFQ[id];a.el.className='af '+(a.n>0?'up':a.n<0?'dn':'');a.el.textContent=a.n?`${cn(id)} ${a.n>0?'▲':'▼'} 호감 ${a.n>0?'+':''}${a.n}`:`${cn(id)} 호감 그대로`;
+  a.h=setTimeout(()=>{a.el.classList.add('out');setTimeout(()=>a.el.remove(),400)},2600)}
 /* 호감이 0 아래로: 냉담(−10) · 반감(−25) · 혐오(−40). 숫자와 단계는 보이지 않는다 */
 const REFUSE={kirien:['…오늘은 혼자 갈래. 너랑 같이 걸을 기분 아니야.'],oswin:['정중히 사양하겠습니다. 오늘은 장부와 단둘이 있고 싶군요.'],barg:['…등을 맡길 마음이 안 든다. 혼자 가라.'],ibre:['오늘은 따라가지 않겠습니다.'],kasimir:['오늘은 제 쪽에서 거절하죠. 드문 일이니 기억해 두십시오.'],eno:['오늘은… 물길에 있을게요.']};
 const affBad=id=>{const a=(S.aff||{})[id]||0;return a<=-40?3:a<=-25?2:a<=-10?1:0};
