@@ -26,7 +26,7 @@ def choose(pg,text):
         sel='#ov.on button:has-text("다른 것도 묻는다")'
     pg.wait_for_selector(sel,timeout=20000); pg.click(sel); pg.wait_for_timeout(60)
 def go(pg,k):
-    pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); choose(pg,'간다'); pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000); pg.wait_for_timeout(650);(pg.is_visible('#ov.on h2:has-text("대성당")') and (choose(pg,'고개를 숙인다'),choose(pg,'대성당을 나선다')))
+    pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); choose(pg,'간다'); pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000); pg.wait_for_timeout(650);(pg.is_visible('#ov.on h2:has-text("대성당")') and (choose(pg,'고개를 숙인다'),choose(pg,'대성당을 나선다')));(pg.is_visible('#ov.on h2:has-text("문 앞의 상자")') and (choose(pg,'서랍 깊이'),choose(pg,'서랍을 닫는다')))
 def fight(pg):
     pg.wait_for_function('window.__k2.G.on',timeout=10000); pg.evaluate("()=>{const S=window.__k2.S;S.hp=S.mhp}"); pg.evaluate(BOT)
     pg.wait_for_function('!window.__k2.G.on',timeout=240000); h=okpop(pg); assert h!='쓰러졌다',h; return h

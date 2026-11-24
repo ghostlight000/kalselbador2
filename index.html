@@ -154,6 +154,7 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .tq .btn{text-align:left;padding-left:12px;min-height:34px}.tq .btn:before{content:"›";color:var(--a);margin-right:9px}
 .tq0{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 18px;margin-top:2px}.tq0:empty{display:none}.tq .btn.q0{min-height:32px;font-size:13px;color:var(--m);border-image:none;border-color:transparent;padding:2px 12px}.tq .btn.q0:before{content:none}
 .tq .btn.q0:hover{color:var(--t)}
+.tq .btn .qd{color:var(--m)}.tq .btn .qd:after{content:" ✓";font-size:11px;opacity:.8}
 .pcard:before,.pcard:after{content:"";position:absolute;left:50%;width:9px;height:9px;background:var(--a);transform:translateX(-50%) rotate(45deg)}
 .pcard:before{top:-19px}.pcard:after{bottom:-19px}
 .pcard h2{text-align:center}
@@ -962,7 +963,7 @@ Object.assign(QA,{
  oswin:[
   ['그 장부는 어디서 구했어?',['교단 문서고에서 훔쳤지요. 정확히는 원래 제 것이던 걸 되찾았습니다.','*오스윈이 장부 모서리의 그을음을 손톱으로 긁는다.','학술원 시절 제가 정리하던 명단입니다. 교단이 사 갔고 저는 서류에서 지워졌지요.','반쯤 지워진 이름들을 밤마다 한 줄씩 되살립니다. 글씨가 이렇게 흐린 건 제 눈 탓이 아닙니다.']],
   ['학술원에서는 무슨 일을 했어?',['칼라쉬 후예들의 비늘에서 마력 찌꺼기를 재는 일이었습니다. 제 비늘도 재 봤지요.','*오스윈의 꼬리 끝에서 작은 불꽃이 튄다.','숫자는 늘 실망스러웠습니다. 겨울 시대 조상들의 백분의 일도 안 되더군요.','그래서 다들 다른 방법을 찾기 시작했습니다. 비늘 대신 사람 머릿속을 재는 방법을요.']],
-  ['차 한잔 할래?',['좋지요. 제가 끓이겠습니다. 맛은 묻지 마십시오.','*찻잔에서 희미하게 쇠 냄새가 난다.','학술원에서는 찻물을 실험용 유리병에 끓였습니다. 그 버릇이 아직 남아서요.','마그다 부인은 제 차를 한 모금 마시고 말없이 자기 주전자를 내미셨지요. 그게 평가였습니다.']],
+  [s=>s.loc==='base'?'차 한잔 할래?':'잠깐 쉬었다 갈래?',s=>s.loc==='base'?['좋지요. 제가 끓이겠습니다. 맛은 묻지 마십시오.','*찻잔에서 희미하게 쇠 냄새가 난다.','학술원에서는 찻물을 실험용 유리병에 끓였습니다. 그 버릇이 아직 남아서요.','마그다 부인은 제 차를 한 모금 마시고 말없이 자기 주전자를 내미셨지요. 그게 평가였습니다.']:['좋습니다. 저 계단이 말라 있군요.','*오스윈이 외투 자락을 털고 앉는다. 장부를 무릎에 올리고 펴지 않는다.','학술원에서는 쉬는 시간도 기록했습니다. 몇 분 몇 초까지요.','지금은 아무도 적지 않습니다. …이상하게 그게 제일 쉬는 것 같군요.']],
   ['꼬리에서 튀는 불꽃은 뭐야?',['겨울 시대의 흔적입니다. 정전기라고 부르셔도 됩니다.','*말하는 사이 비늘 사이로 파란 불꽃이 하나 더 튄다.','화가 나거나 놀라면 더 많이 튀지요. 거짓말을 할 때도요. 그러니 제 꼬리를 잘 보십시오.','학술원은 이걸 주문이라 부르고 싶어 했습니다. 아쉽게도 그냥 찌꺼기였지요.']],
   ['서류에서 지워진다는 건 어떤 기분이야?',['어느 아침 출근했는데 문지기가 저를 모르더군요. 명부에 없는 사람은 들여보낼 수 없다고요.','*오스윈이 웃는다. 웃음이 짧다.','연구실 문패는 이미 떼어져 있었습니다. 제가 쓴 논문에는 다른 이름이 적혀 있었고요.','그날 밤 제 이름을 소리 내어 말해 봤습니다. 아직 거기 있는지 확인하려고요.']]],
  ibre:[
@@ -2256,6 +2257,7 @@ function storyView(){
 /* --- 팝업: 선택 창 ev, 결과 창 pop --- */
 function ev(h,p,b,w){if(COGQ&&typeof p==='string'){p+=`<p class="m cog">${COGQ.p}</p>`;COGQ=null}EV0={h,p,b,w};render()}
 let TK=null;const TG={},CHI={};
+const QD=(l,seen)=>seen?`<span class="qd">${l}</span>`:l; // 이미 들은 질문은 흐리게, 끝에 ✓
 function tev(id,h,p,b){ev(h,p,b,{k:id})} // 대화 창: 초상과 이름 머리, 질문 목록
 /* 말 줄 정리: 'X — “…”' 문단을 말한 사람 이름표와 말로 나눈다. 같은 사람이 이어 말하면 이름표를 다시 달지 않는다 */
 function sayFmt(h,own){let prev=null;return h.replace(/<p>([^<>“”—]{1,16}) — “([\s\S]*?)”<\/p>|<p class="m">/g,(m,who,t)=>{if(!who){prev=null;return m}const same=who===prev||who===own;prev=who;return `<p class="say${same?' cont':''}">${same?'':`<b>${who}</b>`}“${t}”</p>`})}
@@ -2373,37 +2375,38 @@ const CMD={
     if(S.orx[id]){const ae=aevFor(id);if(ae){if(tn)S.tnew[id]=tn;S.aevK=ae;SCENE.aev();return}}
     if(!S.orx[id]&&ORX[id]){S.orx[id]=1;aff(id,1);seq(id,T,ORX[id][S.og]||ORX[id][0],h=>tev(id,T,top+h,[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]]));return}
     const loc=(TALK[id]||{})[S.loc]||(TALK[id]||{})[pk(S.loc)],qs=[];
-    if(loc)qs.push(['이곳은 어때?',()=>{const key=id+':'+S.loc,first=!S.talked[key];S.talked[key]=1;if(first)aff(id,4);seq(id,T,loc,h=>tev(id,T,h,back))}]);
+    if(loc)qs.push([QD('이곳은 어때?',S.talked[id+':'+S.loc]),()=>{const key=id+':'+S.loc,first=!S.talked[key];S.talked[key]=1;if(first)aff(id,4);seq(id,T,loc,h=>tev(id,T,h,back))}]);
     qs.push(['요즘 어때?',()=>{const M=MOOD[id]||[['…']];tev(id,T,tln(id,M[Math.random()*M.length|0]),back)}]);
-    const ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));if(ot.length)qs.push(['다른 사람들 이야기',()=>CMD.talkO(id)]);
-    CHI[id]=(['지난 이야기를 들려줘',()=>{const ch=chNext(id);
+    const ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));S.oask=S.oask||{};if(ot.length)qs.push([QD('다른 사람들 이야기',ot.every(o=>S.oask[id+':'+o])),()=>CMD.talkO(id)]);
+    CHI[id]=([QD('지난 이야기를 들려줘',!chNext(id)),()=>{const ch=chNext(id);
       if(!ch){const D=DEFL[id]||[['…'],['…']];tev(id,T,tln(id,(S.chd[id]||0)>=(CH[id]||[]).length?D[1]:D[0]),back);return}
       const ci=S.chd[id]||0;
       seq(id,`${T} — ${ch.t}`,ch.p,h=>tev(id,`${T} — ${ch.t}`,h,ch.c.map(([l,g,r],k)=>[l,()=>{aff(id,g);S.chc=S.chc||{};(S.chc[id]=S.chc[id]||{})[ci]=k;S.chd[id]=(S.chd[id]||0)+1;jr(`${josa(T,'이','가')} 「${ch.t}」 이야기를 들려주었다.`);seq(id,`${T} — ${ch.t}`,r,h2=>tev(id,`${T} — ${ch.t}`,h2,back))}])))}]);
-    qs.push(['너에 대해 이야기해 줘',()=>CMD.about(id)]);
+    {const Q=QA[id]||[];const all=Q.every((x,i)=>!x||S.asked[id+':'+i])&&(!RCX[id]||S.asked[id+':r']);qs.push([QD('너에 대해 이야기해 줘',all),()=>CMD.about(id)])}
     TG[id]=qs;
     tev(id,T,top+`<p class="m">${greet(id)}</p>`,[['물어보고 싶은 게 있어',()=>CMD.ask(id)],['이야기를 그만둔다',null]])},
-  talkO:id=>{const T=cn(id),ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));tev(id,T,`<p class="m">${greet(id)}</p>`,ot.map(o=>[josa(cn(o),'은','는')+' 어때?',()=>tev(id,`${T} — ${cn(o)} 이야기`,tln(id,CMT[id][o]),[['다른 사람 이야기',()=>CMD.talkO(id)],['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]])]).concat([['다른 것도 묻는다',()=>CMD.ask(id)]]))},
+  talkO:id=>{const T=cn(id),ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));tev(id,T,`<p class="m">${greet(id)}</p>`,ot.map(o=>[QD(josa(cn(o),'은','는')+' 어때?',(S.oask||{})[id+':'+o]),()=>{(S.oask=S.oask||{})[id+':'+o]=1;save();tev(id,`${T} — ${cn(o)} 이야기`,tln(id,CMT[id][o]),[['다른 사람 이야기',()=>CMD.talkO(id)],['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]])}]).concat([['다른 것도 묻는다',()=>CMD.ask(id)]]))},
   ntalk:id=>{const N=NPCT[id];if(!N||!N.met(S))return;S.nmet=S.nmet||{};const first=!S.nmet[id];S.nmet[id]=1;S.nask=S.nask||{};
     const back=[['다른 것도 묻는다',()=>CMD.ntalk(id)],['이야기를 그만둔다',null]];
-    const L=N.t.filter(x=>!x[1]||x[1](S)).map((x,i)=>[x[0]+(S.nask[id+':'+x[0]]?'':' <i class="hbn">✦</i>'),()=>{S.nask[id+':'+x[0]]=1;save();const Ls=typeof x[2]==='function'?x[2](S):x[2];seq(id,N.n,Ls,h=>tev(id,N.n,h,back))}]);
+    const L=N.t.filter(x=>!x[1]||x[1](S)).map((x,i)=>[S.nask[id+':'+x[0]]?QD(x[0],1):x[0]+' <i class="hbn">✦</i>',()=>{S.nask[id+':'+x[0]]=1;save();const Ls=typeof x[2]==='function'?x[2](S):x[2];seq(id,N.n,Ls,h=>tev(id,N.n,h,back))}]);
     tev(id,N.n,(first?`<p class="m">${N.look}</p>`:'')+`<p class="m">${N.g[Math.random()*N.g.length|0]}</p>`,L.concat([['이야기를 그만둔다',null]]))},
   ask:id=>{if(!TG[id]){CMD.talk(id);EV0=null}tev(id,cn(id),`<p class="m">${greet(id)}</p>`,(TG[id]||[]).concat([['이야기를 그만둔다',null]]))},
   about:id=>{if(!TG[id]){CMD.talk(id);EV0=null}const T=cn(id),Q=QA[id]||[],back=[['다른 것도 묻는다',()=>CMD.about(id)],['이야기를 그만둔다',null]];
     const run=(key,L)=>{if(!S.asked[key]){S.asked[key]=1;aff(id,2)}seq(id,T,L,h=>tev(id,T,h,back))};
     const open=[];for(let i=0;i<Q.length&&open.length<2;i++){if(!Q[i]||S.asked[id+':'+i])continue;if(i>1&&Q[i-1]&&!S.asked[id+':'+(i-1)])break;if(affTier(id)<QAT[Math.min(i,QAT.length-1)])break;open.push(i)}
-    let L=open.map(i=>[Q[i][0],()=>run(id+':'+i,typeof Q[i][1]==='function'?Q[i][1](S):Q[i][1])]);
+    const lab=i=>typeof Q[i][0]==='function'?Q[i][0](S):Q[i][0];
+    let L=open.map(i=>[lab(i),()=>run(id+':'+i,typeof Q[i][1]==='function'?Q[i][1](S):Q[i][1])]);
     if(RCX[id]&&!S.asked[id+':r']&&affTier(id)>=2)L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)]);
     (CH[id]||[]).forEach((c,i)=>{const pick=((S.chc||{})[id]||{})[i];if(!c.fu||i>=(S.chd[id]||0)||pick===undefined||pick===0||S.asked[id+':f'+i])return;
       L.unshift([c.c[0][0].replace(/\.$/,''),()=>{S.asked[id+':f'+i]=1;aff(id,3);seq(id,T,['!'+c.c[0][0]].concat(c.c[0][2]),h=>tev(id,T,h,back))}])});
     let note='';
-    if(!L.length){note='<p class="m">지금은 더 묻고 싶은 게 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>';L=Q.map((x,i)=>[x,i]).filter(([x,i])=>x&&S.asked[id+':'+i]).map(([x,i])=>[x[0],()=>run(id+':'+i,typeof x[1]==='function'?x[1](S):x[1])]);if(RCX[id]&&S.asked[id+':r'])L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)])}
+    if(!L.length){note='<p class="m">지금은 더 묻고 싶은 게 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>';L=Q.map((x,i)=>[x,i]).filter(([x,i])=>x&&S.asked[id+':'+i]).map(([x,i])=>[QD(lab(i),1),()=>run(id+':'+i,typeof x[1]==='function'?x[1](S):x[1])]);if(RCX[id]&&S.asked[id+':r'])L.push([QD('내가 어떻게 보여?',1),()=>run(id+':r',RCX[id][S.race]||RCX[id].b)])}
     tev(id,`${T} — 너에 대해`,`<p class="m">${greet(id)}</p>`,(CHI[id]?[CHI[id]]:[]).concat(L,[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]]))},
   manorIn:()=>{if(!S.act&&met(S,'kasimir'))SCENE.manorIn()},ibreM:()=>{if(!S.act&&S.night>=3&&!met(S,'ibre'))SCENE.ibreM()},ibreAgain:()=>{if(!S.act&&S.dec.ibre)SCENE.ibreAgain()},kasM:()=>{if(!S.act&&S.manor&&!met(S,'kasimir'))SCENE.kasM()},kasAgain:()=>{if(!S.act&&S.dec.kasimir)SCENE.kasAgain()},kqM:()=>{if(!S.act&&S.kq===3&&S.party==='kirien')SCENE.kqM()},kqD:()=>{if(!S.act&&S.kq===4&&S.party==='kirien'&&actN()>=2.5)SCENE.kqD()},kqC:()=>{if(!S.act&&S.kq===5&&S.party==='kirien')SCENE.kqC()},eda:()=>{if(!S.act&&S.pit&&met(S,'barg')&&met(S,'eno')&&!S.eda)SCENE.eda()},enoM:()=>{if(!S.act&&S.pit&&!met(S,'eno'))SCENE.enoM()},enoAgain:()=>{if(!S.act&&S.dec.eno)SCENE.enoAgain()},bargM:()=>{if(!S.act&&S.pit&&!met(S,'barg'))SCENE.bargM()},bargAgain:()=>{if(!S.act&&S.dec.barg)SCENE.bargAgain()},brita:()=>{if(!S.act&&S.mr===1)SCENE.brita()},tomb:()=>{if(!S.act&&S.mr===2&&!S.manor)SCENE.tomb()},pqask:()=>{if(!S.act&&S.pq===1)SCENE.pqask()},pqtent:()=>{if(!S.act&&S.pq===2)SCENE.pqtent()},hag:()=>{if(!S.act&&S.outs)SCENE.hag()},kq1:()=>{if(!S.act&&!S.kq&&S.party==='kirien')SCENE.kq1()},oq1:()=>{if(!S.act&&S.mg&&!S.oq&&S.party==='oswin')SCENE.oq1()},oq2:()=>{if(!S.act&&S.oq===2)SCENE.oq2()},oq3:()=>{if(!S.act&&S.oq===3&&S.party==='oswin')SCENE.oq3()},oq4:()=>{if(!S.act&&S.oq===4&&S.party==='oswin')SCENE.oq4()},revOut:()=>{if(!S.act&&S.rev&&!S.revd)SCENE.revOut()},oq5:()=>{if(!S.act&&S.oq===5)SCENE.oq5()},hboard:()=>{if(!S.act)SCENE.board()},aw1:()=>{if(!S.act&&S.eda&&!S.mg)SCENE.aw1()},britaM:()=>{if(!S.act&&S.mg&&S.bm!==1)SCENE.britaM()},hagM:()=>{if(!S.act&&S.mg&&S.hq===3&&S.hm!==1)SCENE.hagM()},pitM:()=>{if(!S.act&&S.mg&&S.pit&&S.pm!==1)SCENE.pitM()},kq2:()=>{if(!S.act&&S.kq===1&&S.party==='kirien')SCENE.kq2()},kq3:()=>{if(!S.act&&S.kq===2&&S.party==='kirien')SCENE.kq3()},kqbuy:()=>{if(!S.act&&S.kq>=3&&S.kq<6&&!S.inv.mem)SCENE.kqBuy(1)},archive:()=>{if(!S.act)SCENE.archive()},kirAgain:()=>{if(!S.act)SCENE.kirAgain()},oswAgain:()=>{if(!S.act)SCENE.oswAgain()},
   rumor:()=>{const back=[['다른 걸 묻는다',()=>CMD.rumor()],['이야기를 그만둔다',null]],first=!S.magda;S.magda=1;
-    const O=[['개인적인 이야기',()=>{const n=Math.min(MAGP.length-1,S.magp||0);S.magp=n+1;save();tev('magda','마그다',MAGP[n].map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:`<p>마그다 — “${x}”</p>`).join(''),back)}],
+    const O=[[QD('개인적인 이야기',(S.magp||0)>=MAGP.length),()=>{const n=Math.min(MAGP.length-1,S.magp||0);S.magp=n+1;save();tev('magda','마그다',MAGP[n].map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:`<p>마그다 — “${x}”</p>`).join(''),back)}],
       ['근처의 소문',()=>{const L=S.legacy;const pool=RU.concat(L&&L.end&&LEGRU[L.end]?[LEGRU[L.end]]:[]).concat(RU2.filter(r=>r[0](S)).map(r=>r[1]));const r=pool[Math.random()*pool.length|0];tev('magda','마그다',`<p class="m">마그다가 잔을 닦던 손을 멈추고 목소리를 낮춘다.</p><p>마그다 — “${r}”</p>`,back)}]];
-    const cs=COMPS_MET().filter(id=>MAGC[id]);if(cs.length)O.push(['동료들에 대해 묻는다',()=>tev('magda','마그다','<p class="m">마그다가 누구 이야기를 듣고 싶냐는 듯 턱을 괸다.</p>',cs.map(id=>[cn(id),()=>tev('magda','마그다',MAGC[id].map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:`<p>마그다 — “${x}”</p>`).join(''),back)]).concat([['됐다',null]]))]);
+    const cs=COMPS_MET().filter(id=>MAGC[id]);if(cs.length)O.push(['동료들에 대해 묻는다',()=>tev('magda','마그다','<p class="m">마그다가 누구 이야기를 듣고 싶냐는 듯 턱을 괸다.</p>',cs.map(id=>[QD(cn(id),(S.mgc||{})[id]),()=>{(S.mgc=S.mgc||{})[id]=1;save();tev('magda','마그다',MAGC[id].map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:`<p>마그다 — “${x}”</p>`).join(''),back)}]).concat([['됐다',null]]))]);
     if(!S.base&&!S.mr&&!S.manor&&S.comps.length>=2)O.push(['쉴 곳을 묻는다',()=>met(S,'ibre')?SCENE.manorRumor():SCENE.innRing()]);
     O.push(['이야기를 그만둔다',null]);
     tev('magda',LODGE,first?'<p class="m">카운터 너머의 여자는 쉰 줄로 보인다. 팔꿈치까지 걷어붙인 팔뚝이 뱃사람처럼 굵다. 왼손 약지와 새끼손가락이 없다.</p><p class="m">잔을 닦는 손은 빠르고 시선은 늘 문 쪽에 가 있다. 카운터 모서리에 칼끝으로 새긴 이름이 있다. 마그다.</p><p>마그다 — “손님. 방값은 선불이야. 이야기는 공짜고. 둘 다 오래 끌면 값이 붙지.”</p>':'<p class="m">마그다가 잔을 닦다가 고개를 든다.</p><p>마그다 — “또 왔네. 뭐가 궁금해?”</p>',O)},
