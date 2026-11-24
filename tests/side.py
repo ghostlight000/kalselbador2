@@ -17,13 +17,13 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.grantPit()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;K.S.eda=1;K.S.loc='base';K.S.coin=50;K.render()}")
     # 먼 파견에서 피트가 돌아오지 않는다
-    pg.click('button[data-c=board]');E(pg,"()=>{const K=window.__k2;K._r=Math.random;Math.random=()=>0.01}");choose(pg,'성벽 바깥 폐허')
+    pg.click('button[data-c=board]');E(pg,"()=>{const K=window.__k2;K._r=Math.random;Math.random=()=>0.01}");choose(pg,'성벽 바깥 폐허');choose(pg,'피트 (')
     pg.wait_for_selector('#ov.on h2:has-text("돌아오지 않았다")',timeout=15000);E(pg,"()=>{Math.random=window.__k2._r}");okpop(pg)
     s=E(pg,"window.__k2.S");assert s['pq']==1 and s['kids']['pit']['st']=='lost'
     pg.click('button[data-c=tab][data-a=quest]');assert '돌아오지 않은 아이' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     go(pg,'docks');pg.click('button[data-c=pqask]');t=pg.inner_text('#ov');assert '넝마 시장' in t and '가장 역겨운 문장' in t;okpop(pg)
     assert E(pg,"window.__k2.S.outs")==1
-    go(pg,'street');go(pg,'rag');assert pg.locator('.scw svg').count()==1
+    go(pg,'street');go(pg,'rag');assert pg.locator('.scw svg, .scw img').count()==1
     pg.click('button[data-c=pqtent]');choose(pg,'철창으로');assert E(pg,"window.__k2.G.foe")=='ashman';t=win(pg)
     pg.wait_for_selector('#ov.on h2',timeout=5000);assert '나 누구였더라' in pg.inner_text('#ov');choose(pg,'하수구에서 노래하던');t=pg.inner_text('#ov');assert '맞아. 피트' in t and '장부에 한 줄씩' in t;okpop(pg)
     s=E(pg,"window.__k2.S");assert s['pq']==3 and s['kids']['pit']['st']=='hurt';print('pit quest ok')

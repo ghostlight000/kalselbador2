@@ -20,7 +20,7 @@ with sync_playwright() as p:
     # 흑금으로 시작: 동전 35
     start(pg,'p',1);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]')
     pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');E(pg,"window.__k2.endBattle('tut')");okpop(pg)
-    s=E(pg,'window.__k2.S');assert s['coin']==35 and s['tl']==[] and s['v']==11, (s['coin'],s.get('tl'),s['v'])
+    s=E(pg,'window.__k2.S');assert s['coin']==35 and s['tl']==[] and s['v']==12, (s['coin'],s.get('tl'),s['v'])
     E(pg,"()=>{const K=window.__k2;K.S.loc='docks';K.render()}")
     # 레벨 상한과 재능
     E(pg,"()=>{const K=window.__k2;K.gainXp(5000);K.render()}");s=E(pg,'window.__k2.S');assert s['lv']==12 and s['xp']==0, (s['lv'],s['xp'])
@@ -46,7 +46,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;const o=JSON.parse(JSON.stringify(K.S));o.v=10;o.race='b';o.tr=4;o.st=[5,2,3,5];o.tl=undefined;o.coin=0;localStorage.setItem('kalsel2',JSON.stringify(o))}")
     pg.goto(url);pg.wait_for_timeout(400)
     s=E(pg,'window.__k2.S')
-    if s: assert s['st'][1]==3 and s['v']==11 and s['tl']==[], (s['st'],s['v'])
+    if s: assert s['st'][1]==3 and s['v']==12 and s['tl']==[], (s['st'],s['v'])
     print('migrate', s and s['st'])
     print('errors',errs);assert not errs
     b.close()

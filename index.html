@@ -531,12 +531,12 @@ const avSvg=x=>avOk(x)?`<img class="av" src="${x}" alt="">`:`<span class="av"><s
 
 // 탐사: 직접 둘러본다. d=초, enc=무언가와 맞닥뜨릴 확률, foes=맞닥뜨릴 수 있는 것
 const EXP={
- docks:[{n:'부두 창고 뒤지기',d:90,enc:.2,foes:s=>['dog'],loot:()=>({i:{scrap:R(1,2)},g:R(0,2)}),say:'젖은 나무 상자 사이에서 쓸 만한 쇠붙이를 건졌다.'}],
- street:[{n:'뒷골목 뒤지기',d:120,enc:.3,foes:s=>s.night>=1?['dog','thief']:['dog'],loot:()=>({i:Math.random()<.4?{ash:1}:{},g:R(1,4)}),say:'꺼진 가스등 밑을 훑었다. 손끝이 조금 파래졌다.'}],
- academy:[{n:'강의동 뒤뜰 뒤지기',d:150,enc:.35,foes:s=>['clock','glass','shade'],loot:()=>({i:Math.random()<.5?{scrap:R(1,2)}:{ash:1},g:R(2,6)}),say:'버려진 실험 기구 사이에서 쓸 만한 것을 골랐다. 깨진 유리관마다 이름표가 붙어 있다.'}],
- outskirts:[{n:'천막 사이 뒤지기',d:150,enc:.35,foes:s=>['mutt','hollow','lump'],loot:()=>({i:Math.random()<.5?{scrap:R(1,2)}:{band:1},g:R(2,6)}),say:'넝마 더미 사이에서 쓸 만한 것을 골랐다. 천막 그늘에서 누가 이쪽을 오래 지켜봤다.'}],
- works:[{n:'용광로 뒤 고철 더미 뒤지기',d:180,enc:.4,foes:s=>['halfw','slag'],loot:()=>({i:{scrap:R(2,3),...(Math.random()<.4?{ash:1}:{})},g:R(2,6)}),say:'식은 슬래그 사이에서 쇳조각을 골랐다. 고철에 사람 손바닥 자국이 찍혀 있다.'}],
- church:[{n:'교단 묘지 둘러보기',d:150,enc:.25,foes:s=>['thief'],loot:()=>({i:Math.random()<.3?{band:1}:{},g:R(2,5)}),say:'이름이 지워진 비석이 유난히 많다.'}]
+ docks:[{n:'부두 창고 뒤지기',d:90,enc:.2,foes:s=>['dog'],loot:()=>({i:{scrap:R(1,2),...(Math.random()<.4?{fish:1}:{})},g:R(0,2)}),say:'젖은 나무 상자 사이에서 쓸 만한 쇠붙이를 건졌다.'}],
+ street:[{n:'뒷골목 뒤지기',d:120,enc:.3,foes:s=>s.night>=1?['dog','thief']:['dog'],loot:()=>({i:Object.assign(Math.random()<.4?{ash:1}:{},Math.random()<.3?{wax:1}:{}),g:R(1,4)}),say:'꺼진 가스등 밑을 훑었다. 손끝이 조금 파래졌다.'}],
+ academy:[{n:'강의동 뒤뜰 뒤지기',d:150,enc:.35,foes:s=>['clock','glass','shade'],loot:()=>({i:Object.assign(Math.random()<.5?{scrap:R(1,2)}:{ash:1},Math.random()<.3?{oil:1}:{}),g:R(2,6)}),say:'버려진 실험 기구 사이에서 쓸 만한 것을 골랐다. 깨진 유리관마다 이름표가 붙어 있다.'}],
+ outskirts:[{n:'천막 사이 뒤지기',d:150,enc:.35,foes:s=>['mutt','hollow','lump'],loot:()=>({i:Object.assign(Math.random()<.5?{scrap:R(1,2)}:{band:1},Math.random()<.5?{herb:R(1,2)}:{cloth:1}),g:R(2,6)}),say:'넝마 더미 사이에서 쓸 만한 것을 골랐다. 천막 그늘에서 누가 이쪽을 오래 지켜봤다.'}],
+ works:[{n:'용광로 뒤 고철 더미 뒤지기',d:180,enc:.4,foes:s=>['halfw','slag'],loot:()=>({i:{scrap:R(2,3),...(Math.random()<.4?{ash:1}:{}),...(Math.random()<.35?{warm:1}:{})},g:R(2,6)}),say:'식은 슬래그 사이에서 쇳조각을 골랐다. 고철에 사람 손바닥 자국이 찍혀 있다.'}],
+ church:[{n:'교단 묘지 둘러보기',d:150,enc:.25,foes:s=>['thief'],loot:()=>({i:Object.assign(Math.random()<.3?{band:1}:{},Math.random()<.3?{wax:1}:{}),g:R(2,5)}),say:'이름이 지워진 비석이 유난히 많다.'}]
 };
 // 여관 주인의 이야기(소문)
 const RU=['할아버지가 그러는데 옛날엔 주문이란 게 있었대. 근데 아무도 한 줄을 못 외워. 배운 사람들조차. 입을 열면 소리가 안 나온다더군. 목구멍에 문이 잠긴 것처럼.','학술원이 노인들 꿈을 사 간다더라. 겨울 시대 꿈만 골라서. 하룻밤에 동전 다섯. 꿈을 판 노인들은 그날부터 잠을 푹 잔대. 아무 꿈도 안 꾸니까.','가스등 불빛 아래 오래 서 있지 마. 집에 가는 길을 잊는다고들 해. 우리 남편이 그랬어. 불 켜는 사람이 제일 먼저 잊는다니. 웃기지도 않지.','학술원 사람들이 요즘 밤마다 묘지를 돈다더군. 삽은 안 들고 장부만 들고. 무얼 세는지는 몰라.','공장 지대 갱도에서 미지근한 물이 올라온대. 겨울 내내 얼어 있던 곳인데. 늙은 광부들은 그 물에 손을 담그면 옛날 노래가 들린다고 해.','부두 쪽 짐꾼 하나가 어제 제 이름을 못 댔다지. 오늘은 기억해 냈다던가. 내일은 모르지. 요즘은 다들 이름을 손등에 써 놓고 다녀.','대성당 정화자들이 또 장부를 고친대. 누구 이름이 빠졌는지는 아무도 몰라. 빠진 사람도 모르니까. 그게 제일 무서운 거야.'];
@@ -585,7 +585,7 @@ const DSP={
 const KIDS={pit:{n:'피트',d:'하수구에서 구한 아이. 성은 모른다.'},nell:{n:'넬',cost:15,d:'부두에서 그물을 깁던 아이. 손이 빠르다.'},jos:{n:'조스',cost:25,d:'굴뚝 청소부 아이. 좁은 데를 잘 기어든다.'},adele:{n:'아델',cost:40,d:'글을 읽을 줄 아는 아이. 교단 구호소에서 자랐다.'}};
 const kid=k=>{S.kids=S.kids||{};return S.kids[k]};
 const kidOk=k=>{const K=kid(k);return K&&K.st==='ok'};
-const kidSt=k=>{const K=kid(k);if(!K)return '';if(K.st==='out')return '파견 중';if(K.st==='hurt')return '다쳤다 — 돌봐 줘야 한다';if(K.st==='care')return '저택에서 간호받으며 쉬는 중';if(K.st==='hosp')return '교단 구호소에서 쉬는 중';if(K.st==='lost')return '돌아오지 않았다';return '쉬고 있다'};
+const kidSt=k=>{const K=kid(k);if(!K)return '';if(K.st==='out')return '파견 중';if(K.st==='hurt')return '다쳤다 — 돌봐 줘야 한다';if(K.st==='care')return '저택에서 간호받으며 쉬는 중';if(K.st==='hosp')return '교단 구호소에서 쉬는 중';if(K.st==='lost')return '돌아오지 않았다';if(K.st==='gath')return '채집 중'+(S.gl&&S.gl[k]?' — '+GSP[S.gl[k].sp].n:'');return '쉬고 있다'};
 const HELPER='심부름꾼 아이들';
 
 /* 저택 손보기: 지붕을 먼저 고치고 나머지를 고른다. 값은 시작할 때 치르고 그만두면 돌려받는다. d=초 */
@@ -594,7 +594,10 @@ const FIX={
  hearth:{n:'벽난로와 거실',need:'roof',coin:3,scrap:1,d:180,b:'굴뚝이 막혀 연기가 거꾸로 들어온다.',f:'굴뚝을 뚫고 묵은 재를 긁어냈다. 불이 곧게 탄다.',e:'쉬는 시간이 1분에서 30초로 준다. 거실을 꾸밀 수 있다'},
  kitchen:{n:'부엌',need:'roof',coin:6,scrap:2,d:300,b:'솥은 녹슬었고 찬장에는 쥐똥뿐이다.',f:'솥을 닦고 찬장을 새로 짰다. 저녁이면 식탁에 다 같이 앉을 수 있다.',e:'쉴 때 저택에 사는 동료들과 밥을 먹는다 (30분에 한 번 · 모두 호감 +1)'},
  study:{n:'서재',need:'roof',coin:5,scrap:1,d:240,b:'책이 모두 젖어 부풀었다. 책장 하나는 쓰러져 있다.',f:'책장을 세우고 책을 한 권씩 펴서 말렸다. 몇 권은 읽을 만하다.',e:'서재에서 옛 책을 읽을 수 있다 (경험, 이 집과 도시의 옛이야기)'},
- coach:{n:'마차 창고',need:'roof',coin:8,scrap:3,d:360,b:'바퀴 빠진 마차 한 대와 텅 빈 마구간이 있다.',f:'바퀴를 갈아 끼우고 부두 마부와 삯을 정했다.',e:'도시 안 이동 시간이 40% 줄고 길 위에서 덜 마주친다'}
+ coach:{n:'마차 창고',need:'roof',coin:8,scrap:3,d:360,b:'바퀴 빠진 마차 한 대와 텅 빈 마구간이 있다.',f:'바퀴를 갈아 끼우고 부두 마부와 삯을 정했다.',e:'도시 안 이동 시간이 40% 줄고 길 위에서 덜 마주친다'},
+ shop:{n:'공방',need:'roof',coin:6,scrap:3,d:300,b:'화덕 두 개와 큰 풀무가 있다. 풀무 가죽은 삭았고 화덕에는 새 둥지가 있다.',f:'풀무 가죽을 갈고 화덕을 쓸어냈다. 불이 곧게 든다.',e:'쇠와 약을 다룰 줄 아는 장인이 있으면 공방에서 물건을 만들 수 있다'},
+ store:{n:'창고',need:'roof',coin:4,scrap:2,d:240,b:'문짝이 떨어져 쥐가 드나든다.',f:'문짝을 달고 선반을 짰다.',e:'아이들이 채집해 둘 수 있는 양이 2시간치에서 6시간치로 는다'},
+ cellar:{n:'저장고',need:'store',coin:8,scrap:3,d:360,b:'반지하 저장고에 물이 무릎까지 찼다.',f:'물을 퍼내고 배수구를 뚫었다. 서늘하고 마르다.',e:'아이들이 채집해 둘 수 있는 양이 10시간치로 는다'}
 };
 const FIXN=Object.keys(FIX);
 function manorDesc(){const f=S.fix||{},d=S.deco||DECO0;
@@ -783,7 +786,7 @@ let C={av:'i0',r:'p',t:0,o:0,sx:'x',n:'베렌',leg:null,legMsg:''}; // 만들기
 
 function newGame(){
   const st=baseStats(C.r,C.t,C.o),mhp=calcMhp(st,1);
-  S={v:11,mgs:{},aev:{},mort:0,av:C.av||'i0',kids:{},asked:{},tnew:{},cl:{},chd:{},kq:0,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'베렌').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5+(C.r==='p'&&C.t===1?30:0),tl:[],
+  S={v:12,mgs:{},aev:{},mort:0,av:C.av||'i0',kids:{},asked:{},tnew:{},cl:{},chd:{},kq:0,lv:1,xp:0,sp:0,skp:0,sk:[OSK[C.o]],sex:C.sx,name:(C.n.trim()||'베렌').replace(/[<>&"'`\\]/g,'').slice(0,12),race:C.r,tr:C.t,og:C.o,st,hp:mhp,mhp,coin:5+(C.r==='p'&&C.t===1?30:0),tl:[],
      inv:{letter:1,band:2},loc:'inn',act:null,disp:[],comps:[],party:null,aff:{},cq:{},rom:null,talked:{},dec:{},fix:{},deco:{...DECO0},own:{},read:{},night:0,tutd:0,base:0,pit:0,pro:0,vis:{docks:1,inn:1},log:[],jr:[],legacy:C.leg,t0:Date.now()};
   log('오지 말라는 편지를 품고 오렌하르트에 닿았다. 운하 부두의 녹슨 닻 여관에 방을 얻었다.');
   save();V='place';try{window.scrollTo(0,0)}catch(e){}
@@ -1588,7 +1591,7 @@ const SCENE={
  pit3:c=>ev('피트',(c?'<p>피트의 배에서 대답 대신 꼬르륵 소리가 난다. 피트가 얼굴을 붉힌다.</p>':'<p>피트 — “위는 가스등이 너무 밝아. 오래 있으면 머리가 멍해져. 여긴 어두워서 괜찮아.”</p>')+
    '<p>피트 — “…근데 너네 집 있어? 진짜 집? 지붕 있는 거?”</p>'+pline({kirien:'유령 나오던 집이지만 지붕은 있어. 반쯤.',oswin:'지붕은 있습니다. 비가 새는 지붕이지만요. 철학적으로는 지붕이지요.'}),
    [['저택에서 같이 지내자',()=>SCENE.pitJoin()],['심부름을 해 주면 밥을 주겠다',()=>SCENE.pitJoin()]]),
- pitJoin:q=>{S.pit=1;S.kids=S.kids||{};S.kids.pit=S.kids.pit||{st:'ok'};log('피트가 저택에서 지내게 되었다.');jr('하수구에서 쥐 떼에 쫓기던 아이 피트를 구했다. 저택에서 심부름을 하며 지내기로 했다.');
+ pitJoin:q=>{S.pit=1;S.kids=S.kids||{};S.kids.pit=S.kids.pit||{st:'ok'};kinit('pit');log('피트가 저택에서 지내게 되었다.');jr('하수구에서 쥐 떼에 쫓기던 아이 피트를 구했다. 저택에서 심부름을 하며 지내기로 했다.');
    ev('피트',`<p>피트 — “진짜? 뭐든 할게. 밥만 주면.”</p>`+pline({kirien:'밥은 네가 해. 나는 못 해.',oswin:'글은 읽을 줄 압니까? 아니라면 가르치지요. 심부름꾼이 장부를 못 읽으면 곤란하니까.'})+
    (met(S,'eno')?'':'<p>피트 — “…아까 그거 봤어? 철창 옆에서 길 알려 준 거. 물길 아이야. 하수구 애들끼리만 하는 이야기인데 진짜 있었네.”</p><p>피트 — “길 잃으면 나타나서 길을 알려 준대. 대신 이름을 하나 물어본대.”</p>')+(met(S,'barg')?'':'<p>피트 — “밤마다 부두에 큰 늑대 아저씨가 나타나. 회색 마차만 보면 지붕에서 뛰어내려서 자루를 열어 봐. 누굴 찾는대. 헌병들이 그 아저씨 찾아다니던데.”</p>')+`<p class="m">피트가 저택에서 지내게 되었다. 본거지에서 파견을 맡길 수 있다.</p>`,[['데려간다',()=>{if(!q&&!met(S,'eno'))SCENE.enoM()}]],1)}
 };
@@ -1891,9 +1894,10 @@ function migrate(){
   S.fix=S.fix||{};S.deco=Object.assign({},DECO0,S.deco||{});Object.keys(DECO).forEach(sl=>{if(decoO(sl,S.deco[sl])[0]!==S.deco[sl])S.deco[sl]=DECO0[sl]});S.own=S.own||{};S.read=S.read||{};if(S.v<6)S.v=6;
   S.chd=S.chd||{};S.sx=S.sx||{};S.kq=S.kq||0;if(S.v<7)S.v=7;
   S.asked=S.asked||{};S.tnew=S.tnew||{};S.cl=S.cl||{};S.comps.forEach(cst);if(S.v<8)S.v=8;
-  if(!S.av)S.av='i0';if(S.mort==null)S.mort=S.night>=3?3:1;if(S.kqe&&S.kq===4)S.kq=6;if((S.kq||0)>=3)S.outs=1;if(S.manor&&!S.mr)S.mr=3;S.kids=S.kids||{};if(S.pit&&!S.kids.pit)S.kids.pit={st:S.disp.length?'out':'ok'};S.disp.forEach(d=>{if(!d.kid)d.kid='pit'});if(S.v<9)S.v=9;
+  if(!S.av)S.av='i0';if(S.mort==null)S.mort=S.night>=3?3:1;if(S.kqe&&S.kq===4)S.kq=6;if((S.kq||0)>=3)S.outs=1;if(S.manor&&!S.mr)S.mr=3;S.kids=S.kids||{};if(S.pit&&!S.kids.pit)S.kids.pit={st:S.disp.length?'out':'ok'};S.disp.forEach(d=>{if(!d.kid&&!d.comp)d.kid='pit'});if(S.v<9)S.v=9;
   S.mgs=S.mgs||{};S.aev=S.aev||{};if(S.v<10){if(!S.mg){const old=S.sk.filter(k=>SKL[k].mg);if(old.length){S.sk=S.sk.filter(k=>!SKL[k].mg);if(old.includes(OSK0[S.og])){S.mgOld=[OSK0[S.og]];if(!S.sk.includes(OSK[S.og]))S.sk.push(OSK[S.og])}S.skp+=old.filter(k=>k!==OSK0[S.og]).length;if(!S.sk.length)S.sk=[OSK[S.og]]}}S.v=10} // v10: 주인공은 처음에 주문을 쓰지 못한다 // v9: 아이들·먼 파견·간호 // v8: 호감 10단계, 질문 대화, 동료 전투 // v7: 동료 자기 이야기, 키리엔 퀘스트 // v6: 저택 손보기·꾸미기
   S.tl=(S.tl||[]).filter(k=>TAL[k]);if(S.rev&&!S.a2)S.a2=6;if(S.v<11){if(S.race==='p'&&S.tr===1)S.coin+=30;if(S.race==='b'&&S.tr===4)S.st[1]++;if(S.tutd)S.tutF=1;S.v=11} // v11: 종족 능력·재능
+  S.gl=S.gl||{};S.gsh=S.gsh||{};S.rcpL=S.rcpL||{};S.gear=S.gear||{};S.dish=S.dish||{};S.crN=S.crN||0;Object.keys(S.kids).forEach(k=>{kinit(k);if(S.kids[k].st==='gath'&&!S.gl[k])S.kids[k].st='ok'});Object.keys(S.gl).forEach(k=>{if(!kid(k))delete S.gl[k]});if(S.v<12)S.v=12; // v12: 채집·제작·요리
   S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,Math.max(0,S.hp|0));
 }
 const log=t=>{S.log.unshift(t);S.log=S.log.slice(0,40)};
@@ -2167,7 +2171,9 @@ function placeView(){
     acts.push(B('fix','저택 손보기',{sub:nf<FIXN.length?`고친 곳 ${nf} / ${FIXN.length}`:'모두 고쳤다',dis:busy}),
       B('deco','거실 꾸미기',{sub:S.fix.hearth?`지금 저택은 ${comfortT()}`:'벽난로와 거실을 먼저 고쳐야 한다',dis:!S.fix.hearth}));
     if(S.fix.study)acts.push(B('read','서재에서 책 읽기',{sub:`2분 · ${BOOK.filter((b,i)=>!S.read[i]).length?'아직 읽지 않은 책이 있다':'다 읽은 책을 다시 편다'}`,dis:busy}));
-    acts.push(B('locked','공방',{sub:'장인을 들여야 쓸 수 있다',dis:true}),B('rooms','동료의 방',{sub:S.comps.some(id=>chNext(id)||aevFor(id))?'✦ 누군가 할 이야기가 있는 것 같다':S.comps.length?`${S.comps.length}명이 지낸다`:'빈 방 네 칸'}));
+    if(S.pit)acts.push(B('ledger','채집 장부',{sub:Object.keys(S.gl||{}).length?Object.keys(S.gl).map(k=>KIDS[k].n+' — '+GSP[S.gl[k].sp].n).join(' · '):'아이들에게 재료 모으기를 맡긴다'}));
+    if(S.fix.kitchen)acts.push(B('pot','부엌 솥',{sub:'재료로 요리를 한다'}));
+    acts.push(B('shop','공방',{sub:S.craft?'만드는 중 — '+RCP[S.craft.id].n:smithIn()?(smChNext()?'✦ 오틸리에가 할 이야기가 있는 것 같다':'오틸리에에게 배우고 만든다'):S.smM?'공방을 고치면 오틸리에가 온다':'장인을 들여야 쓸 수 있다'}),B('rooms','동료의 방',{sub:S.comps.some(id=>chNext(id)||aevFor(id))?'✦ 누군가 할 이야기가 있는 것 같다':S.comps.length?`${S.comps.length}명이 지낸다`:'빈 방 네 칸'}));
   }
   if(S.loc==='inn'){
     if(!S.base)acts.push(B('rest',`${LODGE}에서 쉬기`,{sub:S.hp>=S.mhp?'체력이 가득하다':'2분 · 체력을 모두 되찾는다',dis:busy||S.hp>=S.mhp}));
@@ -2177,6 +2183,7 @@ function placeView(){
   const kir=S.party==='kirien'||!!(S.left&&S.left.kirien),kirSub=t=>kir?t:S.comps.includes('kirien')?'키리엔과 함께 와야 한다':'키리엔이 함께해야 한다';
   Object.entries(LEAVEW).concat([['kasimir','church']]).forEach(([k,at])=>{if((S.left||{})[k]&&!(S.recon||{})[k]&&S.loc===at)acts.push(B('recon',`${josa(cn(k),'을','를')} 찾아간다`,{a:k,sub:'떠난 동료',dis:busy}))});
   Object.entries(NPCT).forEach(([k,N])=>{if(S.loc===N.at&&N.met(S)&&!N.busy(S))acts.push(B('ntalk',`${N.n}${josa(N.n,'과','와').slice(-1)} 이야기한다`,{a:k,sub:N.sub,dis:busy}))});
+  if(S.loc==='docks'&&S.base&&!S.smM)acts.push(B('smithM','다리 밑 땜장이',{sub:'운하 다리 밑에서 쇠 두드리는 소리가 난다',dis:busy}));
   if(S.loc==='docks'&&S.night>=3&&!met(S,'ibre'))acts.push(B('ibreM','창고 뒤 내기 결투장',{sub:'고함과 동전 소리가 들린다',dis:busy}));
   if(S.loc==='docks'&&S.dec.ibre)acts.push(B('ibreAgain','창고 뒤의 이브레',{sub:'아직 결투장에 있다',dis:busy}));
   if(S.loc==='church'&&S.manor&&!met(S,'kasimir'))acts.push(B('kasM','납골당의 남자',{sub:'오르빌 무덤 옆 계단',dis:busy}));
@@ -2232,7 +2239,7 @@ function bagHtml(){const e=Object.entries(S.inv).filter(([,n])=>n>0);return e.le
 function sideCards(){
   const P=COMP[S.party];
   let h=`<div class="card"><h2>동료</h2>${!P&&S.mort===1?'<p><b class="g">모르텐</b></p><p class="m">경비대 교관</p>':''}${P?`<p><b class="g">${P.n}</b></p><p class="m">${compLine(S.party)}</p>${CSK[S.party]?`<p class="m">${Object.keys(CSK[S.party]).filter(k=>cst(S.party).r[k]).map(k=>CSK[S.party][k].n+' '+'◆'.repeat(cst(S.party).r[k])).join(' · ')||'기술을 아직 고르지 않았다'}${cst(S.party).cp?' · <span class="hbn">점수 '+cst(S.party).cp+'</span>':''}</p>`:''}${S.comps.length>1?`<p class="m">${S.comps.filter(x=>x!==S.party).map(cn).join(', ')} — ${S.base?'본거지에서 지낸다':'여관 1층에서 기다린다'}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
-  if(S.base&&S.pit)h+=`<div class="card"><h2>파견</h2>${Object.keys(S.kids||{}).map(k=>{const d=S.disp.find(x=>(x.kid||'pit')===k);return d?`<div class="disp">${KIDS[k].n} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`:`<p class="m">${KIDS[k].n} — ${kidSt(k)}</p>`}).join('')}</div>`;
+  if(S.base&&S.pit)h+=`<div class="card"><h2>파견</h2>${Object.keys(S.kids||{}).map(k=>{const d=S.disp.find(x=>(x.kid||'pit')===k);if(S.gl&&S.gl[k])return `<p class="m">${KIDS[k].n} — ${GSP[S.gl[k].sp].n} 채집 · ${peekTxt(k)}</p>`;return d?`<div class="disp">${KIDS[k].n} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`:`<p class="m">${KIDS[k].n} — ${kidSt(k)}</p>`}).join('')}${S.disp.filter(d=>d.comp).map(d=>`<div class="disp">${cn(d.comp)} — ${DSP[d.id].n}<div class="row"><span class="m">돌아오기까지</span><span class="dl" data-t="${d.t0+d.d*1000}">${fmt((d.t0+d.d*1000-Date.now())/1000)}</span></div></div>`).join('')}${S.craft?`<div class="disp">공방 — ${RCP[S.craft.id].n}<div class="row"><span class="m">끝나기까지</span><span class="dl" data-t="${S.craft.t0+S.craft.d*1000}">${fmt((S.craft.t0+S.craft.d*1000-Date.now())/1000)}</span></div></div>`:''}</div>`;
   if(!S.base)h+=`<div class="card"><h2>머무는 곳</h2><p class="m">운하 부두 ${LODGE} 이층 끝방. 하룻밤씩 값을 치른다. 짐을 둘 데도 사람을 들일 데도 없다.</p></div>`;
   h+=`<div class="card"><h2>기록</h2><div class="log">${S.log.slice(0,14).map(x=>`<div>${x}</div>`).join('')}</div></div>`;
   return h;
@@ -2412,13 +2419,16 @@ function resolveAct(){
     if(a.at==='outskirts'&&S.hq===1){add('grim',1);S.hq=2;jr('천막 사이 넝마 더미에서 하그의 주문책을 찾았다.');pop(X.n,{i:Object.assign({grim:1},L.i),g:L.g,n:[X.say,'넝마 더미 바닥에서 가죽 표지 책 한 권이 나왔다. 하그의 주문책이다.']});save();return true}
     if(S.base&&!S.pit&&(a.at==='docks'||a.at==='street')){pop(X.n,{i:L.i,g:L.g,n:[X.say]});S.pend='sewer';save();return true}
     const SXR=sxExplore(a.at),say=[X.say,...SXR.notes];if(!SXR.started)xevRoll(a.at);
-    if(!S.pend&&Math.random()<X.enc){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:say.join(' ')};save();startBattle('fight',foe);return true}
+    if(!S.pend&&Math.random()<X.enc*(a.cd?.5:1)){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:say.join(' ')};save();startBattle('fight',foe);return true}
     pop(X.n,{i:L.i,g:L.g,n:say})}
   if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='inn'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='inn'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(S.mg&&!S.oq0&&S.comps.includes('oswin')&&!S.pend)S.pend='oq0';if(a.to==='academy'&&S.sole&&(S.oq||0)>=2&&!S.solv&&!S.pend)S.pend='soleV';if(a.to==='base'&&S.oq===6&&!S.lisL&&!S.pend)S.pend='liseL';sxArrive(a.to);if(a.to==='church'&&!S.archM&&!S.pend)S.pend='archM';if(a.to==='base'&&(S.a2||0)>=3&&!S.gift&&!S.pend)S.pend='gift';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
     const rf=!S.pend&&roadFoe(a);if(rf){save();SCENE.road(rf,a);return true}
+    if(S.base&&!(TEST&&!ROADT))roadPick(a.to);
 }
   if(a.t==='r'){S.hp=S.mhp;const b=S.loc==='base';const bell=BELLS[(S.bell=(S.bell||0)+1)%BELLS.length];log(b?'화로 곁에서 쉬었다. 몸이 풀렸다.':'여관 방에서 쉬었다.');const n=[b?'장작이 타는 소리를 듣다 깜박 잠들었다. 체력을 모두 되찾았다.':'창밖 가스등이 밤새 깜박였다. 그래도 눈을 붙였다. 체력을 모두 되찾았다.'];n.push(`<span class="m">대성당 종이 일곱 번 울렸다. 바람에 ${(S.a2||0)>=1?'불의 목자 '+ARCHN+'의 ':''}설교 한 줄이 실려 왔다. ${bell}</span>`);
     if(b&&mealOk()){const k=S.fix.kitchen?1:0,c=comfort()>=8?1:0;if(k+c){S.meal=Date.now();S.comps.forEach(id=>aff(id,1));
+      const dk=Object.keys(DISH).filter(x=>S.inv[x]>0).sort((a,b)=>(S.comps.includes(DISH[b].likes)?1:0)-(S.comps.includes(DISH[a].likes)?1:0))[0];
+      if(dk){add(dk,-1);n.push(`가방에 있던 ${DISH[dk].n}을(를) 상에 올렸다.`);const lk=DISH[dk].likes;if(S.comps.includes(lk)&&!(S.left||{})[lk]){aff(lk,2);n.push(DISHSAY[lk])}}
       n.push((k?'부엌에서 끓인 수프를 다 같이 나눠 먹었다. ':'')+(c?'아늑한 거실에서 다들 늦게까지 이야기를 나눴다. ':'')+`${S.comps.map(cn).join(', ')} — 조금 가까워진 것 같다.`)}}
     if(b&&S.bargP&&S.comps.includes('barg')&&!S.bargPs){S.bargPs=1;n.push('현관 기둥에 학술원 꼬리표 하나가 못 박혀 있다. 마차가 지날 때마다 대조해 보겠다고 바르그가 박아 둔 것이다.')}
     pop('휴식',{n})}
@@ -2438,18 +2448,29 @@ function resolveDisp(){
   for(const k of Object.keys(S.kids)){const K=S.kids[k];if((K.st==='care'||K.st==='hosp')&&Date.now()>=K.until){K.st='ok';changed=true;log(`${KIDS[k].n}의 상처가 다 나았다.`)}}
   for(const d of [...S.disp]){
     if(Date.now()<d.t0+d.d*1000)continue;
-    S.disp=S.disp.filter(x=>x!==d);changed=true;const D=DSP[d.id],k=d.kid||'pit',N=KIDS[k].n,K=kid(k);if(K)K.st='ok';
+    S.disp=S.disp.filter(x=>x!==d);changed=true;const D=DSP[d.id];
+    if(d.comp){const r=D.res(),I={};Object.entries(r.i).forEach(([x,n])=>{const v=Math.ceil(n*1.5);if(v>0){I[x]=v;add(x,v)}});const g=Math.ceil(r.g*1.5);S.coin+=g;log(`${cn(d.comp)}가 ${D.n}에서 돌아왔다.`);pop('파견에서 돌아왔다',{i:I,g,n:[`${cn(d.comp)} — ${D.n}`,D.say,`${cn(d.comp)} — “${CDSAY[d.comp]||'다녀왔습니다.'}”`]});continue}
+    const k=d.kid||'pit',N=KIDS[k].n,K=kid(k);if(K)K.st='ok';
     if(k==='pit'&&D.far&&!S.pq&&S.eda&&Math.random()<.35){if(K)K.st='lost';S.pq=1;log('피트가 돌아오지 않았다.');jr(`${D.n}에 보낸 피트가 돌아오지 않았다.`);pop('돌아오지 않았다',{n:[`${D.n}에 보낸 피트가 해가 져도 돌아오지 않는다.`,'<span class="m">임무 탭에 「돌아오지 않은 아이」가 생겼다.</span>']});continue}
-    if(D.risk&&Math.random()<D.risk){if(K)K.st='hurt';log(`${N}가 다쳐서 돌아왔다.`);pop('파견에서 돌아왔다',{n:[`${N} — ${D.n}`,D.hurt,'<span class="m">다친 아이는 저택의 아이들 방에서 돌봐 줘야 다시 일할 수 있다.</span>']});continue}
-    const r=D.res();Object.entries(r.i).forEach(([x,n])=>add(x,n));S.coin+=r.g;log(`${N}가 ${D.n}에서 돌아왔다.`);
-    pop('파견에서 돌아왔다',{i:r.i,g:r.g,n:[`${N} — ${D.n}`,D.say]});
+    const vv=K&&K.ks?K.ks.v:1,risk=D.risk?Math.max(0,D.risk*(1-.1*(vv-1))-(K&&K.shoe?.05:0)):0;
+    if(risk&&Math.random()<risk){if(K)K.st='hurt';log(`${N}가 다쳐서 돌아왔다.`);pop('파견에서 돌아왔다',{n:[`${N} — ${D.n}`,D.hurt,'<span class="m">다친 아이는 저택의 아이들 방에서 돌봐 줘야 다시 일할 수 있다.</span>']});continue}
+    const r=D.res();Object.entries(r.i).forEach(([x,n])=>add(x,n));S.coin+=r.g;log(`${N}가 ${D.n}에서 돌아왔다.`);const kn=[];kup(k,'v',D.far?2:1,kn);
+    pop('파견에서 돌아왔다',{i:r.i,g:r.g,n:[`${N} — ${D.n}`,D.say,...kn]});
   }
+  if(S.craft&&Date.now()>=S.craft.t0+S.craft.d*1000){const R0=RCP[S.craft.id],k=S.craft.id;S.craft=null;S.crN=(S.crN||0)+1;changed=true;const n=[R0.e];let I={};
+    if(R0.out){I=R0.out;Object.entries(I).forEach(([x,v])=>add(x,v))}
+    else if(R0.gear==='shoe'){const c=Object.keys(S.kids||{}).find(c=>!kid(c).shoe&&kid(c).st!=='lost');if(c){kid(c).shoe=1;n.unshift(`${KIDS[c].n}에게 신발을 신겼다. ${KIDS[c].n}가 발을 몇 번 굴러 본다.`)}}
+    else{S.gear=S.gear||{};S.gear[R0.gear]=1}
+    if(k==='blade')n.push('<span class="m">재를 먹인 쇠를 물에 담그자 짧게 끓어오른다. 낯선 목소리가 한 마디 스친다. 무슨 말인지는 놓쳤다.</span>');
+    if(smChNext())n.push('<span class="m">오틸리에가 화덕 곁에서 무언가 말하고 싶은 얼굴이다.</span>');
+    log(`공방에서 ${R0.n}을(를) 만들었다.`);pop(R0.n+'을(를) 만들었다',{i:I,n})}
   if(changed)save();return changed;
 }
 function tick(){
   if(CL.dirty&&CL.st=='on')cflush();
   if(!S)return;
   let ch=false;
+  if(!AWAYCK&&!EV0&&!POP&&!G.on&&awayCheck())return;
   if(!EV0&&!POP&&!G.on){ch=resolveAct()||ch;ch=resolveDisp()||ch;if(!EV0&&!POP&&S.pend){pending();return}}
   if(ch){render();return}
   // 진행 막대·남은 시간만 다시 칠한다
@@ -2495,7 +2516,7 @@ const CMD={
     const say=S.party&&(DECOSAY[S.party]||{})[id];
     ev('거실',`<p class="m">${DECO[sl].n}을(를) ${nm}(으)로 바꿨다. 지금 저택은 <b>${comfortT()}</b>.</p>`+(say?`<p>${cn(S.party)} — “${say}”</p>`:''),[['좋다',null]],1);save()},
   read:()=>{if(S.act||!S.fix.study)return;startAct({t:'b',d:120})},
-  explore:a=>{if(S.act)return;const X=(EXP[S.loc]||[])[+a];if(!X)return;startAct({t:'x',at:S.loc,i:+a,l:X.n,d:X.d})},
+  explore:a=>{if(S.act)return;const X=(EXP[S.loc]||[])[+a];if(!X)return;const cd=S.inv.candle>0?1:0;if(cd){add('candle',-1);log('밀랍 양초에 불을 붙였다.')}startAct({t:'x',at:S.loc,i:+a,l:X.n+(cd?' · 양초':''),d:X.d,cd})},
   mtalk:()=>{if(S.mort!==1)return;S.masked=S.masked||{};const back=[['다른 이야기를 한다',()=>CMD.mtalk()],['이야기를 그만둔다',null]];
     const N=MTQ.filter(n=>!S.masked[n[0]]&&(!n[1]||S.masked[n[1]])).slice(0,3),L=N.length?N:MTQ.filter(n=>S.masked[n[0]]);
     tev('morten','모르텐','<p class="m">모르텐이 막대에 몸을 기댄다.</p>'+(N.length?'':'<p class="m">더 묻고 싶은 건 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>'),L.map(([id,,q,Ls])=>[q,()=>{S.masked[id]=1;seq('morten','모르텐',typeof Ls==='function'?Ls():Ls,h=>tev('morten','모르텐',h,back))}]).concat([['이야기를 그만둔다',null]]))},
@@ -2550,28 +2571,29 @@ const CMD={
   cancel:()=>{const a=S.act;if(!a)return;S.act=null;if(a.t==='f'){S.coin+=a.pc!=null?a.pc:FIX[a.k].coin;add('scrap',FIX[a.k].scrap)}log(a.t==='m'?'걸음을 돌렸다.':'하던 일을 그만두었다.');save();render()},
   tutor:()=>startBattle('tut'),practice:()=>startBattle('practice'),
   sxa:a=>{if(S.act)return;const q=sxQ(a),D=SX[a];if(!q||q.e)return;const st=D.steps[q.i];if(!st||!st.run||st.at!==S.loc||(st.need&&!st.need(S)))return;st.run()},
-  board:()=>{if(!S.base||!S.pit)return;const free=Object.keys(S.kids||{}).filter(kidOk),ok=free.length>0;
-    const L=(far)=>'<div class="dlist">'+Object.entries(DSP).filter(([,d])=>!!d.far===far).map(([k,d])=>`<button class="drow"${ok?` data-c="dpick" data-a="${k}"`:' disabled'}><b>${d.n}</b><span class="m">${fmt(d.d*SEC())}${d.risk?' · 위험':''}</span></button>`).join('')+'</div>';
-    ev('파견 게시판',`<p class="m">${ok?`맡길 수 있는 아이 ${free.length}명. 일을 고르면 바로 보낸다.`:'지금은 쉬고 있는 아이가 없다.'}</p><h3>가까운 곳</h3>${L(false)}<h3>먼 곳 <span class="m">오래 걸리고 위험하지만 얻는 것이 많다</span></h3>${L(true)}`,[['닫기',null]],1)},
+  board:()=>{if(!S.base||!S.pit)return;const free=Object.keys(S.kids||{}).filter(kidOk),fc=freeComps(),ok=free.length>0;
+    const L=(far)=>'<div class="dlist">'+Object.entries(DSP).filter(([,d])=>!!d.far===far).map(([k,d])=>`<button class="drow"${ok||far&&fc.length?` data-c="dpick" data-a="${k}"`:' disabled'}><b>${d.n}</b><span class="m">${fmt(d.d*SEC())}${d.risk?' · 위험':''}</span></button>`).join('')+'</div>';
+    ev('파견 게시판',`<p class="m">${ok?`맡길 수 있는 아이 ${free.length}명. 일을 고르면 바로 보낸다.`:'지금은 쉬고 있는 아이가 없다.'}</p><h3>가까운 곳</h3>${L(false)}<h3>먼 곳 <span class="m">오래 걸리고 위험하지만 얻는 것이 많다. 함께 걷지 않는 동료를 보내면 다치지 않고 더 많이 가져온다</span></h3>${L(true)}`,[['닫기',null]],1)},
   dpick:k=>{EV0=null;CMD.dsend(k);render()},
-  dsend:k=>{const D=DSP[k];if(!D)return;const free=Object.keys(S.kids||{}).filter(kidOk);if(!free.length)return;
+  dsend:k=>{const D=DSP[k];if(!D)return;const free=Object.keys(S.kids||{}).filter(kidOk),fc=D.far?freeComps():[];if(!free.length&&!fc.length)return;
     const go=c=>{S.kids[c].st='out';S.disp.push({id:k,kid:c,t0:Date.now(),d:D.d*SEC()});log(`${KIDS[c].n}를 ${D.n}에 보냈다.`);save();render()};
-    if(free.length===1)go(free[0]);else ev(D.n,'<p class="m">누구를 보낼까.</p>',free.map(c=>[KIDS[c].n,()=>go(c)]).concat([['그만둔다',null]]))},
+    const goC=c=>{S.disp.push({id:k,comp:c,t0:Date.now(),d:D.d*SEC()});log(`${josa(cn(c),'을','를')} ${D.n}에 보냈다.`);save();render()};
+    if(free.length===1&&!fc.length)go(free[0]);else ev(D.n,'<p class="m">누구를 보낼까.</p>',free.map(c=>[`${KIDS[c].n} (${kstat(c)})`,()=>go(c)]).concat(fc.map(c=>[`${cn(c)} (동료 · 다치지 않는다)`,()=>goC(c)])).concat([['그만둔다',null]]))},
   kids:()=>{if(!S.base||!S.pit)return;const ks=Object.keys(S.kids||{}),hire=S.eda?Object.keys(KIDS).filter(k=>KIDS[k].cost&&!kid(k)):[],btn=[];
     ks.filter(k=>kid(k).st==='hurt').forEach(k=>{btn.push([`${KIDS[k].n} 간호하기 (붕대 1 · 오래 걸림)`,()=>CMD.kcare(k,'care')]);btn.push([`${KIDS[k].n} 구호소에 보내기 (동전 8)`,()=>CMD.kcare(k,'hosp')])});
     if(hire[0])btn.push([`${KIDS[hire[0]].n} 고용하기 (동전 ${px(KIDS[hire[0]].cost)})`,()=>CMD.khire(hire[0])]);
-    ev('아이들 방',ks.map(k=>`<p><b>${KIDS[k].n}</b> <span class="m">${kidSt(k)}</span></p><p class="m">${KIDS[k].d}</p>`).join('')+(hire[0]?`<p class="m">부두에 일을 찾는 아이가 있다. ${KIDS[hire[0]].n} — ${KIDS[hire[0]].d}</p>`:S.eda?'':'<p class="m">이야기가 더 진행되면 다른 아이들도 일을 찾아올 것이다.</p>'),btn.concat([['문을 닫는다',null]]))},
+    ev('아이들 방',ks.map(k=>`<p><b>${KIDS[k].n}</b> <span class="m">${kidSt(k)}</span></p><p class="m">${KIDS[k].d} ${kid(k).st!=='lost'?kstat(k):''}</p>`).join('')+(hire[0]?`<p class="m">부두에 일을 찾는 아이가 있다. ${KIDS[hire[0]].n} — ${KIDS[hire[0]].d}</p>`:S.eda?'':'<p class="m">이야기가 더 진행되면 다른 아이들도 일을 찾아올 것이다.</p>'),btn.concat([['문을 닫는다',null]]))},
   kcare:(k,how)=>{const K=kid(k);if(!K||K.st!=='hurt')return;
     if(how==='care'){if(!(S.inv.band>0)){ev('아이들 방','<p>붕대가 없다.</p>',[['알겠다',null]],1);return}add('band',-1);K.st='care';K.until=Date.now()+5400e3*SEC();log(`${KIDS[k].n}를 간호했다. 한동안 쉬어야 한다.`);ev('아이들 방',`<p>상처를 씻고 붕대를 감아 준다. ${KIDS[k].n}가 이를 악물고 참는다.</p><p class="m">${fmt(5400*SEC())} 동안 쉬면 낫는다.</p>`,[['이불을 덮어 준다',null]],1)}
     else{if(S.coin<8){ev('아이들 방','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=8;K.st='hosp';K.until=Date.now()+2700e3*SEC();log(`${KIDS[k].n}를 교단 구호소에 보냈다.`);ev('아이들 방',`<p>교단 구호소 수녀가 ${KIDS[k].n}를 데려간다.</p><p class="m">${fmt(2700*SEC())} 동안 쉬면 낫는다.</p>`,[['알겠다',null]],1)}
     save()},
-  khire:k=>{const C=KIDS[k];if(!C||kid(k)||!S.eda)return;if(S.coin<px(C.cost)){ev('아이들 방','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=px(C.cost);S.kids[k]={st:'ok'};log(`${C.n}를 심부름꾼으로 고용했다.`);jr(`${C.n}를 심부름꾼으로 고용했다. ${C.d}`);
+  khire:k=>{const C=KIDS[k];if(!C||kid(k)||!S.eda)return;if(S.coin<px(C.cost)){ev('아이들 방','<p>동전이 모자라다.</p>',[['알겠다',null]],1);return}S.coin-=px(C.cost);S.kids[k]={st:'ok'};kinit(k);log(`${C.n}를 심부름꾼으로 고용했다.`);jr(`${C.n}를 심부름꾼으로 고용했다. ${C.d}`);
     ev(C.n,`<p>${C.n} — “${{nell:'일한 만큼만 주세요. 지난 주인은 이름도 안 물었어요. 저는 넬이에요.',jos:'굴뚝보다 좁은 데는 없어요. 어디든 들어가요. 나올 때 뭘 들고 나와야 하는지만 알려 주세요.',adele:'장부를 읽을 줄 알아요. 구호소에서 배웠어요. …거기 장부에는 아이들 이름 옆에 무게가 적혀 있었어요.'}[k]}”</p><p class="m">${C.n}가 저택에서 지내게 되었다.</p>`,[['좋다',null]],1);save()},
   rooms:()=>{const L=S.comps.filter(c=>!(S.left||{})[c]),inn=!S.base;if(inn&&S.loc!=='inn'||!inn&&S.loc!=='base')return;if(!L.length){CMD.rooms0();return}
-    ev(inn?'여관 1층':'동료의 방',`<p class="m">${inn?'저택이 생기기 전까지는 여관에서 데리고 나갈 사람을 바꾼다.':'데리고 나갈 사람은 여기서만 바꿀 수 있다.'}</p>${L.map(id=>`<p><b>${cn(id)}</b> <span class="m">${compLine(id)}${S.party===id?' · 함께 걷는 중':''}</span></p>`).join('')}`,
+    ev(inn?'여관 1층':'동료의 방',`<p class="m">${inn?'저택이 생기기 전까지는 여관에서 데리고 나갈 사람을 바꾼다.':'데리고 나갈 사람은 여기서만 바꿀 수 있다.'}</p>${L.map(id=>`<p><b>${cn(id)}</b> <span class="m">${compLine(id)}${S.party===id?' · 함께 걷는 중':awayC(id)?' · 파견 중':''}</span></p>`).join('')}`,
       (inn?[]:[['동료와 이야기한다'+(L.some(id=>chNext(id)||aevFor(id))?' ✦':''),()=>CMD.roomTalk()]]).concat(L.length>1?[['함께 나갈 동료를 고른다',()=>CMD.roomPick()]]:[]).concat([['문을 닫는다',null]]))},
   roomTalk:()=>{const L=S.comps.filter(c=>!(S.left||{})[c]);ev('동료의 방','<p class="m">누구와 이야기할까.</p>',L.map(id=>[josa(cn(id),'과','와')+' 이야기한다'+(chNext(id)||aevFor(id)?' ✦':''),()=>CMD.talk(id)]).concat([['돌아간다',()=>CMD.rooms()]]))},
-  roomPick:()=>{const L=S.comps.filter(c=>!(S.left||{})[c]),inn=!S.base;ev(inn?'여관 1층':'동료의 방',`<p class="m">지금은 ${josa(cn(S.party),'과','와')} 함께 걷고 있다. 누구와 나갈까.</p>`,L.filter(id=>id!==S.party).map(id=>[josa(cn(id),'과','와')+' 나간다',()=>{if(affBad(id)>=2){ev(cn(id),tln(id,REFUSE[id]),[['돌아간다',()=>CMD.rooms()]],1);return}S.party=id;log(josa(cn(id),'과','와')+' 함께 나서기로 했다.');save()}]).concat([['돌아간다',()=>CMD.rooms()]]))},
+  roomPick:()=>{const L=S.comps.filter(c=>!(S.left||{})[c]),inn=!S.base;ev(inn?'여관 1층':'동료의 방',`<p class="m">지금은 ${josa(cn(S.party),'과','와')} 함께 걷고 있다. 누구와 나갈까.</p>`,L.filter(id=>id!==S.party&&!awayC(id)).map(id=>[josa(cn(id),'과','와')+' 나간다',()=>{if(affBad(id)>=2){ev(cn(id),tln(id,REFUSE[id]),[['돌아간다',()=>CMD.rooms()]],1);return}S.party=id;log(josa(cn(id),'과','와')+' 함께 나서기로 했다.');save()}]).concat([['돌아간다',()=>CMD.rooms()]]))},
   rooms0:()=>ev('동료의 방','<p>복도를 따라 빈 방 네 칸. 침대 틀만 남아 있다.</p><p class="m">함께 걸을 사람을 만나면 여기서 지내게 된다. 데리고 나갈 사람도 여기서만 바꿀 수 있다.</p>',[['문을 닫는다',null]]),
   evb:a=>{const f=EV0&&EV0.b[+a][1];if(!f&&EV0&&EV0.ta)TAON=false;TK=EV0&&EV0.w&&EV0.w.k||null;EV0=null;if(f)f();TK=null;if(S)save();render()},
   popok:()=>{POP=null;render()},
@@ -2579,6 +2601,182 @@ const CMD={
   csel:a=>{CSEL=a;render()},
   settings:()=>settings()
 };
+/* ===================== 채집·제작·요리 (v042) =====================
+   채집 장부: 아이 하나를 한 곳에 맡겨 두면 게임을 닫아 둔 동안에도 재료가 쌓인다(한도 2·6·10시간치).
+   공방: 장인 오틸리에에게 배운 것을 만든다(실제 시간). 부엌 솥: 재료 둘로 요리, 싸움에서도 쓴다. */
+const DISH={
+ soup:{n:'생선 수프',m:['fish','herb'],hp:35,fx:'wide',likes:'kirien',e:'체력 35. 다음 적 차례에 판정이 넓어진다.'},
+ tea:{n:'쓴 차와 빵',m:['flour','herb'],hp:25,fp:1,likes:'oswin',e:'체력 25, 기력 1.'},
+ roast:{n:'기름진 고기 구이',m:['meat','oil'],hp:50,likes:'ibre',e:'체력 50.'},
+ raw:{n:'덜 익힌 고기',m:['meat'],hp:40,fx:'mark',likes:'barg',e:'체력 40. 다음 공격 피해가 15% 는다.'},
+ cake:{n:'꿀 과자',m:['flour','honey'],hp:20,fp:2,likes:'eno',e:'체력 20, 기력 2.'},
+ htea:{n:'꿀 약초차',m:['herb','honey'],hp:30,fx:'ward',likes:'kasimir',e:'체력 30. 다음에 맞는 공격 피해가 절반이 된다.'}
+};
+const DISHSAY={kirien:'키리엔이 수프 그릇에 코를 박는다. “…생선은 싫다고 했잖아. 이건 괜찮아.”',oswin:'오스윈이 쓴 차를 한 모금 마시고 눈을 감는다. “학술원 차보다 정직한 맛이군요.”',ibre:'이브레가 고기를 뼈째 든다. “따뜻합니다. 고맙습니다.”',barg:'바르그가 덜 익힌 고기를 말없이 씹는다. 한참 뒤에 한 번 고개를 끄덕인다.',eno:'에노는 먹지 않는다. 꿀 과자 접시 곁에 앉아 냄새만 오래 맡는다. “누가 이걸 아이한테 구워 줬던 기억이 있어요.”',kasimir:'카시미르가 약초차 잔을 손바닥으로 감싼다. “붉은 물보다 이쪽이 낫군요. 그대에게만 하는 말입니다.”'};
+Object.assign(IT,{
+ cloth:['천 조각','시장 뒷골목에서 고른 자투리 천. 대부분 회색이다.'],
+ herb:['들풀','성벽 바깥에서 뜯은 쓴 풀. 씹으면 혀가 저린다.'],
+ oil:['기름','등잔 기름과 기계 기름이 반쯤 섞였다. 냄새가 독하다.'],
+ thread:['실','헌 옷에서 풀어낸 실. 질기다.'],
+ wax:['밀랍','점등꾼들이 버린 초 토막을 녹여 뭉쳤다.'],
+ fish:['생선','운하 아랫목에서 잡힌 작은 생선. 눈이 흐리다.'],
+ flour:['밀가루','빵집 바닥에서 쓸어 담았다. 체에 치면 먹을 만하다.'],
+ meat:['고기','성벽 바깥 덫에 걸린 산토끼 고기.'],
+ honey:['꿀','무너진 집 벽 속 벌집에서 떼어 왔다. 겨울 꽃 냄새가 난다.'],
+ warm:['미지근한 물','하칸골 용광로 뒤 배수구에서 떠 온 물. 병을 막아 두어도 식지 않는다.'],
+ salve:['들풀 고약','들풀을 기름에 개어 굳힌 고약. 싸움 중에 바르면 체력 60을 되찾는다.'],
+ candle:['밀랍 양초','오래 타는 양초. 탐사에 들고 가면 무언가와 맞닥뜨릴 확률이 절반으로 준다. 한 번 쓰면 다 탄다.']
+});
+Object.entries(DISH).forEach(([k,D])=>{IT[k]=[D.n,D.e+' 싸움 중에 먹을 수 있다.']});
+const MATS=['scrap','ash','cloth','herb','oil','thread','wax','fish','flour','meat','honey','warm','moss'];
+
+// 채집 장부. r=레벨마다 더해지는 시간당 양, s=레벨이 오를 때 아이가 전하는 이야기
+const GSP={
+ dock:{n:'부두 가장자리',r:[{scrap:2},{fish:1},{oil:1}],
+  s:['널판 밑에 짐꾼들이 흘린 쇠붙이가 걸린다.','짐배 일꾼 하나가 그물 거는 법을 알려 줬다. 이제 생선도 몇 마리씩 걸린다. 일꾼은 이름을 묻지 않았다고 한다.','부두 끝 기름 창고 경비가 아이를 알아본다. 새는 통 밑에 깡통을 받쳐 두어도 모른 척한다. 대신 회색 마차가 언제 오는지는 묻지 말라고 했다고 한다.'],
+  say:['운하 쪽은 오늘 조용했어요.','밤에 짐배 한 척이 불을 끄고 지나갔어요. 안 본 척했어요.','물이 어제보다 차가웠어요.']},
+ market:{n:'시장 뒷골목',r:[{cloth:2},{flour:1},{thread:1}],
+  s:['천 가게 뒤 쓰레기 더미에서 자투리 천을 고른다.','빵집 아주머니가 바닥에 흘린 밀가루를 쓸어 가게 해 준다. 바닥을 쓸어 주는 값이라고 한다.','넝마주이 노인이 실 푸는 법을 가르쳐 줬다. 노인은 실을 풀 때마다 같은 노래를 흥얼거린다. 가사는 기억나지 않는다고 한다.'],
+  say:['빵집에서 탄 빵 끄트머리를 얻어먹었어요.','오늘은 다들 값을 깎느라 소리를 질렀어요.','누가 제 이름을 물었어요. 모른다고 했어요.']},
+ lamp:{n:'가스등 거리 처마 밑',r:[{ash:1},{wax:1},{oil:1}],
+  s:['꺼진 가스등 처마 밑에 푸른 재가 쌓인다. 손끝이 조금 파래진다.','점등꾼들이 쓰다 버린 초 토막이 모이는 자리를 알아냈다.','브리타 할머니가 남는 기름을 나눠 준다. 대신 등 이름을 하나씩 외워 오라고 한다. 아이는 이제 등 열두 개의 이름을 안다.'],
+  say:['재를 만지면 뭘 잊어버린 것 같은데 뭘 잊었는지는 몰라요.','가스등 하나가 제가 지나갈 때만 흔들렸어요.','오늘은 등이 일찍 켜졌어요.']},
+ wall:{n:'성벽 바깥 들판',r:[{herb:2},{meat:1},{honey:1}],
+  s:['성벽 바깥 들판에서 쓴 풀을 뜯는다. 사람 발길이 끊긴 곳이다.','무너진 집터에 덫을 놓는 법을 익혔다. 산토끼가 걸린다. 아이는 처음 잡은 날 울었다고 한다.','벽 속에 벌집이 있는 집을 찾았다. 벽에는 겨울 시대 글자가 새겨져 있다. 벌들은 그 글자 둘레에만 집을 짓는다고 한다.'],
+  say:['바람에서 쇠 냄새가 안 났어요. 좋았어요.','들개 발자국이 있었는데 개는 없었어요.','성벽 위에서 누가 계속 내려다봤어요.']},
+ rag:{n:'넝마 시장',u:s=>s.outs,r:[{thread:2},{cloth:1},{wax:1}],
+  s:['넝마 시장에서 헌 옷을 풀어 실을 모은다.','천막촌 아이들과 친해졌다. 남는 천을 서로 바꾼다.','천막 뒤 노파가 오래된 초 토막을 나눠 준다. 교단 축일에 쓰고 남은 것이라고 한다. 축일이 언제였는지는 아무도 모른다.'],
+  say:['천막촌 아이가 꿈을 판 적이 있대요. 무슨 꿈이었는지는 모른대요.','오늘은 노래가 안 들렸어요.','실이 자꾸 엉켰어요. 그래도 다 풀었어요.']}
+};
+const GLV=[0,3,9]; // 그곳에서 일한 시간이 이만큼 쌓이면 다음 단계
+const glv=sp=>{const h=(S.gsh||{})[sp]||0;return h>=GLV[2]?3:h>=GLV[1]?2:1};
+const capH=()=>S.fix.cellar?10:S.fix.store?6:2;
+const KST0={pit:{d:1,v:2,e:3},nell:{d:3,v:1,e:2},jos:{d:2,v:3,e:1},adele:{d:2,v:1,e:3}};
+const KSN={d:'손재주',v:'체력',e:'눈썰미'};
+function kinit(k){const K=kid(k);if(!K)return;if(!K.ks)K.ks=Object.assign({},KST0[k]||{d:1,v:1,e:1});if(!K.kx)K.kx={d:0,v:0,e:0}}
+function kup(k,s,a,notes){const K=kid(k);if(!K)return;kinit(k);K.kx[s]+=a;while(K.ks[s]<5&&K.kx[s]>=6*K.ks[s]){K.kx[s]-=6*K.ks[s];K.ks[s]++;const t=`${KIDS[k].n}의 ${KSN[s]}가 ${K.ks[s]}로 늘었다.`;log(t);if(notes)notes.push(`<span class="m">${t}</span>`)}}
+const kstat=k=>{kinit(k);const K=kid(k);return `손재주 ${K.ks.d} · 체력 ${K.ks.v} · 눈썰미 ${K.ks.e}${K.shoe?' · 신발':''}`};
+const gspOk=sp=>!GSP[sp].u||GSP[sp].u(S);
+const grate=sp=>{const o={};GSP[sp].r.slice(0,glv(sp)).forEach(r=>Object.entries(r).forEach(([m,n])=>o[m]=(o[m]||0)+n));return o};
+const rateTxt=sp=>Object.entries(grate(sp)).map(([m,n])=>`${itName(m)} ${n}`).join(' · ');
+// 지금까지 쌓인 양(가져오지 않음)
+function gpeek(k){const g=(S.gl||{})[k];if(!g)return null;kinit(k);const K=kid(k),h=Math.min(capH(),Math.max(0,(Date.now()-g.t0)/1000/SEC()/3600)),mul=.8+.1*K.ks.d,o={},c=g.c||{};
+  Object.entries(grate(g.sp)).forEach(([m,n])=>{const v=n*h*mul+(c[m]||0);o[m]=v});return {h,o,full:h>=capH()}}
+const peekTxt=k=>{const p=gpeek(k);if(!p)return '';const e=Object.entries(p.o).filter(([,v])=>v>=1).map(([m,v])=>`${itName(m)} ${Math.floor(v)}`).join(' · ');return (e||'아직 모인 것이 없다')+(p.full?' · 가득 찼다':'')};
+// 거둬들인다. 반환: {i,g,n}
+function gcollect(k){const g=(S.gl||{})[k],p=gpeek(k);if(!g||!p)return {i:{},g:0,n:[]};const i={},c={},n=[];let coin=0;
+  Object.entries(p.o).forEach(([m,v])=>{const f=Math.floor(v);if(f>0)i[m]=f;c[m]=v-f});
+  const K=kid(k),lv0=glv(g.sp);S.gsh=S.gsh||{};S.gsh[g.sp]=(S.gsh[g.sp]||0)+p.h;kup(k,'d',p.h,n);
+  for(let r=0;r<Math.floor(p.h);r++)if(Math.random()<.05*K.ks.e){coin+=R(1,3);kup(k,'e',2,n)}
+  if(coin)n.unshift(`${KIDS[k].n}가 눈여겨본 자리에서 동전 ${coin}을 주워 왔다.`);
+  const lv1=glv(g.sp);if(lv1>lv0){const t=GSP[g.sp].s[lv1-1];n.unshift(`<b>${GSP[g.sp].n} — ${lv1}단계</b>`,t,`<span class="m">이제 ${rateTxt(g.sp)}씩 모인다(한 시간에).</span>`);jr(`${GSP[g.sp].n}: ${t}`)}
+  Object.entries(i).forEach(([m,v])=>add(m,v));S.coin+=coin;g.c=c;g.t0=Date.now();return {i,g:coin,n}}
+function mergeI(a,b){Object.entries(b).forEach(([m,v])=>a[m]=(a[m]||0)+v);return a}
+// 자리를 비운 동안
+let AWAYCK=false,ROADT=false;
+function awayCheck(){AWAYCK=true;if(!S||!S.gl)return false;const ks=Object.keys(S.gl);if(!ks.length)return false;const away=Date.now()-(S.sv||Date.now());if(away<600e3*SEC())return false;
+  const I={},n=[];let g=0;ks.forEach(k=>{const p=gpeek(k);const r=gcollect(k);mergeI(I,r.i);g+=r.g;const sp=S.gl[k].sp,G0=GSP[sp];
+    n.push(`<b>${KIDS[k].n}</b> — ${G0.n}${p&&p.full?' · 한도가 차서 중간부터 쉬었다':''}`,`${KIDS[k].n} — “${G0.say[Math.random()*G0.say.length|0]}”`,...r.n)});
+  n.unshift(`<span class="m">${fmt(away/1000)} 동안 자리를 비웠다.</span>`);log('자리를 비운 동안 아이들이 모아 둔 것을 거둬들였다.');save();pop('자리를 비운 동안',{i:I,g,n});return true}
+
+// 공방. how: c=값을 치르고 배운다, q=부탁을 들어주고 배운다, s=장인의 이야기에서 배운다
+const RCP={
+ band:{n:'기운 붕대',m:{cloth:2},d:300,out:{band:1},how:'c',coin:4,e:'붕대 1. 싸움 중에 감으면 체력을 되찾는다.'},
+ salve:{n:'들풀 고약',m:{herb:2,oil:1},d:600,out:{salve:1},how:'c',coin:8,e:'싸움 중에 바르면 체력 60을 되찾는다.'},
+ candle:{n:'밀랍 양초',m:{wax:2,thread:1},d:600,out:{candle:1},how:'c',coin:8,e:'탐사에 들고 가면 무언가와 맞닥뜨릴 확률이 절반으로 준다.'},
+ shoe:{n:'아이 신발',m:{cloth:1,thread:1,oil:1},d:900,gear:'shoe',how:'q',q:{thread:4},qt:'실이 떨어졌소. 실 네 타래를 구해 오면 아이들 신발 짓는 법을 알려 주겠소. 맨발로 성벽 바깥을 다니게 둘 거요?',e:'신발이 없는 아이 하나에게 신긴다. 그 아이가 파견에서 다칠 확률이 5%p 준다.'},
+ coat:{n:'무두질한 외투',m:{cloth:3,thread:2,oil:1},d:1800,gear:'coat',how:'q',q:{warm:1},qt:'하칸골 용광로 뒤 배수구에 미지근한 물이 고이오. 한 병만 떠다 주시오. 내가 쫓겨난 이유를 내 눈으로 다시 봐야겠소. 그러면 가죽 다루는 법을 가르쳐 주겠소.',e:'입고 다닌다. 받는 피해가 6% 준다.'},
+ blade:{n:'재를 먹인 칼날',m:{scrap:3,ash:2},d:1800,gear:'blade',how:'s',e:'칼에 덧댄다. 주는 피해가 8% 늘고 교단 사람에게는 15% 는다.'},
+ lamp:{n:'불지기의 등잔',m:{oil:2,wax:2,ash:1},d:2400,gear:'lamp',how:'s',e:'허리에 찬다. 싸움마다 처음 쓰는 기술의 기력이 1 준다.'}
+};
+const CHF=['warden','purL','hunter'];
+const SMITH='오틸리에';
+const smithIn=()=>S.smM&&S.fix.shop;
+const gear=k=>!!(S.gear||{})[k];
+const rcpHave=k=>Object.entries(RCP[k].m).every(([m,n])=>(S.inv[m]||0)>=n);
+const matTxt=m=>Object.entries(m).map(([x,n])=>`${itName(x)} ${n} <span class="m">(${S.inv[x]||0})</span>`).join(' · ');
+const rcpDone=k=>{const R0=RCP[k];if(R0.gear==='shoe')return !Object.keys(S.kids||{}).some(c=>!kid(c).shoe&&kid(c).st!=='lost');return R0.gear?gear(R0.gear):false};
+const skCost=k=>Math.max(0,skC(k)-(G.kind==='fight'&&gear('lamp')&&!G.lampU?1:0));
+
+const CRAFT_CMD={
+ smithM:()=>{if(S.loc!=='docks'||!S.base||S.smM)return;
+  ev('다리 밑 땜장이','<p>운하 다리 밑 마른 자리에 작은 화덕이 있다. 백발의 여자가 구멍 난 냄비를 모루에 대고 두드린다. 양 팔뚝이 팔꿈치까지 매끈하게 데어 있다.</p><p>여자가 망치를 내려놓지 않고 말한다.</p><p>오틸리에 — “냄비요, 칼이요. 둘 다 아니면 비키시오. 불빛 가리오.”</p>',
+   [['오르빌 저택에 공방이 있다고 말한다',()=>{S.smM=1;log('다리 밑 땜장이 오틸리에를 만났다.');jr('운하 다리 밑에서 하칸골에서 쫓겨난 대장장이 오틸리에를 만났다. 공방을 고치면 저택으로 오겠다고 했다.');
+     ev('다리 밑 땜장이',`<p>망치가 멈춘다.</p><p>오틸리에 — “노래하던 집 말이오. 그 집 공방이면 화덕이 둘이오. 풀무도 큰 게 있었지.”</p><p>오틸리에 — “하칸골에서 서른 해를 쇠와 약을 만졌소. 쫓겨난 지는 한 해. 지붕 있는 데서 일할 수 있다면 가르쳐 줄 수도 있소. 공짜는 아니오.”</p><p>오틸리에 — “${S.fix.shop?'공방을 벌써 고쳐 뒀다고? …그럼 오늘 밤 가겠소.':'공방부터 고쳐 놓으시오. 화덕에 불이 들면 내 발로 가겠소.'}”</p><p class="m">${S.fix.shop?'오틸리에가 저택 공방에서 지내게 되었다.':'저택 손보기에서 공방을 고치면 오틸리에가 온다.'}</p>`,[['알겠다',null]],1)}],
+    ['그냥 지나간다',null]])},
+ shop:()=>{if(S.loc!=='base'||!S.base)return;
+  if(!smithIn()){ev('공방',`<p>화덕 두 개와 큰 풀무가 있다.${S.fix.shop?' 불은 들지만 쓸 줄 아는 사람이 없다.':' 풀무 가죽은 삭았고 화덕에는 새 둥지가 있다.'}</p><p class="m">${S.smM?(S.fix.shop?'':'공방을 고치면 오틸리에가 온다.'):'쇠와 약을 다룰 줄 아는 사람을 들여야 쓸 수 있다. 부두 쪽에서 쇠 두드리는 소리가 난다는 말이 있다.'}</p>`,[['닫기',null]],1);return}
+  if(!S.smA){S.smA=1;S.rcpL=S.rcpL||{};ev('공방','<p>오틸리에가 연장 자루를 내려놓고 화덕을 한 바퀴 돈다. 풀무를 두 번 밟아 보고 고개를 끄덕인다.</p><p>오틸리에 — “쓸 만하오. 배우고 싶은 게 있으면 말하시오. 값은 받겠소. 돈이든 물건이든.”</p><p>오틸리에 — “만드는 건 당신 손으로 하시오. 내가 해 주면 당신은 영영 못 하오.”</p>',[['공방을 둘러본다',()=>CMD.shop()]],1);save();return}
+  const L=S.rcpL||{},cr=S.craft,lines=[];
+  if(cr)lines.push(`<div class="disp">만드는 중 — ${RCP[cr.id].n}<div class="row"><span class="m">끝나기까지</span><span class="dl" data-t="${cr.t0+cr.d*1000}">${fmt((cr.t0+cr.d*1000-Date.now())/1000)}</span></div></div>`);
+  lines.push('<h3>배운 것</h3>');const kn=Object.keys(RCP).filter(k=>L[k]);
+  lines.push(kn.length?kn.map(k=>{const R0=RCP[k],done=rcpDone(k);return `<div class="ms"><b>${R0.n}</b> <span class="m">${done?(R0.gear==='shoe'?'아이들 모두 신발이 있다':'이미 가지고 있다'):fmt(R0.d*SEC())}</span><div class="m">${matTxt(R0.m)}</div><div class="m">${R0.e}</div></div>`}).join(''):'<p class="empty">아직 배운 것이 없다</p>');
+  const lr=Object.keys(RCP).filter(k=>!L[k]&&RCP[k].how!=='s');
+  if(lr.length)lines.push('<h3>오틸리에에게 배울 수 있는 것</h3>'+lr.map(k=>{const R0=RCP[k];return `<div class="ms"><b>${R0.n}</b> <span class="m">${R0.how==='c'?`동전 ${px(R0.coin)}`:'부탁을 들어주면'}</span><div class="m">${R0.e}</div>${R0.how==='q'&&(S.rq||{})[k]?`<div class="m">오틸리에의 부탁 — ${matTxt(R0.q)}</div>`:''}</div>`}).join(''));
+  const nx=smChNext();
+  const b=[];if(!cr)kn.filter(k=>!rcpDone(k)).forEach(k=>b.push([`${RCP[k].n} 만들기${rcpHave(k)?'':' (재료가 모자라다)'}`,()=>CMD.craftgo(k)]));
+  lr.forEach(k=>{const R0=RCP[k];if(R0.how==='c')b.push([`${R0.n} 배우기 (동전 ${px(R0.coin)})`,()=>CMD.rlearn(k)]);else if(!(S.rq||{})[k])b.push([`${R0.n}에 대해 묻는다`,()=>CMD.rask(k)]);else b.push([`부탁한 것을 건넨다 — ${R0.n}`,()=>CMD.rgive(k)])});
+  b.push([`오틸리에와 이야기한다${nx?' ✦':''}`,()=>CMD.ntalk('otil')],['공방을 나선다',null]);
+  ev('공방',`<p class="m">${cr?'화덕에 불이 들어 있다.':'화덕이 식어 있다.'} 가진 재료 — ${MATS.filter(m=>S.inv[m]>0).map(m=>`${itName(m)} ${S.inv[m]}`).join(' · ')||'없다'}</p>`+lines.join(''),b,1)},
+ rlearn:k=>{const R0=RCP[k];if(!R0||R0.how!=='c'||(S.rcpL||{})[k])return;if(S.coin<px(R0.coin)){ev('공방','<p>동전이 모자라다.</p>',[['돌아간다',()=>CMD.shop()]],1);return}
+  S.coin-=px(R0.coin);S.rcpL[k]=1;log(`오틸리에에게 「${R0.n}」을(를) 배웠다.`);
+  ev('공방',`<p>오틸리에가 화덕 앞에서 손을 한 번 움직여 보인다. 두 번은 보여 주지 않는다.</p><p>오틸리에 — “${{band:'천은 결대로 찢으시오. 거꾸로 찢으면 상처에 실밥이 남소.',salve:'들풀은 짓이기지 말고 칼등으로 누르시오. 기름이 끓기 전에 넣어야 하오.',candle:'심지는 한가운데. 한쪽으로 쏠리면 초가 우오.'}[k]}”</p><p class="m">「${R0.n}」을(를) 배웠다.</p>`,[['공방으로 돌아간다',()=>CMD.shop()]],1);save()},
+ rask:k=>{const R0=RCP[k];if(!R0||R0.how!=='q')return;S.rq=S.rq||{};S.rq[k]=1;save();ev('공방',`<p>오틸리에 — “${R0.qt}”</p><p class="m">오틸리에의 부탁 — ${matTxt(R0.q)}</p>`,[['공방으로 돌아간다',()=>CMD.shop()]],1)},
+ rgive:k=>{const R0=RCP[k];if(!R0||!(S.rq||{})[k]||S.rcpL[k])return;if(!Object.entries(R0.q).every(([m,n])=>(S.inv[m]||0)>=n)){ev('공방',`<p>아직 모자라다.</p><p class="m">${matTxt(R0.q)}</p>`,[['공방으로 돌아간다',()=>CMD.shop()]],1);return}
+  Object.entries(R0.q).forEach(([m,n])=>add(m,-n));S.rcpL[k]=1;log(`오틸리에의 부탁을 들어주고 「${R0.n}」을(를) 배웠다.`);
+  const t=k==='coat'?'<p>오틸리에가 병마개를 따고 손가락을 담근다. 한참을 그대로 둔다.</p><p>오틸리에 — “…서른 해 동안 이 물로 쇠를 식혔소. 한 번도 식은 적이 없지. 이 물은 데워지는 게 아니오. 무언가가 계속 데우고 있는 거요.”</p><p>오틸리에 — “약속은 지키겠소. 가죽은 이렇게 펴는 거요.”</p>':'<p>오틸리에가 실타래를 하나씩 손바닥에 감아 본다.</p><p>오틸리에 — “좋은 실이오. 아이들 발은 금방 크니까 넉넉하게 지으시오. 작은 신발은 맨발보다 나쁘오.”</p>';
+  ev('공방',t+`<p class="m">「${R0.n}」을(를) 배웠다.</p>`,[['공방으로 돌아간다',()=>CMD.shop()]],1);save()},
+ craftgo:k=>{const R0=RCP[k];if(!R0||!(S.rcpL||{})[k]||S.craft||rcpDone(k))return;if(!rcpHave(k)){ev('공방',`<p>재료가 모자라다.</p><p class="m">${matTxt(R0.m)}</p><p class="m">재료는 아이들에게 채집을 맡기거나 탐사에서 얻는다.</p>`,[['공방으로 돌아간다',()=>CMD.shop()]],1);return}
+  Object.entries(R0.m).forEach(([m,n])=>add(m,-n));S.craft={id:k,t0:Date.now(),d:R0.d*SEC()};log(`공방에서 ${R0.n}을(를) 만들기 시작했다.`);save();
+  ev('공방',`<p>화덕에 불을 넣는다. 오틸리에는 의자에 앉아 지켜보기만 한다.</p><p class="m">${fmt(R0.d*SEC())} 뒤에 끝난다. 그동안 다른 일을 해도 된다.</p>`,[['알겠다',null]],1)},
+ ledger:()=>{if(!S.base||!S.pit)return;S.gl=S.gl||{};const ks=Object.keys(S.kids||{}).filter(k=>kid(k).st!=='lost');ks.forEach(kinit);
+  const sps=Object.keys(GSP).filter(gspOk);
+  const h=`<p class="m">아이 하나를 한 곳에 맡겨 두면 자리를 비운 동안에도 재료가 쌓인다. 위험은 없다. 한 번에 쌓아 둘 수 있는 양은 ${capH()}시간치다${capH()<10?` (${S.fix.store?'저장고':'창고'}를 고치면 ${S.fix.store?10:6}시간치)`:''}.</p>`+
+   '<h3>아이들</h3>'+ks.map(k=>`<div class="ms"><b>${KIDS[k].n}</b> <span class="m">${kstat(k)}</span><div class="m">${S.gl[k]?`${GSP[S.gl[k].sp].n}에서 채집 중 — ${peekTxt(k)}`:kidSt(k)}</div></div>`).join('')+
+   '<h3>맡길 곳</h3>'+sps.map(sp=>`<div class="ms"><b>${GSP[sp].n}</b> <span class="m">${glv(sp)}단계 · 한 시간에 ${rateTxt(sp)}</span><div class="m">${GSP[sp].s[glv(sp)-1]}</div></div>`).join('')+
+   '<p class="m">손재주는 모아 오는 양을, 체력은 파견에서 다치지 않을 확률을, 눈썰미는 쓸 만한 것을 주워 올 확률을 올린다. 맡은 일을 하면서 조금씩 는다.</p>';
+  const b=[];ks.forEach(k=>{if(S.gl[k]){b.push([`${KIDS[k].n} — 모인 것을 거둬들인다`,()=>CMD.gtake(k,0)]);b.push([`${KIDS[k].n} — 불러들인다`,()=>CMD.gtake(k,1)])}else if(kidOk(k))b.push([`${KIDS[k].n}에게 채집을 맡긴다`,()=>CMD.gpick(k)])});
+  ev('채집 장부',h,b.concat([['장부를 덮는다',null]]),1)},
+ gpick:k=>{if(!kidOk(k))return;ev('채집 장부',`<p class="m">${KIDS[k].n}를 어디에 맡길까.</p>`,Object.keys(GSP).filter(gspOk).map(sp=>[`${GSP[sp].n} (${rateTxt(sp)})`,()=>CMD.gsend(k,sp)]).concat([['돌아간다',()=>CMD.ledger()]]))},
+ gsend:(k,sp)=>{if(!kidOk(k)||!GSP[sp]||!gspOk(sp))return;S.gl=S.gl||{};kid(k).st='gath';S.gl[k]={sp,t0:Date.now(),c:{}};log(`${KIDS[k].n}에게 ${GSP[sp].n} 채집을 맡겼다.`);save();CMD.ledger()},
+ gtake:(k,stop)=>{if(!(S.gl||{})[k])return;const r=gcollect(k);if(stop){delete S.gl[k];kid(k).st='ok'}save();
+  const e=Object.keys(r.i).length||r.g;ev('채집 장부',`<p>${e?`${KIDS[k].n}가 모아 둔 것을 내놓는다.`:`${KIDS[k].n}가 빈손을 내보인다. 아직 모인 것이 없다.`}</p>${Object.entries(r.i).length?`<p class="m">${Object.entries(r.i).map(([m,v])=>`${itName(m)} ${v}`).join(' · ')}</p>`:''}${r.n.map(x=>`<p>${x}</p>`).join('')}${stop?`<p class="m">${KIDS[k].n}가 저택으로 돌아왔다.</p>`:''}`,[['장부로 돌아간다',()=>CMD.ledger()]],1)},
+ pot:()=>{if(S.loc!=='base'||!S.fix.kitchen)return;const have=['fish','herb','meat','oil','flour','honey'].filter(m=>S.inv[m]>0);S.dish=S.dish||{};
+  const kn=Object.keys(DISH).filter(k=>S.dish[k]);
+  ev('부엌 솥',`<p class="m">재료를 하나 또는 둘 넣는다. 만든 음식은 가방에 담아 두었다가 싸움 중에 먹거나 다 같이 둘러앉을 때 나눠 먹는다.</p><h3>아는 요리</h3>${kn.length?kn.map(k=>`<p><b>${DISH[k].n}</b> <span class="m">${DISH[k].m.map(itName).join(' + ')} — ${DISH[k].e}</span></p>`).join(''):'<p class="empty">아직 만들어 본 요리가 없다</p>'}<p class="m">가진 재료 — ${have.map(m=>`${itName(m)} ${S.inv[m]}`).join(' · ')||'없다'}</p>`,
+   have.map(m=>[`${itName(m)}을(를) 넣는다`,()=>CMD.pot2(m)]).concat([['솥을 내려놓는다',null]]),1)},
+ pot2:a=>{if(!(S.inv[a]>0))return;const have=['fish','herb','meat','oil','flour','honey'].filter(m=>m!==a&&S.inv[m]>0);
+  ev('부엌 솥',`<p>솥에 ${itName(a)}을(를) 넣었다. 하나 더 넣을까.</p>`,have.map(m=>[`${itName(m)}을(를) 더 넣는다`,()=>CMD.cook(a,m)]).concat([['이대로 끓인다',()=>CMD.cook(a)],['꺼내고 그만둔다',null]]))},
+ cook:(a,b)=>{const ms=[a,b].filter(Boolean).sort();if(!ms.every(m=>S.inv[m]>0))return;const k=Object.keys(DISH).find(x=>DISH[x].m.slice().sort().join()===ms.join());
+  if(!k){ev('부엌 솥',`<p>${ms.map(itName).join('와 ')}을(를) 끓여 본다. 냄새가 서로 겉돈다. 먹을 것이 되지 않을 것 같아 불을 끈다.</p><p class="m">재료는 그대로 남았다.</p>`,[['다른 것을 넣어 본다',()=>CMD.pot()]],1);return}
+  ms.forEach(m=>add(m,-1));add(k,1);S.dish=S.dish||{};const first=!S.dish[k];S.dish[k]=1;log(`${DISH[k].n}을(를) 만들었다.`);if(first)jr(`부엌에서 처음으로 ${DISH[k].n}을(를) 만들었다.`);save();
+  ev('부엌 솥',`<p>${first?'처음 해 보는 조합이다. 김이 오르고 부엌에 냄새가 퍼진다.':'익숙한 냄새가 부엌에 퍼진다.'}</p><p><b>${DISH[k].n}</b></p><p class="m">${DISH[k].e} 가방에 담았다.</p>`,[['한 번 더 끓인다',()=>CMD.pot()],['솥을 내려놓는다',null]],1)}
+};
+// 오틸리에의 이야기 세 장. 장을 들으면 비법 하나를 배운다
+function smChNext(){const n=S.crN||0,a=S.nask||{};return n>=1&&!a['otil:하칸골에서는 무슨 일을 했어?']||n>=4&&!a['otil:팔뚝의 흉은 어쩌다 생겼어?']||n>=8&&!a['otil:스승은 어떤 사람이었어?']}
+NPCT.otil={n:SMITH,sub:'장인 · 벨데인',at:'base',met:s=>!!s.smA,busy:()=>true,
+ look:'백발을 뒤로 바짝 묶은 늙은 벨데인 여자다. 양 팔뚝이 팔꿈치까지 매끈하게 데어 있다. 앞치마 주머니에 줄과 집게가 꽂혀 있고 손톱 밑이 까맣다.',
+ g:['오틸리에가 풀무 손잡이에 팔을 걸친 채 이쪽을 본다.','오틸리에가 줄질을 멈추지 않고 고개만 든다.'],
+ t:[['공방은 쓸 만해?',null,['화덕 하나는 쇠, 하나는 약. 섞어 쓰면 둘 다 망치오.','*오틸리에가 풀무를 한 번 밟는다. 불이 곧게 선다.','이 집 주인은 노래를 좋아했다지. 공방 벽에도 악보가 붙어 있었소. 떼어서 불쏘시개로 썼소. 미안하게 됐소.']],
+  ['재료는 어디서 구해?',null,['아이들한테 맡기시오. 부두에서는 쇠붙이. 시장에서는 천. 들판에서는 풀. 처마 밑에서는 재.','*오틸리에가 손가락으로 공방 창밖을 가리킨다.','같은 데를 오래 다니면 길이 보이오. 길이 보이면 남들이 못 줍는 걸 줍소.']],
+  ['하칸골에서는 무슨 일을 했어?',s=>(s.crN||0)>=1,['대연소로 옆에서 서른 해를 일했소. 쇠도 만지고 약도 만졌지. 데인 일꾼한테 바르는 고약은 다 내 손에서 나갔소.','>왜 쫓겨났어?','물어봤소. 냉각수가 왜 식지 않느냐고. 갱도에서 올라오는 물이 말이오. 겨울에도 김이 나오.','*망치 자루를 쥔 손에 힘이 들어간다.','다음 날 내 이름이 장부에서 지워져 있었소. 서른 해가 한 줄이더군.']],
+  ['팔뚝의 흉은 어쩌다 생겼어?',s=>(s.crN||0)>=4,s=>{if(!(s.rcpL||{}).blade){s.rcpL=s.rcpL||{};s.rcpL.blade=1;log('오틸리에에게 「재를 먹인 칼날」을 배웠다.')}return ['젊을 때 칼을 하나 벼렸소. 담금질할 물에 푸른 재를 풀었지. 그러면 날이 오래 간다고 들었소.','*오틸리에가 팔뚝을 내려다본다.','쇠를 물에 넣자 물이 끓어올랐소. 그리고 소리가 났소. 사람 목소리였소. 누군가 제 이름을 부르는 소리.','>무슨 이름이었어?','모르오. 처음 듣는 이름이었소. 칼은 잘 들었소. 지금도 잘 들 거요.','*오틸리에가 종이에 도안을 그려 건넨다. 날을 따라 가는 줄이 일곱 개다.','쓰고 싶으면 쓰시오. 교단 사람들은 질색할 거요. 그 사람들이 왜 질색하는지 생각해 보시오.','*「재를 먹인 칼날」을 배웠다.']}],
+  ['스승은 어떤 사람이었어?',s=>(s.crN||0)>=8,s=>{if(!(s.rcpL||{}).lamp){s.rcpL=s.rcpL||{};s.rcpL.lamp=1;log('오틸리에에게 「불지기의 등잔」을 배웠다.')}return ['하칸골이 생기기 전부터 쇠를 다루던 집안 사람이었소. 겨울 시대 이야기를 자기가 본 것처럼 했지.','*오틸리에가 화덕 불을 들여다본다. 오래.','스승의 할머니의 할머니가 등잔 하나를 만들었다고 했소. 얼굴을 천으로 가린 손님이 주문한 거였다지. 불이 꺼지지 않는 등잔.','>그 손님은 누구였어?','이름은 안 남았소. 등잔 값으로 노래 한 소절을 두고 갔다고만 들었소. 그 노래를 부르면 화덕 불이 잘 든다고.','*오틸리에가 낮게 흥얼거린다. 화덕 불이 내 쪽으로 기운다. 오틸리에가 노래를 멈추고 나를 본다.','…도안은 내 머릿속에만 있소. 적어 주겠소. 당신이 가지고 있는 게 맞을 것 같소.','*「불지기의 등잔」을 배웠다.']}]]};
+PORT.otil='i5';
+// 동료를 먼 곳에 보낼 때 돌아와서 하는 말
+const CDSAY={kirien:'성벽 바깥은 바람 냄새가 달라. 사람 냄새가 없어서 좋았어.',oswin:'폐허에 겨울 시대 글자가 있더군요. 읽을 수는 없었습니다. 읽을 수 없다는 게 더 마음에 걸리지요.',barg:'들개 떼가 있었다. 이제 없다.',kasimir:'흙 묻은 구두는 오랜만입니다. 나쁘지 않았습니다.',ibre:'무거운 건 제가 들었습니다. 아이들이 들 무게가 아니었습니다.',eno:'물이 고인 자리마다 누가 두고 간 기억이 있었어요. 하나만 데려왔어요.'};
+const awayC=c=>(S.disp||[]).some(d=>d.comp===c);
+const freeComps=()=>S.comps.filter(c=>c!==S.party&&!(S.left||{})[c]&&!awayC(c));
+// 길 위에서 줍기: 걸어서 닿았을 때 가끔
+const ROADP=[
+ {at:['outskirts','docks','street'],h:'벽틈의 들풀',p:'<p>무너진 담 틈에 쓴 들풀이 무성하다. 아무도 뜯어 가지 않았다.</p>',i:{herb:2},bon:{kirien:['herb',1,'키리엔 — “이쪽 것도 먹을 수 있어. 엄마가 알려 줬어.”']}},
+ {at:['street','works','church'],h:'넘어진 짐수레',p:'<p>바퀴 빠진 짐수레가 길가에 넘어져 있다. 주인은 보이지 않는다. 천 꾸러미와 기름통이 흩어져 있다.</p>',i:{cloth:1,oil:1},bon:{ibre:['scrap',2,'이브레가 수레 축을 한 손으로 들어 쇠붙이를 빼낸다. “버린 겁니다. 녹이 슬었습니다.”']}},
+ {at:['docks','inn','base'],h:'운하 둑의 아이들',p:'<p>운하 둑에서 아이들이 맨손으로 생선을 건져 올린다. 한 아이가 두 마리를 내민다. “동전 하나요.”</p>',i:{fish:2},cost:1,bon:{eno:['fish',1,'에노가 물가에 손을 담근다. 생선 한 마리가 스스로 손바닥에 올라온다.']}}
+];
+function roadPick(to){if(S.pend||EV0||POP||Math.random()>=.15)return false;const L=ROADP.filter(r=>r.at.includes(to));if(!L.length)return false;const r=L[Math.random()*L.length|0];
+ const b=r.bon[S.party];ev(r.h,r.p,[[r.cost?`동전 ${r.cost}을 주고 받는다`:'챙긴다',()=>{if(r.cost){if(S.coin<r.cost){ev(r.h,'<p>동전이 없다.</p>',[['지나간다',null]],1);return}S.coin-=r.cost}const I=Object.assign({},r.i);if(b)I[b[0]]=(I[b[0]]||0)+b[1];Object.entries(I).forEach(([m,n])=>add(m,n));pop(r.h,{i:I,n:b?[b[2]]:[]})}],['지나간다',null]]);return true}
+Object.assign(CMD,CRAFT_CMD);
+
 async function doImport(){const t=($('#imp2')||{}).value||'';try{const o=await sdecode(t);S=o;migrate();save();EV0=null;render()}catch(e){ev('기록 코드로 이어 하기','<p class="m">코드를 읽지 못했다. 처음부터 끝까지 빠짐없이 붙여 넣었는지 확인하자.</p>',[['닫기',null]])}}
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-c]');if(!b||b.disabled)return;
@@ -2745,9 +2943,12 @@ function bshake(){const a=$('#barena');a.classList.remove('shake');void a.offset
 function bacts(){
   const el=$('#bacts');el.className='';
   if(G.st==='player'&&G.menu==='skill'){
-    el.innerHTML=S.sk.map(k=>{const K=SKL[k],noItem=K.item&&(bsafe()||!(S.inv[K.item]>0)),ok=G.fp>=skC(k)&&!noItem&&G.kind!=='tut';
-      return `<button class="btn" data-ba="sk" data-k="${k}" ${ok?'':'disabled'}>${K.n} ${'◆'.repeat(skC(k))}<small>${noItem?IT[K.item][0]+'이(가) 없다':K.d}</small></button>`}).join('')+
+    el.innerHTML=S.sk.map(k=>{const K=SKL[k],noItem=K.item&&(bsafe()||!(S.inv[K.item]>0)),ok=G.fp>=skCost(k)&&!noItem&&G.kind!=='tut';
+      return `<button class="btn" data-ba="sk" data-k="${k}" ${ok?'':'disabled'}>${K.n} ${'◆'.repeat(skCost(k))}<small>${noItem?IT[K.item][0]+'이(가) 없다':K.d}</small></button>`}).join('')+
       `<button class="btn" data-ba="back">돌아가기<small>다른 행동을 고른다</small></button>`;
+  }else if(G.st==='player'&&G.menu==='bag'){
+    const L=['salve',...Object.keys(DISH)].filter(k=>S.inv[k]>0);
+    el.innerHTML=L.map(k=>`<button class="btn" data-ba="bi" data-k="${k}">${itName(k)} ${S.inv[k]}<small>${k==='salve'?'체력 60':DISH[k].e}</small></button>`).join('')+`<button class="btn" data-ba="back">돌아가기<small>다른 행동을 고른다</small></button>`;
   }else if(G.st==='player'){
     const tut=G.kind==='tut',can2=tut||G.fp>=2,st=SV();
     el.innerHTML=`<button class="btn" data-ba="atk" ${tut?'disabled':''}>공격<small>바로 벤다 · 피해 ${dAtk(st)}</small></button>`+
@@ -2755,7 +2956,8 @@ function bacts(){
       `<button class="btn" data-ba="skill" ${tut?'disabled':''}>기술<small>${S.sk.map(k=>SKL[k].n).join(' · ')}</small></button>`+
       `<button class="btn" data-ba="guard" ${tut?'disabled':''}>자세 잡기<small>판정 넓게 · 기력 +1</small></button>`+
       (G.awk&&!G.awu?`<button class="btn wide" data-ba="aw">떠오르는 말<small>혀끝까지 차오른 낯선 말</small></button>`:'')+
-      `<button class="btn wide" data-ba="band" ${G.band>0&&!bsafe()?'':'disabled'}>붕대 ${G.band}<small>체력 ${24+2*sv(3)} 회복</small></button>`;
+      `<button class="btn${G.kind==='fight'&&bagN()?'':' wide'}" data-ba="band" ${G.band>0&&!bsafe()?'':'disabled'}>붕대 ${G.band}<small>체력 ${24+2*sv(3)} 회복</small></button>`+
+      (G.kind==='fight'&&bagN()?`<button class="btn" data-ba="bag" ${(G.bagU||0)<2?'':'disabled'}>가방<small>고약·음식 · ${(G.bagU||0)<2?`이번 싸움에 ${2-(G.bagU||0)}번 더`:'이번 싸움에는 더 꺼낼 수 없다'}</small></button>`:'');
   }else if(G.st==='enemy'){
     el.className='def';
     el.innerHTML=CFG.auto?`<button class="btn wide" disabled>자동 회피 중</button>`:`<button class="btn" data-p="dodge">회피<small><kbd>F</kbd> / <kbd>Space</kbd></small></button><button class="btn" data-p="parry">받아치기<small><kbd>J</kbd></small></button>`;
@@ -2798,12 +3000,22 @@ function bact(a,k){
   if(a==='atk'){let d=dAtk(SV());if(G.open){d=Math.round(d*1.5);G.open=false}if(G.mark){d=Math.round(d*(1+.15*G.mark));G.mark=0}G.fx.push({k:'slash',t:now()});SND.slash();bjudge('일격','dodge');dmgFoe(d);blog('공격. '+d+' 피해.');afterAct();return}
   if(a==='heavy'){if(G.kind!=='tut'){if(G.fp<2)return;G.fp-=2}G.menu=null;startQte('heavy');return}
   if(a==='guard'){G.first=0;G.guard=true;G.fp=Math.min(5,G.fp+1);let gh='';if(tal('breath')&&G.kind==='fight'){const h=Math.min(4,G.mhp-G.hp);if(h>0){G.hp+=h;bfloat('#bphp','+'+h,'heal');gh=' 체력 '+h+' 회복.'}}blog('자세를 낮춘다. 다음 공격을 읽기 쉬워진다.'+gh);enemyTurn();return}
+  if(a==='bag'){if(!bagN()||(G.bagU||0)>=2)return;G.menu='bag';brender();return}
+  if(a==='bi'){useBag(k);return}
   if(a==='band'){if(G.band<=0)return;G.band--;G.first=0;const h=Math.min(24+2*sv(3)+(G.kind==='fight'?(tal('sew')?8:0)+(lin('p',2)?6:0):0),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
 }
+const bagN=()=>['salve',...Object.keys(DISH)].filter(k=>S.inv[k]>0).length;
+function useBag(k){if(bsafe()||(G.bagU||0)>=2||!(S.inv[k]>0)||(k!=='salve'&&!DISH[k]))return;add(k,-1);G.bagU=(G.bagU||0)+1;G.first=0;G.menu=null;
+  const D=DISH[k],h=Math.min(k==='salve'?60:D.hp,G.mhp-G.hp);G.hp+=h;if(h)bfloat('#bphp','+'+h,'heal');let t=(k==='salve'?'고약을 상처에 바른다. ':D.n+'을(를) 급히 먹는다. ')+'체력 '+h+' 회복.';
+  if(D&&D.fp){G.fp=Math.min(5,G.fp+D.fp);t+=' 기력 +'+D.fp+'.'}
+  if(D&&D.fx==='wide'){G.wide=1;t+=' 몸이 데워져 움직임이 잘 보인다.'}
+  if(D&&D.fx==='ward'){G.ward=1;G.wardT='약초차의 온기가';t+=' 속이 따뜻해진다.'}
+  if(D&&D.fx==='mark'){G.mark=(G.mark||0)+1;t+=' 피가 끓는다.'}
+  blog(t);enemyTurn()}
 function useSkill(k){
-  const K=SKL[k];if(!K||!S.sk.includes(k)||G.kind==='tut'||G.fp<skC(k))return;
+  const K=SKL[k];if(!K||!S.sk.includes(k)||G.kind==='tut'||G.fp<skCost(k))return;
   if(K.item){if(bsafe()||!(S.inv[K.item]>0))return;if(!(k==='ash'&&tal('ashh')&&Math.random()<.5))add(K.item,-1);else blog('재를 아껴 뿌렸다. 주머니의 재가 줄지 않았다.')}
-  G.fp-=skC(k);G.spell=K.mg?1:0;const st=SV();
+  const lampNow=skCost(k)<skC(k);G.fp-=skCost(k);if(lampNow){G.lampU=1;blog('허리의 등잔이 한 번 밝아진다. 숨이 덜 찬다.')}G.spell=K.mg?1:0;const st=SV();
   if(k==='stance'){G.stance=1;bjudge('받아치기 자세','parry');blog('칼끝을 낮춘다. 다음 공격을 받아칠 준비를 한다.')}
   if(k==='hamstring'){const d=4+st[3];G.slow=1;G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);bjudge('발목 긋기','dodge');blog('발목을 그었다. '+d+' 피해. 적이 느려진다.')}
   if(k==='spirit'){const d=Math.round(10+2.4*st[1]);G.fx.push({k:'parry',t:now(),r:Math.random()});SND.parry();dmgFoe(d);bjudge('혼불','parry');blog('푸른 혼불이 적을 감싼다. '+d+' 피해.')}
@@ -2832,7 +3044,7 @@ function resolveQte(perfect){
   blog('강타'+(perfect?' — 빈 곳을 정확히 찔렀다. ':'. ')+d+' 피해.');
   setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650);
 }
-function dmgFoe(d){if(G.kind==='fight'){let m=1;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;d=Math.round(d*m)}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
+function dmgFoe(d){if(G.kind==='fight'){let m=1;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;if(gear('blade'))m*=CHF.includes(G.foe)?1.15:1.08;d=Math.round(d*m)}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
 function maybePhase(then){
   if(G.ph===1&&bfoe().boss&&G.fhp<=bfoe().hp/2&&!bsafe()){
     G.ph=2;G.next=bpick();G.st='wait';brender();
@@ -2940,6 +3152,7 @@ function enemyTurn(){
 function hurt(d){if(bsafe())return;if(G.wall){G.wall=0;blog('이브레가 대신 맞는다. 꿈쩍도 하지 않는다.');return}if(G.ward){G.ward=0;d=Math.max(1,Math.round(d/2));blog((G.wardT||'정전기 막이')+' 충격을 반으로 줄였다.');G.wardT=null}
   if(S.race==='p'&&!G.scale){G.scale=1;d=Math.max(1,Math.round(d/2));blog('비늘이 첫 공격을 받아 냈다. 피해가 절반으로 줄었다.')}
   if(S.party==='barg'&&stal('oath'))d=Math.max(1,Math.round(d*.9));
+  if(gear('coat'))d=Math.max(1,Math.round(d*.94));
   if(d>=G.hp&&stal('stand')&&!G.stand){G.stand=1;d=G.hp-1;blog('쓰러질 뻔했다. 그래도 서 있다.')}
   const half=G.hp>G.mhp/2;G.hp-=d;bfloat('#bphp','-'+d,'hurt');
   if(S.race==='b'&&half&&G.hp>0&&G.hp<=G.mhp/2&&!G.oathB){G.oathB=1;G.fp=Math.min(5,G.fp+2);blog('씨족의 맹세가 떠오른다. 기력 +2.')}}
@@ -3057,7 +3270,7 @@ function devOpen(){
   $('#dov').innerHTML=`<div class="pcard dev"><h2>개발</h2>
   <div class="seg">${b('fast','즉시 완료: '+(FAST||TEST?'켬':'끔'))}${b('fmove','이동 건너뛰기: '+(FMOVE?'켬':'끔'))}${S?b('mz','노래하는 저택 열기(처음부터)'):''}${s?b('finish','진행 중인 일 끝내기'):''}</div>
   ${s?`<h3>진행</h3><div class="seg">${b('night','밤 0',0)}${b('night','밤 1',1)}${b('night','밤 2',2)}${b('night','밤 3',3)}</div>
-  <div class="seg">${b('heal','체력 가득')}${b('coin','동전 +50')}${b('band','붕대 +5')}${b('tut','가르침 처음부터')}${b('comp','다음 동료 합류 ('+s.comps.length+')')}${b('aff','데려간 동료 호감 +20')}${b('base','본거지 얻기')}${b('pit','피트 얻기')}${b('scrap','고철 +10')}${b('fixall','저택 모두 고치기')}${b('enc','길 위 마주침: '+(ENC_ON?'켬':'끔'))}${b('act1','1막 끝으로 (에다 직전)')}${b('pqgo','피트 실종 일으키기')}${b('rev','이야기 단계: '+({1:'1막',2:'2막',2.5:'2막 후반',3:'3막'})[actN()]+' → 다음')}${b('outs','변두리 열기')}${b('kq','키리엔 퀘스트 다음 단계 ('+(s.kq||0)+')')}${b('mg','주문: '+(s.mg?'깨어남':'아직'))}${b('aev','데려간 동료 다음 호감 이벤트')}</div>
+  <div class="seg">${b('heal','체력 가득')}${b('coin','동전 +50')}${b('band','붕대 +5')}${b('tut','가르침 처음부터')}${b('comp','다음 동료 합류 ('+s.comps.length+')')}${b('aff','데려간 동료 호감 +20')}${b('base','본거지 얻기')}${b('pit','피트 얻기')}${b('scrap','고철 +10')}${b('fixall','저택 모두 고치기')}${b('mats','재료 +5씩')}${b('smith','오틸리에 들이기')}${b('crN','공방에서 만든 수 +4 ('+(s.crN||0)+')')}${b('away','자리를 비운 지 3시간으로')}${b('enc','길 위 마주침: '+(ENC_ON?'켬':'끔'))}${b('act1','1막 끝으로 (에다 직전)')}${b('pqgo','피트 실종 일으키기')}${b('rev','이야기 단계: '+({1:'1막',2:'2막',2.5:'2막 후반',3:'3막'})[actN()]+' → 다음')}${b('outs','변두리 열기')}${b('kq','키리엔 퀘스트 다음 단계 ('+(s.kq||0)+')')}${b('mg','주문: '+(s.mg?'깨어남':'아직'))}${b('aev','데려간 동료 다음 호감 이벤트')}</div>
   <h3>전투</h3><div class="seg">${b('fight','골목개','dog')}${b('fight','도둑','thief')}${b('fight','점등꾼','lamp')}${b('fight','점등꾼 격노 직전','lamp2')}${b('fight','정화자','warden')}${b('fight','노래하는 옛 주인','singer')}${b('fight','쥐 떼','rats')}${b('fight','태엽 경비','clock')}${b('fight','유리관에서 나온 것','glass')}${b('fight','회색 수거인','collector')}${b('fight','그림자','shade')}${b('fight','덩어리','lump')}${b('fight','변이한 들개','mutt')}${b('fight','텅 빈 자','hollow')}${b('fight','재 짜는 사람','ashman')}${b('fight','유리 지붕 수거인 격노 직전','awc2')}${b('fight','교단 추적자','hunter')}</div>
   <h3>이야기</h3><div class="seg">${b('pro','시작 연출 다시')}${b('leg','1편 기억: '+(s.legacy?(s.legacy.end||'없음'):'없음'))}${b('state','상태 보기')}</div>
   <textarea id="dvs" readonly style="display:none"></textarea>`:'<p class="m">캐릭터를 만들면 진행 도구가 나온다.</p>'}
@@ -3071,7 +3284,7 @@ const DV={
   finish:()=>{if(S.act)S.act.t0=Date.now()-S.act.d*1000-1;S.disp.forEach(d=>d.t0=Date.now()-d.d*1000-1);Object.values(S.kids||{}).forEach(K=>{if(K.until)K.until=0});save()},
   night:a=>{S.night=+a;log('[개발] 밤 '+a);save()},
   heal:()=>{S.hp=S.mhp;save()},coin:()=>{S.coin+=50;save()},band:()=>{add('band',5);save()},
-  tut:()=>{S.tutd=0;S.tutAsk=0;save()},scrap:()=>{add('scrap',10);save()},fixall:()=>{FIXN.forEach(k=>S.fix[k]=1);log('[개발] 저택을 모두 고쳤다');save()},enc:()=>{ENC_ON=!ENC_ON},
+  tut:()=>{S.tutd=0;S.tutAsk=0;save()},scrap:()=>{add('scrap',10);save()},fixall:()=>{FIXN.forEach(k=>S.fix[k]=1);log('[개발] 저택을 모두 고쳤다');save()},mats:()=>{MATS.forEach(m=>add(m,5));save()},smith:()=>{S.smM=1;S.fix.roof=1;S.fix.shop=1;S.smA=1;save()},crN:()=>{S.crN=(S.crN||0)+4;save()},away:()=>{const d=3*3600e3*SEC();Object.values(S.gl||{}).forEach(g=>g.t0-=d);S.sv=Date.now()-d;AWAYCK=false;localStorage.setItem(K,JSON.stringify(S))},enc:()=>{ENC_ON=!ENC_ON},
   rev:()=>{if(!S.eda){S.eda=1;S.acad=1}else if(!S.rev)S.rev=1;else if(!S.a3)S.a3=1;else{S.rev=0;S.a3=0}log('[개발] 이야기 단계 '+actN());save()},
   pqgo:()=>{if(!S.pit){S.pit=1;S.kids=S.kids||{};S.kids.pit={st:'ok'}}S.kids.pit.st='lost';S.pq=1;S.eda=S.eda||1;log('[개발] 피트 실종');save()},outs:()=>{S.outs=1;save()},
   act1:()=>{S.night=Math.max(S.night,3);S.tutd=1;['kirien','oswin'].forEach(joinComp);if(!S.base){S.base=1;S.manor=1;S.vis.base=1}S.pit=1;log('[개발] 1막 끝 직전');save()},

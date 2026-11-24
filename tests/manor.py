@@ -38,7 +38,7 @@ with sync_playwright() as p:
     c0=S(pg)['coin'];pg.click('button[data-c=fix]');choose(pg,'마차 창고 고치기');assert S(pg)['coin']==c0-8;pg.click('button[data-c=cancel]');assert S(pg)['coin']==c0 and S(pg)['inv']['scrap']==18;print('refund ok')
     for k in ['벽난로와 거실','부엌','서재','마차 창고']:
         pg.click('button[data-c=fix]');choose(pg,k+' 고치기');waitact(pg);okpop(pg)
-    s=S(pg);assert all(s['fix'].get(k) for k in ['roof','hearth','kitchen','study','coach']);assert '모두 고쳤다' in pg.inner_text('.M')
+    s=S(pg);assert all(s['fix'].get(k) for k in ['roof','hearth','kitchen','study','coach']);assert '고친 곳 5 / 8' in pg.inner_text('.M')
     assert pg.evaluate("window.__k2.travelSec('docks','street')")<t if False else pg.evaluate("window.__k2.travelSec('docks','street')")<=0.6*900;print('all fixed, coach travel',pg.evaluate("window.__k2.travelSec('docks','street')"))
     # 꾸미기
     c0=S(pg)['coin'];pg.click('button[data-c=deco]');choose(pg,'벽지 바꾸기');choose(pg,'짙은 포도주빛');t=pg.inner_text('#ov');assert '잉크 얼룩' in t;choose(pg,'좋다');assert S(pg)['coin']==c0-6
@@ -54,6 +54,6 @@ with sync_playwright() as p:
     pg.evaluate("()=>{window.__k2.S.meal=Date.now()+1e9;window.__k2.render()}");assert pg.locator('button[data-c=rest][disabled]').count()==1;print('meal ok')
     # 저장 이전: v5 저장에 기본값
     pg.evaluate("()=>{const K=window.__k2;const o=JSON.parse(JSON.stringify(K.S));o.v=5;delete o.fix;delete o.deco;delete o.own;delete o.read;localStorage.setItem('kalsel2',JSON.stringify(o));K.load()}")
-    s=S(pg);assert s['v']==11 and s['fix']=={} and s['deco']['mantel']=='face';print('migrate v6 ok')
+    s=S(pg);assert s['v']==12 and s['fix']=={} and s['deco']['mantel']=='face';print('migrate v6 ok')
     b.close()
 print('errors',errs);assert not errs;print('ALL OK')

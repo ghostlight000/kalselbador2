@@ -85,7 +85,7 @@ with sync_playwright() as p:
     # 옛 저장(v9 영매사, 혼불 보유) 이전
     old=E(pg,"()=>{const K=window.__k2;const o=JSON.parse(JSON.stringify(K.S));o.v=9;o.og=2;o.mg=0;o.sk=['spirit','shock'];o.skp=0;delete o.mgs;return JSON.stringify(o)}")
     E(pg,f"()=>{{localStorage.setItem('kalsel2',{json.dumps(old)})}}");pg.goto(url);pg.wait_for_timeout(400)
-    s=E(pg,"window.__k2.S");assert s['v']==11 and s['sk']==['mend'] and s['mgOld']==['spirit'] and s['skp']==1,(s['sk'],s.get('mgOld'),s['skp'])
+    s=E(pg,"window.__k2.S");assert s['v']==12 and s['sk']==['mend'] and s['mgOld']==['spirit'] and s['skp']==1,(s['sk'],s.get('mgOld'),s['skp'])
     print('migrate ok')
     b.close()
 assert not errs,errs

@@ -16,7 +16,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.av='i2';K.grantBase()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;K.grantPit()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;K.S.loc='base';K.S.coin=100;K.S.inv.band=3;K.render()}")
-    assert pg.locator('.scw svg').count()==1
+    assert pg.locator('.scw svg, .scw img').count()==1
     assert E(pg,"window.__k2.DSP.wall.d")>=7200 and E(pg,"window.__k2.DSP.dock.d")>=1200
     pg.click('button[data-c=board]');t=pg.inner_text('#ov');assert '가까운 곳' in t and '먼 곳' in t;pg.click('#ov.on .drow:has-text("시장 심부름")')
     assert E(pg,"window.__k2.S.kids.pit.st")=='out';pg.click('button[data-c=board]');assert pg.locator('#ov .drow[disabled]').count()>=6;choose(pg,'닫기')
