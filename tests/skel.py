@@ -99,7 +99,7 @@ with sync_playwright() as p:
     choose(pg,'서재'); choose(pg,'금고 바늘을'); pg.click('#ov.on button:text-is("4시")'); choose(pg,'15분'); choose(pg,'다시 맞춘다')
     pg.click('#ov.on button:text-is("3시")'); choose(pg,'15분'); assert '대신 노래해 둘게' in pg.inner_text('#ov'); choose(pg,'열쇠를 챙긴다')
     choose(pg,'계단 위의 문'); choose(pg,'문을 연다'); h=fight(pg); assert '노래하는 옛 주인' in h
-    pg.wait_for_selector('#ov.on h2',timeout=5000); t=pg.inner_text('#ov'); assert '여관비는 아끼겠네' in t and '여우 모양 문진' in t; choose(pg,'짐을 옮긴다')
+    pg.wait_for_selector('#ov.on h2',timeout=5000); t=pg.inner_text('#ov'); assert '네 편지 뒤에 있던' in t and '같은 손이다' in t and '여우 모양 문진' in t; assert pg.evaluate('window.__k2.S.inv.bless')==1; choose(pg,'짐을 옮긴다')
     s=S(pg); assert s['base']==1 and s['inv'].get('relic')==1 and not s['pit']; print('base ok')
     assert pg.locator('button[data-c=board]').count()==0
     # 동료의 방: 데려갈 동료 바꾸기
