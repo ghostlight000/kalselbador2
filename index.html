@@ -282,7 +282,7 @@ const K='kalsel2',VER='v0.1 뼈대';
 // 테스트: 내 컴퓨터에서 연 파일(file://)에 ?test를 붙였을 때만. 배포 사이트에서는 켜지지 않는다.
 const TEST=location.protocol==='file:'&&/[?&]test\b/.test(location.search);
 // 개발자 모드: claude.ai에서 게임 주인이 열 때(caps에서 켬), 또는 내 컴퓨터(file:·localhost)에서 #dev·?dev로 열 때만. 배포 사이트에서는 켜지지 않는다.
-let DEV=false,FAST=false;
+let DEV=false,FAST=false,FMOVE=false;
 try{DEV=TEST||(/[#?&]dev\b/.test(location.href)&&/^(file:|https?:\/\/(localhost|127\.0\.0\.1)[:/])/.test(location.href))}catch(e){}
 const SEC=()=>(TEST||FAST)?0.002:1; // 실제 시간 배수
 const fmt=s=>{s=Math.max(0,Math.ceil(s));return s>=3600?Math.floor(s/3600)+'시간 '+Math.floor(s%3600/60)+'분':s>=60?Math.floor(s/60)+'분 '+(s%60)+'초':s+'초'};
@@ -2327,7 +2327,7 @@ const CMD={
   legclear:()=>{C.leg=null;C.legMsg='';render()},
   start:()=>{newGame()},
   import2:()=>{ev('기록 코드로 이어 하기',`<p class="m">다른 기기에서 만든 2편 기록 코드(KS2.)를 붙여 넣는다.</p><textarea id="imp2"></textarea><p class="m" id="impm"></p>`,[['불러오기',()=>doImport()],['닫기',null]])},
-  go:a=>{if(S.act)return;const p=PL[a];if(p.u&&!p.u(S))return;startAct({t:'m',fr:S.loc,to:a,d:travelSec(S.loc,a)})},
+  go:a=>{if(S.act)return;const p=PL[a];if(p.u&&!p.u(S))return;startAct({t:'m',fr:S.loc,to:a,d:DEV&&FMOVE?0.05:travelSec(S.loc,a)})},
   rest:()=>{if(S.act)return;startAct({t:'r',d:Math.round((S.loc==='base'?(S.fix.hearth?30:60):120)*(stal('three')?.8:1))})},
   fix:()=>{if(S.loc!=='base'||!S.base)return;
     ev('저택 손보기',`<p class="m">값은 시작할 때 치른다. 그만두면 돌려받는다. 가진 것 — 동전 ${S.coin} · 고철 ${S.inv.scrap||0}</p>`+FIXN.map(k=>{const F=FIX[k],done=S.fix[k],ok=fixOk(k);
@@ -2868,13 +2868,13 @@ if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener
 
 /* ===================== 개발자 창 ===================== */
 function devInit(){
-  try{FAST=localStorage.getItem('k2fast')==='1'}catch(e){}
+  try{FAST=localStorage.getItem('k2fast')==='1';FMOVE=localStorage.getItem('k2fmove')==='1'}catch(e){}
   $('#devb').hidden=false;$('#bdev').classList.add('on');
 }
 function devOpen(){
   const s=S;const b=(c,l,a)=>`<button class="btn" data-dv="${c}"${a!=null?` data-a="${a}"`:''}>${l}</button>`;
   $('#dov').innerHTML=`<div class="pcard dev"><h2>개발</h2>
-  <div class="seg">${b('fast','즉시 완료: '+(FAST||TEST?'켬':'끔'))}${s?b('finish','진행 중인 일 끝내기'):''}</div>
+  <div class="seg">${b('fast','즉시 완료: '+(FAST||TEST?'켬':'끔'))}${b('fmove','이동 건너뛰기: '+(FMOVE?'켬':'끔'))}${s?b('finish','진행 중인 일 끝내기'):''}</div>
   ${s?`<h3>진행</h3><div class="seg">${b('night','밤 0',0)}${b('night','밤 1',1)}${b('night','밤 2',2)}${b('night','밤 3',3)}</div>
   <div class="seg">${b('heal','체력 가득')}${b('coin','동전 +50')}${b('band','붕대 +5')}${b('tut','가르침 처음부터')}${b('comp','다음 동료 합류 ('+s.comps.length+')')}${b('aff','데려간 동료 호감 +20')}${b('base','본거지 얻기')}${b('pit','피트 얻기')}${b('scrap','고철 +10')}${b('fixall','저택 모두 고치기')}${b('enc','길 위 마주침: '+(ENC_ON?'켬':'끔'))}${b('act1','1막 끝으로 (에다 직전)')}${b('pqgo','피트 실종 일으키기')}${b('rev','이야기 단계: '+({1:'1막',2:'2막',2.5:'2막 후반',3:'3막'})[actN()]+' → 다음')}${b('outs','변두리 열기')}${b('kq','키리엔 퀘스트 다음 단계 ('+(s.kq||0)+')')}${b('mg','주문: '+(s.mg?'깨어남':'아직'))}${b('aev','데려간 동료 다음 호감 이벤트')}</div>
   <h3>전투</h3><div class="seg">${b('fight','골목개','dog')}${b('fight','도둑','thief')}${b('fight','점등꾼','lamp')}${b('fight','점등꾼 격노 직전','lamp2')}${b('fight','정화자','warden')}${b('fight','노래하는 옛 주인','singer')}${b('fight','쥐 떼','rats')}${b('fight','태엽 경비','clock')}${b('fight','유리관에서 나온 것','glass')}${b('fight','회색 수거인','collector')}${b('fight','그림자','shade')}${b('fight','덩어리','lump')}${b('fight','변이한 들개','mutt')}${b('fight','텅 빈 자','hollow')}${b('fight','재 짜는 사람','ashman')}${b('fight','유리 지붕 수거인 격노 직전','awc2')}${b('fight','교단 추적자','hunter')}</div>
@@ -2885,6 +2885,7 @@ function devOpen(){
 }
 const DV={
   fast:()=>{FAST=!FAST;try{localStorage.setItem('k2fast',FAST?'1':'0')}catch(e){}},
+  fmove:()=>{FMOVE=!FMOVE;try{localStorage.setItem('k2fmove',FMOVE?'1':'0')}catch(e){}},
   finish:()=>{if(S.act)S.act.t0=Date.now()-S.act.d*1000-1;S.disp.forEach(d=>d.t0=Date.now()-d.d*1000-1);Object.values(S.kids||{}).forEach(K=>{if(K.until)K.until=0});save()},
   night:a=>{S.night=+a;log('[개발] 밤 '+a);save()},
   heal:()=>{S.hp=S.mhp;save()},coin:()=>{S.coin+=50;save()},band:()=>{add('band',5);save()},
