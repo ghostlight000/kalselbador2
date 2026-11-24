@@ -31,6 +31,11 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.inv.gvial")==1
     # 2막 셋째 단계 뒤 저택에 돌아오면 뜬다
     E(pg,"()=>{const K=window.__k2;K.S.gift=0;K.S.a2=3;K.S.base=1;K.S.pend=null}")
+    # 우두머리 둘째 국면: 세 번째마다 결정타, 완전한 받아침으로 힘이 흩어진다
+    E(pg,"()=>{const K=window.__k2;K.startBattle('fight','singer')}");pg.wait_for_timeout(300)
+    ks=E(pg,"()=>{const K=window.__k2,G=K.G;G.ph=2;G.chg=0;return [K.bpick(),K.bpick(),K.bpick(),G.chg]}");assert ks[2]=='singSig' and ks[3]==0 and ks[0]!='singSig',ks
+    v=E(pg,"()=>{const K=window.__k2,G=K.G;G.foe='warden';let n=0;for(let i=0;i<40;i++){G.ph=1;K.bpick();if(G.nbn)n++}G.foe='singer';return n}");assert v>0,v
+    E(pg,"window.__k2.endBattle('win')")
     assert errs==[],errs
     print('errors',errs);print('ALL OK')
     b.close()
