@@ -145,6 +145,8 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 @keyframes taIn{from{opacity:0}to{opacity:1}}
 .taimg{position:relative;line-height:0;background:#0a0d14;border:1px solid #3b4659;outline:1px solid #222a38;outline-offset:3px;box-shadow:0 0 28px rgba(110,140,200,.12)}
 .taimg svg{width:100%;height:auto;display:block}
+.taimg canvas{width:100%;height:auto;display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+.taimg:after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
 .taimg svg *{fill:none;stroke:#a9b8d2;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .taimg svg .tf{fill:#a9b8d2;stroke:none}
 .taimg svg .fr{stroke:#4b5870;stroke-width:1.4}.taimg svg .fo{stroke:#6f7f9c;stroke-width:1.6}
@@ -2305,19 +2307,73 @@ function storyView(){
 }
 
 /* --- 팝업: 선택 창 ev, 결과 창 pop --- */
-/* 저택 글 모험의 선 그림(흰 선, 검은 바탕). 제목으로 고른다 */
-const TAFR='<defs><radialGradient id="tagl"><stop offset="0" stop-color="#8fb0e6" stop-opacity=".22"/><stop offset="1" stop-color="#8fb0e6" stop-opacity="0"/></radialGradient></defs><ellipse class="gl" cx="300" cy="150" rx="260" ry="130"/><rect class="fr" x="10" y="10" width="580" height="280"/><path class="fo" d="M10 46c14 0 22-8 22-22 0-6 4-14 14-14M590 46c-14 0-22-8-22-22 0-6-4-14-14-14M10 254c14 0 22 8 22 22 0 6 4 14 14 14M590 254c-14 0-22 8-22 22 0 6-4 14-14 14"/><path class="fo" d="M300 10v8M294 18h12M300 290v-8M294 282h12"/><circle class="ash" cx="120" cy="60" r="1.6"/><circle class="ash" cx="470" cy="44" r="1.2"/><circle class="ash" cx="520" cy="230" r="1.4"/><circle class="ash" cx="70" cy="210" r="1.1"/><circle class="ash" cx="380" cy="30" r="1"/>';
-const TAART={
- hub:'<path d="M20 270H580"/><path d="M300 270v-20h30v-20h30v-20h30v-20h30v-20h30v-20h30v-20h60"/><path d="M296 236L486 106M300 270v-34M360 230v-40M420 190v-42M480 150v-44"/><path d="M500 130V58h40v72M520 58v-8"/><path d="M150 18v40M108 66q42 34 84 0M108 66v12M150 84v12M192 66v12"/><path class="am" d="M105 72c-3-6 3-10 3-14M150 90c-3-6 3-10 3-14M195 72c-3-6 3-10 3-14"/><rect x="60" y="120" width="60" height="78"/><rect x="150" y="128" width="50" height="66"/><path d="M78 150l24 20M98 150l-18 24M162 152l26 18"/>',
- hall:'<path d="M20 270H580"/><path d="M80 270V64q0-26 30-26t30 26v206"/><circle cx="110" cy="96" r="22"/><path d="M98 84l26 26M126 82l-20 28M92 130h36M100 160l6 8-6 8 6 8M120 160l-6 8 6 8-6 8"/><path d="M104 262l18-8M118 268l-14-6"/><rect x="230" y="70" width="80" height="104"/><rect x="340" y="70" width="80" height="104"/><rect x="450" y="70" width="80" height="104"/><ellipse cx="270" cy="112" rx="22" ry="28"/><ellipse cx="380" cy="112" rx="22" ry="28"/><ellipse cx="490" cy="112" rx="22" ry="28"/><path d="M256 100l28 26M262 96l20 30M366 100l28 26M476 98l28 28M484 94l12 36"/><path d="M250 184h40M360 184h40M470 184h40"/>',
- parlor:'<path d="M20 270H580"/><path d="M150 270V176h300v94"/><path d="M150 176l40-64h260v64"/><path d="M168 192h264v26H168z"/><path d="M190 192v26M212 192v26M234 192v26M256 192v26M278 192v26M300 192v26M322 192v26M344 192v26M366 192v26M388 192v26M410 192v26"/><path d="M200 112l20-34h66l-12 34"/><path d="M226 92h40M222 102h40"/><path d="M180 270v-22M420 270v-22"/><path d="M500 270V150l40-30 30 30v120M512 150h46"/><path d="M300 112v-12"/><path class="am" d="M300 98c-4-6 4-10 4-15"/>',
- kitchen:'<path d="M20 270H580"/><rect x="150" y="50" width="300" height="120"/><circle cx="195" cy="120" r="12"/><circle cx="250" cy="120" r="12"/><circle cx="305" cy="120" r="12"/><circle cx="360" cy="120" r="12"/><circle cx="415" cy="120" r="12"/><path d="M195 108V62M250 108V62M305 108V62M360 108V62M415 108V88M415 80V62"/><path d="M185 150h20M240 150h20M295 150h20M350 150h20M405 150h20"/><path d="M60 200h120M60 230h120M80 200v-16h20v16M130 200v-24q10-8 20 0v24"/><path d="M430 270v-60h110v60M430 236h110M470 210v-12"/><path class="am" d="M450 266c0-10 10-12 8-22M480 266c0-8 8-10 6-18"/>',
- study:'<path d="M20 270H580"/><path d="M120 270v-66h360v66M120 204h360"/><path d="M250 204v-74h100v74"/><circle cx="300" cy="166" r="24"/><path d="M300 166v-14M300 166l10 6"/><path d="M300 138v4M300 190v4M272 166h4M324 166h4"/><path d="M40 270V40h60v230M40 90h60M40 140h60M40 190h60M52 52v30M64 52v30M82 104v28M54 150v30M70 202v30"/><path d="M500 270V40h60v230M500 90h60M500 140h60M500 190h60M512 102v30M540 52v30M520 150v32"/><path d="M160 194h50l6-10h-56z"/><path d="M440 204v-16"/><path class="am" d="M440 186c-4-6 4-10 4-15"/>',
- door:'<path d="M20 270H580"/><path d="M230 270V60q70-40 140 0v210"/><path d="M300 52v218"/><circle cx="318" cy="170" r="7"/><path d="M318 177v12"/><path class="am" d="M200 262l-40 8M400 262l40 8M230 120l-30-10M370 120l30-10M230 200l-40 0M370 200l40 0"/><path d="M160 270l40-60h200l40 60"/>',
- dial:'<circle cx="300" cy="150" r="110"/><circle cx="300" cy="150" r="96"/><path d="M300 54v14M300 232v14M204 150h14M382 150h14M232 82l10 10M358 208l10 10M368 82l-10 10M242 208l-10 10"/><path d="M300 150l0-62M300 150l40 24"/><circle cx="300" cy="150" r="6" class="tf"/>',
- piano:'<path d="M60 230h480"/><path d="M80 120h440v110H80z"/><path d="M80 120v110M120 120v110M160 120v110M200 120v110M240 120v110M280 120v110M320 120v110M360 120v110M400 120v110M440 120v110M480 120v110"/><path d="M106 120v64h28v-64M146 120v64h28v-64M226 120v64h28v-64M266 120v64h28v-64M306 120v64h28v-64M386 120v64h28v-64M426 120v64h28v-64"/><path d="M200 70q100-40 200 0"/>'};
+/* 저택 글 모험의 그림: 240×120 도트 그림을 키워서 보인다(옛 컴퓨터 글 모험 느낌). 0 바탕 1 밝음 2 중간 3 어둠 4 호박 5 아주 밝음 */
+const TAPAL=[[10,13,20],[184,198,222],[125,141,176],[52,63,86],[224,164,88],[232,238,248]];
+function taPaint(k){const W=240,H=120,b=new Uint8Array(W*H);
+  const P=(x,y,c)=>{x|=0;y|=0;if(x>=0&&y>=0&&x<W&&y<H)b[y*W+x]=c};
+  const Rf=(x,y,w,h,c)=>{for(let j=0;j<h;j++)for(let i=0;i<w;i++)P(x+i,y+j,c)};
+  const O=(x,y,w,h,c)=>{for(let i=0;i<w;i++){P(x+i,y,c);P(x+i,y+h-1,c)}for(let j=0;j<h;j++){P(x,y+j,c);P(x+w-1,y+j,c)}};
+  const D=(x,y,w,h,c,m)=>{m=m||2;for(let j=0;j<h;j++)for(let i=0;i<w;i++)if(((x+i)+(y+j)*(m===2?1:2))%m===0)P(x+i,y+j,c)};
+  const L=(x0,y0,x1,y1,c)=>{x0|=0;y0|=0;x1|=0;y1|=0;const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;for(;;){P(x0,y0,c);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx}if(e2<=dx){e+=dx;y0+=sy}}};
+  const C=(cx,cy,r,c,f)=>{for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){const d=x*x+y*y;if(f?d<=r*r+r:Math.abs(Math.sqrt(d)-r)<.6)P(cx+x,cy+y,c)}};
+  const E=(cx,cy,rx,ry,c,f)=>{for(let y=-ry;y<=ry;y++)for(let x=-rx;x<=rx;x++){const d=x*x/(rx*rx)+y*y/(ry*ry);if(f?d<=1:Math.abs(d-1)<.14)P(cx+x,cy+y,c)}};
+  const Eh=(cx,cy,rx,ry,c,f)=>{for(let y=-ry;y<=0;y++)for(let x=-rx;x<=rx;x++){const d=x*x/(rx*rx)+y*y/(ry*ry);if(f?d<=1:Math.abs(d-1)<.14)P(cx+x,cy+y,c)}};
+  const floor=()=>{L(0,104,239,104,2);for(let y=106;y<120;y+=3)for(let x=(y%2)*4;x<240;x+=8)Rf(x,y,4,1,3)};
+  const flame=(x,y)=>{P(x,y-3,4);P(x,y-2,4);P(x+1,y-2,4);P(x,y-1,5);P(x-1,y-1,4);P(x+1,y-1,4)};
+  const candle=(x,y)=>{Rf(x,y,2,5,1);flame(x,y-1)};
+  const frame=(x,y,w,h)=>{O(x,y,w,h,1);O(x+2,y+2,w-4,h-4,2);D(x+3,y+3,w-6,h-6,3)};
+  ({
+  hub(){floor();L(0,78,118,78,3);for(let x=4;x<118;x+=10)L(x,79,x,103,3);
+    for(let i=0;i<8;i++){const y=104-(i+1)*9,x=118+i*12;Rf(x,y,214-x,9,i%2?2:3);L(x,y,213,y,1);L(x,y,x,y+8,1)}
+    L(116,78,206,8,1);L(116,79,206,9,2);for(let i=0;i<8;i++){const x=118+i*12;L(x+6,104-(i+1)*9,x+6,104-(i+1)*9-10+Math.round(i*.0),2)}
+    Rf(204,10,26,22,3);Eh(217,10,13,7,3,1);Eh(217,10,13,7,1);L(204,10,204,31,1);L(229,10,229,31,1);L(217,4,217,31,2);P(221,20,4);P(221,21,4)
+    L(60,0,60,10,2);L(42,14,78,14,1);L(42,15,78,15,2);[44,52,60,68,76].forEach(x=>{Rf(x,11,2,3,1);flame(x,10)});L(50,15,60,20,2);L(70,15,60,20,2);
+    frame(14,36,26,32);E(27,50,6,8,3,1);L(22,44,32,56,1);L(31,45,24,56,1);frame(48,40,20,26);E(58,52,5,6,3,1);L(52,48,64,58,1);
+    for(let i=0;i<14;i++)P((i*37)%118+2,(i*23)%30+4,2)},
+  hall(){floor();
+    Rf(28,20,30,84,3);O(28,20,30,84,1);L(26,20,43,8,1);L(43,8,60,20,1);L(30,20,43,10,2);L(43,10,56,20,2);
+    C(43,36,10,1,1);C(43,36,8,3,1);L(43,36,47,30,1);for(let a=0;a<12;a++)P(43+Math.round(Math.cos(a/12*6.28)*9),36+Math.round(Math.sin(a/12*6.28)*9),5);L(36,30,50,44,5);L(49,30,38,43,5);
+    O(34,54,18,40,2);L(43,56,43,80,1);C(43,84,4,1,1);L(64,102,74,99,1);L(66,103,72,103,1);
+    [[96,'오'],[136,'마'],[176,'']].forEach(([x,n],i)=>{frame(x,28,30,42);E(x+15,46,7,10,2,1);Rf(x+9,57,13,9,2);L(x+8,38,x+22,54,5);L(x+10,37,x+23,51,1);L(x+21,38,x+9,53,1);Rf(x+9,72,12,3,n?2:0);O(x+9,72,12,3,2)});
+    D(96,10,110,6,3,4)},
+  parlor(){floor();
+    E(30,90,24,12,3,1);D(8,78,44,26,2,3);E(30,80,18,8,2);L(8,92,52,92,3);
+    Rf(84,58,108,46,3);O(84,58,108,46,1);for(let i=0;i<108;i+=2)L(84+i,58,100+i*.85,38,i%4?3:2);L(84,58,100,38,1);L(100,38,192,38,1);L(192,38,192,58,1);
+    Rf(88,64,100,9,1);for(let i=0;i<100;i+=7){L(88+i,64,88+i,72,3);if(i%21!==14)Rf(92+i,64,3,5,3)}
+    Rf(88,104-1,4,1,1);Rf(186,103,4,1,1);Rf(90,73,3,31,2);Rf(184,73,3,31,2);
+    Rf(116,26,24,12,5);L(116,26,128,24,1);L(128,24,140,26,1);for(let y=29;y<36;y+=2)L(118,y,138,y,2);L(128,24,128,38,2);
+    candle(178,30);Rf(176,35,6,2,2);
+    Rf(206,52,22,52,3);O(206,52,22,52,2);L(206,52,217,40,2);L(217,40,228,52,2);D(208,56,18,46,2,3)},
+  piano(){Rf(14,30,212,70,1);for(let i=0;i<=212;i+=14)L(14+i,30,14+i,99,3);
+    for(let n=0;n<14;n++)if([0,1,3,4,5].includes(n%7))Rf(14+n*14+9,30,9,40,3);
+    [[0,'도'],[1,'레'],[2,'미'],[4,'솔'],[5,'라']].forEach(([n])=>{const x=14+n*14;D(x+2,82,10,14,2,2)});
+    O(12,28,216,74,2);L(10,104,230,104,2);candle(212,18)},
+  kitchen(){floor();
+    Rf(60,12,120,48,3);O(60,12,120,48,1);O(62,14,116,44,2);
+    [78,100,122,144,166].forEach((x,i)=>{if(i===3){L(x,16,x,24,2);L(x,29,x-1,33,2)}else L(x,16,x,32,2);Rf(x-3,34,7,2,1);Rf(x-4,36,9,5,1);Rf(x-5,41,11,1,5);P(x,43,1);Rf(x-4,50,9,3,2)});
+    L(8,62,50,62,1);L(8,82,50,82,1);[[10,54,6,8],[20,56,5,6],[30,52,8,10],[42,57,5,5],[12,75,7,7],[26,74,6,8],[38,76,9,6]].forEach(([x,y,w,h])=>{Rf(x,y,w,h,2);O(x,y,w,h,1)});
+    Rf(186,62,46,42,3);O(186,62,46,42,1);Rf(196,78,24,14,0);O(196,78,24,14,2);for(let i=0;i<24;i+=2)for(let j=0;j<14;j+=2)if((i*j+i)%5<3)P(196+i,78+j+(i%4?1:0),4);flame(203,90);flame(212,91);
+    Rf(196,54,26,8,2);O(196,54,26,8,1);L(194,55,198,55,1);L(220,55,224,55,1)},
+  study(){floor();
+    [6,198].forEach(x0=>{Rf(x0,8,36,96,3);O(x0,8,36,96,1);for(let y=28;y<100;y+=20)L(x0,y,x0+35,y,1);
+      for(let y=10;y<100;y+=20){let x=x0+2;let r=x0*7+y;while(x<x0+33){const w=2+(r%3);r=r*13%97;Rf(x,y+3+(r%4),w,17-(r%4),r%2?1:2);x+=w+1}}});
+    Rf(56,78,128,5,2);O(56,78,128,5,1);Rf(60,83,4,21,2);Rf(176,83,4,21,2);D(64,86,112,16,3,2);
+    Rf(98,46,44,32,3);O(98,46,44,32,1);O(100,48,40,28,2);C(120,62,9,1);for(let a=0;a<12;a++)P(120+Math.round(Math.cos(a/12*6.28)*7),62+Math.round(Math.sin(a/12*6.28)*7),2);L(120,62,120,56,5);L(120,62,124,64,5);Rf(140,58,3,8,1);
+    candle(162,71);Rf(70,74,18,4,5);L(70,74,88,73,1)},
+  dial(){C(120,60,52,3,1);C(120,60,52,1);C(120,60,46,2);for(let a=0;a<60;a++){const r=a%5?44:40,t=a/60*6.283;L(120+Math.cos(t)*45,60+Math.sin(t)*45,120+Math.cos(t)*r,60+Math.sin(t)*r,a%5?2:5)}
+    L(120,60,120,26,5);L(121,60,121,26,1);L(120,60,120,40,1);C(120,60,3,5,1);D(60,8,120,4,3,4)},
+  door(){floor();for(let i=0;i<6;i++){L(70-i*8,104+i*2,170+i*8,104+i*2,i%2?3:2)}
+    Rf(92,30,56,74,3);Eh(120,30,28,16,3,1);Eh(120,30,28,16,1);L(92,30,92,103,1);L(147,30,147,103,1);
+    for(let x=101;x<146;x+=9)if(Math.abs(x-120)>2)L(x,Math.round(30-16*Math.sqrt(Math.max(0,1-((x-120)/28)**2)))+1,x,103,2);for(let y=15;y<104;y++)P(120,y,y%4?4:5);
+    for(let i=0;i<5;i++){L(120,105,96-i*14,119,i%2?4:3)}for(let i=0;i<5;i++){L(121,105,145+i*14,119,i%2?4:3)}Rf(128,66,4,4,1);Rf(129,70,2,5,1);
+    D(92,8,56,6,2,4)}
+  })[k]();
+  return b}
 const TAMAP={'오르빌 저택':'hub','오르빌 저택 1층':'hub','현관홀':'hall','응접실':'parlor','피아노':'piano','부엌':'kitchen','서재':'study','서재 문':'door','금고':'dial','계단 위의 문':'door'};
-const taImg=h=>`<svg viewBox="0 0 600 300" aria-hidden="true">${TAFR}${TAART[TAMAP[h]]||TAART.hub}</svg>`;
+const TAC={};
+const taImg=h=>{const k=TAMAP[h]||'hub';return `<canvas class="tacv" width="240" height="120" data-k="${k}"></canvas>`};
+function taDraw(){document.querySelectorAll('#ov canvas.tacv').forEach(cv=>{const k=cv.dataset.k;if(cv._k===k)return;cv._k=k;
+  const b=TAC[k]||(TAC[k]=taPaint(k)),cx=cv.getContext('2d'),im=cx.createImageData(240,120);for(let i=0;i<b.length;i++){const c=TAPAL[b[i]];im.data[i*4]=c[0];im.data[i*4+1]=c[1];im.data[i*4+2]=c[2];im.data[i*4+3]=255}cx.putImageData(im,0,0)})}
 let TAON=false; // 저택 안에서는 팝업 대신 전체 화면 글 모험
 function ev(h,p,b,w){if(TAON&&!(w&&w.k)){EV0={h,p,b,w,ta:1};render();return}if(COGQ&&typeof p==='string'){p+=`<p class="m cog">${COGQ.p}</p>`;COGQ=null}EV0={h,p,b,w};render()}
 let TK=null;const TG={},CHI={};
@@ -2337,6 +2393,7 @@ function renderOv(){
   if(!EV0)TAON=false;
   o.classList.toggle('on',!!h);o.classList.toggle('ta',!!(EV0&&EV0.ta));
   if(o._h!==h){o._h=h;morph(o,h);if(EV0&&EV0.ta)o.scrollTop=0}
+  if(EV0&&EV0.ta)taDraw()
 }
 
 /* ===================== 행동 (실제 시간) ===================== */
