@@ -139,6 +139,26 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .stats .btn.sm{min-height:26px;padding:0 4px;margin-left:4px}
 
 /* ===== 창 ===== */
+/* 저택 안: 전체 화면 글 모험(흑백 선 그림 + 겹테 글 상자) */
+#ov.ta{background:#000;padding:18px 12px 40px}
+.ta{width:100%;max-width:620px;color:#e9e9e9;animation:taIn .5s ease}
+@keyframes taIn{from{opacity:0}to{opacity:1}}
+.taimg{border:2px solid #e9e9e9;background:#000;line-height:0}
+.taimg svg{width:100%;height:auto;display:block}
+.taimg svg *{fill:none;stroke:#f0f0f0;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.taimg svg .tf{fill:#f0f0f0;stroke:none}
+.tabox{margin-top:26px;border:4px double #d8d8d8;box-shadow:inset 0 0 8px rgba(255,255,255,.35),0 0 6px rgba(255,255,255,.15);padding:26px 22px 18px;min-height:250px}
+.tah{text-align:center;font-size:12px;letter-spacing:.3em;color:#9a9a9a;margin-bottom:14px}
+.tat{text-align:center;line-height:2.05;font-size:15.5px}
+.tat p{margin:0 0 6px;opacity:0;animation:taP .6s ease forwards}
+.tat p:nth-child(2){animation-delay:.25s}.tat p:nth-child(3){animation-delay:.5s}.tat p:nth-child(4){animation-delay:.75s}.tat p:nth-child(5){animation-delay:1s}.tat p:nth-child(n+6){animation-delay:1.2s}
+@keyframes taP{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.tat .m{color:#bdbdbd}.tat b{color:#fff}
+.tat .say{text-align:center}.tat .say .nm,.tat .say b{color:#9fb2ce}
+.taq{margin-top:18px;border-top:1px dashed #555;padding-top:12px;display:flex;flex-direction:column;gap:2px}
+.taq .btn{background:none!important;border:none!important;border-image:none!important;box-shadow:none!important;color:#cfcfcf;text-align:left;min-height:30px;padding:4px 6px;font-size:15px;font-family:inherit}
+.taq .btn:before{content:attr(data-n) ". ";color:#777}
+.taq .btn:hover,.taq .btn:focus{color:#fff}.taq .btn:hover:before{content:"▸ ";color:#fff}
 .ovl{position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;background:rgba(8,10,14,.74);overflow:auto;padding:24px 14px}
 .ovl.on{display:flex}
 #ov{z-index:40}#sov{z-index:60}#bt{z-index:30;background:var(--bg);display:none;padding:0}
@@ -1351,7 +1371,7 @@ const SCENE={
    ev('오르빌 가문의 무덤',`<p>묘지 북쪽 끝. 이끼 낀 가족묘에 오르빌 상회의 닻 문장이 새겨져 있다. 비문 대부분이 정으로 긁혀 나갔다.</p><p class="m">남은 글자 — “겨울이 끝난 해 … 불을 거둔 이 … 여기 잠들지 않는다.”</p>`+
    (S.party==='oswin'?'<p class="m">오스윈의 꼬리 끝에서 불꽃이 튄다. 비석에 가까이 갈수록 세게.</p>':pline({kirien:'누가 일부러 긁었어. 이름을 지우려고. 교단 장부처럼.'}))+(S.party==='oswin'?'<p>오스윈 — “이 돌은 뭔가를 기억하는군요. 저보다 오래.”</p>':'')+
    `<p>무덤 문 틈에 녹슨 열쇠 하나가 끼워져 있다. 누가 두고 간 것처럼. 손잡이에 오르빌 저택의 문장이 있다.</p><p class="m">지도에 오르빌 저택이 나타났다. 옆 납골당 계단에 누군가 앉아 이쪽을 보고 있다.</p>`,[['열쇠를 챙긴다',()=>{if(!met(S,'kasimir'))SCENE.kasM()}]],1)},
- manorIn:()=>S.mz&&S.mz.in?SCENE.mzHub():ev('오르빌 저택',`<p>현관문은 잠겨 있지 않다. 안은 바깥보다 차갑다.</p><p>위층에서 노래가 들린다. 가사는 없다. 이름 하나를 길게 늘여 부르는 소리다.</p>`+
+ manorIn:()=>(TAON=true,S.mz&&S.mz.in)?SCENE.mzHub():ev('오르빌 저택',`<p>현관문은 잠겨 있지 않다. 안은 바깥보다 차갑다.</p><p>위층에서 노래가 들린다. 가사는 없다. 이름 하나를 길게 늘여 부르는 소리다.</p>`+
    pline({kirien:'노래 들려? 나만 들리는 거 아니지?',oswin:'재에 먹힌 사람은 마지막으로 붙든 걸 끝까지 놓지 않지요. 이 집 주인은 이름을 붙든 모양입니다.'}),
    [['안으로 들어선다',()=>{S.mz=S.mz||{};S.mz.in=1;save();SCENE.mzHub()}],['오늘은 돌아간다',null]]),
  /* ===== 노래하는 저택: 잠깐 방 탈출 (v021) — 위층 문을 여는 열쇠는 1층 어딘가에 =====
@@ -1390,7 +1410,7 @@ const SCENE={
  mzUp:()=>{const M=S.mz;
    if(!M.up){ev('계단 위의 문','<p>계단 끝 문은 단단히 잠겼다. 열쇠 구멍이 하나. 문틈으로 노래가 새어 나온다. 이름 하나를 길게 늘여 부르는 소리다.</p>',[['내려간다',()=>SCENE.mzHub()]]);return}
    ev('계단 위의 문','<p>열쇠가 돌아간다. 노래가 멎는다. 문 너머에서 무언가 천천히 일어서는 소리가 난다.</p>'+pline({kirien:'준비됐어. 너는?',oswin:'노래가 멎었군요. 좋은 징조는 아니지요.',ibre:'제가 먼저 들어가겠습니다.',kasimir:'노래가 멎었습니다. 칼을 뽑으십시오.',eno:'저 안은 노래로 꽉 차 있어요. 숨 크게 쉬어.',barg:'…내 뒤에 붙어라.'}),
-   [['문을 연다',()=>{S.bstory='manor';save();startBattle('fight','singer')}],['아직 아니다',()=>SCENE.mzHub()]])},
+   [['문을 연다',()=>{TAON=false;S.bstory='manor';save();startBattle('fight','singer')}],['아직 아니다',()=>SCENE.mzHub()]])},
  manorW:()=>{S.base=1;S.manor=1;S.vis.base=1;const L=S.legacy;if(L&&RELIC[L.pa])S.inv.relic=1;
    S.inv.bless=1;log('오르빌 저택이 본거지가 되었다.');jr('오르빌 저택의 노래를 잠재웠다. 노래하던 노인은 “그분께서 목소리를 돌려주신다 하셨다”고 했다. 재 위에 대성당 축복장이 남았다. 글씨가 편지 봉투 뒷면의 한 줄과 같다. 저택이 우리 본거지가 되었다.');
    ev('오르빌 저택',`<p>노래가 그친다. 길게 늘여 부르던 이름의 마지막 음이 방 안에 오래 남는다.</p><p>쓰러진 것은 낡은 연미복을 입은 노인의 형상이다. 입술이 아직 움직인다.</p><p>노인 — “그분께서… 목소리를 돌려주신다 하셨는데. 노래하며 기다리면… 돌려주신다고.”</p>
@@ -2279,7 +2299,21 @@ function storyView(){
 }
 
 /* --- 팝업: 선택 창 ev, 결과 창 pop --- */
-function ev(h,p,b,w){if(COGQ&&typeof p==='string'){p+=`<p class="m cog">${COGQ.p}</p>`;COGQ=null}EV0={h,p,b,w};render()}
+/* 저택 글 모험의 선 그림(흰 선, 검은 바탕). 제목으로 고른다 */
+const TAFR='<rect x="8" y="8" width="584" height="284"/><path d="M8 40l14-8M8 260l14 8M592 40l-14-8M592 260l-14 8M40 8l-8 14M560 8l8 14M40 292l-8-14M560 292l8-14"/>';
+const TAART={
+ hub:'<path d="M20 270H580"/><path d="M300 270v-20h30v-20h30v-20h30v-20h30v-20h30v-20h30v-20h60"/><path d="M296 236L486 106M300 270v-34M360 230v-40M420 190v-42M480 150v-44"/><path d="M500 130V58h40v72M520 58v-8"/><path d="M150 18v40M108 66q42 34 84 0M108 66v12M150 84v12M192 66v12"/><path d="M105 72c-3-6 3-10 3-14M150 90c-3-6 3-10 3-14M195 72c-3-6 3-10 3-14"/><rect x="60" y="120" width="60" height="78"/><rect x="150" y="128" width="50" height="66"/><path d="M78 150l24 20M98 150l-18 24M162 152l26 18"/>',
+ hall:'<path d="M20 270H580"/><path d="M80 270V64q0-26 30-26t30 26v206"/><circle cx="110" cy="96" r="22"/><path d="M98 84l26 26M126 82l-20 28M92 130h36M100 160l6 8-6 8 6 8M120 160l-6 8 6 8-6 8"/><path d="M104 262l18-8M118 268l-14-6"/><rect x="230" y="70" width="80" height="104"/><rect x="340" y="70" width="80" height="104"/><rect x="450" y="70" width="80" height="104"/><ellipse cx="270" cy="112" rx="22" ry="28"/><ellipse cx="380" cy="112" rx="22" ry="28"/><ellipse cx="490" cy="112" rx="22" ry="28"/><path d="M256 100l28 26M262 96l20 30M366 100l28 26M476 98l28 28M484 94l12 36"/><path d="M250 184h40M360 184h40M470 184h40"/>',
+ parlor:'<path d="M20 270H580"/><path d="M150 270V176h300v94"/><path d="M150 176l40-64h260v64"/><path d="M168 192h264v26H168z"/><path d="M190 192v26M212 192v26M234 192v26M256 192v26M278 192v26M300 192v26M322 192v26M344 192v26M366 192v26M388 192v26M410 192v26"/><path d="M200 112l20-34h66l-12 34"/><path d="M226 92h40M222 102h40"/><path d="M180 270v-22M420 270v-22"/><path d="M500 270V150l40-30 30 30v120M512 150h46"/>',
+ kitchen:'<path d="M20 270H580"/><rect x="150" y="50" width="300" height="120"/><circle cx="195" cy="120" r="12"/><circle cx="250" cy="120" r="12"/><circle cx="305" cy="120" r="12"/><circle cx="360" cy="120" r="12"/><circle cx="415" cy="120" r="12"/><path d="M195 108V62M250 108V62M305 108V62M360 108V62M415 108V88M415 80V62"/><path d="M185 150h20M240 150h20M295 150h20M350 150h20M405 150h20"/><path d="M60 200h120M60 230h120M80 200v-16h20v16M130 200v-24q10-8 20 0v24"/><path d="M430 270v-60h110v60M430 236h110M470 210v-12"/>',
+ study:'<path d="M20 270H580"/><path d="M120 270v-66h360v66M120 204h360"/><path d="M250 204v-74h100v74"/><circle cx="300" cy="166" r="24"/><path d="M300 166v-14M300 166l10 6"/><path d="M300 138v4M300 190v4M272 166h4M324 166h4"/><path d="M40 270V40h60v230M40 90h60M40 140h60M40 190h60M52 52v30M64 52v30M82 104v28M54 150v30M70 202v30"/><path d="M500 270V40h60v230M500 90h60M500 140h60M500 190h60M512 102v30M540 52v30M520 150v32"/><path d="M160 194h50l6-10h-56z"/>',
+ door:'<path d="M20 270H580"/><path d="M230 270V60q70-40 140 0v210"/><path d="M300 52v218"/><circle cx="318" cy="170" r="7"/><path d="M318 177v12"/><path d="M200 262l-40 8M400 262l40 8M230 120l-30-10M370 120l30-10M230 200l-40 0M370 200l40 0"/><path d="M160 270l40-60h200l40 60"/>',
+ dial:'<circle cx="300" cy="150" r="110"/><circle cx="300" cy="150" r="96"/><path d="M300 54v14M300 232v14M204 150h14M382 150h14M232 82l10 10M358 208l10 10M368 82l-10 10M242 208l-10 10"/><path d="M300 150l0-62M300 150l40 24"/><circle cx="300" cy="150" r="6" class="tf"/>',
+ piano:'<path d="M60 230h480"/><path d="M80 120h440v110H80z"/><path d="M80 120v110M120 120v110M160 120v110M200 120v110M240 120v110M280 120v110M320 120v110M360 120v110M400 120v110M440 120v110M480 120v110"/><path d="M106 120v64h28v-64M146 120v64h28v-64M226 120v64h28v-64M266 120v64h28v-64M306 120v64h28v-64M386 120v64h28v-64M426 120v64h28v-64"/><path d="M200 70q100-40 200 0"/>'};
+const TAMAP={'오르빌 저택':'hub','오르빌 저택 1층':'hub','현관홀':'hall','응접실':'parlor','피아노':'piano','부엌':'kitchen','서재':'study','서재 문':'door','금고':'dial','계단 위의 문':'door'};
+const taImg=h=>`<svg viewBox="0 0 600 300" aria-hidden="true">${TAFR}${TAART[TAMAP[h]]||TAART.hub}</svg>`;
+let TAON=false; // 저택 안에서는 팝업 대신 전체 화면 글 모험
+function ev(h,p,b,w){if(TAON&&!(w&&w.k)){EV0={h,p,b,w,ta:1};render();return}if(COGQ&&typeof p==='string'){p+=`<p class="m cog">${COGQ.p}</p>`;COGQ=null}EV0={h,p,b,w};render()}
 let TK=null;const TG={},CHI={};
 const QD=(l,seen)=>seen?`<span class="qd">${l}</span>`:l; // 이미 들은 질문은 흐리게, 끝에 ✓
 function tev(id,h,p,b){ev(h,p,b,{k:id})} // 대화 창: 초상과 이름 머리, 질문 목록
@@ -2291,10 +2325,12 @@ function renderOv(){
   const o=$('#ov');let h='';
   if(EV0&&EV0.w&&EV0.w.k){const k=EV0.w.k,nm=cn(k),sub=COMP[k]?COMP[k].k:NPCT[k]?NPCT[k].sub:TSUB[k]||'',ti=String(EV0.h),sp=ti.indexOf(' — '),t2=sp>0?ti.slice(sp+3):(ti!==nm?ti:'');
     h=`<div class="pcard tk"><div class="tkh">${avSvg(PORT[k]||'i0')}<div><b>${nm}</b><span>${sub}</span></div>${t2?`<em>${t2}</em>`:''}</div><div class="tkb">${sayFmt(EV0.p,nm)}</div><div class="tq">${EV0.b.map((x,i)=>`<button class="btn" data-c="evb" data-a="${i}">${x[0]}</button>`).join('')}</div></div>`}
+  else if(EV0&&EV0.ta){h=`<div class="ta"><div class="taimg">${taImg(EV0.h)}</div><div class="tabox"><div class="tah">${EV0.h}</div><div class="tat">${sayFmt(EV0.p)}</div><div class="taq">${EV0.b.map((x,i)=>`<button class="btn" data-c="evb" data-a="${i}" data-n="${i+1}">${x[0]}</button>`).join('')}</div></div></div>`}
   else if(EV0){const two=EV0.b.length===2;h=`<div class="pcard${EV0.w?' w':''}"><h2>${EV0.h}</h2>${sayFmt(EV0.p)}<div class="btns${two?' two':''}">${EV0.b.map((x,i)=>`<button class="btn${EV0.b.length===1?' pri':''}" data-c="evb" data-a="${i}">${x[0]}</button>`).join('')}</div></div>`}
   else if(POP){const it=Object.entries(POP.i).filter(([,n])=>n);h=`<div class="pcard"><h2>${POP.t}</h2>${POP.n.map(x=>`<p>${x}</p>`).join('')}${it.length||POP.g?`<div class="items">${it.map(([k,n])=>`<span>${esc(itName(k))} ${n>0?'+':''}${n}</span>`).join('')}${POP.g?`<span>동전 +${POP.g}</span>`:''}</div>`:''}<div class="btns"><button class="btn pri" data-c="popok">확인</button></div></div>`}
-  o.classList.toggle('on',!!h);
-  if(o._h!==h){o._h=h;morph(o,h)}
+  if(!EV0)TAON=false;
+  o.classList.toggle('on',!!h);o.classList.toggle('ta',!!(EV0&&EV0.ta));
+  if(o._h!==h){o._h=h;morph(o,h);if(EV0&&EV0.ta)o.scrollTop=0}
 }
 
 /* ===================== 행동 (실제 시간) ===================== */
@@ -2467,7 +2503,7 @@ const CMD={
   roomTalk:()=>{const L=S.comps.filter(c=>!(S.left||{})[c]);ev('동료의 방','<p class="m">누구와 이야기할까.</p>',L.map(id=>[josa(cn(id),'과','와')+' 이야기한다'+(chNext(id)||aevFor(id)?' ✦':''),()=>CMD.talk(id)]).concat([['돌아간다',()=>CMD.rooms()]]))},
   roomPick:()=>{const L=S.comps.filter(c=>!(S.left||{})[c]),inn=!S.base;ev(inn?'여관 1층':'동료의 방',`<p class="m">지금은 ${josa(cn(S.party),'과','와')} 함께 걷고 있다. 누구와 나갈까.</p>`,L.filter(id=>id!==S.party).map(id=>[josa(cn(id),'과','와')+' 나간다',()=>{if(affBad(id)>=2){ev(cn(id),tln(id,REFUSE[id]),[['돌아간다',()=>CMD.rooms()]],1);return}S.party=id;log(josa(cn(id),'과','와')+' 함께 나서기로 했다.');save()}]).concat([['돌아간다',()=>CMD.rooms()]]))},
   rooms0:()=>ev('동료의 방','<p>복도를 따라 빈 방 네 칸. 침대 틀만 남아 있다.</p><p class="m">함께 걸을 사람을 만나면 여기서 지내게 된다. 데리고 나갈 사람도 여기서만 바꿀 수 있다.</p>',[['문을 닫는다',null]]),
-  evb:a=>{const f=EV0&&EV0.b[+a][1];TK=EV0&&EV0.w&&EV0.w.k||null;EV0=null;if(f)f();TK=null;if(S)save();render()},
+  evb:a=>{const f=EV0&&EV0.b[+a][1];if(!f&&EV0&&EV0.ta)TAON=false;TK=EV0&&EV0.w&&EV0.w.k||null;EV0=null;if(f)f();TK=null;if(S)save();render()},
   popok:()=>{POP=null;render()},
   fold:a=>{S.fold=S.fold||{};const def=a.startsWith('a')&&+a.slice(1)<((MS[Math.max(0,MS.findIndex((m,i)=>i>0&&!m[2](S)))]||[])[4]||1);const cur=S.fold[a]!=null?S.fold[a]:def;S.fold[a]=!cur;save();render()},
   csel:a=>{CSEL=a;render()},
@@ -2930,7 +2966,7 @@ document.addEventListener('pointerdown',e=>{
   if(b){e.preventDefault();press(b.dataset.p,e.timeStamp||now());return}
   if(G.st==='qte'&&e.target.closest('#barena,#bqte')){e.preventDefault();press('qte',e.timeStamp||now())}
 },{passive:false});
-document.addEventListener('keydown',e=>{
+document.addEventListener('keydown',e=>{if(EV0&&EV0.ta&&/^[1-9]$/.test(e.key)){const b=document.querySelector(`#ov.ta .taq button[data-n="${e.key}"]`);if(b){b.click();e.preventDefault();return}}
   if(!G.on||$('#sov').classList.contains('on')||$('#bov').classList.contains('on'))return;
   const k=e.key.toLowerCase(),ts=e.timeStamp||now();
   if(e.repeat){if(G.st==='enemy'||G.st==='qte')e.preventDefault();return}

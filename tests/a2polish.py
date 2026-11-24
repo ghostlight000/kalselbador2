@@ -31,6 +31,9 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.inv.gvial")==1
     # 2막 셋째 단계 뒤 저택에 돌아오면 뜬다
     E(pg,"()=>{const K=window.__k2;K.S.gift=0;K.S.a2=3;K.S.base=1;K.S.pend=null}")
+    # 저택 안은 전체 화면 글 모험, 나오면 보통 창으로
+    E(pg,"()=>{const K=window.__k2;K.S.mz={};K.SCENE.manorIn()}");pg.wait_for_selector('#ov.on.ta .taimg svg');choose(pg,'오늘은 돌아간다')
+    E(pg,"()=>{window.__k2.ev('x','<p>y</p>',[['닫기',null]],1)}");assert 'ta' not in pg.get_attribute('#ov','class');okpop(pg)
     # 우두머리 둘째 국면: 세 번째마다 결정타, 완전한 받아침으로 힘이 흩어진다
     E(pg,"()=>{const K=window.__k2;K.startBattle('fight','singer')}");pg.wait_for_timeout(300)
     ks=E(pg,"()=>{const K=window.__k2,G=K.G;G.ph=2;G.chg=0;return [K.bpick(),K.bpick(),K.bpick(),G.chg]}");assert ks[2]=='singSig' and ks[3]==0 and ks[0]!='singSig',ks
