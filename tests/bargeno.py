@@ -45,7 +45,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '물길 아이' in q;pg.click('button[data-c=tab][data-a=place]')
     # 에다는 바르그·에노를 만나기 전엔 없다
     pg.click('button[data-c=enoAgain]');choose(pg,'함께하자');t=pg.inner_text('#ov');assert '키리엔과 계속 다닌다' in t and '에노와 다닌다' in t,t;choose(pg,'에노와 다닌다');assert E(pg,"window.__k2.S.party")=='eno' and 'kirien' in E(pg,"window.__k2.S.comps")
-    t=pg.inner_text('.goalc');assert '회색 마차의 늑대' in t,t
+    t=pg.inner_text('.goalc');assert '회색 마차의 늑대' not in t,t;pg.click('button[data-c=tab][data-a=quest]');assert '회색 마차의 늑대' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     # 여관 부엌 → 헌병과 싸운다 → 바르그
     pg.click('button[data-c=bargM]');choose(pg,'자루를 연다');t=pg.inner_text('#ov');assert '이번에도 아니다' in t;assert '탈영병 바르그' in t and '무서운 걸 다 써 버렸대' in t;choose(pg,'늑대 옆에 선다');assert E(pg,"window.__k2.G.foe")=='mp';win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("운하 계단")',timeout=5000);choose(pg,'같이 알아보자');choose(pg,'밤길로 나선다');assert '맹세했다' in pg.inner_text('#ov');choose(pg,'도망친 사람을 넘기기 싫어서');assert '헌병들을 막아섰다' in E(pg,"JSON.stringify(window.__k2.S.jr)");choose(pg,'갈 길을 가라');okpop(pg)

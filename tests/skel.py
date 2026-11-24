@@ -113,7 +113,7 @@ with sync_playwright() as p:
     pg.wait_for_selector('#ov.on h2:has-text("물길 아이")',timeout=5000); choose(pg,'네가 해 봐'); choose(pg,'너는 뭐야?'); assert '내 안의 할머니' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다')
     assert 'eno' in S(pg)['comps']
     if S(pg)['loc']!='docks': go(pg,'docks')
-    assert 'goal' in pg.get_attribute('button[data-c=bargM]','class'); pg.click('button[data-c=bargM]'); choose(pg,'누구냐고 묻는다'); assert '잿빛 송곳니' in pg.inner_text('#ov'); choose(pg,'둘러댄다'); choose(pg,'운하 계단으로'); choose(pg,'구호소로'); choose(pg,'밤길로'); choose(pg,'자루를 여는'); choose(pg,'저택에서 지내라'); choose(pg,'계속 다닌다')
+    pg.click('button[data-c=bargM]'); choose(pg,'누구냐고 묻는다'); assert '잿빛 송곳니' in pg.inner_text('#ov'); choose(pg,'둘러댄다'); choose(pg,'운하 계단으로'); choose(pg,'구호소로'); choose(pg,'밤길로'); choose(pg,'자루를 여는'); choose(pg,'저택에서 지내라'); choose(pg,'계속 다닌다')
     assert 'barg' in S(pg)['comps']; print('barg/eno ok')
     # ---- 파견 ----
     go(pg,'base'); pg.click('button[data-c=board]'); pg.click('#ov.on .drow:has-text("시장 심부름")')
