@@ -38,11 +38,11 @@ with sync_playwright() as p:
     assert not bad,bad
     # 하수구 → 에노(거절) → 다시 영입
     start(pg)
-    E(pg,"()=>{window.__k2.SCENE.sewer()}");t=pg.inner_text('#ov');assert '안내인' in t and '목소리가 문장 중간에 바뀐다' in t;choose(pg,'안내인을 따라간다');win(pg)
+    E(pg,"()=>{window.__k2.SCENE.sewer()}");t=pg.inner_text('#ov');assert '물자국이 없다' in t and '목소리가 문장 중간에 바뀐다' in t;choose(pg,'목소리를 따라간다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("피트")',timeout=5000);choose(pg,'이름이 뭐야?');choose(pg,'배고프지 않아?');choose(pg,'저택에서 같이 지내자');choose(pg,'데려간다')
-    pg.wait_for_selector('#ov.on h2:has-text("물길의 안내인")',timeout=5000);choose(pg,'철창에 손을 넣는다');assert '셋까지 세면' in pg.inner_text('#ov');choose(pg,'길을 알려 줘서');t=pg.inner_text('#ov');assert '지도에 구멍' in t and '물소리' in t;choose(pg,'하수구가 더 어울린다');okpop(pg)
+    pg.wait_for_selector('#ov.on h2:has-text("물길 아이")',timeout=5000);choose(pg,'철창에 손을 넣는다');assert '셋까지 세면' in pg.inner_text('#ov');choose(pg,'길을 알려 줘서');t=pg.inner_text('#ov');assert '지도에 구멍' in t and '물소리' in t;choose(pg,'하수구가 더 어울린다');okpop(pg)
     assert E(pg,"window.__k2.S.dec.eno")==1
-    pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '물길의 안내인' in q;pg.click('button[data-c=tab][data-a=place]')
+    pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '물길 아이' in q;pg.click('button[data-c=tab][data-a=place]')
     # 에다는 바르그·에노를 만나기 전엔 없다
     pg.click('button[data-c=enoAgain]');choose(pg,'함께하자');t=pg.inner_text('#ov');assert '키리엔과 계속 다닌다' in t and '에노와 다닌다' in t,t;choose(pg,'에노와 다닌다');assert E(pg,"window.__k2.S.party")=='eno' and 'kirien' in E(pg,"window.__k2.S.comps")
     t=pg.inner_text('.goalc');assert '회색 마차의 늑대' in t,t

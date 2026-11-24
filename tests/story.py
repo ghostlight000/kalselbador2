@@ -75,7 +75,7 @@ with sync_playwright() as p:
             choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '지워진 아침' in pg.inner_text('#ov');choose(pg,'그래도 넌 여기 있어');choose(pg,'다른 이야기를 한다')
             s=S(pg);assert s['chd']['oswin']==2 and s['aff']['oswin']==52,s['aff']
             choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '각주가 너무 많습니다' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
-            choose(pg,'이곳은 어때?');assert '장부를 태우기' in pg.inner_text('#ov');choose(pg,'이야기를 그만둔다')
+            choose(pg,'이곳은 어때?');assert '종이가 천천히 휜다' in pg.inner_text('#ov');choose(pg,'이야기를 그만둔다')
             pg.click('button[data-c=tab][data-a=char]');t=pg.inner_text('.M');assert '들은 이야기' not in t and '말투' not in t and '레벨' in t and '연속 베기' in t;pg.click('button[data-c=tab][data-a=place]')
             pg.click('button[data-c=tab][data-a=story]');assert '지워진 아침' in pg.inner_text('.M');print('chapters ok')
         pg.close()

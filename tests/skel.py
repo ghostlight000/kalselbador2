@@ -107,10 +107,10 @@ with sync_playwright() as p:
     # ---- 하수구의 아이 → 피트 ----
     go(pg,'docks'); pg.click('button[data-c=explore][data-a="0"]')
     pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='부두 창고 뒤지기'",timeout=10000); okpop(pg)
-    pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='하수구 입구'; choose(pg,'안내인을 따라간다'); h=fight(pg); assert '쥐 떼' in h
+    pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='하수구 입구'; choose(pg,'목소리를 따라간다'); h=fight(pg); assert '쥐 떼' in h
     pg.wait_for_selector('#ov.on h2',timeout=5000); t=pg.inner_text('#ov'); assert pg.inner_text('#ov h2')=='피트'; choose(pg,'이름이 뭐야?'); choose(pg,'배고프지 않아?'); assert '지붕은 있습니다' in pg.inner_text('#ov'); choose(pg,'저택에서 같이 지내자'); assert '글은 읽을 줄 압니까' in pg.inner_text('#ov'); choose(pg,'데려간다')
     assert S(pg)['pit']==1; print('pit ok')
-    pg.wait_for_selector('#ov.on h2:has-text("물길의 안내인")',timeout=5000); choose(pg,'네가 해 봐'); choose(pg,'그걸 왜 마셔?'); assert '할머니 목소리' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다')
+    pg.wait_for_selector('#ov.on h2:has-text("물길 아이")',timeout=5000); choose(pg,'네가 해 봐'); choose(pg,'너는 뭐야?'); assert '내 안의 할머니' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다')
     assert 'eno' in S(pg)['comps']
     if S(pg)['loc']!='docks': go(pg,'docks')
     assert 'goal' in pg.get_attribute('button[data-c=bargM]','class'); pg.click('button[data-c=bargM]'); choose(pg,'누구냐고 묻는다'); assert '잿빛 송곳니' in pg.inner_text('#ov'); choose(pg,'둘러댄다'); choose(pg,'운하 계단으로'); choose(pg,'구호소로'); choose(pg,'밤길로'); choose(pg,'자루를 여는'); choose(pg,'저택에서 지내라'); choose(pg,'계속 다닌다')
