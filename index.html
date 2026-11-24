@@ -139,26 +139,32 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .stats .btn.sm{min-height:26px;padding:0 4px;margin-left:4px}
 
 /* ===== 창 ===== */
-/* 저택 안: 전체 화면 글 모험(흑백 선 그림 + 겹테 글 상자) */
-#ov.ta{background:#000;padding:18px 12px 40px}
-.ta{width:100%;max-width:620px;color:#e9e9e9;animation:taIn .5s ease}
+/* 저택 안: 전체 화면 글 모험. 재빛 어둠, 푸른 재 빛 선, 가스등 호박색은 한 점만 */
+#ov.ta{background:radial-gradient(ellipse at 50% 18%,#1a2030 0%,#0d1018 55%,#07080c 100%);padding:18px 12px 44px}
+.ta{width:100%;max-width:620px;color:#d6dbe3;animation:taIn .6s ease}
 @keyframes taIn{from{opacity:0}to{opacity:1}}
-.taimg{border:2px solid #e9e9e9;background:#000;line-height:0}
+.taimg{position:relative;line-height:0;background:#0a0d14;border:1px solid #3b4659;outline:1px solid #222a38;outline-offset:3px;box-shadow:0 0 28px rgba(110,140,200,.12)}
 .taimg svg{width:100%;height:auto;display:block}
-.taimg svg *{fill:none;stroke:#f0f0f0;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.taimg svg .tf{fill:#f0f0f0;stroke:none}
-.tabox{margin-top:26px;border:4px double #d8d8d8;box-shadow:inset 0 0 8px rgba(255,255,255,.35),0 0 6px rgba(255,255,255,.15);padding:26px 22px 18px;min-height:250px}
-.tah{text-align:center;font-size:12px;letter-spacing:.3em;color:#9a9a9a;margin-bottom:14px}
+.taimg svg *{fill:none;stroke:#a9b8d2;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.taimg svg .tf{fill:#a9b8d2;stroke:none}
+.taimg svg .fr{stroke:#4b5870;stroke-width:1.4}.taimg svg .fo{stroke:#6f7f9c;stroke-width:1.6}
+.taimg svg .gl{fill:url(#tagl);stroke:none}.taimg svg .am{stroke:#d9a35a}.taimg svg .amf{fill:#d9a35a;stroke:none}
+.taimg svg .ash{fill:#8ea0c0;stroke:none;opacity:.55}
+.tabox{position:relative;margin-top:24px;background:rgba(10,13,20,.86);border:1px solid #3b4659;outline:1px solid #222a38;outline-offset:4px;padding:28px 24px 18px;min-height:240px}
+.tabox:before,.tabox:after{content:"";position:absolute;width:14px;height:14px;border:1px solid #6f7f9c;transform:rotate(45deg);background:#0d1018;left:50%;margin-left:-7px}
+.tabox:before{top:-8px}.tabox:after{bottom:-8px}
+.tah{text-align:center;font-size:11.5px;letter-spacing:.42em;color:#7c8aa3;margin-bottom:16px}
+.tah:before,.tah:after{content:"—";color:#3b4659;margin:0 .6em;letter-spacing:0}
 .tat{text-align:center;line-height:2.05;font-size:15.5px}
-.tat p{margin:0 0 6px;opacity:0;animation:taP .6s ease forwards}
-.tat p:nth-child(2){animation-delay:.25s}.tat p:nth-child(3){animation-delay:.5s}.tat p:nth-child(4){animation-delay:.75s}.tat p:nth-child(5){animation-delay:1s}.tat p:nth-child(n+6){animation-delay:1.2s}
+.tat p{margin:0 0 6px;opacity:0;animation:taP .7s ease forwards}
+.tat p:nth-child(2){animation-delay:.3s}.tat p:nth-child(3){animation-delay:.6s}.tat p:nth-child(4){animation-delay:.9s}.tat p:nth-child(5){animation-delay:1.15s}.tat p:nth-child(n+6){animation-delay:1.35s}
 @keyframes taP{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
-.tat .m{color:#bdbdbd}.tat b{color:#fff}
+.tat .m{color:#97a3b8}.tat b{color:#e9c48c;font-weight:600}
 .tat .say{text-align:center}.tat .say .nm,.tat .say b{color:#9fb2ce}
-.taq{margin-top:18px;border-top:1px dashed #555;padding-top:12px;display:flex;flex-direction:column;gap:2px}
-.taq .btn{background:none!important;border:none!important;border-image:none!important;box-shadow:none!important;color:#cfcfcf;text-align:left;min-height:30px;padding:4px 6px;font-size:15px;font-family:inherit}
-.taq .btn:before{content:attr(data-n) ". ";color:#777}
-.taq .btn:hover,.taq .btn:focus{color:#fff}.taq .btn:hover:before{content:"▸ ";color:#fff}
+.taq{margin-top:18px;border-top:1px solid #262f3f;padding-top:12px;display:flex;flex-direction:column;gap:2px}
+.taq .btn{background:none!important;border:none!important;border-image:none!important;box-shadow:none!important;color:#b9c3d3;text-align:left;min-height:30px;padding:4px 8px;font-size:15px;font-family:inherit;transition:color .15s,padding .15s}
+.taq .btn:before{content:attr(data-n);display:inline-block;width:1.6em;color:#55637c;font-size:13px}
+.taq .btn:hover,.taq .btn:focus{color:#eef2f8;padding-left:12px}.taq .btn:hover:before,.taq .btn:focus:before{content:"›";color:#8fb0e6}
 .ovl{position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;background:rgba(8,10,14,.74);overflow:auto;padding:24px 14px}
 .ovl.on{display:flex}
 #ov{z-index:40}#sov{z-index:60}#bt{z-index:30;background:var(--bg);display:none;padding:0}
@@ -2300,14 +2306,14 @@ function storyView(){
 
 /* --- 팝업: 선택 창 ev, 결과 창 pop --- */
 /* 저택 글 모험의 선 그림(흰 선, 검은 바탕). 제목으로 고른다 */
-const TAFR='<rect x="8" y="8" width="584" height="284"/><path d="M8 40l14-8M8 260l14 8M592 40l-14-8M592 260l-14 8M40 8l-8 14M560 8l8 14M40 292l-8-14M560 292l8-14"/>';
+const TAFR='<defs><radialGradient id="tagl"><stop offset="0" stop-color="#8fb0e6" stop-opacity=".22"/><stop offset="1" stop-color="#8fb0e6" stop-opacity="0"/></radialGradient></defs><ellipse class="gl" cx="300" cy="150" rx="260" ry="130"/><rect class="fr" x="10" y="10" width="580" height="280"/><path class="fo" d="M10 46c14 0 22-8 22-22 0-6 4-14 14-14M590 46c-14 0-22-8-22-22 0-6-4-14-14-14M10 254c14 0 22 8 22 22 0 6 4 14 14 14M590 254c-14 0-22 8-22 22 0 6-4 14-14 14"/><path class="fo" d="M300 10v8M294 18h12M300 290v-8M294 282h12"/><circle class="ash" cx="120" cy="60" r="1.6"/><circle class="ash" cx="470" cy="44" r="1.2"/><circle class="ash" cx="520" cy="230" r="1.4"/><circle class="ash" cx="70" cy="210" r="1.1"/><circle class="ash" cx="380" cy="30" r="1"/>';
 const TAART={
- hub:'<path d="M20 270H580"/><path d="M300 270v-20h30v-20h30v-20h30v-20h30v-20h30v-20h30v-20h60"/><path d="M296 236L486 106M300 270v-34M360 230v-40M420 190v-42M480 150v-44"/><path d="M500 130V58h40v72M520 58v-8"/><path d="M150 18v40M108 66q42 34 84 0M108 66v12M150 84v12M192 66v12"/><path d="M105 72c-3-6 3-10 3-14M150 90c-3-6 3-10 3-14M195 72c-3-6 3-10 3-14"/><rect x="60" y="120" width="60" height="78"/><rect x="150" y="128" width="50" height="66"/><path d="M78 150l24 20M98 150l-18 24M162 152l26 18"/>',
+ hub:'<path d="M20 270H580"/><path d="M300 270v-20h30v-20h30v-20h30v-20h30v-20h30v-20h30v-20h60"/><path d="M296 236L486 106M300 270v-34M360 230v-40M420 190v-42M480 150v-44"/><path d="M500 130V58h40v72M520 58v-8"/><path d="M150 18v40M108 66q42 34 84 0M108 66v12M150 84v12M192 66v12"/><path class="am" d="M105 72c-3-6 3-10 3-14M150 90c-3-6 3-10 3-14M195 72c-3-6 3-10 3-14"/><rect x="60" y="120" width="60" height="78"/><rect x="150" y="128" width="50" height="66"/><path d="M78 150l24 20M98 150l-18 24M162 152l26 18"/>',
  hall:'<path d="M20 270H580"/><path d="M80 270V64q0-26 30-26t30 26v206"/><circle cx="110" cy="96" r="22"/><path d="M98 84l26 26M126 82l-20 28M92 130h36M100 160l6 8-6 8 6 8M120 160l-6 8 6 8-6 8"/><path d="M104 262l18-8M118 268l-14-6"/><rect x="230" y="70" width="80" height="104"/><rect x="340" y="70" width="80" height="104"/><rect x="450" y="70" width="80" height="104"/><ellipse cx="270" cy="112" rx="22" ry="28"/><ellipse cx="380" cy="112" rx="22" ry="28"/><ellipse cx="490" cy="112" rx="22" ry="28"/><path d="M256 100l28 26M262 96l20 30M366 100l28 26M476 98l28 28M484 94l12 36"/><path d="M250 184h40M360 184h40M470 184h40"/>',
- parlor:'<path d="M20 270H580"/><path d="M150 270V176h300v94"/><path d="M150 176l40-64h260v64"/><path d="M168 192h264v26H168z"/><path d="M190 192v26M212 192v26M234 192v26M256 192v26M278 192v26M300 192v26M322 192v26M344 192v26M366 192v26M388 192v26M410 192v26"/><path d="M200 112l20-34h66l-12 34"/><path d="M226 92h40M222 102h40"/><path d="M180 270v-22M420 270v-22"/><path d="M500 270V150l40-30 30 30v120M512 150h46"/>',
- kitchen:'<path d="M20 270H580"/><rect x="150" y="50" width="300" height="120"/><circle cx="195" cy="120" r="12"/><circle cx="250" cy="120" r="12"/><circle cx="305" cy="120" r="12"/><circle cx="360" cy="120" r="12"/><circle cx="415" cy="120" r="12"/><path d="M195 108V62M250 108V62M305 108V62M360 108V62M415 108V88M415 80V62"/><path d="M185 150h20M240 150h20M295 150h20M350 150h20M405 150h20"/><path d="M60 200h120M60 230h120M80 200v-16h20v16M130 200v-24q10-8 20 0v24"/><path d="M430 270v-60h110v60M430 236h110M470 210v-12"/>',
- study:'<path d="M20 270H580"/><path d="M120 270v-66h360v66M120 204h360"/><path d="M250 204v-74h100v74"/><circle cx="300" cy="166" r="24"/><path d="M300 166v-14M300 166l10 6"/><path d="M300 138v4M300 190v4M272 166h4M324 166h4"/><path d="M40 270V40h60v230M40 90h60M40 140h60M40 190h60M52 52v30M64 52v30M82 104v28M54 150v30M70 202v30"/><path d="M500 270V40h60v230M500 90h60M500 140h60M500 190h60M512 102v30M540 52v30M520 150v32"/><path d="M160 194h50l6-10h-56z"/>',
- door:'<path d="M20 270H580"/><path d="M230 270V60q70-40 140 0v210"/><path d="M300 52v218"/><circle cx="318" cy="170" r="7"/><path d="M318 177v12"/><path d="M200 262l-40 8M400 262l40 8M230 120l-30-10M370 120l30-10M230 200l-40 0M370 200l40 0"/><path d="M160 270l40-60h200l40 60"/>',
+ parlor:'<path d="M20 270H580"/><path d="M150 270V176h300v94"/><path d="M150 176l40-64h260v64"/><path d="M168 192h264v26H168z"/><path d="M190 192v26M212 192v26M234 192v26M256 192v26M278 192v26M300 192v26M322 192v26M344 192v26M366 192v26M388 192v26M410 192v26"/><path d="M200 112l20-34h66l-12 34"/><path d="M226 92h40M222 102h40"/><path d="M180 270v-22M420 270v-22"/><path d="M500 270V150l40-30 30 30v120M512 150h46"/><path d="M300 112v-12"/><path class="am" d="M300 98c-4-6 4-10 4-15"/>',
+ kitchen:'<path d="M20 270H580"/><rect x="150" y="50" width="300" height="120"/><circle cx="195" cy="120" r="12"/><circle cx="250" cy="120" r="12"/><circle cx="305" cy="120" r="12"/><circle cx="360" cy="120" r="12"/><circle cx="415" cy="120" r="12"/><path d="M195 108V62M250 108V62M305 108V62M360 108V62M415 108V88M415 80V62"/><path d="M185 150h20M240 150h20M295 150h20M350 150h20M405 150h20"/><path d="M60 200h120M60 230h120M80 200v-16h20v16M130 200v-24q10-8 20 0v24"/><path d="M430 270v-60h110v60M430 236h110M470 210v-12"/><path class="am" d="M450 266c0-10 10-12 8-22M480 266c0-8 8-10 6-18"/>',
+ study:'<path d="M20 270H580"/><path d="M120 270v-66h360v66M120 204h360"/><path d="M250 204v-74h100v74"/><circle cx="300" cy="166" r="24"/><path d="M300 166v-14M300 166l10 6"/><path d="M300 138v4M300 190v4M272 166h4M324 166h4"/><path d="M40 270V40h60v230M40 90h60M40 140h60M40 190h60M52 52v30M64 52v30M82 104v28M54 150v30M70 202v30"/><path d="M500 270V40h60v230M500 90h60M500 140h60M500 190h60M512 102v30M540 52v30M520 150v32"/><path d="M160 194h50l6-10h-56z"/><path d="M440 204v-16"/><path class="am" d="M440 186c-4-6 4-10 4-15"/>',
+ door:'<path d="M20 270H580"/><path d="M230 270V60q70-40 140 0v210"/><path d="M300 52v218"/><circle cx="318" cy="170" r="7"/><path d="M318 177v12"/><path class="am" d="M200 262l-40 8M400 262l40 8M230 120l-30-10M370 120l30-10M230 200l-40 0M370 200l40 0"/><path d="M160 270l40-60h200l40 60"/>',
  dial:'<circle cx="300" cy="150" r="110"/><circle cx="300" cy="150" r="96"/><path d="M300 54v14M300 232v14M204 150h14M382 150h14M232 82l10 10M358 208l10 10M368 82l-10 10M242 208l-10 10"/><path d="M300 150l0-62M300 150l40 24"/><circle cx="300" cy="150" r="6" class="tf"/>',
  piano:'<path d="M60 230h480"/><path d="M80 120h440v110H80z"/><path d="M80 120v110M120 120v110M160 120v110M200 120v110M240 120v110M280 120v110M320 120v110M360 120v110M400 120v110M440 120v110M480 120v110"/><path d="M106 120v64h28v-64M146 120v64h28v-64M226 120v64h28v-64M266 120v64h28v-64M306 120v64h28v-64M386 120v64h28v-64M426 120v64h28v-64"/><path d="M200 70q100-40 200 0"/>'};
 const TAMAP={'오르빌 저택':'hub','오르빌 저택 1층':'hub','현관홀':'hall','응접실':'parlor','피아노':'piano','부엌':'kitchen','서재':'study','서재 문':'door','금고':'dial','계단 위의 문':'door'};
@@ -2985,7 +2991,7 @@ function devInit(){
 function devOpen(){
   const s=S;const b=(c,l,a)=>`<button class="btn" data-dv="${c}"${a!=null?` data-a="${a}"`:''}>${l}</button>`;
   $('#dov').innerHTML=`<div class="pcard dev"><h2>개발</h2>
-  <div class="seg">${b('fast','즉시 완료: '+(FAST||TEST?'켬':'끔'))}${b('fmove','이동 건너뛰기: '+(FMOVE?'켬':'끔'))}${s?b('finish','진행 중인 일 끝내기'):''}</div>
+  <div class="seg">${b('fast','즉시 완료: '+(FAST||TEST?'켬':'끔'))}${b('fmove','이동 건너뛰기: '+(FMOVE?'켬':'끔'))}${S?b('mz','노래하는 저택 열기(처음부터)'):''}${s?b('finish','진행 중인 일 끝내기'):''}</div>
   ${s?`<h3>진행</h3><div class="seg">${b('night','밤 0',0)}${b('night','밤 1',1)}${b('night','밤 2',2)}${b('night','밤 3',3)}</div>
   <div class="seg">${b('heal','체력 가득')}${b('coin','동전 +50')}${b('band','붕대 +5')}${b('tut','가르침 처음부터')}${b('comp','다음 동료 합류 ('+s.comps.length+')')}${b('aff','데려간 동료 호감 +20')}${b('base','본거지 얻기')}${b('pit','피트 얻기')}${b('scrap','고철 +10')}${b('fixall','저택 모두 고치기')}${b('enc','길 위 마주침: '+(ENC_ON?'켬':'끔'))}${b('act1','1막 끝으로 (에다 직전)')}${b('pqgo','피트 실종 일으키기')}${b('rev','이야기 단계: '+({1:'1막',2:'2막',2.5:'2막 후반',3:'3막'})[actN()]+' → 다음')}${b('outs','변두리 열기')}${b('kq','키리엔 퀘스트 다음 단계 ('+(s.kq||0)+')')}${b('mg','주문: '+(s.mg?'깨어남':'아직'))}${b('aev','데려간 동료 다음 호감 이벤트')}</div>
   <h3>전투</h3><div class="seg">${b('fight','골목개','dog')}${b('fight','도둑','thief')}${b('fight','점등꾼','lamp')}${b('fight','점등꾼 격노 직전','lamp2')}${b('fight','정화자','warden')}${b('fight','노래하는 옛 주인','singer')}${b('fight','쥐 떼','rats')}${b('fight','태엽 경비','clock')}${b('fight','유리관에서 나온 것','glass')}${b('fight','회색 수거인','collector')}${b('fight','그림자','shade')}${b('fight','덩어리','lump')}${b('fight','변이한 들개','mutt')}${b('fight','텅 빈 자','hollow')}${b('fight','재 짜는 사람','ashman')}${b('fight','유리 지붕 수거인 격노 직전','awc2')}${b('fight','교단 추적자','hunter')}</div>
@@ -2996,6 +3002,7 @@ function devOpen(){
 }
 const DV={
   fast:()=>{FAST=!FAST;try{localStorage.setItem('k2fast',FAST?'1':'0')}catch(e){}},
+  mz:()=>{devClose();S.mz={};S.manor=0;SCENE.manorIn();return 1},
   fmove:()=>{FMOVE=!FMOVE;try{localStorage.setItem('k2fmove',FMOVE?'1':'0')}catch(e){}},
   finish:()=>{if(S.act)S.act.t0=Date.now()-S.act.d*1000-1;S.disp.forEach(d=>d.t0=Date.now()-d.d*1000-1);Object.values(S.kids||{}).forEach(K=>{if(K.until)K.until=0});save()},
   night:a=>{S.night=+a;log('[개발] 밤 '+a);save()},
