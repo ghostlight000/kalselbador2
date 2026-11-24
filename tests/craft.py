@@ -73,8 +73,8 @@ with sync_playwright() as p:
     E(pg,"()=>{G.st='player';G.beats=[];brender()}");pg.click('[data-ba=bag]');pg.click('[data-ba=bi][data-k=salve]');assert E(pg,"G.bagU")==2 and E(pg,"S.inv.salve")==1
     E(pg,"()=>{G.st='player';G.beats=[];brender()}");assert pg.locator('[data-ba=bag][disabled]').count()==1
     # 외투·칼날
-    E(pg,"()=>{S.gear.coat=1;G.hp=200;G.mhp=200;G.scale=1}");E(pg,"hurt(100)");assert E(pg,"G.hp")==106,E(pg,"G.hp")
-    E(pg,"()=>{G.first=0;G.spell=0;G.fhp=500}");E(pg,"dmgFoe(100)");assert E(pg,"G.fhp")==392,E(pg,"G.fhp")
+    assert E(pg,"S.eq.wpn")=='ablade' and E(pg,"!!S.geq.ablade");E(pg,"()=>{S.eq.body='tcoat';G.hp=200;G.mhp=200;G.scale=1}");E(pg,"hurt(100)");assert E(pg,"G.hp")==110,E(pg,"G.hp")
+    E(pg,"()=>{G.first=0;G.spell=0;G.fhp=500}");E(pg,"dmgFoe(100)");assert E(pg,"G.fhp")==385,E(pg,"G.fhp")
     E(pg,"()=>{G.on=false;$('#bt').classList.remove('on');S.hp=S.mhp;render()}")
     print('battle bag ok')
     # 동료를 먼 곳에

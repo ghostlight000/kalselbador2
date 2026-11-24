@@ -760,9 +760,10 @@ const TIER=[{w:1.5,sp:1.35},{w:1.3,sp:1.25},{w:1.12,sp:1.1},{w:1,sp:1},{w:.88,sp
    우두머리는 판정도 좁다: 첫 국면 TIER[4], 둘째 국면 TIER[5](점등꾼만 한 단계 아래). 우두머리 앞에서 붕대는 세 번까지.
    맞추는 비율 85%면 체력 절반 남짓, 70%면 둘에 하나쯤 이기도록 시뮬레이션으로 맞췄다(2026-11-24) */
 const BOSSM={lamp:[1.25,1.5,1.9],singer:[1.4,1.8,2.3],purL:[1.7,2.3,2.9],penitent:[1.7,2.3,2.9]},BOSSM0=[1.6,2.1,2.7],ELITEM=[1.45,1.8];
-const foeHpM=()=>{const F=bfoe();return F.boss?(BOSSM[G.foe]||BOSSM0)[0]:F.tier>=3?ELITEM[0]:1};
-const foeDmM=()=>{const F=bfoe();return F.boss?(BOSSM[G.foe]||BOSSM0)[G.ph===2?2:1]:F.tier>=3?ELITEM[1]:1};
+const foeHpM=()=>{const F=bfoe();return (F.boss?(BOSSM[G.foe]||BOSSM0)[0]:F.tier>=3?ELITEM[0]:1)*ACTM()[0]};
+const foeDmM=()=>{const F=bfoe();return (F.boss?(BOSSM[G.foe]||BOSSM0)[G.ph===2?2:1]:F.tier>=3?ELITEM[1]:1)*ACTM()[1]};
 const BANDCAP=3;
+const bandH=()=>Math.round((24+2*sv(3)+(G.kind==='fight'?(tal('sew')?8:0)+(lin('p',2)?6:0):0))*(G.kind==='fight'?1+eqSum('bh'):1));
 const DIFF=[
   {n:'등불 아래',s:'편하게. 판정이 아주 넉넉하다. 고리는 느리고 덜 아프다.',d:300,p:100,dm:.6,sp:1.25},
   {n:'가스등 거리',s:'보통. 회피는 넉넉하고 받아치기는 노려야 한다.',d:220,p:65,dm:1,sp:1},
@@ -1938,6 +1939,7 @@ function migrate(){
   S.mgs=S.mgs||{};S.aev=S.aev||{};if(S.v<10){if(!S.mg){const old=S.sk.filter(k=>SKL[k].mg);if(old.length){S.sk=S.sk.filter(k=>!SKL[k].mg);if(old.includes(OSK0[S.og])){S.mgOld=[OSK0[S.og]];if(!S.sk.includes(OSK[S.og]))S.sk.push(OSK[S.og])}S.skp+=old.filter(k=>k!==OSK0[S.og]).length;if(!S.sk.length)S.sk=[OSK[S.og]]}}S.v=10} // v10: 주인공은 처음에 주문을 쓰지 못한다 // v9: 아이들·먼 파견·간호 // v8: 호감 10단계, 질문 대화, 동료 전투 // v7: 동료 자기 이야기, 키리엔 퀘스트 // v6: 저택 손보기·꾸미기
   S.tl=(S.tl||[]).filter(k=>TAL[k]);if(S.rev&&!S.a2)S.a2=6;if(S.v<11){if(S.race==='p'&&S.tr===1)S.coin+=30;if(S.race==='b'&&S.tr===4)S.st[1]++;if(S.tutd)S.tutF=1;S.v=11} // v11: 종족 능력·재능
   S.gl=S.gl||{};S.gsh=S.gsh||{};S.rcpL=S.rcpL||{};S.gear=S.gear||{};S.dish=S.dish||{};S.crN=S.crN||0;Object.keys(S.kids).forEach(k=>{kinit(k);if(S.kids[k].st==='gath'&&!S.gl[k])S.kids[k].st='ok'});Object.keys(S.gl).forEach(k=>{if(!kid(k))delete S.gl[k]});if(S.v<12)S.v=12; // v12: 채집·제작·요리
+  S.geq=S.geq||{};S.eq=S.eq||{};Object.entries(EQCRAFT).forEach(([g,id])=>{if(S.gear[g]&&!S.geq[id]){S.geq[id]=1;if(!S.eq[EQI[id].s])S.eq[EQI[id].s]=id}});
   S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,Math.max(0,S.hp|0));
 }
 const log=t=>{S.log.unshift(t);S.log=S.log.slice(0,40)};
@@ -2084,7 +2086,7 @@ const STAL=[
  ['fire','깨어난 불','깨진 돔의 강의실에서 목소리가 깨어났다','주문 기술을 배울 수 있다',s=>s.mg]];
 const stal=k=>{if(!S)return false;const e=STAL.find(x=>x[0]===k);return !!(e&&e[4](S))};
 /* 능력·재능이 바꾸는 값 */
-const mhpB=()=>!S?0:(tal('hide')?12:0)+(lin('i',0)?8:0);
+const mhpB=()=>!S?0:(tal('hide')?12:0)+(lin('i',0)?8:0)+eqHp();
 const priceK=()=>(tal('count')?.9:1)*(lin('i',3)?.9:1);
 const px=n=>Math.max(1,Math.round(n*priceK()));
 const skC=k=>{const K=SKL[k];return K.mg&&lin('i',2)?Math.max(1,K.c-1):K.c};
@@ -2254,6 +2256,7 @@ function placeView(){
   Object.entries(A2B).forEach(([k,[at,n,l,sub]])=>{if(S.loc===at&&(S.a2||0)===n&&((S.oq||0)>=4||S.mg))acts.push(B(k,l,{sub,dis:busy}))});
   if(S.loc==='vault'&&(S.a2||0)>=6&&!S.rev){if(S.oq===4&&osw)acts.push(B('oq4','학술원 금서고',{sub:'오스윈이 낡은 열쇠를 꺼낸다',dis:busy}));else acts.push(B('vaultS','학술원 금서고',{sub:'예배실에서 가져온 열쇠 꾸러미가 있다',dis:busy}))}
   acts.push(...h2Acts(busy));
+  if(S.loc==='street')acts.push(B('shopE','헌병대 불하품점',{sub:'칼과 외투를 판다',dis:busy}));
   if(S.loc==='base'&&S.oq===4&&S.rev&&S.vrev)acts.push(B('oq4s','오스윈에게 설계서를 보여 준다',{sub:'금서고에서 가져온 서류',dis:busy}));
   if(pk(S.loc)==='academy'&&S.rev&&!S.revd)acts.push(B('revOut','언덕길의 정화자들',{sub:'회색 옷들이 길을 막고 있다',dis:busy}));
   if(S.loc==='base'&&S.oq===5)acts.push(B('oq5','장부의 끝',{sub:'오스윈이 서재에서 기다린다',dis:busy}));
@@ -2292,6 +2295,7 @@ function charView(){
   <h3>레벨 ${S.lv} <span class="m">${S.lv>=LVMAX?'레벨 상한':`경험 ${S.xp} / ${xpNeed(S.lv)}`}</span></h3>
   <h3>능력치${S.sp?` <span class="hbn">올릴 수 있는 점수 ${S.sp}</span>`:''}</h3><div class="stats st4">${SN.map((n,i)=>`<span>${n}</span>${bar(S.st[i],14)}<span>${S.st[i]}${S.sp?' '+B('statup','＋',{a:i,cls:'sm'}):''}</span><span class="m sne">${i===1&&S.mg?'목소리에 실려 나오는 불':SNE[i]}</span>`).join('')}</div>
   <p class="m">체력 ${S.mhp} · 공격 ${dAtk(S.st)} · 강타 ${dHeavy(S.st,0)}~${dHeavy(S.st,1)} · 되받아치기 ${dCounter(S.st,0)}</p></div>
+  ${eqCard()}
   <div class="card"><h2>기술 ${skCan()?'<span class="hbn">새 기술을 배울 수 있다</span>':''}</h2>${S.sk.map(k=>`<div class="ms"><b>${SKL[k].n}</b>${SKL[k].mg?' <span class="m">주문</span>':''} <span class="m">기력 ${'◆'.repeat(SKL[k].c)}${SKL[k].item?' · '+IT[SKL[k].item][0]+' 1':''} · ${SN[SKL[k].st]}</span><div class="m">${SKL[k].d}</div></div>`).join('')}
   ${!skCan()&&skAvail().length?`<p class="m">레벨 2부터 6까지 오를 때마다 하나씩 배운다.</p>${skAvail().map(k=>`<div class="ms csk off"><b>${SKL[k].n}</b> <span class="m">기력 ${'◆'.repeat(SKL[k].c)} · ${SN[SKL[k].st]}</span><div class="m">${SKL[k].d}</div></div>`).join('')}`:''}
   ${skCan()?`<h3>배울 기술 고르기</h3><div class="acts">${skAvail().map(k=>B('learn',SKL[k].n,{a:k,sub:`기력 ${SKL[k].c} · ${SN[SKL[k].st]} — ${SKL[k].d}`})).join('')}</div>`:''}</div>`+talentCard();
@@ -2509,7 +2513,7 @@ function resolveDisp(){
   if(S.craft&&Date.now()>=S.craft.t0+S.craft.d*1000){const R0=RCP[S.craft.id],k=S.craft.id;S.craft=null;chime('w');S.crN=(S.crN||0)+1;changed=true;const n=[R0.e];let I={};
     if(R0.out){I=R0.out;Object.entries(I).forEach(([x,v])=>add(x,v))}
     else if(R0.gear==='shoe'){const c=Object.keys(S.kids||{}).find(c=>!kid(c).shoe&&kid(c).st!=='lost');if(c){kid(c).shoe=1;n.unshift(`${KIDS[c].n}에게 신발을 신겼다. ${KIDS[c].n}가 발을 몇 번 굴러 본다.`)}}
-    else{S.gear=S.gear||{};S.gear[R0.gear]=1}
+    else{S.gear=S.gear||{};S.gear[R0.gear]=1;if(EQCRAFT[R0.gear]&&eqGive(EQCRAFT[R0.gear],true))n.push(`<span class="m">${EQI[EQCRAFT[R0.gear]].n}은(는) ${EQSL[EQI[EQCRAFT[R0.gear]].s]} 칸에 갖출 수 있다.</span>`)}
     if(k==='blade')n.push('<span class="m">재를 먹인 쇠를 물에 담그자 짧게 끓어오른다. 낯선 목소리가 한 마디 스친다. 무슨 말인지는 놓쳤다.</span>');
     if(smChNext())n.push('<span class="m">오틸리에가 화덕 곁에서 무언가 말하고 싶은 얼굴이다.</span>');
     log(`공방에서 ${R0.n}을(를) 만들었다.`);pop(R0.n+'을(를) 만들었다',{i:I,n})}
@@ -2736,9 +2740,9 @@ const RCP={
  salve:{n:'들풀 고약',m:{herb:2,oil:1},d:600,out:{salve:1},how:'c',coin:8,e:'싸움 중에 바르면 체력 60을 되찾는다.'},
  candle:{n:'밀랍 양초',m:{wax:2,thread:1},d:600,out:{candle:1},how:'c',coin:8,e:'탐사에 들고 가면 무언가와 맞닥뜨릴 확률이 절반으로 준다.'},
  shoe:{n:'아이 신발',m:{cloth:1,thread:1,oil:1},d:900,gear:'shoe',how:'q',q:{thread:4},qt:'실이 떨어졌소. 실 네 타래를 구해 오면 아이들 신발 짓는 법을 알려 주겠소. 맨발로 성벽 바깥을 다니게 둘 거요?',e:'신발이 없는 아이 하나에게 신긴다. 그 아이가 파견에서 다칠 확률이 5%p 준다.'},
- coat:{n:'무두질한 외투',m:{cloth:3,thread:2,oil:1},d:1800,gear:'coat',how:'q',q:{warm:1},qt:'하칸골 용광로 뒤 배수구에 미지근한 물이 고이오. 한 병만 떠다 주시오. 내가 쫓겨난 이유를 내 눈으로 다시 봐야겠소. 그러면 가죽 다루는 법을 가르쳐 주겠소.',e:'입고 다닌다. 받는 피해가 6% 준다.'},
- blade:{n:'재를 먹인 칼날',m:{scrap:3,ash:2},d:1800,gear:'blade',how:'s',e:'칼에 덧댄다. 주는 피해가 8% 늘고 교단 사람에게는 15% 는다.'},
- lamp:{n:'불지기의 등잔',m:{oil:2,wax:2,ash:1},d:2400,gear:'lamp',how:'s',e:'허리에 찬다. 싸움마다 처음 쓰는 기술의 기력이 1 준다.'}
+ coat:{n:'무두질한 외투',m:{cloth:3,thread:2,oil:1},d:1800,gear:'coat',how:'q',q:{warm:1},qt:'하칸골 용광로 뒤 배수구에 미지근한 물이 고이오. 한 병만 떠다 주시오. 내가 쫓겨난 이유를 내 눈으로 다시 봐야겠소. 그러면 가죽 다루는 법을 가르쳐 주겠소.',e:'몸에 갖춘다. 받는 피해 −10%, 체력 +12.'},
+ blade:{n:'재를 먹인 칼날',m:{scrap:3,ash:2},d:1800,gear:'blade',how:'s',e:'무기로 갖춘다. 공격 피해 +15%, 교단 사람에게는 +30%.'},
+ lamp:{n:'불지기의 등잔',m:{oil:2,wax:2,ash:1},d:2400,gear:'lamp',how:'s',e:'장신구로 갖춘다. 싸움마다 처음 쓰는 기술의 기력이 1 준다.'}
 };
 const CHF=['warden','purL','hunter'];
 const SMITH='오틸리에';
@@ -2747,7 +2751,7 @@ const gear=k=>!!(S.gear||{})[k];
 const rcpHave=k=>Object.entries(RCP[k].m).every(([m,n])=>(S.inv[m]||0)>=n);
 const matTxt=m=>Object.entries(m).map(([x,n])=>`${itName(x)} ${n} <span class="m">(${S.inv[x]||0})</span>`).join(' · ');
 const rcpDone=k=>{const R0=RCP[k];if(R0.gear==='shoe')return !Object.keys(S.kids||{}).some(c=>!kid(c).shoe&&kid(c).st!=='lost');return R0.gear?gear(R0.gear):false};
-const skCost=k=>Math.max(0,skC(k)-(G.kind==='fight'&&gear('lamp')&&!G.lampU?1:0));
+const skCost=k=>Math.max(0,skC(k)-(G.kind==='fight'&&eqHas('flamp')&&!G.lampU?1:0));
 
 const CRAFT_CMD={
  smithM:()=>{if(S.loc!=='docks'||!S.base||S.smM)return;
@@ -2991,6 +2995,54 @@ Object.assign(SCENE,{
    ev('3번 노 뒤 줄',`<p>노 지기가 쓰러진 뒤 줄에 선 사람들이 흩어진다. 줄 끝에 낯익은 뒷모습이 남아 있다. 혼자 서 있다. 어디로 가야 할지 모르는 사람처럼.</p><p>이름을 부른다. ${tkN(t)}이(가) 천천히 돌아본다.</p><p>${AMNR[t]}</p><p class="m">반쯤 태워졌다. 나와 함께한 날들이 그 안에 없다.</p>`+pline({kirien:'…야. 나야. 우리 같이 다녔잖아.',oswin:'반쯤 탄 사람의 눈입니다. 장부에서 이백열세 번 본 눈이지요.',barg:'…데려가자. 기억은 나중이다.',ibre:'제가 업겠습니다.',kasimir:'잊힌 쪽보다 기억하는 쪽이 더 아프다는 걸 이제야 알겠군요.',eno:'안쪽에 빈자리가 있어요. 당신 모양으로.'}),[['손을 잡고 데려간다',null]],1)}
 });
 
+/* ===================== 장비와 상점 (v048) =====================
+   칸 셋: 무기·몸·장신구. 상점(가스등 거리 헌병대 불하품점)·공방·우두머리 전리품으로 얻는다.
+   막이 넘어가면 모든 적이 강해진다(ACTM). 장비 없이 2막에 들어서면 버겁도록 맞췄다(간이 시뮬레이션 2026-11-25). */
+const EQSL={wpn:'무기',body:'몸',trk:'장신구'};
+const EQI={
+ sabre:{s:'wpn',n:'헌병대 사브르',a:.1,d:'공격 피해 +10%.',p:22,act:1,t:'헌병대가 쓰다 내놓은 사브르. 날이 고르다.'},
+ hakan:{s:'wpn',n:'하칸 강철 칼',a:.2,d:'공격 피해 +20%.',p:55,act:2,t:'하칸골 제철소의 강철. 무겁고 잘 든다.'},
+ ablade:{s:'wpn',n:'재를 먹인 칼날',a:.15,ch:.13,d:'공격 피해 +15%, 교단 사람에게는 +30%.',t:'담금질 물에 푸른 재를 풀었다. 쇠를 물에 넣자 누군가 이름을 불렀다.'},
+ chain:{s:'wpn',n:'이데른의 향로 사슬',a:.18,pw:.1,d:'공격 피해 +18%, 받아치기 판정 +10%.',t:'정화자 대장이 손목에 감던 사슬. 끝의 향로는 아직 따뜻하다.'},
+ greats:{s:'wpn',n:'울릭의 대검',a:.28,dw:-.05,d:'공격 피해 +28%, 회피 판정 −5%.',t:'씨족 문양이 갈려 나갔다. 손잡이에 맨발의 흙이 묻어 있다.'},
+ quilt:{s:'body',n:'누빈 외투',r:.06,h:8,d:'받는 피해 −6%, 체력 +8.',p:18,act:1,t:'솜을 두껍게 누볐다. 칼날보다 바람을 잘 막는다.'},
+ leather:{s:'body',n:'하칸 가죽 흉갑',r:.12,h:16,d:'받는 피해 −12%, 체력 +16.',p:50,act:2,t:'제철소 일꾼들이 쇳물을 막으려고 입는 가죽. 그을음 냄새가 난다.'},
+ tcoat:{s:'body',n:'무두질한 외투',r:.1,h:12,d:'받는 피해 −10%, 체력 +12.',t:'오틸리에에게 배운 법으로 직접 무두질했다.'},
+ grey:{s:'body',n:'정화자의 회색 코트',r:.14,h:14,d:'받는 피해 −14%, 체력 +14.',t:'안감에 기도문이 수놓였다. 입으면 향 냄새가 따라온다.'},
+ apron:{s:'body',n:'노 지기의 가죽 앞치마',r:.18,h:24,d:'받는 피해 −18%, 체력 +24.',t:'노 앞의 열기를 몇 해나 막아 온 앞치마. 군데군데 푸르게 그을었다.'},
+ waxc:{s:'trk',n:'밀랍 부적',bh:.25,d:'붕대로 되찾는 체력 +25%.',p:15,act:1,t:'흰 옷 사제들이 구호소에서 나눠 주던 부적. 상처에 대면 차분해진다.'},
+ flamp:{s:'trk',n:'불지기의 등잔',lamp:1,d:'싸움마다 처음 쓰는 기술의 기력이 1 준다.',t:'불이 꺼지지 않는 등잔. 얼굴을 가린 손님을 위해 처음 만들어졌다.'},
+ hook:{s:'trk',n:'점등꾼의 놋쇠 갈고리',fp:1,d:'싸움을 기력 1을 더 갖고 시작한다.',t:'반들반들 닦인 장대 끝 갈고리. 누군가 오래 손에 쥐었다.'},
+ page:{s:'trk',n:'노래 교본 한 장',pw:.08,d:'받아치기 판정 +8%.',t:'번진 이름이 적힌 악보. 박자를 세는 손이 저절로 따라간다.'},
+ valve:{s:'trk',n:'풀무 밸브',h:15,d:'체력 +15.',t:'수거인의 풀무에서 빼낸 놋쇠 밸브. 손에 쥐면 숨이 길어진다.'},
+ mask:{s:'trk',n:'가면 조각',dw:.08,d:'회피 판정 +8%.',t:'재 짜는 사람의 가면 귀퉁이. 깨진 눈구멍 너머로 박자가 보인다.'}
+};
+const EQDROP={lamp:'hook',singer:'page',collector:'valve',ashman:'mask',purL:'chain',keeper:'apron',ulrik:'greats',squad:'grey'};
+const EQCRAFT={coat:'tcoat',blade:'ablade',lamp:'flamp'};
+const ACTM=()=>{const a=actN();return a>=2.5?[1.3,1.4]:a>=2?[1.15,1.2]:[1,1]};
+const eqOwn=id=>!!((S&&S.geq)||{})[id];
+const eqOn=()=>(S&&S.eq)||{};
+const eqIt=sl=>EQI[eqOn()[sl]];
+const eqSum=k=>Object.keys(EQSL).reduce((t,sl)=>t+((eqIt(sl)||{})[k]||0),0);
+const eqHas=id=>Object.values(eqOn()).includes(id);
+const eqAtkM=()=>1+eqSum('a')+(eqHas('ablade')&&G&&CHF.includes(G.foe)?.13:0);
+const eqDr=()=>Math.min(.4,eqSum('r'));
+const eqHp=()=>!S?0:eqSum('h');
+function eqRecalc(){const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp=Math.max(1,Math.min(S.mhp,S.hp+(S.mhp-m0)))}
+function eqGive(id,auto){S.geq=S.geq||{};S.eq=S.eq||{};if(S.geq[id])return false;S.geq[id]=1;const sl=EQI[id].s;if(auto&&!S.eq[sl]){S.eq[sl]=id;eqRecalc()}return true}
+function eqCard(){S.eq=S.eq||{};return `<div class="card"><h2>장비</h2>${Object.entries(EQSL).map(([sl,n])=>{const I=eqIt(sl);return `<div class="ms"><b>${n} — ${I?I.n:'없음'}</b>${I?`<div class="m">${I.d}</div>`:''} ${B('eqpick',I?'바꾸기':'갖추기',{a:sl,cls:'sm'})}</div>`}).join('')}<p class="m">장비는 가스등 거리 헌병대 불하품점, 공방, 쓰러뜨린 우두머리에게서 얻는다. 막이 넘어갈수록 거리의 적이 강해진다.</p></div>`}
+Object.assign(CMD,{
+ eqpick:sl=>{const L=Object.keys((S.geq||{})).filter(id=>EQI[id]&&EQI[id].s===sl);
+   ev(EQSL[sl]+' 칸',L.length?L.map(id=>`<p><b>${EQI[id].n}</b>${eqOn()[sl]===id?' <span class="m">갖춘 것</span>':''}<br><span class="m">${EQI[id].d} ${EQI[id].t}</span></p>`).join(''):'<p class="empty">가진 것이 없다</p>',
+     L.filter(id=>eqOn()[sl]!==id).map(id=>[EQI[id].n+' 갖추기',()=>{S.eq[sl]=id;eqRecalc();log(EQI[id].n+'을(를) 갖췄다.');save()}]).concat(eqOn()[sl]?[['빼 둔다',()=>{delete S.eq[sl];eqRecalc();save()}]]:[]).concat([['닫는다',null]]))},
+ shopE:()=>{if(S.loc!=='street')return;const a=actN(),L=Object.keys(EQI).filter(id=>EQI[id].p&&EQI[id].act<=a);
+   ev('헌병대 불하품점',`<p>가스등 거리 뒷골목의 좁은 가게. 벽에 헌병대 칼과 외투가 걸려 있다. 주인 홀트가 의족을 의자에 올려 둔 채 신문을 넘긴다.</p><p>홀트 — “${a>=2?'언덕 너머는 개들이 아니야. 맨몸으로 다니다간 이름보다 목이 먼저 날아가.':'경비대가 버린 물건이야. 버렸다고 못 쓰는 건 아니지.'}”</p>${L.map(id=>`<p><b>${EQI[id].n}</b> <span class="m">동전 ${px(EQI[id].p)}${eqOwn(id)?' · 가지고 있다':''}</span><br><span class="m">${EQI[id].d} ${EQI[id].t}</span></p>`).join('')}${a<2?'<p class="m">홀트 — “좋은 물건은 언덕 너머 일이 시작돼야 들어와.”</p>':''}<p class="m">가진 동전 ${S.coin}</p>`,
+     L.filter(id=>!eqOwn(id)).map(id=>[`${EQI[id].n} 사기 (동전 ${px(EQI[id].p)})`,()=>CMD.buyE(id)]).concat([['가게를 나선다',null]]))},
+ buyE:id=>{const I=EQI[id];if(!I||!I.p||eqOwn(id)||I.act>actN())return;if(S.coin<px(I.p)){ev('헌병대 불하품점','<p>홀트 — “동전이 모자라. 외상은 안 해.”</p>',[['돌아간다',()=>CMD.shopE()]],1);return}
+   S.coin-=px(I.p);eqGive(id,false);S.eq=S.eq||{};const prev=eqOn()[I.s];S.eq[I.s]=id;eqRecalc();log(I.n+'을(를) 샀다.');save();
+   ev('헌병대 불하품점',`<p>홀트가 물건을 종이에 싸서 밀어 준다.</p><p class="m">${I.n}을(를) 갖췄다.${prev?' '+EQI[prev].n+'은(는) 가방에 넣었다. 캐릭터 탭에서 바꿀 수 있다.':''}</p>`,[['가게로 돌아간다',()=>CMD.shopE()]],1)}
+});
+
 async function doImport(){const t=($('#imp2')||{}).value||'';try{const o=await sdecode(t);S=o;migrate();save();EV0=null;render()}catch(e){ev('기록 코드로 이어 하기','<p class="m">코드를 읽지 못했다. 처음부터 끝까지 빠짐없이 붙여 넣었는지 확인하자.</p>',[['닫기',null]])}}
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-c]');if(!b||b.disabled)return;
@@ -3063,7 +3115,7 @@ let G={on:false};
 const bfoe=()=>G.kind==='tut'?TUTF:FOES[G.foe];
 const btier=()=>{if(G.kind==='tut')return TIER[0];if(G.kind==='practice')return TIER[Math.min(3,1+S.night)];const F=bfoe();if(G.kind==='fight'&&F.boss)return TIER[(G.ph===2?5:4)-(G.foe==='lamp'?1:0)];return TIER[G.ph===2&&F.tier2!=null?F.tier2:F.tier]};
 const bsafe=()=>G.kind!=='fight';
-const BW=()=>{const D=DF(),m=(G.guard?1.3:1)*(G.wide?1.3:1)*btier().w*(1+(sv(2)-3)*.03),f=G.kind==='fight',dm=f&&tal('eye')?1.1:1,pm=f?(tal('beat')?1.08:1)*(lin('p',4)?1.1:1)*(stal('teach')&&!G.S.parry?1.1:1):1;return{d:D.d*m*dm,p:D.p*m*(G.stance?1.5:1)*pm,g:D.d*m*dm*1.6}}; // g: 일찍 누르면 스침. 정신이 높을수록 판정이 넓다
+const BW=()=>{const D=DF(),m=(G.guard?1.3:1)*(G.wide?1.3:1)*btier().w*(1+(sv(2)-3)*.03),f=G.kind==='fight',dm=f&&tal('eye')?1.1:1,pm=f?(tal('beat')?1.08:1)*(lin('p',4)?1.1:1)*(stal('teach')&&!G.S.parry?1.1:1):1;const ew=f?1+eqSum('dw'):1,ep=f?1+eqSum('pw'):1;return{d:D.d*m*dm*ew,p:D.p*m*(G.stance?1.5:1)*pm*ep,g:D.d*m*dm*1.6*ew}}; // g: 일찍 누르면 스침. 정신이 높을수록 판정이 넓다
 const sv=i=>G.kind==='fight'?S.st[i]:5;
 const fkW=b=>b&&b.f&&G.kind==='fight'&&S.race==='i'?1.15:1; // 짐승의 감각 // 전투에서 쓰는 능력치(가르침·연습은 5로 고정)
 const dAtk=st=>5+st[0]+(lin('b',3)&&G.kind==='fight'?2:0);
@@ -3196,7 +3248,7 @@ function bacts(){
       `<button class="btn" data-ba="skill" ${tut?'disabled':''}>기술<small>${S.sk.map(k=>SKL[k].n).join(' · ')}</small></button>`+
       `<button class="btn" data-ba="guard" ${tut?'disabled':''}>자세 잡기<small>판정 넓게 · 기력 +1</small></button>`+
       (G.awk&&!G.awu?`<button class="btn wide" data-ba="aw">떠오르는 말<small>혀끝까지 차오른 낯선 말</small></button>`:'')+
-      `<button class="btn${G.kind==='fight'&&bagN()?'':' wide'}" data-ba="band" ${G.band>0&&!bsafe()&&!(bfoe().boss&&G.bandU>=BANDCAP)?'':'disabled'}>붕대 ${G.band}<small>${bfoe().boss&&G.bandU>=BANDCAP?'감을 틈이 없다':bfoe().boss&&!bsafe()?`체력 ${24+2*sv(3)} 회복 · ${BANDCAP-G.bandU}번 더`:`체력 ${24+2*sv(3)} 회복`}</small></button>`+
+      `<button class="btn${G.kind==='fight'&&bagN()?'':' wide'}" data-ba="band" ${G.band>0&&!bsafe()&&!(bfoe().boss&&G.bandU>=BANDCAP)?'':'disabled'}>붕대 ${G.band}<small>${bfoe().boss&&G.bandU>=BANDCAP?'감을 틈이 없다':bfoe().boss&&!bsafe()?`체력 ${bandH()} 회복 · ${BANDCAP-G.bandU}번 더`:`체력 ${bandH()} 회복`}</small></button>`+
       (G.kind==='fight'&&bagN()?`<button class="btn" data-ba="bag" ${(G.bagU||0)<2?'':'disabled'}>가방<small>고약·음식 · ${(G.bagU||0)<2?`이번 싸움에 ${2-(G.bagU||0)}번 더`:'이번 싸움에는 더 꺼낼 수 없다'}</small></button>`:'');
   }else if(G.st==='enemy'){
     el.className='def';
@@ -3212,7 +3264,7 @@ const bbtns=list=>'<div class="btns'+(list.length===2?' two':'')+'">'+list.map((
 /* 흐름 */
 function startBattle(kind,foe){
   ac();EV0=null;POP=null;render();
-  G={on:true,kind,foe:foe||(kind==='practice'?'drill':null),st:'wait',hp:kind==='fight'?S.hp:100,mhp:kind==='fight'?S.mhp:100,fp:2,band:kind==='fight'?(S.inv.band||0):0,
+  G={on:true,kind,foe:foe||(kind==='practice'?'drill':null),st:'wait',hp:kind==='fight'?S.hp:100,mhp:kind==='fight'?S.mhp:100,fp:2+(kind==='fight'?eqSum('fp'):0),band:kind==='fight'?(S.inv.band||0):0,
      fhp:0,ph:1,guard:false,open:false,next:null,cur:null,beats:[],fx:[],lock:0,turn:0,tg:0,tut:kind==='tut'?0:null,last:null,q:null,
      S:{dodge:0,parry:0,hit:0,graze:0,whiff:0,full:0,ofs:[],perf:0,qte:0}};
   G.fmax=Math.round(bfoe().hp*(kind==='fight'?foeHpM():1));G.fhp=G.fmax;G.bandU=0;if(kind==='fight'&&lin('p',0))G.slow=1;
@@ -3242,7 +3294,7 @@ function bact(a,k){
   if(a==='guard'){G.first=0;G.guard=true;G.fp=Math.min(5,G.fp+1);let gh='';if(tal('breath')&&G.kind==='fight'){const h=Math.min(4,G.mhp-G.hp);if(h>0){G.hp+=h;bfloat('#bphp','+'+h,'heal');gh=' 체력 '+h+' 회복.'}}blog('자세를 낮춘다. 다음 공격을 읽기 쉬워진다.'+gh);enemyTurn();return}
   if(a==='bag'){if(!bagN()||(G.bagU||0)>=2)return;G.menu='bag';brender();return}
   if(a==='bi'){useBag(k);return}
-  if(a==='band'){if(G.band<=0||(bfoe().boss&&G.bandU>=BANDCAP&&!bsafe()))return;G.band--;G.bandU=(G.bandU||0)+1;G.first=0;const h=Math.min(24+2*sv(3)+(G.kind==='fight'?(tal('sew')?8:0)+(lin('p',2)?6:0):0),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
+  if(a==='band'){if(G.band<=0||(bfoe().boss&&G.bandU>=BANDCAP&&!bsafe()))return;G.band--;G.bandU=(G.bandU||0)+1;G.first=0;const h=Math.min(bandH(),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
 }
 const bagN=()=>['salve',...Object.keys(DISH)].filter(k=>S.inv[k]>0).length;
 function useBag(k){if(bsafe()||(G.bagU||0)>=2||!(S.inv[k]>0)||(k!=='salve'&&!DISH[k]))return;add(k,-1);G.bagU=(G.bagU||0)+1;G.first=0;G.menu=null;
@@ -3284,7 +3336,7 @@ function resolveQte(perfect){
   blog('강타'+(perfect?' — 빈 곳을 정확히 찔렀다. ':'. ')+d+' 피해.');
   setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650);
 }
-function dmgFoe(d){if(G.kind==='fight'){let m=1;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;if(gear('blade'))m*=CHF.includes(G.foe)?1.15:1.08;d=Math.round(d*m)}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
+function dmgFoe(d){if(G.kind==='fight'){let m=1;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;m*=eqAtkM();d=Math.round(d*m)}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
 function maybePhase(then){
   if(G.ph===1&&bfoe().boss&&G.fhp<=G.fmax/2&&!bsafe()){
     G.ph=2;G.next=bpick();G.st='wait';brender();
@@ -3405,7 +3457,7 @@ function enemyTurn(){
 function hurt(d){if(bsafe())return;if(G.wall){G.wall=0;blog('이브레가 대신 맞는다. 꿈쩍도 하지 않는다.');return}if(G.ward){G.ward=0;d=Math.max(1,Math.round(d/2));blog((G.wardT||'정전기 막이')+' 충격을 반으로 줄였다.');G.wardT=null}
   if(S.race==='p'&&!G.scale){G.scale=1;d=Math.max(1,Math.round(d/2));blog('비늘이 첫 공격을 받아 냈다. 피해가 절반으로 줄었다.')}
   if(S.party==='barg'&&stal('oath'))d=Math.max(1,Math.round(d*.9));
-  if(gear('coat'))d=Math.max(1,Math.round(d*.94));
+  if(G.kind==='fight'&&eqDr())d=Math.max(1,Math.round(d*(1-eqDr())));
   if(d>=G.hp&&stal('stand')&&!G.stand){G.stand=1;d=G.hp-1;blog('쓰러질 뻔했다. 그래도 서 있다.')}
   const half=G.hp>G.mhp/2;G.hp-=d;bfloat('#bphp','-'+d,'hurt');
   if(S.race==='b'&&half&&G.hp>0&&G.hp<=G.mhp/2&&!G.oathB){G.oathB=1;G.fp=Math.min(5,G.fp+2);blog('씨족의 맹세가 떠오른다. 기력 +2.')}}
@@ -3478,10 +3530,10 @@ function endBattle(res){
     if(res==='win'){
       const L=F.loot();if(XL){Object.entries(XL.i).forEach(([k,n])=>L.i[k]=(L.i[k]||0)+n);L.g+=XL.g}Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;
       const story=NIGHT[S.night]===G.foe;if(story)S.night++;
-      log(F.n+'을(를) 물리쳤다.');const XPL=gainXp(Math.round((F.xp||5)*XPM)).concat(compXp(F.xp||5));
+      const dropI=EQDROP[G.foe],dropN=dropI&&eqGive(dropI,false)?[`<b>${EQI[dropI].n}</b>을(를) 얻었다. ${EQI[dropI].d} 캐릭터 탭에서 갖출 수 있다.`]:[];log(F.n+'을(를) 물리쳤다.');const XPL=gainXp(Math.round((F.xp||5)*XPM)).concat(compXp(F.xp||5));
       if(story&&G.foe==='lamp'){S.pend=S.mort===1&&!S.party?'mortDie':'kirien';jr('편지가 가리킨 사람을 쓰러뜨렸다. 꺼지지 않는 등불이 돌바닥을 굴렀다. 그 사람은 “돌아오는 길은 모두 이곳으로”라고 중얼거리고 이름 하나를 붙였다. 그 이름은 끝내 알아듣지 못했다. 잊은 것은 아직 찾지 못했다. 교단 구역으로 가는 길이 열렸다.');S.hp=Math.max(S.hp,1)}
       else if(story)jr(F.win);
-      pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([F.win,`<span class="m">${line}</span>`]).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
+      pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([F.win,`<span class="m">${line}</span>`]).concat(dropN).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
     }else{
       S.hp=Math.ceil(S.mhp*.3);S.loc=S.base?'base':'inn';S.act=null;log(F.n+' 앞에서 쓰러졌다.');
       pop('쓰러졌다',{n:[F.n+' 앞에서 돌바닥이 차가웠다.',(S.base?'눈을 뜨니 본거지 화로 앞이다.':`눈을 뜨니 ${LODGE} 방이다.`)+' 누군가 끌고 와 준 모양이다. 체력이 조금 돌아왔다.',`<span class="m">${line}</span>`]});
