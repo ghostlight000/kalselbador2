@@ -96,6 +96,8 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .scs{display:block;width:100%;height:100%}.scim{object-fit:cover;filter:saturate(.5) contrast(.7) brightness(1.32);-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 12%,#000 78%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 12%,#000 78%,transparent);mask-composite:intersect}
 :root[data-theme=dark] .scim{filter:saturate(.6) contrast(.86) brightness(.92)}
 .scw.im{border:none;background:none}
+.bsh{display:flex;align-items:center;justify-content:center;gap:5px;min-height:16px;margin-top:4px;font-size:.8em}.bsh i{width:9px;height:9px;transform:rotate(45deg);border:1px solid var(--a);opacity:.5}.bsh i.on{background:var(--ghi);opacity:1}.bsh b{color:var(--bad);letter-spacing:.1em}
+.phase.brk b{color:var(--bad)}
 .bep{letter-spacing:.3em;font-size:.78em;opacity:.7;text-align:center;margin:0 0 -4px}.bpre p{margin:.45em 0}
 .chg{margin:8px 0 4px}.chg .bar{margin:2px 0 0}
 .chtm{height:4px;background:var(--b);margin:10px 0 2px;overflow:hidden}.chtm i{display:block;height:100%;background:var(--bad);transform-origin:left}
@@ -303,7 +305,7 @@ body:has(#bt.on) #devb{display:none}
 <div id="bt" class="ovl">
  <div class="bwrap">
   <div class="btop"><div class="brand">전투</div><div><span id="bdev"><button class="btn sm" data-bdev="win">즉시 승리</button><button class="btn sm" data-bdev="lose">즉시 패배</button></span> <button class="btn sm" id="bstop" hidden>연습 끝내기</button> <button class="btn sm" id="bset">설정</button></div></div>
-  <section><div class="fn"><span id="bfn"></span><span class="fph" id="bfph"></span></div><div class="bbar" id="bfbar"><b id="bfhpd"></b><i id="bfhp"></i></div></section>
+  <section><div class="fn"><span id="bfn"></span><span class="fph" id="bfph"></span></div><div class="bbar" id="bfbar"><b id="bfhpd"></b><i id="bfhp"></i></div><div class="bsh" id="bsh"></div></section>
   <div id="btele"></div>
   <div id="barena"><canvas id="bcv"></canvas><div id="bjudge"></div></div>
   <div id="bqte" hidden><div class="track"><div id="bqz"></div><div id="bqm"></div></div><div class="qh">표식이 금빛 구간에 닿을 때 — <kbd>Space</kbd> 또는 화면 탭</div></div>
@@ -3218,6 +3220,7 @@ function bbars(){
   $('#bfhp').style.width=fr+'%';$('#bfhpd').style.width=fr+'%';$('#bphp').style.width=pr+'%';$('#bphpd').style.width=pr+'%';
   $('#bhpn').textContent=bsafe()?(G.kind==='tut'?'가르침':'연습')+' — 피해 없음':Math.max(0,G.hp)+' / '+G.mhp;
   let s='';for(let i=0;i<5;i++)s+=i<G.fp?'◆':'<s>◇</s>';$('#bfp').innerHTML=s;
+  const bsh=$('#bsh');if(bsh)bsh.innerHTML=G.shmax?`<span class="m">실드</span> ${G.sh?Array.from({length:G.shmax},(x,i)=>i<G.sh?'<i class="on"></i>':'<i></i>').join(''):'<b>무너짐 · 피해 150%</b>'}`:'';
   $('#bfph').textContent=G.ph===2?'격노'+(FSIG[G.foe]&&bfoe().boss&&G.kind==='fight'?' · 힘 '+'◆'.repeat(G.chg||0)+'◇'.repeat(3-(G.chg||0)):''):'';
   const cid=G.kind==='fight'&&S?bcomp():null;$('#bcomp').hidden=!cid;if(cid)$('#bcompn').textContent=cid==='morten'?'모르텐 · 경비대 교관'+(G.ward?' · 막대로 막아 준다':''):cn(cid)+' · 레벨 '+cst(cid).lv+(G.ward?' · 정전기 막':'')+(G.mark?' · 약점 짚음':'');
 }
@@ -3267,7 +3270,7 @@ function startBattle(kind,foe){
   G={on:true,kind,foe:foe||(kind==='practice'?'drill':null),st:'wait',hp:kind==='fight'?S.hp:100,mhp:kind==='fight'?S.mhp:100,fp:2+(kind==='fight'?eqSum('fp'):0),band:kind==='fight'?(S.inv.band||0):0,
      fhp:0,ph:1,guard:false,open:false,next:null,cur:null,beats:[],fx:[],lock:0,turn:0,tg:0,tut:kind==='tut'?0:null,last:null,q:null,
      S:{dodge:0,parry:0,hit:0,graze:0,whiff:0,full:0,ofs:[],perf:0,qte:0}};
-  G.fmax=Math.round(bfoe().hp*(kind==='fight'?foeHpM():1));G.fhp=G.fmax;G.bandU=0;if(kind==='fight'&&lin('p',0))G.slow=1;
+  G.fmax=Math.round(bfoe().hp*(kind==='fight'?foeHpM():1));G.fhp=G.fmax;G.bandU=0;G.shmax=kind==='fight'&&bfoe()&&(bfoe().boss||bfoe().tier>=3)?(bfoe().boss?6:4):0;G.sh=G.shmax;G.brk=0;if(kind==='fight'&&lin('p',0))G.slow=1;
   $('#bt').classList.add('on');$('#blog').innerHTML='';sizeCv();readCols();
   $('#bstop').hidden=kind==='fight'||(kind==='tut'&&!S.tutd);$('#bstop').textContent=kind==='tut'?'가르침 건너뛰기':'연습 끝내기';
   if(kind==='tut'){brender();tutStep()}
@@ -3288,7 +3291,7 @@ function bact(a,k){
   if(a==='skill'){G.menu='skill';brender();return}
   if(a==='back'){G.menu=null;brender();return}
   if(a==='sk'){useSkill(k);return}
-  if(a==='aw'){if(!G.awk||G.awu)return;G.awu=1;G.spell=1;S.awu=1;const d=Math.round(70+4*sv(1));G.fx.push({k:'parry',t:now(),r:Math.random()});SND.perfect();dmgFoe(d);bjudge('처음 듣는 말','parry');blog('입이 먼저 움직인다. 강의실의 가스등이 한꺼번에 꺼지고 희고 깊은 불이 수거인을 감싼다. '+d+' 피해.');afterAct();return}
+  if(a==='aw'){if(!G.awk||G.awu)return;G.awu=1;G.spell=1;S.awu=1;const d=Math.round(70+4*sv(1));G.fx.push({k:'parry',t:now(),r:Math.random()});SND.perfect();dmgFoe(d,3);bjudge('처음 듣는 말','parry');blog('입이 먼저 움직인다. 강의실의 가스등이 한꺼번에 꺼지고 희고 깊은 불이 수거인을 감싼다. '+d+' 피해.');afterAct();return}
   if(a==='atk'){let d=dAtk(SV());if(G.open){d=Math.round(d*1.5);G.open=false}if(G.mark){d=Math.round(d*(1+.15*G.mark));G.mark=0}G.fx.push({k:'slash',t:now()});SND.slash();bjudge('일격','dodge');dmgFoe(d);blog('공격. '+d+' 피해.');afterAct();return}
   if(a==='heavy'){if(G.kind!=='tut'){if(G.fp<2)return;G.fp-=2}G.menu=null;startQte('heavy');return}
   if(a==='guard'){G.first=0;G.guard=true;G.fp=Math.min(5,G.fp+1);let gh='';if(tal('breath')&&G.kind==='fight'){const h=Math.min(4,G.mhp-G.hp);if(h>0){G.hp+=h;bfloat('#bphp','+'+h,'heal');gh=' 체력 '+h+' 회복.'}}blog('자세를 낮춘다. 다음 공격을 읽기 쉬워진다.'+gh);enemyTurn();return}
@@ -3310,8 +3313,8 @@ function useSkill(k){
   const lampNow=skCost(k)<skC(k);G.fp-=skCost(k);if(lampNow){G.lampU=1;blog('허리의 등잔이 한 번 밝아진다. 숨이 덜 찬다.')}G.spell=K.mg?1:0;const st=SV();
   if(k==='stance'){G.stance=1;bjudge('받아치기 자세','parry');blog('칼끝을 낮춘다. 다음 공격을 받아칠 준비를 한다.')}
   if(k==='hamstring'){const d=4+st[3];G.slow=1;G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);bjudge('발목 긋기','dodge');blog('발목을 그었다. '+d+' 피해. 적이 느려진다.')}
-  if(k==='spirit'){const d=Math.round(10+2.4*st[1]);G.fx.push({k:'parry',t:now(),r:Math.random()});SND.parry();dmgFoe(d);bjudge('혼불','parry');blog('푸른 혼불이 적을 감싼다. '+d+' 피해.')}
-  if(k==='shock'){const d=Math.round(6+1.5*st[1]);G.wide=1;G.fx.push({k:'parry',t:now(),r:Math.random()});SND.perfect();dmgFoe(d);bjudge('방전','parry');blog('마력이 터진다. '+d+' 피해. 적의 움직임이 또렷이 보인다.')}
+  if(k==='spirit'){const d=Math.round(10+2.4*st[1]);G.fx.push({k:'parry',t:now(),r:Math.random()});SND.parry();dmgFoe(d,2);bjudge('혼불','parry');blog('푸른 혼불이 적을 감싼다. '+d+' 피해.')}
+  if(k==='shock'){const d=Math.round(6+1.5*st[1]);G.wide=1;G.fx.push({k:'parry',t:now(),r:Math.random()});SND.perfect();dmgFoe(d,2);bjudge('방전','parry');blog('마력이 터진다. '+d+' 피해. 적의 움직임이 또렷이 보인다.')}
   if(k==='mend'){const h=Math.min(8+3*st[2],G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');bjudge('숨 고르기','dodge');blog('숨을 고른다. 체력 '+h+' 회복.')}
   if(k==='ash'){G.forget=1;bjudge('재 흩뿌리기','miss');blog('푸른 재를 뿌렸다. 적의 눈빛이 잠깐 흐려진다.')}
   if(k==='windward'){G.guard=true;G.wide=1;bjudge('바람막이','dodge');blog('낮게 주문을 읊는다. 바람이 멎은 것처럼 주위가 고요해진다.')}
@@ -3331,15 +3334,17 @@ function resolveQte(perfect){
   G.S.qte++;if(perfect)G.S.perf++;
   G.fx.push({k:'slash',t:now(),gold:perfect});perfect?SND.perfect():SND.slash();
   bjudge(perfect?'정확한 강타':'강타',perfect?'parry':'dodge');
-  dmgFoe(d);G.first=0;G.st='wait';brender();
+  dmgFoe(d,perfect?3:2);G.first=0;G.st='wait';brender();
   if(G.kind==='tut'){if(perfect)G.tg++;else blog('모르텐 — “조금 더 기다리게. 금빛에 닿을 때.”');brender();setTimeout(()=>{if(G.on&&!tutCheck()){G.st='player';brender()}},650);return}
   blog('강타'+(perfect?' — 빈 곳을 정확히 찔렀다. ':'. ')+d+' 피해.');
   setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650);
 }
-function dmgFoe(d){if(G.kind==='fight'){let m=1;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;m*=eqAtkM();d=Math.round(d*m)}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
+function dmgFoe(d,sh){sh=sh==null?1:sh;if(G.kind==='fight'){let m=1;if(G.shmax)m*=G.sh>0?(bfoe().boss?.25:.35):1.5;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;m*=eqAtkM();d=Math.max(1,Math.round(d*m))}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;if(G.shmax&&G.sh>0&&sh>0){G.sh=Math.max(0,G.sh-sh);if(G.sh===0)shBreak()}bbars()}
+/* 실드(v049, 엘리트·보스): 실드가 있는 동안 피해 25%(엘리트 35%). 받아치기·강타·주문으로 깎는다. 깨지면 적이 한 차례 무너지고 피해 150%. 적의 다음 차례에 다시 차오른다 */
+function shBreak(){G.brk=1;G.fx.push({k:'parry',t:now(),r:Math.random()});try{SND.perfect()}catch(e){}bjudge('무너졌다','parry');blog(bfoe().n+'의 자세가 무너졌다! 다음 차례를 잃고 피해가 크게 들어간다.');const d=document.createElement('div');d.className='phase brk';d.innerHTML='<b>무너졌다</b><span>지금이다</span>';document.body.appendChild(d);setTimeout(()=>d.remove(),1100)}
 function maybePhase(then){
   if(G.ph===1&&bfoe().boss&&G.fhp<=G.fmax/2&&!bsafe()){
-    G.ph=2;G.next=bpick();G.st='wait';brender();
+    G.ph=2;G.next=bpick();G.st='wait';if(G.shmax){G.sh=G.shmax;G.brk=0}brender();
     const mdie=G.kind==='fight'&&G.foe==='lamp'&&S.mort===1&&!S.party;if(mdie){G.mdown=1;G.ward=0}
     const awk=G.kind==='fight'&&G.foe==='awc'&&!S.mg;if(awk)G.awk=1;
     const P2=awk?{h:'목 안쪽이 뜨겁다',s:'모르는 말이 혀끝까지 차오른다',l:'수거인이 풀무 마개를 뽑는다. 강의실의 가스등 불꽃이 일제히 나를 향해 기운다. 목 안쪽에서 처음 듣는 말이 차오른다.'}:mdie?{h:'모르텐이 쓰러진다',s:'등불이 내 머리 위로 떨어진다',l:'모르텐이 나를 밀쳐 내고 대신 등불을 맞는다. 늙은 몸이 돌바닥에 부딪힌다. 일어나지 않는다. 점등꾼의 박자가 더 빠르고 더 비뚤어진다.'}:bfoe().ph2||{h:'재가 일어선다',s:'등불 속 푸른 불이 사람을 잊는다',l:'점등꾼의 박자가 흐트러진다. 더 빠르고 더 비뚤다.'};
@@ -3444,6 +3449,8 @@ function enemyTurn(){
   if(!G.on)return;
   if($('#sov').classList.contains('on')){G.cur=G.next;G.paused='enemy';return}
   if(G.kind==='fight'&&bcomp()&&!G.cDone){G.cDone=true;G.st='wait';brender();compAct();if(checkEnd())return;const g=G;setTimeout(()=>{if(G===g&&G.on&&!checkEnd())maybePhase(enemyTurn)},750);return}
+  if(G.brk>0){G.brk=0;G.st='wait';G.beats=[];bjudge('무너져 있다','dodge');blog(bfoe().n+'이(가) 무너진 채 일어나지 못한다.');brender();setTimeout(()=>{if(G.on)playerTurn()},800);return}
+  if(G.shmax&&G.sh===0){G.sh=G.shmax;blog(bfoe().n+'이(가) 다시 자세를 잡는다. 실드가 차올랐다.');bbars()}
   if(G.cut){G.cut=0;const m0=MV[G.next];G.st='wait';G.beats=[];bjudge('공격 끊기','parry');blog(`키리엔 — ${m0.n}을(를) 휘두르기 전에 끼어들어 끊었다.`);G.next=bpick();brender();setTimeout(()=>{if(G.on)playerTurn()},900);return}
   const m=MV[G.next];G.cur=G.next;G.st='enemy';
   const B0=G.nb&&G.nbk===G.next?G.nb:m.b,sp=DF().sp*btier().sp*(G.slow?1.3:1),bs=B0.map(b=>({t:b.t*sp,a:b.a*sp,f:b.f&&b.f.map(x=>x*sp)}));G.slow=0;
@@ -3479,7 +3486,7 @@ function finishEnemy(){
     if(TS[G.tut].goal==='clean'){if(!r.hit&&!r.graze)G.tg++;else blog('모르텐 — “다시. 진한 고리만.”')}
     brender();if(!tutCheck()){G.next=bpick();brender();setTimeout(()=>{if(G.on&&G.st==='wait')enemyTurn()},900)}return;
   }
-  if(full){G.S.full++;G.open=true;dmgFoe(14);bjudge('완전한 받아침','parry',null);SND.parry();blog(m.n+' — 모두 받아쳤다. 상대가 휘청인다. (다음 공격 ×1.5)');if(G.chg>0){G.chg--;blog('모으던 힘이 하나 흩어진다.')}}
+  if(full){G.S.full++;G.open=true;dmgFoe(14,2);bjudge('완전한 받아침','parry',null);SND.parry();blog(m.n+' — 모두 받아쳤다. 상대가 휘청인다. (다음 공격 ×1.5)');if(G.chg>0){G.chg--;blog('모으던 힘이 하나 흩어진다.')}}
   else blog(m.n+' — 회피 '+r.dodge+' · 받아침 '+r.parry+(r.graze?' · 스침 '+r.graze:'')+' · 맞음 '+r.hit);
   G.next=bpick();brender();
   if(G.kind==='practice'){setTimeout(()=>{if(G.on&&G.st==='wait')enemyTurn()},1100);return}
