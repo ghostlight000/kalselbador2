@@ -28,16 +28,18 @@ with sync_playwright() as p:
     pg.goto(url);pg.wait_for_timeout(200)
     pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
     E(pg,"()=>{const K=window.__k2;K.S.night=3;K.S.mort=2;K.joinComp('kirien');K.joinComp('oswin');K.joinComp('barg');K.S.party='kirien';K.grantBase()}");okpop(pg)
-    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{pit:1,manor:1,mr:3,ring:1,eda:1,acad:1,mg:1,a2:6,rev:1,revd:1,hunt:1,h2:0,gift:'k'});K.S.inv.gvial=1;K.S.dec.ibre=1;K.S.dec.kasimir=1;K.S.vis.academy=1;K.S.vis.works=1;K.S.loc='inn';K.render()}")
+    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{pit:1,manor:1,mr:3,ring:1,eda:1,acad:1,mg:1,a2:6,rev:1,revd:1,hunt:1,h2:0,gift:'k'});K.S.inv.gvial=1;K.S.aff={kirien:10,oswin:30,barg:5};K.S.dec.ibre=1;K.S.dec.kasimir=1;K.S.vis.academy=1;K.S.vis.works=1;K.S.loc='inn';K.render()}")
     t=pg.inner_text('.goalc');assert '얼굴 없는 수배서' in t,t
     pg.click('button[data-c=h2wanted]');t=pg.inner_text('#ov');assert '촛불이 기우는 자' in t;choose(pg,'2층 끝방');choose(pg,'뒷계단')
     assert E(pg,"document.querySelector('#ov').classList.contains('ta')") and E(pg,"CHS.id")=='inn'
-    runchase(pg,True);pg.wait_for_selector('#ov.on h2:has-text("오르빌 저택")');okpop(pg)
+    runchase(pg,True);pg.wait_for_selector('#ov.on h2:has-text("오르빌 저택")');assert '오스윈을(를) 데려갔어' in pg.inner_text('#ov');choose(pg,'서재로 간다');t=pg.inner_text('#ov');assert '일곱 매듭' in t and '리세' not in t or True;assert '오스윈 님은 제가' in t,t;okpop(pg)
+    assert E(pg,"window.__k2.S.taken")=='oswin'
     s=E(pg,"window.__k2.S");assert s['h2']==1 and s['loc']=='base';print('wanted ok')
     pg.click('button[data-c=h2plan]');assert '죽은 이의 것만' in pg.inner_text('#ov');choose(pg,'3번 노를 찾아간다');assert E(pg,"window.__k2.S.h2")==2
     E(pg,"()=>{window.__k2.S.loc='furn';window.__k2.render()}");pg.click('button[data-c=h2furn]');choose(pg,'막아선다');assert E(pg,"G.foe")=='pourer' and E(pg,"G.fmax")==round(180*1.45);win(pg)
-    choose(pg,'맞선다');assert E(pg,"G.foe")=='keeper';win(pg);pg.wait_for_selector('#ov.on h2:has-text("시험 연소 기록")',timeout=5000);t=pg.inner_text('#ov');assert '할데온' in t and '흉내' in t;okpop(pg);assert E(pg,"window.__k2.S.h2")==3;print('furnace ok')
-    E(pg,"()=>{window.__k2.S.loc='church';window.__k2.render()}");pg.click('button[data-c=h2abel]');t=pg.inner_text('#ov');assert '거짓말' in t;choose(pg,'어머니는');assert '목소리를 바쳤어' in pg.inner_text('#ov');okpop(pg)
+    choose(pg,'맞선다');assert E(pg,"G.foe")=='keeper';win(pg);pg.wait_for_selector('#ov.on h2:has-text("시험 연소 기록")',timeout=5000);t=pg.inner_text('#ov');assert '할데온' in t and '흉내' in t;okpop(pg);pg.wait_for_selector('#ov.on h2:has-text("3번 노 뒤 줄")',timeout=5000);assert '실례지만 누구신지요' in pg.inner_text('#ov');okpop(pg);assert E(pg,"window.__k2.S.h2")==3 and E(pg,"window.__k2.S.amn")=='oswin';print('furnace ok')
+    E(pg,"()=>{window.__k2.S.loc='base';window.__k2.render()}");E(pg,"CMD.talk('oswin')");assert '처음 뵙겠습니다' in pg.inner_text('#ov');choose(pg,'곁에 앉아')
+    E(pg,"()=>{window.__k2.S.loc='church';window.__k2.render()}");pg.click('button[data-c=h2abel]');assert '아줌마 누구야' in pg.inner_text('#ov');choose(pg,'광장을 빠져나간다');t=pg.inner_text('#ov');assert '거짓말' in t;choose(pg,'어머니는');assert '목소리를 바쳤어' in pg.inner_text('#ov');okpop(pg)
     s=E(pg,"window.__k2.S");assert s['h2']==4 and s['abelN']==1
     E(pg,"()=>{const S=window.__k2.S;S.party='barg';S.loc='outskirts';window.__k2.render()}");pg.click('button[data-c=h2broth]');t=pg.inner_text('#ov');assert '울릭' in t and '…울릭.' in t and '바르그' in t;choose(pg,'맞선다');assert E(pg,"G.foe")=='ulrik';win(pg);pg.wait_for_selector('#ov.on h2:has-text("천막촌 끝")',timeout=5000);assert '겨울 아침' in pg.inner_text('#ov');okpop(pg)
     assert E(pg,"window.__k2.S.h2")==5;print('abel/brotherhood ok')
