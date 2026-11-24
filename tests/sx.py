@@ -60,7 +60,7 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.sx.shoe.e")=='home';print('shoe ok')
     # 2) 서리이끼 — 도착하면 부탁, 묘지 탐사로 모으기
     E(pg,"()=>{const K=window.__k2;delete K.S.sxno.moss}");go(pg,'outskirts');pg.wait_for_selector('#ov.on h2:has-text("천막촌의 열병")',timeout=5000);choose(pg,'이끼를 구해 오겠다')
-    go(pg,'church');E(pg,"()=>{const K=window.__k2;K.SX.moss.steps[0].col.p=1}")
+    go(pg,'church');clear(pg);E(pg,"()=>{const K=window.__k2;K.SX.moss.steps[0].col.p=1}")
     for i in range(3):explore(pg)
     assert E(pg,"window.__k2.S.sx.moss.i")==1,E(pg,"JSON.stringify(window.__k2.S.sx.moss)")
     go(pg,'outskirts');sxa(pg,'moss');assert '회색 장갑' in pg.inner_text('#ov');choose(pg,'마르타에게 준다');okpop(pg);assert E(pg,"window.__k2.S.sx.moss.e")=='kids';print('moss ok')

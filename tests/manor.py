@@ -5,7 +5,7 @@ ROOT=pathlib.Path(__file__).resolve().parent.parent;url=(ROOT/'index.html').as_u
 errs=[]
 def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=10000);pg.click(f'#ov.on button:has-text("{t}")');pg.wait_for_timeout(60)
 def okpop(pg):pg.wait_for_selector('#ov.on button[data-c=popok]',timeout=10000);pg.click('#ov.on button[data-c=popok]');pg.wait_for_timeout(60)
-def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650)
+def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650);(pg.is_visible('#ov.on h2:has-text("대성당")') and (choose(pg,'고개를 숙인다'),choose(pg,'대성당을 나선다')))
 def waitact(pg):pg.wait_for_function('!window.__k2.S.act',timeout=10000);pg.wait_for_timeout(650)
 S=lambda pg:pg.evaluate('window.__k2.S')
 with sync_playwright() as p:
@@ -18,7 +18,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>{const K=window.__k2;K.S.night=3;K.S.tutd=1;K.render();K.SCENE.kirien()}")
     choose(pg,'못 알아들었다고');choose(pg,'말하지 않는다');choose(pg,'같이 가자');choose(pg,'좋다')
     pg.evaluate("()=>{window.__k2.SCENE.osw2()}");assert pg.locator('#ov button:has-text("같이 가자")').count()==0
-    choose(pg,'함께하자');t=pg.inner_text('#ov');assert '털 날리는' not in t and '키 큰 도마뱀' in t and '여관 1층에서 기다린다' in t,t;choose(pg,'계속 다닌다')
+    choose(pg,'함께하자');t=pg.inner_text('#ov');assert '신탁 상점의 딸이지요' not in t and '쫓겨난 사람 냄새' in t and '여관 1층에서 기다린다' in t,t;choose(pg,'계속 다닌다')
     s=S(pg);assert s['party']=='kirien' and s['comps']==['kirien','oswin'];print('send to inn ok')
     # 여관에서 바꾸기 (여관 소문 창이 먼저 뜰 수 있다)
     pg.wait_for_timeout(700)

@@ -26,7 +26,7 @@ def choose(pg,text):
         sel='#ov.on button:has-text("다른 것도 묻는다")'
     pg.wait_for_selector(sel,timeout=20000); pg.click(sel); pg.wait_for_timeout(60)
 def go(pg,k):
-    pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); choose(pg,'간다'); pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000); pg.wait_for_timeout(650)
+    pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); choose(pg,'간다'); pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000); pg.wait_for_timeout(650);(pg.is_visible('#ov.on h2:has-text("대성당")') and (choose(pg,'고개를 숙인다'),choose(pg,'대성당을 나선다')))
 def fight(pg):
     pg.wait_for_function('window.__k2.G.on',timeout=10000); pg.evaluate("()=>{const S=window.__k2.S;S.hp=S.mhp}"); pg.evaluate(BOT)
     pg.wait_for_function('!window.__k2.G.on',timeout=240000); h=okpop(pg); assert h!='쓰러졌다',h; return h
@@ -44,7 +44,7 @@ with sync_playwright() as p:
     for i in range(5):
         pg.click('#pv .eo'); pg.click('#pv .eo'); pg.wait_for_timeout(50); t=pg.inner_text('#pv')
         if i==0: assert '레아는' in t and '용 사냥꾼' in t and '푸르다' in t, t
-        if i==1: assert '레아의 것' in t and '아버지의 마지막 말' in t and '서두르지 않으면' in t, t
+        if i==1: assert '레아의 것' in t and '아버지의 마지막 말' in t and '오렌하르트에는 가지 마' in t, t
         if i==3: assert '문을 거칠게' in t and '불지기' in t and pg.evaluate('window.__k2.PV.kt.length')==1, t
     pg.click('#pv .eo'); pg.click('#pv [data-pv=close]'); pg.wait_for_timeout(100)
     assert '모르텐' in pg.inner_text('#ov') and '손끝이 푸르군' in pg.inner_text('#ov'); choose(pg,'막대를 쥔 노인을 따라간다'); choose(pg,'막대 앞에 선다'); pg.wait_for_function('window.__k2.G.on'); pg.evaluate(BOT)
@@ -64,7 +64,7 @@ with sync_playwright() as p:
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='모르텐' and '박자가' in pg.inner_text('#ov'); choose(pg,'그의 눈을 감겨 준다'); assert '공급 하나' in pg.inner_text('#ov'); choose(pg,'막대를 줍는다')
     assert S(pg)['mort']==2 and S(pg)['inv'].get('mstaff')==1 and '모르텐이 나를 밀쳐' in pg.evaluate("JSON.stringify(window.__k2.S.jr||window.__k2.S.journal||'')")+pg.evaluate("JSON.stringify(window.__k2.S)")
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='여우 머리의 여자' and '죽은 사람 냄새' in pg.inner_text('#ov')
-    choose(pg,'누구냐고 묻는다'); choose(pg,'편지를 보여 준다'); assert '하나도 안 웃긴데' in pg.inner_text('#ov'); assert pg.locator('#ov button:has-text("혼자 하겠다")').count()==1; choose(pg,'같이 가자'); choose(pg,'좋다')
+    choose(pg,'누구냐고 묻는다'); choose(pg,'편지를 보여 준다'); assert '뒤는 아니고' in pg.inner_text('#ov'); assert pg.locator('#ov button:has-text("혼자 하겠다")').count()==1; choose(pg,'같이 가자'); choose(pg,'좋다')
     s=S(pg); assert s['comps']==['kirien'] and s['party']=='kirien' and s['aff']['kirien']==18, s['aff']; print('kirien joined, aff',s['aff'])
     assert pg.evaluate("window.__k2.romOK('kirien')") and not pg.evaluate("window.__k2.romOK('kasimir')")
     # 대화(이곳에 대해) → 호감 +4 한 번만
