@@ -21,9 +21,9 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=place]')
     E(pg,"()=>{const K=window.__k2;K.joinComp('kirien');K.S.loc='docks';K.render()}")
     # 대화: > 줄은 내가 고른다
-    pg.evaluate("()=>{window.__k2.S.orx={kirien:1,oswin:1,ibre:1,kasimir:1}}");pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '비린내' in t and '그럼 왜 따라왔어?' in t and '말없이 듣는다' in t
-    choose(pg,'그럼 왜 따라왔어?');t=pg.inner_text('#ov');assert '베렌\n“그럼 왜 따라왔어?”' in t and '방향이 같았을 뿐' in t
-    choose(pg,'다른 이야기를 한다');choose(pg,'이곳은 어때?');choose(pg,'말없이 듣는다');t=pg.inner_text('#ov');assert '베렌 —' not in t and '방향이 같았을 뿐' in t;choose(pg,'이야기를 그만둔다')
+    pg.evaluate("()=>{window.__k2.S.orx={kirien:1,oswin:1,ibre:1,kasimir:1}}");pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '비린내' in t and '그럼 왜 왔어?' in t and '말없이 듣는다' in t
+    choose(pg,'그럼 왜 왔어?');t=pg.inner_text('#ov');assert '베렌\n“그럼 왜 왔어?”' in t and '가는 길이 같았어' in t
+    choose(pg,'다른 이야기를 한다');choose(pg,'이곳은 어때?');choose(pg,'말없이 듣는다');t=pg.inner_text('#ov');assert '베렌 —' not in t and '가는 길이 같았어' in t;choose(pg,'이야기를 그만둔다')
     assert E(pg,"window.__k2.S.aff.kirien")==14;print('talk choice ok')
     # 키리엔 기술 점수: 연속 베기 1단계
     pg.click('button[data-c=tab][data-a=char]');pg.click('button[data-c=cskup][data-a="kirien:flurry"]');assert E(pg,"window.__k2.S.cl.kirien.r.flurry")==1 and E(pg,"window.__k2.S.cl.kirien.cp")==0

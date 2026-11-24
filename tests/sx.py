@@ -80,7 +80,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '다시 울린다' in q and '나눠 마셨다' in q;pg.click('button[data-c=tab][data-a=place]')
     # 6) 연계: 모르텐의 열쇠 — 1막에 시작, 깨어나야 2단계, 3막에야 문
     E(pg,"()=>{const K=window.__k2;delete K.S.sxno.mort;K.S.mort=2;K.S.mg=0;K.S.rev=0;K.S.a3=0;K.render()}");go(pg,'docks');go(pg,'street');pg.wait_for_selector('#ov.on h2:has-text("빈 초소")',timeout=5000);assert '일곱째 문' in pg.inner_text('#ov');choose(pg,'수첩과 열쇠를 챙긴다')
-    go(pg,'church');sxa(pg,'mort');assert '대정화자' in pg.inner_text('#ov');choose(pg,'열쇠를 다시')
+    go(pg,'church');sxa(pg,'mort');assert '불의 목자' in pg.inner_text('#ov');choose(pg,'열쇠를 다시')
     go(pg,'outskirts');b0=pg.locator('button[data-c=sxa][data-a=mort]');assert b0.is_disabled() and '잠들어' in b0.inner_text()
     E(pg,"()=>{const K=window.__k2;K.S.mg=1;K.S.oq0=1;K.render()}");sxa(pg,'mort');assert '모르야' in pg.inner_text('#ov');choose(pg,'수첩을 덮는다')
     go(pg,'stairs');b0=pg.locator('button[data-c=sxa][data-a=mort]');assert b0.is_disabled() and '경비' in b0.inner_text()
