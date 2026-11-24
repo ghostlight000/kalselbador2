@@ -96,6 +96,7 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .scs{display:block;width:100%;height:100%}.scim{object-fit:cover;filter:saturate(.5) contrast(.7) brightness(1.32);-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 12%,#000 78%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 12%,#000 78%,transparent);mask-composite:intersect}
 :root[data-theme=dark] .scim{filter:saturate(.6) contrast(.86) brightness(.92)}
 .scw.im{border:none;background:none}
+.bpack{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:-6px 0 2px}.pkc{font:inherit;color:var(--t);background:none;border:1px solid var(--b);padding:2px 7px 4px;min-width:100px;cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:stretch;font-size:.82em}.pkc.on{border-color:var(--ghi);box-shadow:0 0 0 1px var(--ghi) inset}.pkc.dead{opacity:.35;cursor:default}.pkb{height:4px;background:var(--b);display:block}.pkb i{display:block;height:100%;background:var(--bad)}.pks{letter-spacing:1px;font-size:.85em}
 .bsh{display:flex;align-items:center;justify-content:center;gap:5px;min-height:16px;margin-top:4px;font-size:.8em}.bsh i{width:9px;height:9px;transform:rotate(45deg);border:1px solid var(--a);opacity:.5}.bsh i.on{background:var(--ghi);opacity:1}.bsh b{color:var(--bad);letter-spacing:.1em}
 .phase.brk b{color:var(--bad)}
 .bep{letter-spacing:.3em;font-size:.78em;opacity:.7;text-align:center;margin:0 0 -4px}.bpre p{margin:.45em 0}
@@ -305,7 +306,7 @@ body:has(#bt.on) #devb{display:none}
 <div id="bt" class="ovl">
  <div class="bwrap">
   <div class="btop"><div class="brand">전투</div><div><span id="bdev"><button class="btn sm" data-bdev="win">즉시 승리</button><button class="btn sm" data-bdev="lose">즉시 패배</button></span> <button class="btn sm" id="bstop" hidden>연습 끝내기</button> <button class="btn sm" id="bset">설정</button></div></div>
-  <section><div class="fn"><span id="bfn"></span><span class="fph" id="bfph"></span></div><div class="bbar" id="bfbar"><b id="bfhpd"></b><i id="bfhp"></i></div><div class="bsh" id="bsh"></div></section>
+  <section><div class="bpack" id="bpack" hidden></div><div class="fn"><span id="bfn"></span><span class="fph" id="bfph"></span></div><div class="bbar" id="bfbar"><b id="bfhpd"></b><i id="bfhp"></i></div><div class="bsh" id="bsh"></div></section>
   <div id="btele"></div>
   <div id="barena"><canvas id="bcv"></canvas><div id="bjudge"></div></div>
   <div id="bqte" hidden><div class="track"><div id="bqz"></div><div id="bqm"></div></div><div class="qh">표식이 금빛 구간에 닿을 때 — <kbd>Space</kbd> 또는 화면 탭</div></div>
@@ -1392,9 +1393,9 @@ const SCENE={
    ev(N,`<p>${line}</p><p>${P} — “${(COMP[S.party].hello||{})[id]||'짐은 알아서 옮기라고 해.'}”</p>`+
    `<p class="m">${josa(N,'이','가')} 함께하기로 했다. 데리고 다닐 수 있는 사람은 한 명이다. 남는 사람은 ${home}.${more?' '+more:''}</p>`,
    [[`${josa(P,'과','와')} 계속 다닌다`,()=>{log(`${josa(P,'과','와')} 계속 다닌다. ${josa(N,'은','는')} ${home}.`);save()}],[`${josa(N,'과','와')} 다닌다`,()=>{S.party=id;log(`${josa(N,'과','와')} 다니기로 했다. ${josa(P,'은','는')} ${home}.`);save()}]])},
- road:(foe,a)=>ev('길 위에서',`<p>${PL[a.fr].n}에서 ${PL[a.to].n}(으)로 가는 길. 가스등 하나가 꺼진 골목 앞에서 무언가 길을 막는다.</p><p class="m">${FOES[foe].intro}</p>`+
+ road:(foe,a)=>(ROADX=packFor(foe),ev('길 위에서',`<p>${PL[a.fr].n}에서 ${PL[a.to].n}(으)로 가는 길. 가스등 하나가 꺼진 골목 앞에서 무언가 길을 막는다.</p><p class="m">${FOES[foe].intro}</p>${ROADX?`<p class="m">뒤에서도 그림자가 다가온다. ${ROADX.map(f=>FOES[f].n).join(', ')}.</p>`:''}`+
    pline({kirien:foe==='dog'?'배고픈 애야. 물리기 전에 쫓아 버려.':'저 칼 든 손 낯익은데.',oswin:'지름길이 늘 짧은 건 아니지요.'}),
-   [['맞선다',()=>startBattle('fight',foe)],['돌아서 달아난다',()=>{const l=tal('night')?0:Math.min(S.coin,R(1,3));S.coin-=l;log('길 위에서 달아났다'+(l?'. 동전 '+l+'개를 흘렸다.':'.'));if(l)pop('달아났다',{n:['뛰다가 주머니에서 동전이 쏟아졌다.'],g:0,i:{}});save()}]]),
+   [['맞선다',()=>startBattle('fight',foe,ROADX)],['돌아서 달아난다',()=>{const l=tal('night')?0:Math.min(S.coin,R(1,3));S.coin-=l;log('길 위에서 달아났다'+(l?'. 동전 '+l+'개를 흘렸다.':'.'));if(l)pop('달아났다',{n:['뛰다가 주머니에서 동전이 쏟아졌다.'],g:0,i:{}});save()}]])),
  archive:()=>ev('대성당 뒤편',`<p>문서고 쪽에서 책 무더기가 쏟아지는 소리가 난다.</p><p>책장 사이에 붉은 구릿빛 비늘의 파볼릭이 서 있다. 두꺼운 장부를 품에 안았다. 그 앞을 회색 옷의 정화자가 막아선다.</p>
    <p>정화자 — “장부를 내려놓아라. 이름 없는 자.”</p><p>파볼릭 — “이름 없는 자라. 지운 건 당신들인데 말이지요.”</p>`,
    [['끼어든다',()=>{S.bstory='oswin';save();startBattle('fight','warden')}],['물러난다',null]]),
@@ -2473,7 +2474,7 @@ function resolveAct(){
     if(a.at==='outskirts'&&S.hq===1){add('grim',1);S.hq=2;jr('천막 사이 넝마 더미에서 하그의 주문책을 찾았다.');pop(X.n,{i:Object.assign({grim:1},L.i),g:L.g,n:[X.say,'넝마 더미 바닥에서 가죽 표지 책 한 권이 나왔다. 하그의 주문책이다.']});save();return true}
     if(S.base&&!S.pit&&(a.at==='docks'||a.at==='street')){pop(X.n,{i:L.i,g:L.g,n:[X.say]});S.pend='sewer';save();return true}
     const SXR=sxExplore(a.at),say=[X.say,...SXR.notes];if(!SXR.started)xevRoll(a.at);
-    if(!S.pend&&Math.random()<X.enc*(a.cd?.5:1)){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:say.join(' ')};save();startBattle('fight',foe);return true}
+    if(!S.pend&&Math.random()<X.enc*(a.cd?.5:1)){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:say.join(' ')};save();startBattle('fight',foe,packFor(foe));return true}
     pop(X.n,{i:L.i,g:L.g,n:say})}
   if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='inn'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='inn'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(S.mg&&!S.oq0&&S.comps.includes('oswin')&&!S.pend)S.pend='oq0';if(a.to==='academy'&&S.sole&&(S.oq||0)>=2&&!S.solv&&!S.pend)S.pend='soleV';if(a.to==='base'&&S.oq===6&&!S.lisL&&!S.pend)S.pend='liseL';sxArrive(a.to);if(a.to==='church'&&!S.archM&&!S.pend)S.pend='archM';if(a.to==='base'&&(S.a2||0)>=3&&!S.gift&&!S.pend)S.pend='gift';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
     const rf=!S.pend&&roadFoe(a);if(rf){save();SCENE.road(rf,a);return true}
@@ -2730,7 +2731,7 @@ function gcollect(k){const g=(S.gl||{})[k],p=gpeek(k);if(!g||!p)return {i:{},g:0
   Object.entries(i).forEach(([m,v])=>add(m,v));S.coin+=coin;g.c=c;g.t0=Date.now();g.fn=0;return {i,g:coin,n}}
 function mergeI(a,b){Object.entries(b).forEach(([m,v])=>a[m]=(a[m]||0)+v);return a}
 // 자리를 비운 동안
-let AWAYCK=false,ROADT=false;
+let AWAYCK=false,ROADT=false,ROADX=null;
 function awayCheck(){AWAYCK=true;if(!S||!S.gl)return false;const ks=Object.keys(S.gl);if(!ks.length)return false;const away=Date.now()-(S.sv||Date.now());if(away<600e3*SEC())return false;
   const I={},n=[];let g=0;ks.forEach(k=>{const p=gpeek(k);const r=gcollect(k);mergeI(I,r.i);g+=r.g;const sp=S.gl[k].sp,G0=GSP[sp];
     n.push(`<b>${KIDS[k].n}</b> — ${G0.n}${p&&p.full?' · 한도가 차서 중간부터 쉬었다':''}`,`${KIDS[k].n} — “${G0.say[Math.random()*G0.say.length|0]}”`,...r.n)});
@@ -3045,6 +3046,31 @@ Object.assign(CMD,{
    ev('헌병대 불하품점',`<p>홀트가 물건을 종이에 싸서 밀어 준다.</p><p class="m">${I.n}을(를) 갖췄다.${prev?' '+EQI[prev].n+'은(는) 가방에 넣었다. 캐릭터 탭에서 바꿀 수 있다.':''}</p>`,[['가게로 돌아간다',()=>CMD.shopE()]],1)}
 });
 
+
+/* ===================== 동시에 나오는 여러 적 (v050) =====================
+   G.pack: 적마다 한 칸. G의 foe·fhp·실드 같은 칸은 지금 '맥락'(내 차례에는 노리는 적, 적의 차례에는 휘두르는 적)이다.
+   pkLoad(i)로 맥락을 바꾼다. 적의 차례에는 살아 있는 적이 차례로 휘두른다. 하나를 쓰러뜨리면 다음 적을 노린다. */
+const PKF=['foe','fhp','fmax','sh','shmax','brk','ph','chg','next','nb','nbk','nbn'];
+const pkOn=()=>!!(G&&G.pack&&G.pack.length>1);
+function pkSave(){if(!pkOn())return;const p=G.pack[G.pi];PKF.forEach(k=>p[k]=G[k])}
+function pkLoad(i){if(!pkOn()||i===G.pi)return;pkSave();G.pi=i;const p=G.pack[i];PKF.forEach(k=>G[k]=p[k])}
+const pkAlive=()=>G.pack.map((p,i)=>i).filter(i=>(i===G.pi?G.fhp:G.pack[i].fhp)>0);
+function pkInit(extra){if(!extra||!extra.length)return;G.pack=[{}];G.pi=0;G.ti=0;pkSave();
+  extra.forEach(f=>{const keep=G.foe;G.foe=f;const fm=Math.round(FOES[f].hp*foeHpM()),shm=FOES[f].boss||FOES[f].tier>=3?(FOES[f].boss?6:4):0;G.foe=keep;G.pack.push({foe:f,fhp:fm,fmax:fm,sh:shm,shmax:shm,brk:0,ph:1,chg:0,next:null})})}
+// 하나가 쓰러졌을 때: 다른 적이 남아 있으면 싸움을 이어 간다
+function pkFell(){if(!pkOn()||G.fhp>0)return false;const al=pkAlive();if(!al.length)return false;pkSave();blog(bfoe().n+'이(가) 쓰러졌다. 남은 적이 '+al.length+'.');
+  if(G.st!=='enemy'){const t=al[0];pkLoad(t);G.ti=t;if(!G.next)G.next=bpick()}bbars();brender();return true}
+// 적의 차례: 살아 있는 적을 차례로
+function pkQueue(){if(!pkOn())return false;if(G.atkQ)return false;G.atkQ=pkAlive();const f=G.atkQ.shift();pkLoad(f);if(!G.next)G.next=bpick();return true}
+function pkNext(after){if(!pkOn()||!G.atkQ){after();return}while(G.atkQ.length&&!(G.pack[G.atkQ[0]].fhp>0))G.atkQ.shift();
+  if(G.atkQ.length){const f=G.atkQ.shift();pkLoad(f);if(!G.next)G.next=bpick();bbars();brender();const g=G;setTimeout(()=>{if(G===g&&G.on)enemyTurn()},450);return}
+  G.atkQ=null;const al=pkAlive();if(!al.length){after();return}const t=al.includes(G.ti)?G.ti:al[0];pkLoad(t);G.ti=t;if(!G.next)G.next=bpick();bbars();after()}
+function pkPick(i){if(!pkOn()||G.st!=='player'||!(G.pack[i]&&(i===G.pi?G.fhp:G.pack[i].fhp)>0))return;pkLoad(i);G.ti=i;if(!G.next)G.next=bpick();bbars();brender()}
+function pkChips(){if(!pkOn())return '';pkSave();return G.pack.map((p,i)=>{const F=FOES[p.foe],dead=p.fhp<=0,on=i===G.pi;return `<button class="pkc${on?' on':''}${dead?' dead':''}" data-pk="${i}" ${dead?'disabled':''} title="${!dead&&p.next?'다음 — '+MV[p.next].n:''}"><b>${F.n}${p.shmax&&!dead?` <span class="pks">${p.sh?'◆'.repeat(p.sh):'무너짐'}</span>`:''}${dead?' <span class="m">쓰러짐</span>':''}</b><span class="pkb"><i style="width:${Math.max(0,p.fhp)/p.fmax*100}%"></i></span></button>`}).join('')}
+// 무리: 길 위와 탐사에서 가끔 둘이나 셋이 함께 나온다
+const PACKS={dog:['dog'],mutt:['mutt'],thief:['dog'],hunter:['pilgrim'],pilgrim:['pilgrim'],halfw:['slag'],slag:['halfw'],hollow:['mutt'],warden:['hunter'],mp:['warden'],rats:['rats'],clock:['clock'],shade:['shade'],lump:['hollow'],preacher:['pilgrim']};
+function packFor(foe){const P=PACKS[foe];if(!P||!S.night)return null;const a=actN(),ch=a>=2.5?.5:a>=2?.35:.15;if(Math.random()>=ch)return null;const ex=P.slice();if(a>=2.5&&Math.random()<.4)ex.push(P[0]);return ex}
+
 async function doImport(){const t=($('#imp2')||{}).value||'';try{const o=await sdecode(t);S=o;migrate();save();EV0=null;render()}catch(e){ev('기록 코드로 이어 하기','<p class="m">코드를 읽지 못했다. 처음부터 끝까지 빠짐없이 붙여 넣었는지 확인하자.</p>',[['닫기',null]])}}
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-c]');if(!b||b.disabled)return;
@@ -3220,6 +3246,7 @@ function bbars(){
   $('#bfhp').style.width=fr+'%';$('#bfhpd').style.width=fr+'%';$('#bphp').style.width=pr+'%';$('#bphpd').style.width=pr+'%';
   $('#bhpn').textContent=bsafe()?(G.kind==='tut'?'가르침':'연습')+' — 피해 없음':Math.max(0,G.hp)+' / '+G.mhp;
   let s='';for(let i=0;i<5;i++)s+=i<G.fp?'◆':'<s>◇</s>';$('#bfp').innerHTML=s;
+  const bpk=$('#bpack');if(bpk){const h=pkChips();if(bpk._h!==h){bpk._h=h;bpk.innerHTML=h}bpk.hidden=!h}
   const bsh=$('#bsh');if(bsh)bsh.innerHTML=G.shmax?`<span class="m">실드</span> ${G.sh?Array.from({length:G.shmax},(x,i)=>i<G.sh?'<i class="on"></i>':'<i></i>').join(''):'<b>무너짐 · 피해 150%</b>'}`:'';
   $('#bfph').textContent=G.ph===2?'격노'+(FSIG[G.foe]&&bfoe().boss&&G.kind==='fight'?' · 힘 '+'◆'.repeat(G.chg||0)+'◇'.repeat(3-(G.chg||0)):''):'';
   const cid=G.kind==='fight'&&S?bcomp():null;$('#bcomp').hidden=!cid;if(cid)$('#bcompn').textContent=cid==='morten'?'모르텐 · 경비대 교관'+(G.ward?' · 막대로 막아 준다':''):cn(cid)+' · 레벨 '+cst(cid).lv+(G.ward?' · 정전기 막':'')+(G.mark?' · 약점 짚음':'');
@@ -3265,12 +3292,12 @@ function bovClose(){$('#bov').classList.remove('on');$('#bov').innerHTML=''}
 const bbtns=list=>'<div class="btns'+(list.length===2?' two':'')+'">'+list.map(([o,l,pri])=>`<button class="btn${pri?' pri':''}" data-bo="${o}">${l}</button>`).join('')+'</div>';
 
 /* 흐름 */
-function startBattle(kind,foe){
+function startBattle(kind,foe,extra){
   ac();EV0=null;POP=null;render();
   G={on:true,kind,foe:foe||(kind==='practice'?'drill':null),st:'wait',hp:kind==='fight'?S.hp:100,mhp:kind==='fight'?S.mhp:100,fp:2+(kind==='fight'?eqSum('fp'):0),band:kind==='fight'?(S.inv.band||0):0,
      fhp:0,ph:1,guard:false,open:false,next:null,cur:null,beats:[],fx:[],lock:0,turn:0,tg:0,tut:kind==='tut'?0:null,last:null,q:null,
      S:{dodge:0,parry:0,hit:0,graze:0,whiff:0,full:0,ofs:[],perf:0,qte:0}};
-  G.fmax=Math.round(bfoe().hp*(kind==='fight'?foeHpM():1));G.fhp=G.fmax;G.bandU=0;G.shmax=kind==='fight'&&bfoe()&&(bfoe().boss||bfoe().tier>=3)?(bfoe().boss?6:4):0;G.sh=G.shmax;G.brk=0;if(kind==='fight'&&lin('p',0))G.slow=1;
+  G.fmax=Math.round(bfoe().hp*(kind==='fight'?foeHpM():1));G.fhp=G.fmax;G.bandU=0;G.shmax=kind==='fight'&&bfoe()&&(bfoe().boss||bfoe().tier>=3)?(bfoe().boss?6:4):0;G.sh=G.shmax;G.brk=0;G.pack=null;G.atkQ=null;if(kind==='fight')pkInit(extra);if(kind==='fight'&&lin('p',0))G.slow=1;
   $('#bt').classList.add('on');$('#blog').innerHTML='';sizeCv();readCols();
   $('#bstop').hidden=kind==='fight'||(kind==='tut'&&!S.tutd);$('#bstop').textContent=kind==='tut'?'가르침 건너뛰기':'연습 끝내기';
   if(kind==='tut'){brender();tutStep()}
@@ -3449,14 +3476,15 @@ function enemyTurn(){
   if(!G.on)return;
   if($('#sov').classList.contains('on')){G.cur=G.next;G.paused='enemy';return}
   if(G.kind==='fight'&&bcomp()&&!G.cDone){G.cDone=true;G.st='wait';brender();compAct();if(checkEnd())return;const g=G;setTimeout(()=>{if(G===g&&G.on&&!checkEnd())maybePhase(enemyTurn)},750);return}
-  if(G.brk>0){G.brk=0;G.st='wait';G.beats=[];bjudge('무너져 있다','dodge');blog(bfoe().n+'이(가) 무너진 채 일어나지 못한다.');brender();setTimeout(()=>{if(G.on)playerTurn()},800);return}
+  if(pkOn()&&!G.atkQ){pkQueue();bbars();brender()}
+  if(G.brk>0){G.brk=0;G.st='wait';G.beats=[];bjudge('무너져 있다','dodge');blog(bfoe().n+'이(가) 무너진 채 일어나지 못한다.');brender();setTimeout(()=>{if(G.on)pkNext(playerTurn)},800);return}
   if(G.shmax&&G.sh===0){G.sh=G.shmax;blog(bfoe().n+'이(가) 다시 자세를 잡는다. 실드가 차올랐다.');bbars()}
-  if(G.cut){G.cut=0;const m0=MV[G.next];G.st='wait';G.beats=[];bjudge('공격 끊기','parry');blog(`키리엔 — ${m0.n}을(를) 휘두르기 전에 끼어들어 끊었다.`);G.next=bpick();brender();setTimeout(()=>{if(G.on)playerTurn()},900);return}
+  if(G.cut){G.cut=0;const m0=MV[G.next];G.st='wait';G.beats=[];bjudge('공격 끊기','parry');blog(`키리엔 — ${m0.n}을(를) 휘두르기 전에 끼어들어 끊었다.`);G.next=bpick();brender();setTimeout(()=>{if(G.on)pkNext(playerTurn)},900);return}
   const m=MV[G.next];G.cur=G.next;G.st='enemy';
   const B0=G.nb&&G.nbk===G.next?G.nb:m.b,sp=DF().sp*btier().sp*(G.slow?1.3:1),bs=B0.map(b=>({t:b.t*sp,a:b.a*sp,f:b.f&&b.f.map(x=>x*sp)}));G.slow=0;
   if(G.forget){G.forget=0;
     if(bs.length>1){bs.shift();const t0=bs[0].t;bs.forEach(b=>b.t-=t0);blog(m.n+' — 첫 박자를 잊었다.')}
-    else{G.st='wait';G.beats=[];blog(m.n+' — 휘두르려다 멈춘다. 무엇을 하려던 건지 잊었다.');G.next=bpick();brender();setTimeout(()=>{if(G.on)playerTurn()},900);return}}
+    else{G.st='wait';G.beats=[];blog(m.n+' — 휘두르려다 멈춘다. 무엇을 하려던 건지 잊었다.');G.next=bpick();brender();setTimeout(()=>{if(G.on)pkNext(playerTurn)},900);return}}
   const base=now()+650+Math.max(...bs.map(b=>b.a-b.t));
   G.beats=bs.map(b=>({T:base+b.t,a:b.a,f:b.f,res:null,warned:false}));
   G.res={dodge:0,parry:0,hit:0,graze:0};G.lock=0;brender();
@@ -3490,11 +3518,12 @@ function finishEnemy(){
   else blog(m.n+' — 회피 '+r.dodge+' · 받아침 '+r.parry+(r.graze?' · 스침 '+r.graze:'')+' · 맞음 '+r.hit);
   G.next=bpick();brender();
   if(G.kind==='practice'){setTimeout(()=>{if(G.on&&G.st==='wait')enemyTurn()},1100);return}
-  setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(playerTurn)},full?700:350);
+  setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(()=>pkNext(playerTurn))},full?700:350);
 }
 function checkEnd(){
   if(bsafe())return false;if(G.st==='end')return true;const g=G;
   if(G.hp<=0){G.st='end';brender();setTimeout(()=>{if(G===g)endBattle('lose')},700);return true}
+  if(G.fhp<=0&&pkFell())return false;
   if(G.fhp<=0){G.st='end';brender();setTimeout(()=>{if(G===g)endBattle('win')},700);return true}
   return false;
 }
@@ -3535,12 +3564,12 @@ function endBattle(res){
     S.hp=Math.max(0,G.hp);S.inv.band=G.band;if(!S.inv.band)delete S.inv.band;
     const XL=S.xl;S.xl=null;const XPM=G.pat&&stal('post')?1.2:1;const BS=S.bstory;S.bstory=null;if(res==='win'&&BS)S.pend=BS+'W';if(G.mgsee&&!S.pend){S.mgsId=G.mgsee;S.pend='mgs'}
     if(res==='win'){
-      const L=F.loot();if(XL){Object.entries(XL.i).forEach(([k,n])=>L.i[k]=(L.i[k]||0)+n);L.g+=XL.g}Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;
+      const PKL=pkOn()?G.pack.map(p=>p.foe):null;const L=PKL?PKL.reduce((o,f)=>{const l=FOES[f].loot();Object.entries(l.i).forEach(([k,n])=>o.i[k]=(o.i[k]||0)+n);o.g+=l.g;return o},{i:{},g:0}):F.loot();if(XL){Object.entries(XL.i).forEach(([k,n])=>L.i[k]=(L.i[k]||0)+n);L.g+=XL.g}Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;
       const story=NIGHT[S.night]===G.foe;if(story)S.night++;
-      const dropI=EQDROP[G.foe],dropN=dropI&&eqGive(dropI,false)?[`<b>${EQI[dropI].n}</b>을(를) 얻었다. ${EQI[dropI].d} 캐릭터 탭에서 갖출 수 있다.`]:[];log(F.n+'을(를) 물리쳤다.');const XPL=gainXp(Math.round((F.xp||5)*XPM)).concat(compXp(F.xp||5));
+      const dropI=EQDROP[G.foe],dropN=dropI&&eqGive(dropI,false)?[`<b>${EQI[dropI].n}</b>을(를) 얻었다. ${EQI[dropI].d} 캐릭터 탭에서 갖출 수 있다.`]:[];log(F.n+'을(를) 물리쳤다.');const XPS=PKL?PKL.reduce((t,f)=>t+(FOES[f].xp||5),0):(F.xp||5),XPL=gainXp(Math.round(XPS*XPM)).concat(compXp(XPS));
       if(story&&G.foe==='lamp'){S.pend=S.mort===1&&!S.party?'mortDie':'kirien';jr('편지가 가리킨 사람을 쓰러뜨렸다. 꺼지지 않는 등불이 돌바닥을 굴렀다. 그 사람은 “돌아오는 길은 모두 이곳으로”라고 중얼거리고 이름 하나를 붙였다. 그 이름은 끝내 알아듣지 못했다. 잊은 것은 아직 찾지 못했다. 교단 구역으로 가는 길이 열렸다.');S.hp=Math.max(S.hp,1)}
       else if(story)jr(F.win);
-      pop('물리쳤다 — '+F.n,{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([F.win,`<span class="m">${line}</span>`]).concat(dropN).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
+      pop('물리쳤다 — '+(PKL?PKL.map(f=>FOES[f].n).join(' · '):F.n),{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([PKL?'적들이 모두 쓰러졌다.':F.win,`<span class="m">${line}</span>`]).concat(dropN).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
     }else{
       S.hp=Math.ceil(S.mhp*.3);S.loc=S.base?'base':'inn';S.act=null;log(F.n+' 앞에서 쓰러졌다.');
       pop('쓰러졌다',{n:[F.n+' 앞에서 돌바닥이 차가웠다.',(S.base?'눈을 뜨니 본거지 화로 앞이다.':`눈을 뜨니 ${LODGE} 방이다.`)+' 누군가 끌고 와 준 모양이다. 체력이 조금 돌아왔다.',`<span class="m">${line}</span>`]});
@@ -3551,6 +3580,7 @@ function endBattle(res){
 }
 /* 전투 입력 */
 $('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-ba]');if(b&&!b.disabled){bact(b.dataset.ba,b.dataset.k);b.blur()}});
+$('#bt').addEventListener('click',e=>{const b=e.target.closest('[data-pk]');if(b)pkPick(+b.dataset.pk)});
 $('#bov').addEventListener('click',e=>{const b=e.target.closest('[data-bo]');if(!b)return;const o=b.dataset.bo;
   if(o==='fgo'){bovClose();blog(bfoe().intro);playerTurn()}if(o==='tgo')tutGo();if(o==='tnext'){G.tut++;tutStep()}});
 $('#bset').addEventListener('click',e=>{e.currentTarget.blur();settings()});
