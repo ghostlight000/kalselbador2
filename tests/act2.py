@@ -35,7 +35,7 @@ with sync_playwright() as p:
     pg.wait_for_selector('#ov.on h2:has-text("비어 있는 의자")',timeout=5000);okpop(pg);assert E(pg,"window.__k2.S.a2")==6
     t=pg.inner_text('.goalc');assert '금서고' in t and '새 자물쇠' in t,t
     # 이동 시간: 같은 구역 안은 짧다
-    assert E(pg,"window.__k2.travelSec('church','chapel')")==90 and E(pg,"window.__k2.travelSec('confess','chapel')")==90 and E(pg,"window.__k2.travelSec('docks','chapel')")>E(pg,"window.__k2.travelSec('docks','church')")
+    assert E(pg,"window.__k2.travelSec('church','chapel')")==60 and E(pg,"window.__k2.travelSec('confess','chapel')")==60 and E(pg,"window.__k2.travelSec('docks','chapel')")>E(pg,"window.__k2.travelSec('docks','church')")
     # 곁가지 정의와 부탁
     sx=E(pg,"Object.keys(window.__k2.SX)");assert all(k in sx for k in ['tag','warmw','dreamk','feast','jobAc','jobWk','jobOt','jobCh']),sx
     pg.click('button[data-c=tab][data-a=quest]');assert '지하 예배실' in pg.inner_text('.M')

@@ -12,8 +12,8 @@ with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto(url);pg.wait_for_timeout(200);pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
     # 이동 시간: 1분 이상
-    t=pg.evaluate("window.__k2.travelSec('docks','street')");assert 600<=t<=900,t
-    assert pg.evaluate("window.__k2.travelSec('docks','base')")>=300;print('travel',t)
+    t=pg.evaluate("window.__k2.travelSec('docks','street')");assert 240<=t<=420,t
+    assert pg.evaluate("window.__k2.travelSec('docks','base')")>=180;print('travel',t)
     # 키리엔 합류(같이 가자) → 오스윈은 여관으로
     pg.evaluate("()=>{const K=window.__k2;K.S.night=3;K.S.tutd=1;K.render();K.SCENE.kirien()}")
     choose(pg,'못 알아들었다고');choose(pg,'말하지 않는다');choose(pg,'같이 가자');choose(pg,'좋다')
@@ -39,7 +39,7 @@ with sync_playwright() as p:
     for k in ['벽난로와 거실','부엌','서재','마차 창고']:
         pg.click('button[data-c=fix]');choose(pg,k+' 고치기');waitact(pg);okpop(pg)
     s=S(pg);assert all(s['fix'].get(k) for k in ['roof','hearth','kitchen','study','coach']);assert '고친 곳 5 / 8' in pg.inner_text('.M')
-    assert pg.evaluate("window.__k2.travelSec('docks','street')")<t if False else pg.evaluate("window.__k2.travelSec('docks','street')")<=0.6*900;print('all fixed, coach travel',pg.evaluate("window.__k2.travelSec('docks','street')"))
+    assert pg.evaluate("window.__k2.travelSec('docks','street')")<t if False else pg.evaluate("window.__k2.travelSec('docks','street')")<=0.6*420;print('all fixed, coach travel',pg.evaluate("window.__k2.travelSec('docks','street')"))
     # 꾸미기
     c0=S(pg)['coin'];pg.click('button[data-c=deco]');choose(pg,'벽지 바꾸기');choose(pg,'짙은 포도주빛');t=pg.inner_text('#ov');assert '잉크 얼룩' in t;choose(pg,'좋다');assert S(pg)['coin']==c0-6
     pg.click('button[data-c=deco]');choose(pg,'벽지 바꾸기');choose(pg,'벗겨진 회벽');choose(pg,'좋다');pg.click('button[data-c=deco]');choose(pg,'벽지 바꾸기');choose(pg,'짙은 포도주빛');choose(pg,'좋다');assert S(pg)['coin']==c0-6;print('deco owned ok')

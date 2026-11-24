@@ -449,7 +449,8 @@ Object.entries(PL).forEach(([k,p])=>{if(p.sub)ROADS_SUB.push([k,p.sub])});
 const ROAD=ROADS_SUB.concat([['docks','street'],['street','church'],['street','academy'],['street','outskirts'],['docks','works'],['works','academy'],['docks','base'],['church','academy']]);
 // 걸어서 8~20분쯤(v023, 사용자: 아직 짧다). 저택 마차 창고를 고치면 40% 준다
 const pk=k=>PL[k].sub||k;
-const travelSec=(a,b)=>{const A=pk(a),B=pk(b);if(A===B)return 90;return Math.round((Math.max(480,Math.hypot(PL[A].x-PL[B].x,PL[A].y-PL[B].y)*25)+(A!==a?90:0)+(B!==b?90:0))*(S&&S.fix&&S.fix.coach?.6:1))};
+// 이동 시간(v044, 사용자: 1편과 비슷하게): 구역 사이 2분 + 거리, 대개 4~9분. 같은 구역 안 작은 장소는 1분
+const travelSec=(a,b)=>{const A=pk(a),B=pk(b);if(A===B)return 60;return Math.round((120+Math.hypot(PL[A].x-PL[B].x,PL[A].y-PL[B].y)*6+(A!==a?60:0)+(B!==b?60:0))*(S&&S.fix&&S.fix.coach?.6:1))};
 // 길 위의 마주침: 첫 번째 밤을 하나라도 넘긴 뒤, 가스등 거리나 교단 구역을 지나는 길에서. 테스트 모드에서는 꺼 둔다
 let ENC_ON=!TEST;
 const roadFoe=a0=>{if(pk(a0.fr)===pk(a0.to))return null;const a={fr:pk(a0.fr),to:pk(a0.to)};if(ENC_ON&&(a.to==='works'||a.fr==='works')&&Math.random()<.25)return Math.random()<.5?'halfw':'slag';if(ENC_ON&&S.hunt&&a.to!=='base'&&a.fr!=='base'&&Math.random()<.2)return 'hunter';if(ENC_ON&&(a.to==='outskirts'||a.fr==='outskirts'))return Math.random()<.25?(Math.random()<.5?'mutt':'hollow'):null;if(!ENC_ON||!S.night||a.fr==='base'&&a.to==='docks'||a.to==='base'&&a.fr==='docks')return null;if(!['street','church'].includes(a.fr)&&!['street','church'].includes(a.to))return null;
@@ -782,7 +783,7 @@ const TS=[
 ];
 
 /* ===================== 설정 (기기마다) ===================== */
-const CFG={diff:1,auto:false,lat:0,snd:true,ofs:true,theme:'auto'};
+const CFG={diff:1,auto:false,lat:0,snd:true,ofs:true,theme:'auto',alw:true,ala:true,alws:'anvil',alas:'bell'};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('k2cfg')||'{}'))}catch(e){}
 if(!DIFF[CFG.diff])CFG.diff=1;
 const saveCfg=()=>{try{localStorage.setItem('k2cfg',JSON.stringify(CFG))}catch(e){}};
@@ -2439,7 +2440,7 @@ function renderOv(){
 function startAct(a){S.act=Object.assign({t0:Date.now()},a);a.d=a.d*SEC();S.act.d=a.d;save();render()}
 function resolveAct(){
   const a=S.act;if(!a||Date.now()<a.t0+a.d*1000)return false;
-  S.act=null;
+  S.act=null;chime('xf'.includes(a.t)?'w':'a');
   if(a.t==='x'){const X=EXP[a.at][a.i],L=X.loot();L.g+=(tal('count')?1:0)+(lin('b',2)?2:0);if(L.i.scrap&&lin('b',1))L.i.scrap++;Object.entries(L.i).forEach(([k,n])=>add(k,n));S.coin+=L.g;log(X.n+'.');
     if(a.at==='outskirts'&&S.hq===1){add('grim',1);S.hq=2;jr('천막 사이 넝마 더미에서 하그의 주문책을 찾았다.');pop(X.n,{i:Object.assign({grim:1},L.i),g:L.g,n:[X.say,'넝마 더미 바닥에서 가죽 표지 책 한 권이 나왔다. 하그의 주문책이다.']});save();return true}
     if(S.base&&!S.pit&&(a.at==='docks'||a.at==='street')){pop(X.n,{i:L.i,g:L.g,n:[X.say]});S.pend='sewer';save();return true}
@@ -2474,6 +2475,7 @@ function resolveDisp(){
   for(const d of [...S.disp]){
     if(Date.now()<d.t0+d.d*1000)continue;
     S.disp=S.disp.filter(x=>x!==d);changed=true;const D=DSP[d.id];
+    chime('w');
     if(d.comp){const r=D.res(),I={};Object.entries(r.i).forEach(([x,n])=>{const v=Math.ceil(n*1.5);if(v>0){I[x]=v;add(x,v)}});const g=Math.ceil(r.g*1.5);S.coin+=g;log(`${cn(d.comp)}가 ${D.n}에서 돌아왔다.`);pop('파견에서 돌아왔다',{i:I,g,n:[`${cn(d.comp)} — ${D.n}`,D.say,`${cn(d.comp)} — “${CDSAY[d.comp]||'다녀왔습니다.'}”`]});continue}
     const k=d.kid||'pit',N=KIDS[k].n,K=kid(k);if(K)K.st='ok';
     if(k==='pit'&&D.far&&!S.pq&&S.eda&&Math.random()<.35){if(K)K.st='lost';S.pq=1;log('피트가 돌아오지 않았다.');jr(`${D.n}에 보낸 피트가 돌아오지 않았다.`);pop('돌아오지 않았다',{n:[`${D.n}에 보낸 피트가 해가 져도 돌아오지 않는다.`,'<span class="m">임무 탭에 「돌아오지 않은 아이」가 생겼다.</span>']});continue}
@@ -2482,7 +2484,7 @@ function resolveDisp(){
     const r=D.res();Object.entries(r.i).forEach(([x,n])=>add(x,n));S.coin+=r.g;log(`${N}가 ${D.n}에서 돌아왔다.`);const kn=[];kup(k,'v',D.far?2:1,kn);
     pop('파견에서 돌아왔다',{i:r.i,g:r.g,n:[`${N} — ${D.n}`,D.say,...kn]});
   }
-  if(S.craft&&Date.now()>=S.craft.t0+S.craft.d*1000){const R0=RCP[S.craft.id],k=S.craft.id;S.craft=null;S.crN=(S.crN||0)+1;changed=true;const n=[R0.e];let I={};
+  if(S.craft&&Date.now()>=S.craft.t0+S.craft.d*1000){const R0=RCP[S.craft.id],k=S.craft.id;S.craft=null;chime('w');S.crN=(S.crN||0)+1;changed=true;const n=[R0.e];let I={};
     if(R0.out){I=R0.out;Object.entries(I).forEach(([x,v])=>add(x,v))}
     else if(R0.gear==='shoe'){const c=Object.keys(S.kids||{}).find(c=>!kid(c).shoe&&kid(c).st!=='lost');if(c){kid(c).shoe=1;n.unshift(`${KIDS[c].n}에게 신발을 신겼다. ${KIDS[c].n}가 발을 몇 번 굴러 본다.`)}}
     else{S.gear=S.gear||{};S.gear[R0.gear]=1}
@@ -2493,7 +2495,9 @@ function resolveDisp(){
 }
 function tick(){
   if(CL.dirty&&CL.st=='on')cflush();
+  titleTick();
   if(!S)return;
+  if(AWAYCK&&S.gl)Object.keys(S.gl).forEach(k=>{const g=S.gl[k];if(!g.fn&&gpeek(k).full){g.fn=1;chime('w');log(`${KIDS[k].n}가 ${GSP[g.sp].n}에서 더 담을 데가 없다며 쉬고 있다.`);save()}});
   let ch=false;
   if(!AWAYCK&&!EV0&&!POP&&!G.on&&awayCheck())return;
   if(!EV0&&!POP&&!G.on){ch=resolveAct()||ch;ch=resolveDisp()||ch;if(!EV0&&!POP&&S.pend){pending();return}}
@@ -2695,7 +2699,7 @@ function gcollect(k){const g=(S.gl||{})[k],p=gpeek(k);if(!g||!p)return {i:{},g:0
   for(let r=0;r<Math.floor(p.h);r++)if(Math.random()<.05*K.ks.e){coin+=R(1,3);kup(k,'e',2,n)}
   if(coin)n.unshift(`${KIDS[k].n}가 눈여겨본 자리에서 동전 ${coin}을 주워 왔다.`);
   const lv1=glv(g.sp);if(lv1>lv0){const t=GSP[g.sp].s[lv1-1];n.unshift(`<b>${GSP[g.sp].n} — ${lv1}단계</b>`,t,`<span class="m">이제 ${rateTxt(g.sp)}씩 모인다(한 시간에).</span>`);jr(`${GSP[g.sp].n}: ${t}`)}
-  Object.entries(i).forEach(([m,v])=>add(m,v));S.coin+=coin;g.c=c;g.t0=Date.now();return {i,g:coin,n}}
+  Object.entries(i).forEach(([m,v])=>add(m,v));S.coin+=coin;g.c=c;g.t0=Date.now();g.fn=0;return {i,g:coin,n}}
 function mergeI(a,b){Object.entries(b).forEach(([m,v])=>a[m]=(a[m]||0)+v);return a}
 // 자리를 비운 동안
 let AWAYCK=false,ROADT=false;
@@ -2814,6 +2818,30 @@ document.addEventListener('input',e=>{if(e.target.id==='cname')C.n=e.target.valu
 
 /* ===================== 설정 창 ===================== */
 let SVM='',SVD='';
+
+/* ===== 알림음 (v044, 1편 방식) =====
+   행동 완료음: 이동·쉬기·순찰·책 읽기가 끝났을 때. 작업 완료음: 탐사·손보기·제작·파견·채집이 끝났을 때. 창 제목에 남은 시간 */
+let ABUS=null;
+// 잔향 버스: 마른 소리 + 2.6초짜리 차가운 울림
+function aBus(c){if(ABUS&&ABUS.c==c)return ABUS.i;const i=c.createGain(),dry=c.createGain(),wet=c.createGain(),cv=c.createConvolver(),lp=c.createBiquadFilter(),L=Math.floor(c.sampleRate*2.6),ir=c.createBuffer(2,L,c.sampleRate);
+for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let n=0;n<L;n++)d[n]=(Math.random()*2-1)*Math.pow(1-n/L,3.2)}
+cv.buffer=ir;lp.type='lowpass';lp.frequency.value=3200;dry.gain.value=.8;wet.gain.value=.32;i.connect(lp);lp.connect(dry);lp.connect(cv);cv.connect(wet);dry.connect(c.destination);wet.connect(c.destination);ABUS={c,i};return i}
+function aEnv(c,g,t,a,v,d){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d)}
+function aOsc(c,o,type,f,t,a,v,d,f2){const s=c.createOscillator(),g=c.createGain();s.type=type;s.frequency.setValueAtTime(f,t);if(f2)s.frequency.exponentialRampToValueAtTime(f2,t+d*.6);aEnv(c,g,t,a,v,d);s.connect(g);g.connect(o);s.start(t);s.stop(t+a+d+.05);return s}
+function aNoise(c,o,t,d,v,ft,f,q){const L=Math.max(1,Math.floor(c.sampleRate*d)),b=c.createBuffer(1,L,c.sampleRate),x=b.getChannelData(0);for(let n=0;n<L;n++)x[n]=Math.random()*2-1;const s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain();s.buffer=b;fl.type=ft;fl.frequency.value=f;fl.Q.value=q||1;aEnv(c,g,t,.002,v,d);s.connect(fl);fl.connect(g);g.connect(o);s.start(t);s.stop(t+d+.05)}
+const ASYN={
+// 교회 종의 부분음(험·프라임·단3도·5도·노미널…) — 낮고 어둡게
+bell(c,o,t){const f=174.6;[[.5,.22,4.2],[1,.3,3.4],[1.19,.2,2.8],[1.5,.13,2.2],[2,.16,1.8],[2.52,.06,1.2],[3.01,.04,.9]].forEach(([r,v,d])=>aOsc(c,o,'sine',f*r,t,.004,v,d));aNoise(c,o,t,.03,.05,'bandpass',1400,2)},
+// 모루: 비조화 쇳소리 두 번(망치가 튕긴다)
+anvil(c,o,t){[[0,1],[.26,.55]].forEach(([dt,k])=>{const u=t+dt;[[1,.14,1.1],[2.76,.08,.7],[5.4,.05,.45],[8.93,.03,.3]].forEach(([r,v,d])=>aOsc(c,o,'sine',523*r,u,.002,v*k,d*(k<1?.7:1)));aNoise(c,o,u,.05,.12*k,'highpass',2500,.7)})},
+// 뿔피리: 거친 톱니파를 낮은 필터로 눌러 숨결처럼. 레→라 5도로 오른다
+horn(c,o,t){[[146.8,0,.55],[220,.42,.9]].forEach(([f,dt,d])=>{const u=t+dt,s=c.createOscillator(),fl=c.createBiquadFilter(),g=c.createGain(),lf=c.createOscillator(),lg=c.createGain();s.type='sawtooth';s.frequency.setValueAtTime(f*.97,u);s.frequency.linearRampToValueAtTime(f,u+.08);lf.frequency.value=5;lg.gain.value=f*.006;lf.connect(lg);lg.connect(s.frequency);fl.type='lowpass';fl.Q.value=.7;fl.frequency.setValueAtTime(250,u);fl.frequency.linearRampToValueAtTime(1100,u+.12);fl.frequency.exponentialRampToValueAtTime(420,u+d);g.gain.setValueAtTime(0,u);g.gain.linearRampToValueAtTime(.09,u+.1);g.gain.setValueAtTime(.09,u+d*.6);g.gain.exponentialRampToValueAtTime(.0001,u+d+.35);s.connect(fl);fl.connect(g);g.connect(o);[s,lf].forEach(x=>{x.start(u);x.stop(u+d+.4)})});aNoise(c,o,t,.5,.012,'bandpass',900,.6)},
+// 가죽북: 음높이가 툭 떨어지는 낮은 울림 두 번
+drum(c,o,t){[[0,1],[.3,.7]].forEach(([dt,k])=>{const u=t+dt;aOsc(c,o,'sine',118,u,.003,.42*k,.55,48);aNoise(c,o,u,.12,.1*k,'lowpass',420,.8)})}};
+const AST={bell:['대성당 종','멀리서 한 번 울리는 낮은 종'],anvil:['모루','공방 모루를 망치로 두 번 두드리는 소리'],horn:['뿔피리','운하 짐배가 낮게 부는 뿔피리'],drum:['가죽북','천막촌에서 두 번 치는 낮은 가죽북']};
+const AVOL={bell:.42,anvil:1.5,horn:1.5,drum:.9};
+function chime(kind,force,st){if(!force&&CFG['al'+kind]===false)return;const c=ac();if(!c)return;try{const want=st||CFG['al'+kind+'s'],v=ASYN[want]?want:'bell',g=c.createGain();g.gain.value=AVOL[v];g.connect(aBus(c));ASYN[v](c,g,c.currentTime+.03)}catch(e){}}
+function titleTick(){try{let t='칼셀바도르: 푸른 재';if(S&&S.act){t='⏳ '+fmt(S.act.t0/1000+S.act.d-Date.now()/1000)+' · '+t}else if(S&&S.craft){t='⚒ '+fmt((S.craft.t0+S.craft.d*1000-Date.now())/1000)+' · '+t}if(document.title!==t)document.title=t}catch(e){}}
 function settings(){
   if(G.on)bpause();
   const seg=(k,opts)=>'<div class="seg">'+opts.map(([v,l])=>`<button class="btn ${CFG[k]===v?'on':''}" data-s="${k}" data-v="${v}">${l}</button>`).join('')+'</div>';
@@ -2823,6 +2851,8 @@ function settings(){
   <div><label>자동 회피 (받아치기는 할 수 없다)</label>${seg('auto',[[false,'끔'],[true,'켬']])}</div>
   <div><label>입력 보정 <b id="latv">${CFG.lat>0?'+':''}${CFG.lat}ms</b> — 누른 것보다 판정이 늦게 느껴지면 +, 이르게 느껴지면 −</label><input type="range" min="-120" max="120" step="5" value="${CFG.lat}" id="lat"></div>
   <div><label>소리</label>${seg('snd',[[true,'켬'],[false,'끔']])}</div>
+  <div><label>작업 완료음 — 탐사·저택 손보기·제작·파견·채집이 끝났을 때</label>${seg('alw',[[true,'켬'],[false,'끔']])}${seg('alws',Object.entries(AST).map(([k,v])=>[k,v[0]]))}</div>
+  <div><label>행동 완료음 — 이동·쉬기·순찰·책 읽기가 끝났을 때</label>${seg('ala',[[true,'켬'],[false,'끔']])}${seg('alas',Object.entries(AST).map(([k,v])=>[k,v[0]]))}<p class="m" style="margin:4px 0 0">소리를 고르거나 켜면 한 번 들려준다. 소리를 끄면 알림음도 울리지 않는다.</p></div>
   <div><label>테마</label>${seg('theme',[['auto','자동'],['dark','숯빛'],['light','양피지']])}</div>
   ${S?`<div><label>기록 — ${cst}</label><div class="seg"><button class="btn" data-s2="copy">기록 코드 만들기</button></div><textarea id="svd" readonly>${esc(SVD)}</textarea><p class="m" id="svm">${SVM}</p></div>
   <details><summary>처음부터 다시</summary><p class="m">이 기기와 계정의 기록이 모두 지워진다. 되돌릴 수 없다.</p><button class="btn" data-s2="reset">지우고 처음부터</button></details>`:''}
@@ -2832,7 +2862,7 @@ function settings(){
 function closeSettings(){$('#sov').classList.remove('on');$('#sov').innerHTML='';if(G.on)bresume()}
 $('#sov').addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.s){const k=b.dataset.s;let v=b.dataset.v;if(k==='diff'){v=+v;$('#dfs').textContent=DIFF[v].s}if(v==='true')v=true;if(v==='false')v=false;CFG[k]=v;saveCfg();if(k==='theme')applyTheme();b.parentNode.querySelectorAll('.btn').forEach(x=>x.classList.toggle('on',x===b))}
+  if(b.dataset.s){const k=b.dataset.s;let v=b.dataset.v;if(k==='diff'){v=+v;$('#dfs').textContent=DIFF[v].s}if(v==='true')v=true;if(v==='false')v=false;CFG[k]=v;saveCfg();if(k==='theme')applyTheme();if(k==='alws'||k==='alas')chime(k[2],1,v);if((k==='alw'||k==='ala')&&v)chime(k[2],1);b.parentNode.querySelectorAll('.btn').forEach(x=>x.classList.toggle('on',x===b))}
   const k2=b.dataset.s2;
   if(k2==='close')closeSettings();
   if(k2==='copy'){try{SVD=await scode();$('#svd').value=SVD;try{await navigator.clipboard.writeText(SVD);SVM='✦ 기록 코드를 복사했다. 다른 기기에서 붙여 넣으면 된다.'}catch(e){SVM='복사가 막혀 있다. 칸의 코드를 길게 눌러 직접 복사하자.'}}catch(e){SVM='코드를 만들지 못했다.'}$('#svm').textContent=SVM}
