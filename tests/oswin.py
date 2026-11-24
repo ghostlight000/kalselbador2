@@ -57,7 +57,7 @@ with sync_playwright() as p:
     r=E(pg,"()=>{const K=window.__k2;K.ENC_ON=true;const o=Math.random;Math.random=()=>0.1;const f=K.roadFoe({fr:'docks',to:'street'});Math.random=o;K.ENC_ON=false;return f}");assert r=='hunter',r
     print('reveal ok')
     # 장부의 끝
-    go(pg,'street');go(pg,'docks');go(pg,'base');assert '장부의 끝' in pg.inner_text('.goalc')
+    go(pg,'street');go(pg,'docks');go(pg,'base');pg.click('button[data-c=tab][data-a=quest]');assert '장부의 끝' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     pg.click('button[data-c=oq5]');choose(pg,'태운다');assert '되돌릴 수 없다' in pg.inner_text('#ov');choose(pg,'다시 생각한다');choose(pg,'이름 하나하나를');choose(pg,'이렇게 하기로');assert '평생 걸리겠군요' in pg.inner_text('#ov');okpop(pg)
     s=E(pg,"window.__k2.S");assert s['oq']==6 and s['oqe']=='return' and s['cq']['oswin']=='done'
     pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '장부의 끝' in t and '돌려주고 있다' in t
