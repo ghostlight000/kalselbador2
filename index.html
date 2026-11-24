@@ -87,7 +87,16 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .ms{padding:6px 0;border-bottom:1px solid var(--b)}
 .csk{margin:6px 0 0 10px}
 .scw{position:relative;margin:-2px 0 10px;border:1px solid var(--b);overflow:hidden;aspect-ratio:3/1;background:var(--k6)}
-.scs{display:block;width:100%;height:100%}.scim{object-fit:cover}
+.scs{display:block;width:100%;height:100%}.scim{object-fit:cover;filter:saturate(.5) contrast(.7) brightness(1.32);-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 12%,#000 78%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 12%,#000 78%,transparent);mask-composite:intersect}
+:root[data-theme=dark] .scim{filter:saturate(.6) contrast(.86) brightness(.92)}
+.scw.im{border:none;background:none}
+.scw.im:after{content:"";position:absolute;inset:7px 9px;border:1px solid var(--a);opacity:.28;pointer-events:none}
+.scw.im:before{content:"";position:absolute;left:50%;bottom:3px;width:7px;height:7px;margin-left:-3.5px;background:var(--c);border:1px solid var(--a);transform:rotate(45deg);opacity:.7;z-index:1}
+.plt{display:flex;align-items:center;gap:9px;text-align:left}
+.plt:before{content:"";flex:none;width:6px;height:6px;background:var(--a);transform:rotate(45deg);opacity:.8}
+.plt:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--a),transparent);opacity:.35}
+.card>h2:not(.plt):not(.nmrow){padding-bottom:6px;background:linear-gradient(90deg,var(--a),transparent 70%) bottom/100% 1px no-repeat;background-color:transparent}
+.place-d{font-style:italic}
 .k0{fill:var(--k0)}.k1{fill:var(--k1)}.k2{fill:var(--k2)}.k3{fill:var(--k3)}.k4{fill:var(--k4)}.k5{fill:var(--k5)}.k6{fill:var(--k6)}.k7{fill:var(--k7)}.kw{fill:var(--kw)}.cog{border-left:2px solid var(--kb);padding-left:8px}.kb{fill:var(--kb)}.sft{opacity:.55}.lit{opacity:.9}
 .scs .moon{fill:var(--k7)}.scs .moonh{fill:var(--k7);opacity:.25}
 .av{display:inline-flex;width:34px;height:34px;flex:none;border:1px solid var(--b);border-radius:2px;background:var(--c2);align-items:center;justify-content:center;overflow:hidden;vertical-align:middle}
@@ -2158,7 +2167,7 @@ function placeView(){
   let h=actProg();
   const GO=S.pro===99?goalNow():null;GOALAT=GO&&GO.at;GK=GO&&(!GO.at||GO.at===S.loc)?GO.k:[];
   if(GO)h+=`<div class="goalc"><div><span class="g">◆ ${GO.t}</span>${GO.src?` <span class="m">— ${GO.src}</span>`:''}</div><div class="gq">${GO.d}</div>${GO.at&&GO.at!==S.loc&&PL[GO.at]?`<div class="m">→ ${PL[GO.at].n}</div>`:''}</div>`;
-  h+=`<div class="card"><div class="scw">${SIMG[pk(S.loc)]?`<img class="scs scim" src="${SIMG[simgK(pk(S.loc))]}" alt="">`:SCN.scene(pk(S.loc),S)}</div><h2>${P.n} <span class="m">${P.k}</span></h2><p class="place-d">${P.d}</p>`;
+  h+=`<div class="card"><div class="scw${SIMG[pk(S.loc)]?' im':''}">${SIMG[pk(S.loc)]?`<img class="scs scim" src="${SIMG[simgK(pk(S.loc))]}" alt="">`:SCN.scene(pk(S.loc),S)}</div><h2 class="plt"><span>${P.n} <span class="m">${P.k}</span></span></h2><p class="place-d">${P.d}</p>`;
   const acts=[];
   if(S.loc==='base'&&!S.base)acts.push(B('manorIn','저택 안으로 들어간다',{sub:met(S,'kasimir')?'위층에서 노래가 들린다':'납골당 계단의 남자가 마음에 걸린다',dis:busy||!met(S,'kasimir')}));
   if(S.loc==='church'&&S.night>=3&&!S.comps.includes('oswin')&&!S.dec.oswin)acts.push(B('archive','대성당 뒤편 문서고',{sub:S.party==='kirien'?'키리엔 — 교단 장부에 사라진 사람 이름이 있을지도 몰라':'문서고 쪽이 소란스럽다',dis:busy}));
