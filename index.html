@@ -739,7 +739,15 @@ function bvary(k){const m=MV[k];G.nbk=k;G.nbn=null;
   if(st==='combo'&&Math.random()<.3){const F=bfoe(),pool=(G.ph===2&&F.pool2?F.pool2:F.pool).filter(q=>q!==k&&!MV[q].sig);if(pool.length){const k2=pool[Math.random()*pool.length|0],off=b[b.length-1].t+680;b=b.concat(MV[k2].b.map(x=>({t:off+x.t*tf,a:x.a,f:x.f&&x.f.slice()})));G.nbn=m.n+' → '+MV[k2].n}}
   G.nb=b}
 // 밤이 깊어질수록: w 판정 배수, sp 고리 시간 배수(작을수록 빠름)
-const TIER=[{w:1.5,sp:1.35},{w:1.3,sp:1.25},{w:1.12,sp:1.1},{w:1,sp:1},{w:.88,sp:.9}];
+const TIER=[{w:1.5,sp:1.35},{w:1.3,sp:1.25},{w:1.12,sp:1.1},{w:1,sp:1},{w:.88,sp:.9},{w:.8,sp:.85}];
+/* 난이도 손질(v045, 사용자: 우두머리·엘리트가 너무 쉽다. 한 번도 죽지 않았다). 잡몹(1·2단계)은 그대로.
+   [체력, 첫 국면 피해, 둘째 국면 피해]. 엘리트(3단계 잡몹)는 체력 ×1.45, 피해 ×1.8.
+   우두머리는 판정도 좁다: 첫 국면 TIER[4], 둘째 국면 TIER[5](점등꾼만 한 단계 아래). 우두머리 앞에서 붕대는 세 번까지.
+   맞추는 비율 85%면 체력 절반 남짓, 70%면 둘에 하나쯤 이기도록 시뮬레이션으로 맞췄다(2026-11-24) */
+const BOSSM={lamp:[1.25,1.5,1.9],singer:[1.4,1.8,2.3],purL:[1.7,2.3,2.9],penitent:[1.7,2.3,2.9]},BOSSM0=[1.6,2.1,2.7],ELITEM=[1.45,1.8];
+const foeHpM=()=>{const F=bfoe();return F.boss?(BOSSM[G.foe]||BOSSM0)[0]:F.tier>=3?ELITEM[0]:1};
+const foeDmM=()=>{const F=bfoe();return F.boss?(BOSSM[G.foe]||BOSSM0)[G.ph===2?2:1]:F.tier>=3?ELITEM[1]:1};
+const BANDCAP=3;
 const DIFF=[
   {n:'등불 아래',s:'편하게. 판정이 아주 넉넉하다. 고리는 느리고 덜 아프다.',d:300,p:100,dm:.6,sp:1.25},
   {n:'가스등 거리',s:'보통. 회피는 넉넉하고 받아치기는 노려야 한다.',d:220,p:65,dm:1,sp:1},
@@ -2876,7 +2884,7 @@ document.addEventListener('input',e=>{if(e.target.id==='lat'){CFG.lat=+e.target.
    ============================================================ */
 let G={on:false};
 const bfoe=()=>G.kind==='tut'?TUTF:FOES[G.foe];
-const btier=()=>{if(G.kind==='tut')return TIER[0];if(G.kind==='practice')return TIER[Math.min(3,1+S.night)];const F=bfoe();return TIER[G.ph===2&&F.tier2!=null?F.tier2:F.tier]};
+const btier=()=>{if(G.kind==='tut')return TIER[0];if(G.kind==='practice')return TIER[Math.min(3,1+S.night)];const F=bfoe();if(G.kind==='fight'&&F.boss)return TIER[(G.ph===2?5:4)-(G.foe==='lamp'?1:0)];return TIER[G.ph===2&&F.tier2!=null?F.tier2:F.tier]};
 const bsafe=()=>G.kind!=='fight';
 const BW=()=>{const D=DF(),m=(G.guard?1.3:1)*(G.wide?1.3:1)*btier().w*(1+(sv(2)-3)*.03),f=G.kind==='fight',dm=f&&tal('eye')?1.1:1,pm=f?(tal('beat')?1.08:1)*(lin('p',4)?1.1:1)*(stal('teach')&&!G.S.parry?1.1:1):1;return{d:D.d*m*dm,p:D.p*m*(G.stance?1.5:1)*pm,g:D.d*m*dm*1.6}}; // g: 일찍 누르면 스침. 정신이 높을수록 판정이 넓다
 const sv=i=>G.kind==='fight'?S.st[i]:5;
@@ -2976,7 +2984,7 @@ function draw(){
 
 /* 전투 화면 */
 function bbars(){
-  const F=bfoe(),fr=Math.max(0,G.fhp)/F.hp*100,pr=Math.max(0,G.hp)/G.mhp*100;
+  const F=bfoe(),fr=Math.max(0,G.fhp)/(G.fmax||F.hp)*100,pr=Math.max(0,G.hp)/G.mhp*100;
   $('#bfn').textContent=F.n;$('#bfbar').style.visibility=bsafe()?'hidden':'';
   $('#bfhp').style.width=fr+'%';$('#bfhpd').style.width=fr+'%';$('#bphp').style.width=pr+'%';$('#bphpd').style.width=pr+'%';
   $('#bhpn').textContent=bsafe()?(G.kind==='tut'?'가르침':'연습')+' — 피해 없음':Math.max(0,G.hp)+' / '+G.mhp;
@@ -3011,7 +3019,7 @@ function bacts(){
       `<button class="btn" data-ba="skill" ${tut?'disabled':''}>기술<small>${S.sk.map(k=>SKL[k].n).join(' · ')}</small></button>`+
       `<button class="btn" data-ba="guard" ${tut?'disabled':''}>자세 잡기<small>판정 넓게 · 기력 +1</small></button>`+
       (G.awk&&!G.awu?`<button class="btn wide" data-ba="aw">떠오르는 말<small>혀끝까지 차오른 낯선 말</small></button>`:'')+
-      `<button class="btn${G.kind==='fight'&&bagN()?'':' wide'}" data-ba="band" ${G.band>0&&!bsafe()?'':'disabled'}>붕대 ${G.band}<small>체력 ${24+2*sv(3)} 회복</small></button>`+
+      `<button class="btn${G.kind==='fight'&&bagN()?'':' wide'}" data-ba="band" ${G.band>0&&!bsafe()&&!(bfoe().boss&&G.bandU>=BANDCAP)?'':'disabled'}>붕대 ${G.band}<small>${bfoe().boss&&G.bandU>=BANDCAP?'감을 틈이 없다':bfoe().boss&&!bsafe()?`체력 ${24+2*sv(3)} 회복 · ${BANDCAP-G.bandU}번 더`:`체력 ${24+2*sv(3)} 회복`}</small></button>`+
       (G.kind==='fight'&&bagN()?`<button class="btn" data-ba="bag" ${(G.bagU||0)<2?'':'disabled'}>가방<small>고약·음식 · ${(G.bagU||0)<2?`이번 싸움에 ${2-(G.bagU||0)}번 더`:'이번 싸움에는 더 꺼낼 수 없다'}</small></button>`:'');
   }else if(G.st==='enemy'){
     el.className='def';
@@ -3030,7 +3038,7 @@ function startBattle(kind,foe){
   G={on:true,kind,foe:foe||(kind==='practice'?'drill':null),st:'wait',hp:kind==='fight'?S.hp:100,mhp:kind==='fight'?S.mhp:100,fp:2,band:kind==='fight'?(S.inv.band||0):0,
      fhp:0,ph:1,guard:false,open:false,next:null,cur:null,beats:[],fx:[],lock:0,turn:0,tg:0,tut:kind==='tut'?0:null,last:null,q:null,
      S:{dodge:0,parry:0,hit:0,graze:0,whiff:0,full:0,ofs:[],perf:0,qte:0}};
-  G.fhp=bfoe().hp;if(kind==='fight'&&lin('p',0))G.slow=1;
+  G.fmax=Math.round(bfoe().hp*(kind==='fight'?foeHpM():1));G.fhp=G.fmax;G.bandU=0;if(kind==='fight'&&lin('p',0))G.slow=1;
   $('#bt').classList.add('on');$('#blog').innerHTML='';sizeCv();readCols();
   $('#bstop').hidden=kind==='fight'||(kind==='tut'&&!S.tutd);$('#bstop').textContent=kind==='tut'?'가르침 건너뛰기':'연습 끝내기';
   if(kind==='tut'){brender();tutStep()}
@@ -3057,7 +3065,7 @@ function bact(a,k){
   if(a==='guard'){G.first=0;G.guard=true;G.fp=Math.min(5,G.fp+1);let gh='';if(tal('breath')&&G.kind==='fight'){const h=Math.min(4,G.mhp-G.hp);if(h>0){G.hp+=h;bfloat('#bphp','+'+h,'heal');gh=' 체력 '+h+' 회복.'}}blog('자세를 낮춘다. 다음 공격을 읽기 쉬워진다.'+gh);enemyTurn();return}
   if(a==='bag'){if(!bagN()||(G.bagU||0)>=2)return;G.menu='bag';brender();return}
   if(a==='bi'){useBag(k);return}
-  if(a==='band'){if(G.band<=0)return;G.band--;G.first=0;const h=Math.min(24+2*sv(3)+(G.kind==='fight'?(tal('sew')?8:0)+(lin('p',2)?6:0):0),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
+  if(a==='band'){if(G.band<=0||(bfoe().boss&&G.bandU>=BANDCAP&&!bsafe()))return;G.band--;G.bandU=(G.bandU||0)+1;G.first=0;const h=Math.min(24+2*sv(3)+(G.kind==='fight'?(tal('sew')?8:0)+(lin('p',2)?6:0):0),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog('붕대를 감는다. 체력 '+h+' 회복.');enemyTurn();return}
 }
 const bagN=()=>['salve',...Object.keys(DISH)].filter(k=>S.inv[k]>0).length;
 function useBag(k){if(bsafe()||(G.bagU||0)>=2||!(S.inv[k]>0)||(k!=='salve'&&!DISH[k]))return;add(k,-1);G.bagU=(G.bagU||0)+1;G.first=0;G.menu=null;
@@ -3101,7 +3109,7 @@ function resolveQte(perfect){
 }
 function dmgFoe(d){if(G.kind==='fight'){let m=1;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;if(gear('blade'))m*=CHF.includes(G.foe)?1.15:1.08;d=Math.round(d*m)}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;bbars()}
 function maybePhase(then){
-  if(G.ph===1&&bfoe().boss&&G.fhp<=bfoe().hp/2&&!bsafe()){
+  if(G.ph===1&&bfoe().boss&&G.fhp<=G.fmax/2&&!bsafe()){
     G.ph=2;G.next=bpick();G.st='wait';brender();
     const mdie=G.kind==='fight'&&G.foe==='lamp'&&S.mort===1&&!S.party;if(mdie){G.mdown=1;G.ward=0}
     const awk=G.kind==='fight'&&G.foe==='awc'&&!S.mg;if(awk)G.awk=1;
@@ -3212,7 +3220,7 @@ function hurt(d){if(bsafe())return;if(G.wall){G.wall=0;blog('이브레가 대신
   const half=G.hp>G.mhp/2;G.hp-=d;bfloat('#bphp','-'+d,'hurt');
   if(S.race==='b'&&half&&G.hp>0&&G.hp<=G.mhp/2&&!G.oathB){G.oathB=1;G.fp=Math.min(5,G.fp+2);blog('씨족의 맹세가 떠오른다. 기력 +2.')}}
 function resolveBeat(b,kind,ofs,note){
-  b.res=kind;const m=MV[G.cur],t=now(),dm=DF().dm*(G.guard?.5:1);
+  b.res=kind;const m=MV[G.cur],t=now(),dm=DF().dm*(G.guard?.5:1)*(G.kind==='fight'?foeDmM():1);
   if(ofs!=null)G.S.ofs.push(ofs);
   if(kind==='dodge'){G.S.dodge++;G.res.dodge++;G.fx.push({k:'dodge',t});SND.dodge();bjudge('회피','dodge',ofs)}
   if(kind==='parry'){G.S.parry++;G.res.parry++;G.fx.push({k:'parry',t,r:Math.random()});SND.parry();bjudge('받아침','parry',ofs);G.fp=Math.min(5,G.fp+1);if(G.kind!=='tut')dmgFoe(dCounter(SV(),G.stance));bbars()}
@@ -3346,7 +3354,7 @@ const DV={
   kq:()=>{if(!S.acad){S.eda=1;S.acad=1}if(!S.comps.includes('kirien'))joinComp('kirien');S.party='kirien';if((S.kq||0)<3)S.kq=(S.kq||0)+1;log('[개발] 키리엔 퀘스트 '+S.kq);save()},
   comp:()=>{const nx=Object.keys(COMP).find(k=>!S.comps.includes(k));if(nx){joinComp(nx);if(nx==='kirien'&&S.night<3)S.night=3}},
   base:()=>{devClose();grantBase();render();return 1},pit:()=>{devClose();grantPit();render();return 1},aff:()=>{if(S.party)aff(S.party,20);save()},
-  fight:a=>{devClose();if(a==='awc2'){S.mg=0;startBattle('fight','awc');G.fhp=Math.ceil(FOES.awc.hp/2)+5;bbars();return 1}if(a==='lamp2'){startBattle('fight','lamp');G.fhp=Math.ceil(FOES.lamp.hp/2)+5;bbars()}else startBattle('fight',a);return 1},
+  fight:a=>{devClose();if(a==='awc2'){S.mg=0;startBattle('fight','awc');G.fhp=Math.ceil(G.fmax/2)+5;bbars();return 1}if(a==='lamp2'){startBattle('fight','lamp');G.fhp=Math.ceil(G.fmax/2)+5;bbars()}else startBattle('fight',a);return 1},
   pro:()=>{devClose();prologue();return 1},
   leg:()=>{const order=['k','r','w',''];const cur=S.legacy?S.legacy.end:'';const nx=order[(order.indexOf(cur)+1)%order.length];
     S.legacy=nx?{name:'시험용 여행자',race:'p',og:'칼라쉬',tr:'남색 서리비늘',end:nx,pa:'fox'}:null;if(S.legacy&&S.base)S.inv.relic=1;save()},
