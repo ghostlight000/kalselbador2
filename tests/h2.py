@@ -47,7 +47,7 @@ with sync_playwright() as p:
     t=pg.inner_text('#ov');assert '여관도 내가 알려 줬어' in t and '냄새가 달랐어' in t;choose(pg,'계단 아래 어둠')
     runchase(pg,False);choose(pg,'맞선다');assert E(pg,"G.foe")=='squad';win(pg);pg.wait_for_selector('#ov.on h2:has-text("운하")',timeout=5000);t=pg.inner_text('#ov');assert '분대를 쓰러뜨리고' in t;choose(pg,'저택으로');okpop(pg)
     s=E(pg,"window.__k2.S");assert s['h2']==6 and s['a3']==1 and s.get('gvU')==1 and not s['inv'].get('gvial');print('door ok')
-    t=pg.inner_text('.goalc');assert '3막' in t,t
+    t=pg.inner_text('.goalc');assert '잊은 사람' in t,t
     E(pg,"()=>{window.__k2.S.loc='church';window.__k2.render()}");pg.click('button[data-c=h2abelA]');choose(pg,'용서한다');okpop(pg);assert E(pg,"window.__k2.S.abel")=='f'
     print('abel after ok')
     b.close()

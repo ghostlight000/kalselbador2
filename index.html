@@ -445,7 +445,7 @@ const PL={
  base:{n:'오르빌 저택',get k(){return S&&S.base?'본거지':'소문 속 저택'},x:28,y:78,get d(){return S&&S.base?manorDesc():'운하 옆 옛 상인 저택. 주인이 죽은 지 십 년이 넘었다. 밤마다 노래가 들린다고 한다.'},hide:s=>!(s.base||s.manor)},
  /* 작은 장소 (v031, 사용자: 에다의 집처럼 퀘스트에 필요한 곳은 지도에 따로). sub = 곁에 붙은 구역. 알게 된 뒤에만 보인다 */
  inn:{n:'녹슨 닻 여관',k:'작은 장소',sub:'docks',x:13,y:66,d:'부두 끝 여관. 닻 모양 간판이 녹물을 흘린다. 난로 곁에서 마그다가 잔을 닦는다.'},
- pawn:{n:'기억 전당포',k:'작은 장소',sub:'street',x:55,y:32,d:'뒷골목 끝 유리병이 천장까지 쌓인 가게. 병마다 꼬리표가 달려 있고 푸른 안개가 고여 있다.',hide:s=>!((s.kq||0)>=2||(s.sx&&s.sx.bottle))},
+ pawn:{n:'기억 전당포',k:'작은 장소',sub:'street',x:55,y:32,d:'뒷골목 끝 유리병이 천장까지 쌓인 가게. 병마다 꼬리표가 달려 있고 푸른 안개가 고여 있다.',hide:s=>!((s.kq||0)>=2||(s.sx&&s.sx.bottle)||(s.rq||0)>=1)},
  eda:{n:'에다의 집',k:'작은 장소',sub:'street',x:41,y:37,d:'가스등 거리 끝 골목의 작은 이층집. 창가에 꺼진 등잔이 놓여 있다.',hide:s=>!((s.kq||0)>=2)},
  sanat:{n:'하얀 요양소',k:'작은 장소',sub:'academy',x:91,y:63,d:'언덕 끝 창마다 쇠창살을 단 하얀 건물. 뒷문으로 회색 마차가 드나든다.',hide:s=>!s.acad},
  dome:{n:'깨진 돔의 강의실',k:'작은 장소',sub:'academy',x:90,y:48,d:'돔 지붕이 깨진 옛 강의동. 바닥에 분필 원이 남아 있다.',hide:s=>!s.acad},
@@ -711,9 +711,10 @@ const MS=[
  ['종지기의 사다리','공급 허가란의 이름은 대성당에 있는데 정문은 회색 옷이 막고 있다.',s=>(s.h2||0)>=4,'시험 연소 기록',2],
  ['형제단의 밤','“변두리 천막촌 끝에 맨발들이 모이고 있어.”',s=>(s.h2||0)>=5,'아벨의 말',2],
  ['일곱째 문','“일곱째 문으로 가라. 흰 옷 종지기가 길을 안다.”',s=>(s.h2||0)>=6,'울릭의 말',2],
- ['3막은 여기서부터','도시 전체가 그 이름을 부른다. 남은 이야기는 다음 판에서 이어진다.',s=>false,'사건',2]
+ ['잊은 사람',s=>{const id=s.rqId||s.amn,n=id?tkN(id):'';return (s.rq||0)>=2?`되찾은 병을 저택에 가져가 ${n}에게 건넨다.`:(s.rq||0)===1?((s.hq||0)>=3?'불의 목자가 약속한 병이 대성당 회랑에 있다. 기억 전당포 창고에서 직접 찾을 수도 있다.':'덜어 낸 기억은 대성당 위탁품으로 기억 전당포 창고에 맡겨진다.'):`${josa(n,'이','가')} 나를 기억하지 못한다. 저택에서 그 곁에 가 보자.`},s=>(s.rq||0)>=3||!(s.rqId||s.amn),'사건',3],
+ ['3막은 여기서부터','도시 전체가 그 이름을 부른다. 남은 이야기는 다음 판에서 이어진다.',s=>false,'사건',3]
 ];
-const ACTS={1:'1막 · 꺼지지 않는 등불',2:'2막 · 장부와 재'};
+const ACTS={1:'1막 · 꺼지지 않는 등불',2:'2막 · 장부와 재',3:'3막 · 다시 짠 배'};
 const msTxt=m=>typeof m[1]==='function'?m[1](S):m[1],msSrc=m=>typeof m[3]==='function'?m[3](S):(m[3]||'');
 
 /* ===== 전투 데이터 (시제품 p3에서 옮김) ===== */
@@ -1586,7 +1587,7 @@ const SCENE={
    const say=h==='hide'?'<p>솔레가 입술을 꼭 다물고 고개를 끄덕인다.</p><p>솔레 — “안 해요. 아무한테도. …대신 다음에 또 보여 줘요.”</p>':yes?'<p>솔레의 눈이 커진다. 무서워하는 얼굴이 아니다.</p><p>솔레 — “진짜구나. 할머니한테 말해야지. 아니 다들한테!”</p><p class="m">솔레가 말릴 틈도 없이 언덕길을 뛰어 내려간다.</p>':'<p>솔레 — “모르는데 그걸 해요? …그게 더 무섭다.”</p><p class="m">솔레는 몇 번이나 뒤돌아보며 언덕길을 내려간다. 아이의 입은 무겁지 않을 것이다.</p>';
    ev('처음 듣는 말',say+'<p class="m">언덕길 가스등이 하나씩 다시 켜진다. 처음보다 조금 흐리게.</p>'+pline({kirien:h==='hide'?'잘했어. 이 도시에선 다른 건 몰라도 그건 숨겨.':'…소문 금방 돌 거야. 각오해.',oswin:h==='hide'?'아이 입을 믿으시는군요. 저보다 낙관적이십니다.':'내일 아침이면 교단이 알 겁니다. 아니, 오늘 밤일지도.',ibre:'아이는 무사합니다. 그거면 됐습니다.',kasimir:h==='hide'?'비밀은 지키는 사람보다 아는 사람 수가 중요하시죠. 지금은 셋입니다.':'아아. 이제 이 도시가 당신을 찾기 시작할 겁니다. 재미있어지겠군요.'})+`<p class="m">새 주문 — ${SKL[k].n}</p>`,[['언덕을 내려간다',()=>{if(S.party&&mgtDue(S.party))mgtScene(S.party)}]],1)},
  aev:()=>{const k=S.aevK;S.aevK=null;if(!k)return;const [id,t]=k.split(':');const e=(AEV[id]||{})[t];if(!e)return;S.aev[id]=+t;S.aevT=Date.now();
-   const T=cn(id),H1=`${T} — ${e.h}`,H2=`${T} — ${e.h2||e.h}`,opts2=(e.c2||[]).slice();if(e.rom&&romReady(id))opts2.push([e.rom[0]+' ♡',0,e.rom[1],0,1]);
+   const T=cn(id),H1=`${T} — ${e.h}`,H2=`${T} — ${e.h2||e.h}`,opts2=(e.c2||[]).slice();if(e.rom&&romReady(id))opts2.push([e.rom[0],0,e.rom[1],0,1]);
    const pick=(H,L,next)=>L.map(([l,g,r,coin,rom])=>[l,()=>{if(g)aff(id,g);if(coin)S.coin+=coin;if(rom){S.rom=id;jr(`${josa(T,'과','와')} 마음을 나누었다.`)}seq(id,H,r,h=>ev(H,h,next(rom)))}]);
    const two=()=>seq(id,H2,e.p2(),h=>ev(H2,h,pick(H2,opts2,()=>[['고개를 끄덕인다',null]])));
    jr(`${T} — 「${e.h}」`);
@@ -2327,6 +2328,7 @@ function placeView(){
   if(typeof bqActs==='function')acts.push(...bqActs(busy));
   if(typeof iqnqActs==='function')acts.push(...iqnqActs(busy));
   if(typeof zqActs==='function')acts.push(...zqActs(busy));
+  if(typeof rqActs==='function')acts.push(...rqActs(busy));
   if(S.loc==='church'&&typeof haldNext==='function'&&haldNext())acts.push(B('hald','대성당 회랑',{sub:'✦ 흰 옷 사제가 손짓한다',dis:busy}));
   if(S.loc==='base'&&typeof duoNext==='function'&&duoNext())acts.push(B('duo','거실에서 말소리가 들린다',{sub:'✦ 동료들이 무언가 이야기하고 있다',dis:busy}));
   if(S.loc==='sanat'&&!S.kq)acts.push(B('kq1','하얀 요양소',{sub:kirSub('창마다 쇠창살을 단 건물'),dis:busy||!kir}));
@@ -3026,7 +3028,7 @@ Object.assign(CMD,{
  h2door:()=>{if(!S.act&&S.h2===5)SCENE.door7()},
  h2abelA:()=>{if(!S.act&&S.h2>=6&&!S.abel)SCENE.abelA()}
 });
-Object.assign(GOAL,{'얼굴 없는 수배서':['inn',['h2wanted']],'설계서의 나머지 장':['base',['h2plan']],'대연소로':['furn',['h2furn']],'종지기의 사다리':['church',['h2abel']],'형제단의 밤':['outskirts',['h2broth']],'일곱째 문':['stairs',['h2door']]});
+Object.assign(GOAL,{'잊은 사람':[s=>(s.rq||0)===1?((s.hq||0)>=3?'church':'pawn'):'base',['rq0','rq1a','rq1b','rq2']],'얼굴 없는 수배서':['inn',['h2wanted']],'설계서의 나머지 장':['base',['h2plan']],'대연소로':['furn',['h2furn']],'종지기의 사다리':['church',['h2abel']],'형제단의 밤':['outskirts',['h2broth']],'일곱째 문':['stairs',['h2door']]});
 
 /* ===================== 내러티브 보강 (v047) =====================
    ① 할데온을 무대 위로: 저택으로 온 편지, 이름 바치기 축일  ② 가장 아끼는 동료가 끌려가 나를 잊는다(저택에 남은 동료 중 호감 최고, 없으면 피트)
@@ -3066,7 +3068,7 @@ const AMN={
  pit:['*피트가 갈고리를 등 뒤로 감춘다.','아저씨 누구야? 여기 아줌마가 아저씨네 집이래.','…밥 주면 일할게. 근데 왜 그렇게 봐?']
 };
 const AMNR={kirien:'키리엔 — “…누구세요? 손 놔. 아파.”',oswin:'오스윈 — “실례지만 누구신지요. 제 이름을 아시는군요.”',barg:'바르그 — “…누구냐. 손대지 마라.”',kasimir:'카시미르 — “구해 주셔서 감사합니다. 실례지만 어느 댁 분이십니까.”',ibre:'이브레 — “고맙습니다. …처음 뵙습니다.”',eno:'에노 — “당신 누구예요? 내 안이 텅 비었어요.”',pit:'피트 — “아저씨 누구야? …나 집에 가도 돼?”'};
-function amnTalk(id){const note='<p class="m">나를 기억하지 못한다. 되찾을 길은 아직 모른다.</p>';if(id==='pit'){ev('피트',preH(['*피트가 갈고리를 등 뒤로 감춘다.','피트 — “아저씨 누구야? 여기 아줌마가 아저씨네 집이래.”','피트 — “…밥 주면 일할게. 근데 왜 그렇게 봐?”'])+note,[['그래도 곁에 앉아 있는다',null]],1);return}tev(id,cn(id),tln(id,AMN[id])+note,[['그래도 곁에 앉아 있는다',null]])}
+function amnTalk(id){const note=(S.rq||0)>=1?'<p class="m">나를 기억하지 못한다. 덜어 낸 기억은 병에 담겨 있다.</p>':'<p class="m">나를 기억하지 못한다. 되찾을 길은 아직 모른다.</p>';if(id==='pit'){ev('피트',preH(['*피트가 갈고리를 등 뒤로 감춘다.','피트 — “아저씨 누구야? 여기 아줌마가 아저씨네 집이래.”','피트 — “…밥 주면 일할게. 근데 왜 그렇게 봐?”'])+note,[['그래도 곁에 앉아 있는다',null]],1);return}tev(id,cn(id),tln(id,AMN[id])+note,[['그래도 곁에 앉아 있는다',null]])}
 // 할데온의 편지에서 넌지시 건드리는 동료의 비밀
 const HSEC={kirien:'여우 머리 아가씨의 어머니는 아직 천막에서 딸을 기다립니다.',oswin:'학자 선생의 누이는 3번 방직소에서 잘 지냅니다. 오빠를 모르는 채로요.',barg:'늑대 기사는 아직 그 겨울 아침을 세고 있습니까.',kasimir:'에스베르가의 상속자께는 진짜 이름이 따로 있지요.',ibre:'무색 4번은 유리관 안에서 편안합니다.',eno:'물길 아이를 우리 쪽에서는 오염이라 부릅니다. 저는 아름답다고 생각합니다.'};
 Object.assign(SCENE,{
@@ -3496,7 +3498,7 @@ const AEV={
    c:[['같이 울어 준다',4,['*어설프게 소리를 내자 바르그가 멍하니 보다가 짖는 소리 같은 웃음을 크게 터뜨린다.','하! 형편없군. …그래도 대답은 대답이다.']]],
    p2:()=>['*달이 기울 무렵 바르그가 일어서더니 부러진 검을 뽑아 용마루 틈에 꽂는다.','*한쪽 무릎을 꿇는다. 기사단의 예법이다.','맹세는 평생 한 번이라고 배웠다. 첫 번째는 아직 못 지켰다.','…그래도 하나 더 하겠다. @N. 네 등 뒤는 내가 선다. 끝까지.'],
    c2:[['맹세를 받는다',4,['*검을 거두는 바르그의 표정이 처음 보는 만큼 가볍다.','…됐다. 이제 늦게 다녀도 된다. 내가 따라가니까.']]],
-   rom:['좋아해. 맹세 말고 네가 필요해',['*바르그가 한참 굳어 있다.','…기사한테 맹세 말고 다른 걸 달라는 놈은 처음이다.','*큰 손이 내 손등을 덮는다. 투박하게. 조심스럽게.','나도 같은 마음이다. 늙은 늑대라도 괜찮다면.']]}},
+   rom:['맹세 말고 곁에 있어 줘',['*바르그가 한참 굳어 있다.','…기사한테 맹세 말고 다른 걸 달라는 놈은 처음이다.','*큰 손이 내 손등을 덮는다. 투박하게. 조심스럽게.','나도 같은 마음이다. 늙은 늑대라도 괜찮다면.']]}},
  eno:{
   4:{w:'road',h:'물웅덩이',h2:'배수구 아래',p2:()=>['*에노가 근처 배수구 뚜껑을 들어 올리자 아래서 물소리가 올라온다.','잠깐 들어 볼래요? 오늘은 조용해서 잘 들려.','*귀를 대자 물소리 사이로 웅얼거림이 섞여 있다. 수십 사람의 낮은 말소리다.','다 버려진 거야. 아직 남은 것들.'],c2:[['무섭다',2,['응. 처음엔 나도. 근데 무서운 게 아니라 쓸쓸한 거였어.']],['누군가 들어 줘서 다행이다',4,['*에노가 뚜껑을 천천히 닫는다.','…그 말 지금 아래까지 들렸을 거예요. 다들 좋아해.']]],p:()=>['*에노가 길 한가운데 물웅덩이 앞에 쪼그려 앉아 손가락으로 물 위에 선을 긋는다.','봐요. 물은 어디로 가야 하는지 알아.','사람보다 길을 잘 알아. 그래서 나는 물한테 길을 물어.'],
    c:[['나한테도 물어봐 줘',3,['*에노가 웃으며 물에 손가락을 담근다.','…저택 쪽이래요. 너는 돌아갈 데가 있대.']],['같이 쪼그려 앉는다',3,['*둘이 한참 물웅덩이를 본다. 아무도 길을 묻지 않는다.','이것도 좋네요.']]]},
@@ -4028,7 +4030,7 @@ Object.assign(SCENE,{
    bound:['*손을 거두자 바르그가 끈을 내려다본다.','…그래. 그 사람도 못 풀었고 너도 안 푸는군.','그럼 끝까지 베렌한테 묶여 있겠다. 네가 누구로 돌아오든.','*바르그가 끈 위에 손을 얹는다. 화난 얼굴이 아니다.','이상하군. 이십 년 동안 이게 사슬 같았는데.'],
    free:['*끈을 풀어 바르그의 손바닥에 올려놓는다.','*바르그가 끈을 쥔 채 한참 움직이지 않는다.','…가서 너로 살아라. 그 사람이 울릭한테 한 말이군.','너는 그 말을 나한테 해 주는구나. 이십 년 늦게.','*바르그가 대검을 등에 멘다.','북쪽에 씨족 무덤이 있다. 이 끈은 거기 묻겠다. 그다음은… 모르겠다. 처음으로 모르겠다.','언젠가 네가 불 앞에 서는 날이 오면 그때는 부르지 않아도 가겠다. 맹세가 아니라 내가 가고 싶어서.']}[k];
   if(k==='new')aff('barg',6);else if(k==='bound')aff('barg',3);
-  const romB=k==='new'&&romReady('barg')?[['그의 손을 잡고 좋아한다고 말한다 ♡',()=>{S.rom='barg';jr('바르그와 마음을 나누었다.');save();seq('barg','맹세의 끝',['*바르그가 잡힌 손을 내려다본다. 한참 동안 놓지 않는다.','…맹세는 이제 안 한다고 했지.','대신 이건 맹세보다 무겁다. 알고 한 말이냐.','*대답하기 전에 바르그가 먼저 웃는다. 짖는 소리 같은 웃음이다.','…나도 같은 마음이다. 이십 년 동안 한 번도 못 해 본 말이다.'],h2=>tev('barg','맹세의 끝',h2,[['고개를 끄덕인다',null]]))}]]:[];
+  const romB=k==='new'&&romReady('barg')?[['맹세 말고 곁에 있어 줘',()=>{S.rom='barg';jr('바르그와 마음을 나누었다.');save();seq('barg','맹세의 끝',['*바르그가 잡힌 손을 내려다본다. 한참 동안 놓지 않는다.','…맹세는 이제 안 한다고 했지.','대신 이건 맹세보다 무겁다. 알고 한 말이냐.','*대답하기 전에 바르그가 먼저 웃는다. 짖는 소리 같은 웃음이다.','…나도 같은 마음이다. 이십 년 동안 한 번도 못 해 본 말이다.'],h2=>tev('barg','맹세의 끝',h2,[['고개를 끄덕인다',null]]))}]]:[];
   seq('barg','맹세의 끝',L,h=>tev('barg','맹세의 끝',h+'<p class="m">바르그의 이야기 「맹세의 끝」이 끝났다.</p>',romB.concat([[k==='free'?'떠나는 등을 본다':'고개를 끄덕인다',()=>{if(k==='free'){S.left=S.left||{};S.left.barg=1;S.recon=S.recon||{};S.recon.barg=1;if(S.party==='barg')S.party=S.comps.find(c=>!S.left[c])||null}save();render()}]])))}
 });
 Object.assign(CMD,{bq1:()=>{if(!S.act&&S.bq===1&&S.party==='barg')SCENE.bq1()},bq2:()=>{if(!S.act&&S.bq===2&&S.party==='barg'&&(S.h2||0)>=5)SCENE.bq2()},bq3:()=>{if(!S.act&&S.bq===3&&S.party==='barg')SCENE.bq3()},bq4:()=>{if(!S.act&&S.bq===4)SCENE.bq4()}});
@@ -4173,6 +4175,37 @@ Object.assign(SCENE,{
 });
 Object.assign(CMD,{hald:()=>{if(S.act)return;const n=haldNext();if(n)SCENE['hald'+n]()}});
 
+/* ===== 3막 ① 잊은 사람 (v064) — 2막 후반에 끌려가 나를 잊은 동료(S.amn)의 기억을 되찾는다. S.rq 1 병의 행방 → 2 병을 찾았다 → 3 끝. S.rqW hald(할데온이 약속대로 건넨다)/self(기억 전당포 창고에서 직접) ===== */
+const rqId=()=>S.rqId||S.amn;
+Object.assign(FOES,{bottler:{xp:30,n:'창고의 병지기',hp:240,tier:3,pool:['censer','grasp','late'],intro:'유리병을 주렁주렁 매단 사내가 선반 사이에서 일어선다. 병끼리 부딪치는 소리가 노래 같다. “대성당 위탁품이다. 하나도 덜 수 없다.”',win:'병지기가 쓰러지며 병 하나를 품에 꼭 끌어안는다. 제 것인 모양이다.',loot:()=>({i:{wax:1},g:R(8,14)})}});
+const RQL={kirien:['*키리엔이 병을 코끝에 대고 한참 냄새를 맡는다.','…네 냄새야. 이거 다 네 냄새야.','*키리엔이 단숨에 마신다. 귀가 천천히 선다.','사람 찾는 게 일인 내가 너를 잃어버렸었네.','…다신 안 잊어. 잊어도 다시 찾아낼 거야.'],
+ oswin:['*오스윈이 병을 가스등에 비춰 꼬리표부터 읽는다. 버릇이다.','…제 글씨로 적힌 게 하나도 없군요. 전부 당신 이야기입니다.','*오스윈이 마시자 꼬리 끝에서 불꽃이 연달아 튄다.','기억났습니다. 장부를 같이 넘기던 밤들이.','학자가 가장 중요한 쪽을 잃어버렸다니 부끄러운 일입니다. 다시 외우겠습니다. 이번엔 두 번.'],
+ barg:['*바르그가 작은 병을 큰 손에 쥐고 오래 내려다본다.','…또 잊으면 어쩌냐. 나는 한 번 잊어 본 놈이다.','*단숨에 마신다. 대검 손잡이의 푸른 끈이 흔들린다.','…기억났다. 등 뒤에 너를 두고 걷던 것까지.','이번엔 맹세 안 한다. 그냥 안 잊는다. 그게 더 어렵다.'],
+ kasimir:['*카시미르가 장갑을 벗고 맨손으로 병을 받는다.','이백삼십 년 동안 잊는 데는 익숙했습니다. 되찾는 건 처음이군요.','*카시미르가 마신다. 병의 유리가 미지근하다.','…아. 그대였군요. 계단에서 촛불이 기울던 저녁부터 전부.','유난히 아깝다고 느낀 것이 이것이었습니다. 제 감은 아직 쓸 만하군요.'],
+ ibre:['*이브레가 병을 받아 손가락으로 센다. 하나.','셈이 하나 비어 있었습니다. 무엇이 비었는지 몰라서 계속 다시 셌습니다.','*이브레가 마시자 비늘이 한꺼번에 선다.','…당신입니다. 빈 칸이 당신이었습니다.','이제 셈이 맞습니다. 앞에는 제가 서겠습니다. 다시.'],
+ eno:['*에노가 병을 손바닥에 물처럼 붓는다. 기억이 흩어지지 않는다.','내 안에 남의 조각은 많은데 당신 조각만 없었어요. 그래서 계속 추웠어요.','*에노가 마신다. 얼굴이 잠깐 내 얼굴을 닮았다가 돌아온다.','…찾았다. 하수구에서 처음 만난 날. 그날 물맛.','이건 빌린 기억이 아니에요. 내 거예요. 처음으로.']};
+const rqActs=busy=>{const a=[],q=S.rq||0,id=rqId();if(!S.a3||!id)return a;const n=tkN(id);
+  if(!q&&S.loc==='base')a.push(B('rq0',`${n}의 빈자리`,{sub:'✦ 나를 기억하지 못하는 사람',dis:busy}));
+  if(q===1&&S.loc==='church'&&(S.hq||0)>=3)a.push(B('rq1a','대성당 회랑 — 약속한 병',{sub:'흰 옷 사제가 손짓한다',dis:busy}));
+  if(q===1&&S.loc==='pawn')a.push(B('rq1b','전당포 창고',{sub:'대성당 위탁품이 쌓인 뒷방',dis:busy}));
+  if(q===2&&S.loc==='base')a.push(B('rq2',`${n}에게 병을 건넨다`,{sub:'✦ 되찾은 기억',dis:busy}));
+  return a};
+Object.assign(SCENE,{
+ rq0:()=>{const id=rqId(),n=tkN(id);S.rqId=id;S.rq=1;jr(`${n}이(가) 나를 기억하지 못한다. 덜어 낸 기억은 태우기 전에 병에 담겨 대성당 위탁품으로 기억 전당포 창고에 맡겨진다.`+((S.hq||0)>=3?' 불의 목자는 때가 되면 돌려주겠다고 했다.':''));save();
+  const who=['oswin','kirien','ibre','kasimir','barg','eno'].find(c=>c!==id&&S.comps.includes(c)&&!(S.left||{})[c]);
+  ev(`${n}의 빈자리`,`<p>저택 거실 구석에서 ${josa(n,'이','가')} 종이에 저택 사람들 이름을 적어 외우고 있다. 내 이름은 맨 아래 칸에 있다. 옆에 적힌 말은 「집주인. 친절함. 이유는 모름」이다.</p>`+(who?tln(who,{oswin:['대연소로 장부를 다시 봤습니다. 덜어 낸 기억은 태우기 전에 병에 담깁니다. 대성당 위탁품으로요.','위탁품은 기억 전당포 창고에 맡겨집니다. 오델의 가게 뒷방이지요.'],kirien:['전당포 창고야. 대성당 위탁품은 다 거기로 가. 엄마 기억 찾을 때 봤어.','…거기 있을 거야. 냄새로 찾을게.'],ibre:['대연소로 줄에서 병을 든 사람들이 전당포 쪽으로 갔습니다. 셌습니다. 열두 명이었습니다.'],kasimir:['기억 전당포 창고에 대성당 위탁품이 쌓인다고 들었습니다. 저도 언젠가 맡긴 것이 있을지 모르는 곳이지요.'],barg:['전당포 뒷방이다. 회색 옷들이 병 상자를 그리로 나르는 걸 봤다.'],eno:['전당포 창고에서 물맛이 나요. 그 사람 맛이요. 거기 있어요.']}[who]):`<p class="m">대연소로에서 본 장부가 떠오른다. 덜어 낸 기억은 태우기 전에 병에 담겨 대성당 위탁품으로 기억 전당포 창고에 맡겨진다.</p>`)+((S.hq||0)>=3?'<p class="m">불의 목자의 말도 떠오른다. “때가 되면 돌려드리겠습니다.”</p>':''),[['병을 찾으러 간다',null]],1)},
+ rq1a:()=>{const n=tkN(rqId());ev('대성당 회랑',`<p>회랑의 작은 방 탁자 위에 작은 병 하나가 놓여 있다. 마개에 흰 끈 일곱 매듭이 묶였고 꼬리표에는 ${n}의 이름이 적혀 있다.</p><p>불의 목자 — “약속드린 것입니다. 한 방울도 덜지 않았습니다.”</p><p>불의 목자 — “값은 받지 않겠습니다. 다만 기억해 주십시오. 제가 약속을 지켰다는 것을요.”</p>`+pline({kirien:'…진짜 돌려주네. 그게 더 무서워.',oswin:'빚이 아니라고 하시는군요. 그런 빚이 제일 비쌉니다.',ibre:'약속을 지켰습니다. 그건 셈에 넣겠습니다.',kasimir:'값을 받지 않는 상인은 나중에 더 큰 것을 받지요.',barg:'…받아라. 다만 저놈 손은 잡지 마라.',eno:'이 병 안의 기억 아직 따뜻해요. 정말로 아무것도 안 덜었어요.'}),
+  [['고맙다고 말하고 병을 받는다',()=>SCENE.rq1E('hald',1)],['병만 받아 들고 돌아선다',()=>SCENE.rq1E('hald',0)]])},
+ rq1b:()=>ev('전당포 창고',`<p>전당포 주인 오델이 창고 열쇠를 카운터에 올려 두고 등을 돌린다. 대성당 위탁품에는 손대지 않는다는 뜻이고 말리지도 않겠다는 뜻이다.</p><p>뒷방에는 유리병이 천장까지 쌓여 있다. 병마다 같은 꼬리표가 붙었다. 「위탁 — 대성당 · 태우지 말 것」.</p><p class="m">선반 사이에서 병끼리 부딪는 소리가 노래처럼 난다. 누군가 일어선다.</p>`,[['맞선다',()=>{S.bstory='rq1b';save();startBattle('fight','bottler')}],['오늘은 물러난다',null]]),
+ rq1bW:()=>{const n=tkN(rqId());ev('전당포 창고',`<p>선반 맨 아래 칸에서 ${n}의 이름이 적힌 병을 찾는다. 옆 칸에는 이름 모를 병이 수백 개다.</p><p class="m">꼬리표 뒷면에 작은 글씨가 있다. 「목자께서 따로 두라 하심」.</p>`,[['병을 챙긴다',()=>SCENE.rq1E('self',0)]],1)},
+ rq1E:(w,d)=>{S.rq=2;S.rqW=w;if(w==='hald')S.hald=(S.hald||0)+d;jr(`${tkN(rqId())}의 기억이 담긴 병을 찾았다.`+(w==='hald'?' 불의 목자가 약속대로 건네주었다.':' 기억 전당포 창고에서 직접 꺼내 왔다.'));save();render()},
+ rq2:()=>{const id=rqId(),n=tkN(id),top=S.rqW==='hald'?'<p class="m">병 마개의 흰 끈 일곱 매듭을 푼다.</p>':'<p class="m">병에 붙은 전당포 꼬리표를 뗀다.</p>';
+  S.amn=null;S.rq=3;if(id!=='pit')aff(id,4);jr(`${josa(n,'이','가')} 기억을 되찾았다. 나를 다시 안다.`);save();
+  if(id==='pit'){ev('피트',top+preH(['*피트가 병을 두 손으로 받아 냄새를 맡더니 얼굴을 찡그린다.','피트 — “쓴 냄새. …근데 마실래.”','*피트가 마시고 한참 눈을 깜박인다.','피트 — “…갈고리 사 준 거. 하수구에서 꺼내 준 거. 다 생각났어.”','피트 — “잊었던 거 비밀로 해 줘. 다른 애들이 놀려.”']),[['머리를 쓰다듬는다',null]],1);return}
+  seq(id,`${n} — 되찾은 것`,RQL[id],h=>tev(id,`${n} — 되찾은 것`,top+h,[['곁에 앉는다',null]]))}
+});
+Object.assign(CMD,{rq0:()=>{if(!S.act&&S.a3&&!S.rq&&rqId())SCENE.rq0()},rq1a:()=>{if(!S.act&&S.rq===1&&(S.hq||0)>=3)SCENE.rq1a()},rq1b:()=>{if(!S.act&&S.rq===1)SCENE.rq1b()},rq2:()=>{if(!S.act&&S.rq===2)SCENE.rq2()}});
+
 /* ===== 저택의 동료들 (v061, 사용자: 동료끼리 대화·말다툼·질투) — 저택에 있으면 가끔 거실에서 말소리가 들린다(S.duo, 쿨다운 S.duoT 20분).
    chat: 엿듣기(둘 다 +1) · argue: 편들기(편든 쪽 +3, 다른 쪽 −1, 말리면 둘 다 +1) · 질투(JEAL): 호감 50 넘는 동료가 나와 더 가까운 동료를 볼 때 */
 const DUO=[
@@ -4232,7 +4265,7 @@ Object.assign(SCENE,{
 Object.assign(CMD,{duo:()=>{if(!S.act&&S.loc==='base')SCENE.duo()}});
 
 Object.assign(CMD,{recon:a=>{if(!S.act&&(S.left||{})[a])SCENE.recon(a)},a2a:()=>{if(!S.act&&(S.a2||0)===0)SCENE.a2a()},a2b:()=>{if(!S.act&&S.a2===1)SCENE.a2b()},a2c:()=>{if(!S.act&&S.a2===2)SCENE.a2c()},a2d:()=>{if(!S.act&&S.a2===3)SCENE.a2d()},a2e:()=>{if(!S.act&&S.a2===4)SCENE.a2e()},a2f:()=>{if(!S.act&&S.a2===5)SCENE.a2f()}});
-window.__k2={bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={PL,isAmn,bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>
