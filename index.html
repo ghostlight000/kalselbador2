@@ -798,13 +798,13 @@ const foeDmM=()=>{const F=bfoe(),D=DF();return dkM(F.boss?(BOSSM[G.foe]||BOSSM0)
 const BANDCAP=3;
 const bandH=()=>Math.round((24+2*sv(3)+(G.kind==='fight'?(tal('sew')?8:0)+(lin('p',2)?6:0):0))*(G.kind==='fight'?1+eqSum('bh'):1));
 const DIFF=[
-  {n:'등불 아래',s:'편하게. 판정이 아주 넉넉하고 고리는 느리다. 적은 한 번에 두 번까지만 휘두르고 속임 동작을 쓰지 않는다. 적 체력 ×0.75, 받는 피해 ×0.5. 우두머리·엘리트와 막이 넘어갈 때 오르는 몫도 절반 아래로 줄어든다.',d:320,p:110,dm:.5,sp:1.3,hp:.75,bk:.45,ak:.4},
+  {n:'등불 아래',s:'편하게. 판정이 아주 넉넉하고 고리는 느리다. 적은 한 번에 두 번까지만 휘두른다. 적 체력 ×0.75, 받는 피해 ×0.5. 우두머리·엘리트와 막이 넘어갈 때 오르는 몫도 절반 아래로 줄어든다.',d:320,p:110,dm:.5,sp:1.3,hp:.75,bk:.45,ak:.4},
   {n:'가스등 거리',s:'보통. 회피는 넉넉하고 받아치기는 노려야 한다.',d:220,p:65,dm:1,sp:1,hp:1,bk:1,ak:1},
   {n:'안개 낀 밤',s:'어렵게. 판정이 좁고 고리는 빠르다. 적 체력 ×1.2, 받는 피해 ×1.35. 우두머리·엘리트와 막이 넘어갈 때 오르는 몫도 더 커진다.',d:150,p:42,dm:1.35,sp:.82,hp:1.2,bk:1.15,ak:1.25}];
 const FOES={
   dog:{xp:6,n:'굶주린 골목개',hp:70,tier:1,pool:['bite','bite2'],intro:'골목 끝에서 갈비뼈가 다 드러난 개 한 마리가 이를 드러낸다.',win:'개는 낑낑대며 어둠 속으로 사라진다.',loot:()=>({i:{},g:R(1,3)})},
   thief:{xp:10,n:'가스등 도둑',hp:120,tier:2,pool:['stab','triple','late'],intro:'가스등 아래에서 누군가 칼을 꺼낸다. 방금까지 등불을 훔치던 손이다.',win:'도둑이 달아나고 떨어뜨린 자루에서 푸른 재가 샌다.',loot:()=>({i:{ash:1},g:R(4,8)})},
-  lamp:{xp:30,n:'재에 먹힌 점등꾼',hp:260,tier:3,tier2:4,boss:true,pool:['swing','triple','late'],pool2:['swing','late','ash','pull','four'],intro:'거리 끝에 꺼지지 않는 등불을 든 사람이 서 있다. 등불 속에서 푸른 재가 소리 없이 탄다.',win:'등불이 돌바닥을 구르며 푸른 재가 꺼진다. 그 사람이 손을 뻗으며 중얼거린다. “돌아오는 길은… 모두 이곳으로…” 끝에 이름 하나가 붙었지만 알아듣지 못했다.',loot:()=>({i:{wick:1},g:R(10,15)})},
+  lamp:{xp:30,n:'재에 먹힌 점등꾼',hp:210,tier:3,tier2:4,boss:true,pool:['swing','triple','late'],pool2:['swing','late','pull','triple'],intro:'거리 끝에 꺼지지 않는 등불을 든 사람이 서 있다. 등불 속에서 푸른 재가 소리 없이 탄다.',win:'등불이 돌바닥을 구르며 푸른 재가 꺼진다. 그 사람이 손을 뻗으며 중얼거린다. “돌아오는 길은… 모두 이곳으로…” 끝에 이름 하나가 붙었지만 알아듣지 못했다.',loot:()=>({i:{wick:1},g:R(10,15)})},
   warden:{xp:14,n:'교단 정화자',hp:140,tier:2,pool:['censer','brand','stab'],intro:'회색 옷의 정화자가 향로 사슬을 감아쥐자 향 냄새 사이로 탄내가 번진다.',win:'정화자가 무릎을 꿇는다. 장부는 아직 파볼릭의 품에 있다.',loot:()=>({i:{band:1},g:R(3,6)})},
   singer:{xp:40,n:'노래하는 옛 주인',hp:240,tier:3,tier2:4,boss:true,pool:['hum','claw','wail'],pool2:['hum','wail','claw','late'],intro:'낡은 연미복을 입은 사람이 계단 끝에 서 있다. 얼굴이 있어야 할 자리에 푸른 재가 맴도는데 노래는 분명 그 입에서 나온다.',win:'노래가 그쳤다. 낡은 옷 속에 푸른 재만 한 줌 남았다.',
     ph2:{h:'노래가 높아진다',s:'이름 하나가 집 전체를 울린다',l:'옛 주인의 노래가 비명처럼 높아진다. 박자가 빨라진다.'},loot:()=>({i:{ash:2},g:R(8,12)})},
@@ -3239,7 +3239,7 @@ document.addEventListener('input',e=>{if(e.target.id==='lat'){CFG.lat=+e.target.
    ============================================================ */
 let G={on:false};
 const bfoe=()=>G.kind==='tut'?TUTF:FOES[G.foe];
-const btier=()=>{if(G.kind==='tut')return {w:2,sp:1.8};if(G.kind==='practice')return TIER[Math.min(3,1+S.night)];const F=bfoe();if(G.kind==='fight'&&F.boss)return TIER[(G.ph===2?5:4)-(G.foe==='lamp'?1:0)];return TIER[G.ph===2&&F.tier2!=null?F.tier2:F.tier]};
+const btier=()=>{if(G.kind==='tut')return {w:2,sp:1.8};if(G.kind==='practice')return TIER[Math.min(3,1+S.night)];const F=bfoe();if(G.kind==='fight'&&F.boss)return TIER[(G.ph===2?5:4)-(G.foe==='lamp'?2:0)];return TIER[G.ph===2&&F.tier2!=null?F.tier2:F.tier]};
 const bsafe=()=>G.kind!=='fight';
 const BW=()=>{const D=G.kind==='tut'?DIFF[0]:DF(),m=(G.guard?1.3:1)*(G.wide?1.3:1)*btier().w*(1+(sv(2)-3)*.03),f=G.kind==='fight',dm=f&&tal('eye')?1.1:1,pm=f?(tal('beat')?1.08:1)*(lin('p',4)?1.1:1)*(stal('teach')&&!G.S.parry?1.1:1):1;const ew=f?1+eqSum('dw'):1,ep=f?1+eqSum('pw'):1;return{d:D.d*m*dm*ew,p:D.p*m*(G.stance?1.5:1)*pm*ep,g:D.d*m*dm*1.6*ew}}; // g: 일찍 누르면 스침. 정신이 높을수록 판정이 넓다
 const sv=i=>G.kind==='fight'?S.st[i]:5;
@@ -3397,7 +3397,7 @@ function startBattle(kind,foe,extra){
   G={on:true,kind,foe:foe||(kind==='practice'?'drill':null),st:'wait',hp:kind==='fight'?S.hp:100,mhp:kind==='fight'?S.mhp:100,fp:2+(kind==='fight'?eqSum('fp'):0),band:kind==='fight'?(S.inv.band||0):0,
      fhp:0,ph:1,guard:false,open:false,next:null,cur:null,beats:[],fx:[],lock:0,turn:0,tg:0,tut:kind==='tut'?0:null,last:null,q:null,
      S:{dodge:0,parry:0,hit:0,graze:0,whiff:0,full:0,ofs:[],perf:0,qte:0}};
-  G.fmax=Math.round(bfoe().hp*(kind==='fight'?foeHpM():1));G.fhp=G.fmax;G.bandU=0;G.shmax=kind==='fight'&&bfoe()&&(bfoe().boss||bfoe().tier>=3)?(bfoe().boss?6:4):0;G.sh=G.shmax;G.brk=0;G.pack=null;G.atkQ=null;if(kind==='fight')pkInit(extra);if(kind==='fight'&&lin('p',0))G.slow=1;
+  G.fmax=Math.round(bfoe().hp*(kind==='fight'?foeHpM():1));G.fhp=G.fmax;G.bandU=0;G.shmax=kind==='fight'&&bfoe()&&(bfoe().boss||bfoe().tier>=3)?(bfoe().boss?(G.foe==='lamp'?4:6):4):0;G.sh=G.shmax;G.brk=0;G.pack=null;G.atkQ=null;if(kind==='fight')pkInit(extra);if(kind==='fight'&&lin('p',0))G.slow=1;
   $('#bt').classList.add('on');$('#blog').innerHTML='';sizeCv();readCols();
   $('#bstop').hidden=kind==='fight'||(kind==='tut'&&!S.tutd);$('#bstop').textContent=kind==='tut'?'가르침 건너뛰기':'연습 끝내기';
   if(kind==='tut'){brender();tutStep()}
@@ -3814,9 +3814,9 @@ function compAct(){
     if(r.read&&cpr()<.15*r.read){G.wide=true;blog('에노 — “다음은 왼쪽이에요.” 적의 움직임이 읽힌다.')}if(r.voices&&!G.forget&&cpr()<.12*r.voices){G.forget=1;blog('에노 — 여러 목소리가 한꺼번에 적을 부른다. 적이 헷갈린다.')}}
   else{d=4+C.lv;dmgFoe(d);blog(`${cn(id)} — ${d} 피해.`)}
   bbars()}
-/* 쉬움(등불 아래, 사용자): 적의 패턴도 쉽게 — 속임 박자 없음, 한 번에 두 박자까지, 박자 사이 0.52초 이상 */
+/* 쉬움(등불 아래, 사용자): 적의 패턴도 쉽게 — 한 번에 두 박자까지, 박자 사이 0.52초 이상. 속임 동작은 남긴다(사용자) */
 const easyOn=()=>CFG.diff===0&&G.kind!=='tut';
-const easyB=B=>{if(!easyOn())return B;const o=B.slice(0,2).map(b=>Object.assign({},b,{f:null}));for(let i=1;i<o.length;i++)if(o[i].t-o[i-1].t<520)o[i].t=o[i-1].t+520;return o};
+const easyB=B=>{if(!easyOn())return B;const o=B.slice(0,2).map(b=>Object.assign({},b));for(let i=1;i<o.length;i++)if(o[i].t-o[i-1].t<520)o[i].t=o[i-1].t+520;return o};
 function enemyTurn(){
   if(!G.on)return;
   if($('#sov').classList.contains('on')){G.cur=G.next;G.paused='enemy';return}
@@ -4312,7 +4312,14 @@ function endShow(k,lead){const E=ENDS[k],g=E.g?1:0;S.end=k;jr(`엔딩 「${E.n}�
   const cs=S.comps.filter(c=>!(S.left||{})[c]&&EPI[c]);
   const rom=S.rom&&EPIR[S.rom]&&cs.includes(S.rom)?`<p>${EPIR[S.rom][g]}</p>`:'';
   const pit=S.pit?`<p class="m">${g?'피트는 저택 부엌에 숟가락을 하나 더 놓는다. 아무도 쓰지 않는 숟가락이다. 치우라고 하면 운다.':'피트는 저택 부엌을 제 땅으로 삼았다. 아이들이 늘어날 때마다 숟가락을 하나씩 더 산다.'}</p>`:'';
-  ev(`엔딩 — 「${E.n}」`,(lead||'')+rom+cs.filter(c=>c!==S.rom).map(c=>`<p class="m">${EPI[c][g]}</p>`).join('')+pit+`<p class="m">— 「${E.n}」 —</p>`,[['이야기를 덮는다',null]],1)}
+  const sum=()=>ev(`엔딩 — 「${E.n}」`,(lead||'')+rom+cs.filter(c=>c!==S.rom).map(c=>`<p class="m">${EPI[c][g]}</p>`).join('')+pit+`<p class="m">— 「${E.n}」 —</p>`,[['이야기를 덮는다',null]],1);
+  /* 엔딩 연출(사용자: 1편처럼): 검은 화면에 장면 → 그 뒤 → 엔딩 이름. 다 보고 나면 기록용 요약 창 */
+  const txt=h=>(h||'').match(/<p[^>]*>[\s\S]*?<\/p>/g)||[],strip=x=>x.replace(/<p[^>]*>|<\/p>/g,'').replace(/<span class="m">|<\/span>/g,'');
+  const L=txt(lead).map(strip),sl=[];for(let i=0;i<L.length;i+=3)sl.push({h:i?'':E.n,L:L.slice(i,i+3)});
+  const ep=[rom,...cs.filter(c=>c!==S.rom).map(c=>`<p>${EPI[c][g]}</p>`),pit].map(x=>strip((txt(x)[0])||'')).filter(Boolean);
+  for(let i=0;i<ep.length;i+=3)sl.push({h:i?'':'그 뒤로',L:ep.slice(i,i+3)});
+  sl.push({h:'',L:[E.n,'<span class="esub">엔딩</span>'],c:'fin'});
+  cine(sl,sum,'이야기를 덮는다')}
 const routeStep=s=>{if(s.route==='shep'){const q=s.sh||0;return q<=1?['교단 안쪽','할데온과 함께 정화자 숙소에 간다. 회색 옷들이 기다린다.','barracks',['sh1']]:q===2?['언덕의 헌금','은방울 언덕 꼭대기 저택에서 가문들이 기억을 바친다. 할데온과 함께 간다.','silver',['sh2']]:q===3?['불 앞에서 쉬는 일','일곱째 밤을 사흘 앞두고 할데온이 옛 불 앞에서 쉬자고 한다.','stairs',['sh3']]:s.shc==='turn'?['흰 옷의 문','이데른이 흰 옷 사제들 쪽 문을 안다. 대성당 아래 계단으로 간다.','stairs',['sh4']]:['일곱째 밤','일곱 의자가 찬다. 대성당 아래 계단으로 간다.','stairs',['sh4']]}
   if(s.route==='ret'){const q=s.rt||0;return q<=1?['빈 이마','지하 예배실에서 울릭이 기다린다. 이마에 첫 줄을 긋는다.','chapel',['rt1']]:q===2?['천막촌의 노래','천막촌 끝에 이름을 부르는 노래가 있다.','outskirts',['rt2']]:q===3?['불 앞의 거울','대성당 아래 계단. 불 속의 목소리가 기다린다.','stairs',['rt3']]:['불로 된 사람','불이 사람 모양으로 일어섰다. 대성당 아래 계단.','stairs',['rt4']]}
   if(s.route==='ext'){const q=s.xt||0;return q<=1?['첫 번째 밸브','가스등 거리 끝 초소 밑에 첫 밸브가 있다.','street',['xt1']]:q===2?['3번 노의 불','하칸골 대연소로 3번 노. 가스관이 모두 여기서 시작한다.','furn',['xt2']]:q===3?['찬 밤','가스등이 꺼진 첫 밤. 저택에 사람들이 모인다.','base',['xt3']]:['옛 불 앞에서','남은 불은 대성당 아래 옛 불 하나다.','stairs',['xt4']]}

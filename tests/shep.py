@@ -12,6 +12,10 @@ def listen(pg):
 def win(pg):
     pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0;if(G.pack)G.pack.forEach(p=>p.fhp=0)}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg)
+def skipcine(pg):
+    pg.wait_for_selector('#pv.on .eo',timeout=8000);assert pg.locator('#pv .eo').count()==1
+    if pg.locator('#pv [data-pv=skip]').count():pg.click('#pv [data-pv=skip]')
+    pg.wait_for_timeout(100);assert '엔딩' in pg.inner_text('#pv');pg.click('#pv [data-pv=close]');pg.wait_for_timeout(150)
 E=lambda pg,x:pg.evaluate(x)
 def go(pg,loc,party):E(pg,f"()=>{{const K=window.__k2;K.S.loc='{loc}';K.S.party='{party}';K.render()}}")
 with sync_playwright() as p:
@@ -37,7 +41,7 @@ with sync_playwright() as p:
     go(pg,'stairs','ibre');pg.click('button[data-c=sh3]');t=pg.inner_text('#ov');assert '몸은 약속대로' in t;choose(pg,'끝까지 따른다');choose(pg,'이렇게 하기로 한다')
     t=pg.inner_text('#ov');assert '첫눈은 쓰지 않겠습니다' in t;choose(pg,'계단을 올라간다')
     pg.click('button[data-c=sh4]');choose(pg,'맞선다');win(pg)
-    pg.wait_for_selector('#ov.on h2:has-text("일곱째 밤")',timeout=5000);t=pg.inner_text('#ov');assert '키리엔이 부른다' in t,t;choose(pg,'문 안으로');choose(pg,'말한다')
+    pg.wait_for_selector('#ov.on h2:has-text("일곱째 밤")',timeout=5000);t=pg.inner_text('#ov');assert '키리엔이 부른다' in t,t;choose(pg,'문 안으로');choose(pg,'말한다');skipcine(pg)
     t=pg.inner_text('#ov');assert '하늘의 불' in t and '놋등' in t and '이브레는 저택 문 앞에' in t and '처음으로 눈을' in t,t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='shepF' and pg.locator('button[data-c=sh4]').count()==0
     print('shep follow ok')
@@ -49,7 +53,7 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.hg")==0 and pg.locator('button[data-c=htalk]').count()==0
     pg.click('button[data-c=sh4]');assert '내 부하였다' in pg.inner_text('#ov');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("흰 옷의 문")',timeout=5000);assert '차는 식었습니다' in pg.inner_text('#ov');choose(pg,'맞선다');win(pg)
-    pg.wait_for_selector('#ov.on h2:has-text("옛 불")',timeout=5000);choose(pg,'할데온');t=pg.inner_text('#ov');assert '이름을 부르는 날' in t and '그 목소리입니다' in t and '신탁 상점에 다시' in t,t;choose(pg,'이야기를 덮는다')
+    pg.wait_for_selector('#ov.on h2:has-text("옛 불")',timeout=5000);choose(pg,'할데온');skipcine(pg);t=pg.inner_text('#ov');assert '이름을 부르는 날' in t and '그 목소리입니다' in t and '신탁 상점에 다시' in t,t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='shepT'
     print('shep turn ok')
     b.close()

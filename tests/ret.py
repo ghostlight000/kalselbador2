@@ -12,6 +12,10 @@ def listen(pg):
 def win(pg):
     pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0;if(G.pack)G.pack.forEach(p=>p.fhp=0)}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg)
+def skipcine(pg):
+    pg.wait_for_selector('#pv.on .eo',timeout=8000);assert pg.locator('#pv .eo').count()==1
+    if pg.locator('#pv [data-pv=skip]').count():pg.click('#pv [data-pv=skip]')
+    pg.wait_for_timeout(100);assert '엔딩' in pg.inner_text('#pv');pg.click('#pv [data-pv=close]');pg.wait_for_timeout(150)
 E=lambda pg,x:pg.evaluate(x)
 def go(pg,loc,party):E(pg,f"()=>{{const K=window.__k2;K.S.loc='{loc}';K.S.party='{party}';K.render()}}")
 with sync_playwright() as p:
@@ -30,12 +34,12 @@ with sync_playwright() as p:
     go(pg,'outskirts','kirien');pg.click('button[data-c=rt2]');choose(pg,'노래를 끊지 않는다');assert '칼을 들어라' in pg.inner_text('#ov');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("천막촌")',timeout=5000);assert '내 눈으로 본다' in pg.inner_text('#ov');choose(pg,'계단으로 간다')
     go(pg,'stairs','kirien');pg.click('button[data-c=rt3]');t=pg.inner_text('#ov');assert '할데온의 웃음' in t and '키리엔' in t and '이브레' not in t.split('부른다')[1][:40],t;choose(pg,'지금의 이름으로 선다');choose(pg,'이렇게 하기로 한다')
-    choose(pg,'맞선다');win(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '지금의 이름' in t and '이브레와 보낸 밤' in t and '내 이름이다' in t,t;choose(pg,'이야기를 덮는다')
+    choose(pg,'맞선다');win(pg);skipcine(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '지금의 이름' in t and '이브레와 보낸 밤' in t and '내 이름이다' in t,t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='retS'
     print('ret stand ok')
     E(pg,base);E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{route:'ret',rt:3,bqe:'bound',loc:'stairs',aff:Object.assign(K.S.aff,{kirien:10,ibre:10,barg:10,oswin:10})});K.render()}")
     pg.click('button[data-c=rt3]');t=pg.inner_text('#ov');assert '남아 있지 않다' in t and pg.locator('#ov.on button:has-text("지금의 이름으로")').count()==0
-    choose(pg,'몸을 넘긴다');choose(pg,'이렇게 하기로 한다');choose(pg,'불 안으로');t=pg.inner_text('#ov');assert '「베렌」' in t and '바르그만은' in t;choose(pg,'이야기를 덮는다')
+    choose(pg,'몸을 넘긴다');choose(pg,'이렇게 하기로 한다');choose(pg,'불 안으로');skipcine(pg);t=pg.inner_text('#ov');assert '「베렌」' in t and '바르그만은' in t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='retG'
     print('ret give ok')
     b.close()

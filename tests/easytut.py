@@ -20,7 +20,7 @@ with sync_playwright() as p:
     if pg.locator('button[data-c=cont]').count():pg.click('button[data-c=cont]')
     pg.wait_for_timeout(300)
     mx=E(pg,"()=>{const K=window.__k2;K.G.kind='fight';const r=['four','late','triple'].map(k=>K.easyB(K.MV[k].b));return [K.CFG.diff,Math.max(...r.map(x=>x.length)),r.some(x=>x.some(b=>b.f)),Math.min(...r.filter(x=>x.length>1).map(x=>x[1].t-x[0].t))]}")
-    assert mx[0]==0 and mx[1]<=2 and not mx[2] and mx[3]>=520,mx
+    assert mx[0]==0 and mx[1]<=2 and mx[2] and mx[3]>=520,mx
     print('easy beats',mx)
     # 모르텐이 죽은 뒤
     E(pg,"()=>{const K=window.__k2;K.S.mort=2;K.render()}");E(pg,"window.__k2.CMD.tutor()");pg.wait_for_function('window.__k2.G.on')

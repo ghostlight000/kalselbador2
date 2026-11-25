@@ -16,9 +16,13 @@ def win2(pg,tgt):
     pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0;if(G.pack)G.pack.forEach(p=>p.fhp=0)}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);pg.wait_for_timeout(400)
     for _ in range(4):
-        if tgt in pg.inner_text('#ov'):break
+        if tgt in pg.inner_text('#ov') or pg.locator('#pv.on').count():break
         if pg.locator('#ov.on .btn.pri').count():pg.click('#ov.on .btn.pri')
         pg.wait_for_timeout(400)
+def skipcine(pg):
+    pg.wait_for_selector('#pv.on .eo',timeout=8000);assert pg.locator('#pv .eo').count()==1
+    if pg.locator('#pv [data-pv=skip]').count():pg.click('#pv [data-pv=skip]')
+    pg.wait_for_timeout(100);assert '엔딩' in pg.inner_text('#pv');pg.click('#pv [data-pv=close]');pg.wait_for_timeout(150)
 E=lambda pg,x:pg.evaluate(x)
 def go(pg,loc,party):E(pg,f"()=>{{const K=window.__k2;K.S.loc='{loc}';K.S.party='{party}';K.render()}}")
 with sync_playwright() as p:
@@ -43,12 +47,12 @@ with sync_playwright() as p:
     assert E(pg,'window.__k2.S.xt')==3
     go(pg,'base','ibre');pg.click('button[data-c=xt3]');assert '오델' in pg.inner_text('#ov');choose(pg,'계단으로 간다')
     go(pg,'stairs','ibre');pg.click('button[data-c=xt4]');t=pg.inner_text('#ov');assert '처음부터' in t and '이름을 먹지 않는' in t;choose(pg,'이름을 먹지 않는 불지기');choose(pg,'이렇게 하기로 한다')
-    choose(pg,'맞선다');win2(pg,'엔딩');pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '이름을 먹지 않는 불' in t and '세레인' in t;choose(pg,'이야기를 덮는다')
+    choose(pg,'맞선다');win2(pg,'엔딩');skipcine(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '이름을 먹지 않는 불' in t and '세레인' in t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='extK'
     print('ext keep ok')
     E(pg,base);E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{route:'ext',xt:4,xdk:['street'],loc:'stairs'});K.render()}")
     pg.click('button[data-c=xt4]');choose(pg,'옛 불을 끈다');choose(pg,'이렇게 하기로 한다');assert '마지막으로 이 불을' in pg.inner_text('#ov');choose(pg,"맞선다");win2(pg,"엔딩")
-    pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '다시 짠 배' in t and '정직한 쪽' in t;choose(pg,'이야기를 덮는다')
+    skipcine(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '다시 짠 배' in t and '정직한 쪽' in t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='extF'
     print('ext out ok')
     b.close()
