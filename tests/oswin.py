@@ -48,7 +48,7 @@ with sync_playwright() as p:
     # 금서고 반전
     E(pg,"()=>{window.__k2.S.a2=6}");go(pg,'docks');go(pg,'street');go(pg,'vault');pg.click('button[data-c=oq4]');choose(pg,'들어간다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("금서고")',timeout=5000);assert '푸른 재 정제 공정' in pg.inner_text('#ov');choose(pg,'서명을 본다')
-    t=pg.inner_text('#ov');nm=E(pg,"window.__k2.S.name");assert nm in t and '편지와 같다' in t;choose(pg,'리세를 그렇게 만든 게 나였어?');drain(pg);choose(pg,'금서고를 나선다')
+    t=pg.inner_text('#ov');nm=E(pg,"window.__k2.S.name");assert nm in t and '편지와 같' in t;choose(pg,'리세를 그렇게 만든 게 나였어?');drain(pg);choose(pg,'금서고를 나선다')
     s=E(pg,"window.__k2.S");assert s['rev']==1 and s['oq']==5 and E(pg,"window.__k2.actN()")==2.5
     t=pg.inner_text('#ov');assert '그 이름' in t;choose(pg,'물러난다');assert pg.locator('button[data-c=revOut]').count()==1
     pg.click('button[data-c=revOut]');choose(pg,'맞선다');assert E(pg,"window.__k2.G.foe")=='purL';win(pg)

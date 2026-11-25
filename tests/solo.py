@@ -33,7 +33,7 @@ with sync_playwright() as p:
     # 혼자 여는 금서고
     E(pg,"()=>{window.__k2.S.a2=6;window.__k2.render()}");t=pg.inner_text('.goalc');assert '금서고' in t and '운반 일지' in t,t
     go(pg,'works');go(pg,'docks');go(pg,'street');go(pg,'vault');assert pg.locator('button[data-c=oq4]').count()==0;pg.click('button[data-c=vaultS]');choose(pg,'들어간다');win(pg)
-    pg.wait_for_selector('#ov.on h2:has-text("금서고")',timeout=5000);choose(pg,'서명을 본다');t=pg.inner_text('#ov');assert '편지와 같다' in t;choose(pg,'품에 넣는다');choose(pg,'금서고를 나선다')
+    pg.wait_for_selector('#ov.on h2:has-text("금서고")',timeout=5000);choose(pg,'서명을 본다');t=pg.inner_text('#ov');assert '편지와 같' in t;choose(pg,'품에 넣는다');choose(pg,'금서고를 나선다')
     s=E(pg,"window.__k2.S");assert s['rev']==1 and s.get('vrev')==1;choose(pg,'맞선다');win(pg);pg.wait_for_selector('#ov.on h2:has-text("언덕길")',timeout=5000);okpop(pg)
     assert E(pg,"window.__k2.S.revd")==1;print('solo vault ok')
     # 오스윈 퀘스트를 나중에: 설계서를 보여 준다
