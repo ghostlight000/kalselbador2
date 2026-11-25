@@ -3198,7 +3198,7 @@ function settings(){
   <div><label>소리</label>${seg('snd',[[true,'켬'],[false,'끔']])}</div>
   <div><label>작업 완료음 — 탐사·저택 손보기·제작·파견·채집이 끝났을 때</label>${seg('alw',[[true,'켬'],[false,'끔']])}${seg('alws',Object.entries(AST).map(([k,v])=>[k,v[0]]))}</div>
   <div><label>행동 완료음 — 이동·쉬기·순찰·책 읽기가 끝났을 때</label>${seg('ala',[[true,'켬'],[false,'끔']])}${seg('alas',Object.entries(AST).map(([k,v])=>[k,v[0]]))}<p class="m" style="margin:4px 0 0">소리를 고르거나 켜면 한 번 들려준다. 소리를 끄면 알림음도 울리지 않는다.</p></div>
-  <div><label>테마</label>${seg('theme',[['auto','자동'],['dark','숯빛'],['light','양피지']])}</div>
+  <div><label>테마</label>${seg('theme',[['auto','자동'],['dark','푸른 재'],['light','흰 안개']])}</div>
   ${S?`<div><label>기록 — ${cst}</label><div class="seg"><button class="btn" data-s2="copy">기록 코드 만들기</button></div><textarea id="svd" readonly>${esc(SVD)}</textarea><p class="m" id="svm">${SVM}</p></div>
   <details><summary>처음부터 다시</summary><p class="m">이 기기와 계정의 기록이 모두 지워진다. 되돌릴 수 없다.</p><button class="btn" data-s2="reset">지우고 처음부터</button></details>`:''}
   </div><div class="btns"><button class="btn pri" data-s2="close">닫기</button></div><p class="m" style="text-align:center">${VER}</p></div>`;
