@@ -2325,6 +2325,7 @@ function placeView(){
   if(S.loc==='works')acts.push(B('hboard','하칸골 게시판',{sub:S.facn?'징수 명단이 붙어 있다':'공장 문 앞 게시판에 종이가 빽빽하다',dis:busy}));
   if(typeof bqActs==='function')acts.push(...bqActs(busy));
   if(typeof iqnqActs==='function')acts.push(...iqnqActs(busy));
+  if(S.loc==='base'&&typeof duoNext==='function'&&duoNext())acts.push(B('duo','거실에서 말소리가 들린다',{sub:'✦ 동료들이 무언가 이야기하고 있다',dis:busy}));
   if(S.loc==='sanat'&&!S.kq)acts.push(B('kq1','하얀 요양소',{sub:kirSub('창마다 쇠창살을 단 건물'),dis:busy||!kir}));
   if(S.loc==='sanat'&&S.kq===1)acts.push(B('kq2','밤의 요양소',{sub:kirSub('회색 마차가 드나드는 뒷문'),dis:busy||!kir}));
   if(S.loc==='street'){
@@ -2550,7 +2551,7 @@ function resolveAct(){
     const SXR=sxExplore(a.at),say=[X.say,...SXR.notes];if(!SXR.started)xevRoll(a.at);
     if(!S.pend&&Math.random()<X.enc*(a.cd?.5:1)){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:say.join(' ')};save();startBattle('fight',foe,packFor(foe));return true}
     pop(X.n,{i:L.i,g:L.g,n:say})}
-  if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='inn'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='inn'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(a.to==='academy'&&S.sole&&(S.oq||0)>=2&&!S.solv&&!S.pend)S.pend='soleV';if(a.to==='base'&&S.oq===6&&!S.lisL&&!S.pend)S.pend='liseL';if(a.to==='base'&&S.a3&&!S.a3h&&S.comps.filter(c=>!(S.left||{})[c]&&S.taken!==c).length>=2&&!S.pend)S.pend='a3Hearth';sxArrive(a.to);if(a.to==='church'&&!S.archM&&!S.pend)S.pend='archM';if(a.to==='base'&&(S.a2||0)>=3&&!S.gift&&!S.pend)S.pend='gift';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&typeof NDF!=='undefined'&&NDF[a.to])jr(NDF[a.to]);if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
+  if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='inn'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='inn'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(a.to==='academy'&&S.sole&&(S.oq||0)>=2&&!S.solv&&!S.pend)S.pend='soleV';if(a.to==='base'&&S.oq===6&&!S.lisL&&!S.pend)S.pend='liseL';if(a.to==='base'&&!S.pend&&!(S.a3&&!S.a3h)&&typeof duoNext==='function'&&duoNext()&&Math.random()<.35&&!TEST)S.pend='duo';if(a.to==='base'&&S.a3&&!S.a3h&&S.comps.filter(c=>!(S.left||{})[c]&&S.taken!==c).length>=2&&!S.pend)S.pend='a3Hearth';sxArrive(a.to);if(a.to==='church'&&!S.archM&&!S.pend)S.pend='archM';if(a.to==='base'&&(S.a2||0)>=3&&!S.gift&&!S.pend)S.pend='gift';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&typeof NDF!=='undefined'&&NDF[a.to])jr(NDF[a.to]);if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
     const rf=!S.pend&&roadFoe(a);if(rf){save();SCENE.road(rf,a);return true}
     if(S.base&&!(TEST&&!ROADT))roadPick(a.to);
 }
@@ -4031,7 +4032,7 @@ Object.assign(CMD,{bq1:()=>{if(!S.act&&S.bq===1&&S.party==='barg')SCENE.bq1()},b
 /* 이야기 사건(v059): 설계서 반전 뒤 동료마다 처음 말을 걸 때 「재의 서명」 대화(S.rvt). 바르그는 「바르그가 베렌을 알아보는 밤」, 오스윈은 퀘스트 서명 장면이 대신한다 */
 const RVT={
  kirien:{b:['*키리엔이 꼬리를 감고 앉아 한참 말이 없다.','설계서 얘기 들었어. 네 서명이라며.','토벤 씨가 너를 선생님이라고 불렀잖아. 이제 왜 그랬는지 알겠어.','>나도 기억이 없어.','알아. 그래서 더 헷갈려.','엄마는 기억을 팔고 나를 몰라. 너는 기억을 잃고 네가 한 일을 몰라.','둘 다 그 사람이 맞는데 그 사람이 아니야. …난 어느 쪽을 미워해야 돼?'],
-  c:[['지금의 나를 봐 줘',4,['*키리엔이 고개를 들자 귀가 천천히 선다.','…보고 있어. 계속 보고 있었어.','그러니까 이상한 짓 하면 바로 알아. 그것만 기억해.']],['미워해도 돼',2,['*키리엔이 코웃음을 친다.','허락받고 미워하는 사람이 어디 있어.','…못 미워. 그게 제일 화나.']]]},
+  c:[['지금의 나를 봐 줘',4,['*키리엔이 고개를 들자 귀가 천천히 선다.','…보고 있어. 계속 보고 있었어.','그러니까 이상한 짓 하면 바로 알아. 그것만 기억해.']],['미워해도 돼',2,['*키리엔이 코웃음을 친다.','허락받고 미워하는 사람이 어디 있어.','…못 미워해. 그게 제일 화가 나.']]]},
  oswin:{b:['*오스윈이 장부를 덮고 안경을 벗는다.','금서고 설계서 이야기를 들었습니다. 서명이 당신 것이라고요.','…놀랍지는 않습니다. 편지를 보여 주셨을 때부터 글씨를 알고 있었으니까요.','>왜 말 안 했어?','증거 없이 말하는 학자는 쫓겨납니다. 저는 이미 쫓겨났지만 그 버릇은 남았지요.','그리고 말했다면 당신이 떠났을 것 같았습니다. 그건 제가 원하지 않았습니다.'],
   c:[['리세 일도 내 손이었겠지',3,['…그랬겠지요. 당신의 손이었습니다. 지금의 당신이 아니라.','그 둘을 나눌 수 있는지 저는 아직 모릅니다. 같이 가 보면 알게 되겠지요.']],['고마워',4,['*꼬리 끝에서 불꽃이 한 번 튄다.','고맙다는 말을 듣자고 한 일은 아닙니다. …그래도 받아 두겠습니다.']]]},
  ibre:{b:['*이브레가 몸을 반쯤 숙이고 앉는데 큰 손이 무릎 위에서 접혔다 펴진다.','징수 명단 맨 끝에 서명이 있었다고 들었습니다. 무색 징수 명단에도.','>내 서명일 거야.','그렇습니까.','*한참 말이 없다.','제 동생은 무색 4번입니다. 그 명단에 있었을 겁니다.','저는 숫자를 잘 셉니다. 당신이 저를 구한 날과 그 서명이 제 동생을 데려간 날. 아직 다 세지 못했습니다.'],
@@ -4108,6 +4109,64 @@ Object.assign(SCENE,{
 });
 Object.assign(CMD,{iq1:()=>{if(!S.act&&S.iq===1&&S.party==='ibre')SCENE.iq1()},iq2:()=>{if(!S.act&&S.iq===2&&S.party==='ibre')SCENE.iq2()},iq3:()=>{if(!S.act&&S.iq===3)SCENE.iq3()},iq4:()=>{if(!S.act&&S.iq===4)SCENE.iq4()},
  nq1:()=>{if(!S.act&&S.nq===1&&S.party==='eno'&&(S.inv.scrap||0)>=5)SCENE.nq1()},nq2:()=>{if(!S.act&&S.nq===2&&S.party==='eno')SCENE.nq2()},nq3:()=>{if(!S.act&&S.nq===3)SCENE.nq3()}});
+
+/* ===== 저택의 동료들 (v061, 사용자: 동료끼리 대화·말다툼·질투) — 저택에 있으면 가끔 거실에서 말소리가 들린다(S.duo, 쿨다운 S.duoT 20분).
+   chat: 엿듣기(둘 다 +1) · argue: 편들기(편든 쪽 +3, 다른 쪽 −1, 말리면 둘 다 +1) · 질투(JEAL): 호감 50 넘는 동료가 나와 더 가까운 동료를 볼 때 */
+const DUO=[
+ {id:'osKas',k:'argue',a:'oswin',b:'kasimir',h:'붉은 물',w:s=>true,
+  p:['*거실 벽난로 앞. 오스윈이 카시미르의 붉은 병을 가스등에 비춰 보려다 손목을 잡힌다.','카시미르 — 남의 병을 함부로 들여다보는 건 무례입니다. 이백 년 전에도 그랬고 지금도 그렇습니다.','오스윈 — 무례는 인정합니다. 하지만 학자로서 묻는 겁니다. 그 물이 당신에게서 무엇을 가져가는지 아십니까.','카시미르 — 시간을 가져가지요. 대가로 시간을 줍니다. 공정한 거래입니다.','오스윈 — 이름도 가져갑니다. 그건 거래 장부에 적혀 있지 않더군요.','*둘이 동시에 나를 본다.'],
+  A:['오스윈 말이 맞다',['오스윈 — 감사합니다. …이기려던 건 아니었습니다. 걱정이었지요.','카시미르 — 걱정은 받아 두겠습니다. 병은 돌려받고요.']],
+  Bs:['카시미르 일이다',['카시미르 — 보십시오. 집주인께서도 사생활을 아십니다.','오스윈 — …예. 제가 선을 넘었습니다. 다만 말은 거두지 않겠습니다.']],
+  M:['둘 다 그만',['*오스윈이 손을 놓고 카시미르가 병을 품에 넣는다.','카시미르 — 오늘은 여기까지 하지요. 차는 그대가 끓이십시오.','오스윈 — 제가 끓이면 실험이 됩니다만.']]},
+ {id:'bargKir',k:'argue',a:'kirien',b:'barg',h:'옛날의 베렌',w:s=>!!s.rev,
+  p:['*부엌에서 목소리가 커진다. 키리엔이 귀를 뒤로 붙인 채 바르그를 올려다보고 있다.','키리엔 — 옛날 베렌 얘기 좀 그만해. 지금 여기 있는 건 쟤야.','바르그 — 넌 모른다. 이십 년을. 그 손이 무슨 일을 했는지도.','키리엔 — 알아. 설계서 봤어. 그래도 지금 쟤는 그 손으로 요양소 애들을 꺼냈어.','바르그 — …둘 다 같은 손이다. 그게 문제라는 거다.','*바르그가 대검 손잡이를 쥐었다 놓는다. 둘이 나를 본다.'],
+  A:['키리엔 말이 맞다',['키리엔 — 봐. 본인도 그렇다잖아.','바르그 — …그래. 지금은 그렇다고 해 두지.','*바르그가 등을 돌리지만 문을 세게 닫지는 않는다.']],
+  Bs:['바르그 말도 맞다',['바르그 — …네가 그 말을 할 줄은 몰랐다.','키리엔 — 뭐야. 편들어 줬더니.','*키리엔의 꼬리가 바닥을 한 번 친다. 화난 것 같지만 귀는 이쪽을 향해 있다.']],
+  M:['둘 다 나를 걱정하는 거잖아',['*둘 다 대답하지 않는다.','키리엔 — …아니거든.','바르그 — 아니다.','*그런데 둘 다 같은 대답을 한 게 웃겼는지 키리엔이 먼저 코웃음을 친다.']]},
+ {id:'ibreKas',k:'argue',a:'ibre',b:'kasimir',h:'대신 죽어 주는 일',w:s=>true,
+  p:['*현관에서 이브레가 문틀에 머리를 숙인 채 카시미르를 내려다본다.','이브레 — 대신 죽어 주는 일을 직업이라고 부르면 안 됩니다.','카시미르 — 그대도 판돈을 받고 싸우지 않습니까. 같은 일입니다.','이브레 — 저는 제 이름으로 싸웁니다. 당신은 남의 이름으로 싸웁니다.','카시미르 — …그 말은 조금 아프군요. 정확해서.'],
+  A:['이브레 말이 맞다',['이브레 — 고맙습니다. 다만 아프게 하려던 건 아닙니다.','카시미르 — 압니다. 그대는 늘 정확할 뿐이지요.']],
+  Bs:['카시미르도 사정이 있다',['카시미르 — 집주인의 변호를 받다니. 이백 년 만입니다.','이브레 — …그렇습니까. 사정은 묻지 않겠습니다. 다음에 들려주십시오.']],
+  M:['둘 다 싸우는 사람이잖아',['*이브레와 카시미르가 서로를 본다.','이브레 — 한 번 겨뤄 볼까요. 이름 없이.','카시미르 — 거절하겠습니다. 다칠까 봐서요. 제가.']]},
+ {id:'kirOsw',k:'argue',a:'kirien',b:'oswin',h:'적어 둔다는 것',w:s=>true,
+  p:['*서재 문틈으로 키리엔과 오스윈의 목소리가 새어 나온다.','키리엔 — 적어 두면 뭐 해. 엄마는 다 팔았어. 장부에 적힌 이름이 엄마를 돌려줘?','오스윈 — 적어 두지 않으면 판 것조차 남지 않습니다. 그게 가장 나쁜 일이지요.','키리엔 — 너는 종이를 믿고 나는 냄새를 믿어. 냄새는 안 지워져.','오스윈 — 냄새는 키리엔 양이 없으면 아무도 못 맡지 않습니까.'],
+  A:['키리엔 편',['키리엔 — 거 봐.','오스윈 — …발로 찾는 사람이 이기는군요. 오늘은.']],
+  Bs:['오스윈 편',['오스윈 — 고맙습니다. 이 대화는 적어 두지 않겠습니다. 이겼으니까요.','키리엔 — 치사해.']],
+  M:['둘 다 필요해',['*둘이 동시에 한숨을 쉰다.','키리엔 — 그 말 나올 줄 알았어.','오스윈 — 저도요. 그래서 반박할 수가 없군요.']]},
+ {id:'ibreEno',k:'chat',a:'ibre',b:'eno',h:'미지근한 자리',w:s=>true,
+  p:['*벽난로 앞 바닥에 이브레와 에노가 나란히 앉아 있다. 이브레는 따뜻한 돌을 끌어안았고 에노는 물그릇에 발을 담갔다.','에노 — 이브레는 왜 맨날 돌을 안고 있어요?','이브레 — 무색은 비늘이 얇습니다. 추위를 탑니다.','에노 — 나는 따뜻하면 흩어져요. 그래서 물에 있어요.','*에노가 이브레 쪽으로 조금 다가앉는다. 이브레도 조금 다가앉는다.','에노 — 이렇게 있으면 딱 미지근해요.','이브레 — …예. 딱 좋습니다.']},
+ {id:'bargIbre',k:'chat',a:'barg',b:'ibre',h:'문틀',w:s=>true,
+  p:['*현관에서 망치 소리가 난다. 바르그가 문틀을 뜯고 있고 이브레가 뒤에서 판자를 들고 서 있다.','바르그 — 한 자 높인다. 이마 그만 박아라.','이브레 — 고맙습니다. 저는 박는 쪽이 익숙합니다만.','바르그 — 익숙해지면 안 되는 것도 있다.','*바르그가 못 하나를 입에 문다.','바르그 — …방패를 들어 본 적 있냐.','이브레 — 없습니다. 제가 방패입니다.','*바르그가 못을 떨어뜨린다. 웃은 것 같다.']},
+ {id:'kasEno',k:'chat',a:'kasimir',b:'eno',h:'오래된 춤',w:s=>true,
+  p:['*응접실에서 낡은 음악 상자 소리가 난다. 카시미르가 에노의 손을 잡고 천천히 세 걸음을 밟는다.','카시미르 — 하나. 둘. 셋. …잘하십니다.','에노 — 내 안에 춤추던 아가씨가 하나 있어요. 걔가 하는 거예요.','카시미르 — 그 아가씨께 감사를 전해 주십시오. 이백 년 만에 박자가 맞는 상대입니다.','*음악 상자가 멈추자 에노의 얼굴이 잠깐 다른 사람처럼 웃는다.']},
+ {id:'kirIbre',k:'chat',a:'kirien',b:'ibre',h:'비 오는 날',w:s=>true,
+  p:['*처마 밑. 비가 들이치자 이브레가 말없이 손바닥을 키리엔 머리 위로 내민다.','키리엔 — …안 해도 돼.','이브레 — 압니다.','*키리엔이 비켜서지 않는다.','키리엔 — 너 손 시리잖아. 비늘 얇다며.','이브레 — 압니다.','*키리엔이 꼬리로 이브레의 손목을 한 번 감쌌다가 놓는다. 둘 다 그 얘기는 하지 않는다.']}
+];
+const JEAL={kirien:['*키리엔이 문간에 기대 팔짱을 끼고 있다.','…요즘 @O이랑 자주 있더라.','아니, 뭐. 상관없어. 그냥 냄새가 바뀌었길래.','*귀가 뒤로 눕는다. 상관있는 얼굴이다.'],
+ oswin:['*오스윈이 장부를 펼쳐 둔 채 한 쪽도 넘기지 않고 있다.','@O 씨와 어제 늦게까지 이야기하시더군요. 서재까지 들렸습니다.','…아닙니다. 기록할 일은 아니지요. 기록하고 싶은 일도 아니고요.','*꼬리 끝에서 불꽃이 쉬지 않고 튄다. 본인도 멈추지 못한다.'],
+ ibre:['*이브레가 문틀 아래서 한참 망설인다.','@O 씨 옆에 서 계시는 날이 많아졌습니다.','저는 앞에 서는 사람입니다. 옆은 잘 모릅니다.','…옆에도 서 보고 싶습니다. 그 말이 하고 싶었습니다.'],
+ kasimir:['*카시미르가 지팡이 은 손잡이에 턱을 괸 채 웃고 있다. 눈은 웃지 않는다.','@O 쪽이 그대를 독차지하는 모양이군요.','이백 년을 살면 질투 따위는 졸업하는 줄 알았습니다.','…아니더군요. 그게 오늘 배운 것입니다.'],
+ barg:['*바르그가 숫돌 앞에서 같은 칼날을 몇 번이고 간다.','@O 놈이랑 붙어 다니더군.','…상관없다. 등은 내가 맡으면 된다.','*숫돌 소리가 조금 거칠어진다.'],
+ eno:['*에노가 물그릇을 들여다보며 고개를 갸웃한다. 그 몸짓이 누구의 버릇인지는 에노도 모른다.','내 안의 누가 화가 났어요. 당신이 @O이랑 있을 때마다.','누군지 찾아봤는데… 나였어요.','처음이에요. 나 혼자 화난 거.']};
+const duoLn=L=>L.map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:(m=>m?`<p>${m[1]} — “${m[2]}”</p>`:`<p>${x}</p>`)(x.match(/^(\S+) — (.*)$/s))).join('');
+const duoPresent=c=>S.comps.includes(c)&&!(S.left||{})[c]&&S.taken!==c&&!(typeof isAmn==='function'&&isAmn(c));
+const duoNext=()=>{if(!S.base||Date.now()-(S.duoT||0)<1200e3*SEC())return null;S.duo=S.duo||{};
+  const a=(S.aff||{});const pres=S.comps.filter(duoPresent);
+  const J=pres.filter(c=>!(S.jeal||{})[c]&&(a[c]||0)>=50).map(c=>{const o=pres.filter(x=>x!==c).sort((x,y)=>(a[y]||0)-(a[x]||0))[0];return o&&((S.rom===o)||(a[o]||0)>=(a[c]||0)+10)?{id:'j:'+c,k:'jeal',a:c,b:o}:null}).filter(Boolean);
+  if(J.length)return J[0];
+  return DUO.find(d=>!S.duo[d.id]&&duoPresent(d.a)&&duoPresent(d.b)&&d.w(S))||null};
+Object.assign(SCENE,{
+ duo:()=>{const d=duoNext();if(!d)return;S.duoT=Date.now();save();
+  if(d.k==='jeal'){S.jeal=S.jeal||{};S.jeal[d.a]=1;const T=cn(d.a),L=JEAL[d.a].map(x=>x.replace('@O',cn(d.b)));
+   seq(d.a,`${T} — 질투`,L,h=>tev(d.a,`${T} — 질투`,h,[['너도 소중해',()=>{aff(d.a,3);SCENE.duoE(d.a,['…알아. 그냥 듣고 싶었어.'],`${josa(T,'이','가')} ${josa(cn(d.b),'을','를')} 질투했다. 너도 소중하다고 말해 주었다.`)}],['그런 거 아니야',()=>{aff(d.a,1);SCENE.duoE(d.a,['…그래. 알았어.'],`${josa(T,'이','가')} ${josa(cn(d.b),'을','를')} 질투했다.`)}],['질투하는 거야?',()=>{aff(d.a,2);SCENE.duoE(d.a,['*대답 대신 시선을 피한다.','…아니라고는 안 할게.'],`${josa(T,'이','가')} ${josa(cn(d.b),'을','를')} 질투했다. 아니라고는 하지 않았다.`)}]]));return}
+  S.duo[d.id]=1;const A=cn(d.a),Bn=cn(d.b),H=`거실의 목소리 — ${d.h}`;
+  const body=duoLn(d.p);
+  if(d.k==='chat'){aff(d.a,1);aff(d.b,1);jr(`${josa(A,'과','와')} ${josa(Bn,'이','가')} 나누는 이야기를 엿들었다. 「${d.h}」`);ev(H,body,[['조용히 자리를 뜬다',null]],1);return}
+  ev(H,body,[[d.A[0],()=>{aff(d.a,3);aff(d.b,-1);SCENE.duoR(H,d,d.A[1],`${josa(A,'과','와')} ${josa(Bn,'이','가')} 다퉜다. ${A} 편을 들었다.`)}],[d.Bs[0],()=>{aff(d.b,3);aff(d.a,-1);SCENE.duoR(H,d,d.Bs[1],`${josa(A,'과','와')} ${josa(Bn,'이','가')} 다퉜다. ${Bn} 편을 들었다.`)}],[d.M[0],()=>{aff(d.a,1);aff(d.b,1);SCENE.duoR(H,d,d.M[1],`${josa(A,'과','와')} ${josa(Bn,'이','가')} 다퉜다. 둘 다 말렸다.`)}]])},
+ duoR:(H,d,L,j)=>{jr(j);save();ev(H,duoLn(L),[['자리를 뜬다',null]],1)},
+ duoE:(id,L,j)=>{jr(j);save();seq(id,`${cn(id)} — 질투`,L,h=>tev(id,`${cn(id)} — 질투`,h,[['이야기를 마친다',null]]))}
+});
+Object.assign(CMD,{duo:()=>{if(!S.act&&S.loc==='base')SCENE.duo()}});
 
 Object.assign(CMD,{recon:a=>{if(!S.act&&(S.left||{})[a])SCENE.recon(a)},a2a:()=>{if(!S.act&&(S.a2||0)===0)SCENE.a2a()},a2b:()=>{if(!S.act&&S.a2===1)SCENE.a2b()},a2c:()=>{if(!S.act&&S.a2===2)SCENE.a2c()},a2d:()=>{if(!S.act&&S.a2===3)SCENE.a2d()},a2e:()=>{if(!S.act&&S.a2===4)SCENE.a2e()},a2f:()=>{if(!S.act&&S.a2===5)SCENE.a2f()}});
 window.__k2={bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
