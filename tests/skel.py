@@ -40,7 +40,7 @@ with sync_playwright() as p:
     pg.click('text=1편의 기록이 있다면'); pg.fill('#legt',LEG); pg.click('button[data-c=legread]'); pg.wait_for_timeout(200)
     t=pg.inner_text('.cr'); assert '불을 이어받은 자' in t and '<script>' not in t
     pg.click('button[data-c=start]'); pg.wait_for_timeout(150)
-    assert '손끝이 푸른 사람은 데려간다' in pg.inner_text('#pv')
+    assert '손끝이 푸른 사람이 나오면' in pg.inner_text('#pv')
     for i in range(5):
         pg.click('#pv .eo'); pg.click('#pv .eo'); pg.wait_for_timeout(50); t=pg.inner_text('#pv')
         if i==0: assert '레아는' in t and '용 사냥꾼' in t and '푸르다' in t, t
