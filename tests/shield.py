@@ -29,8 +29,8 @@ with sync_playwright() as p:
     E(pg,"()=>{G.cDone=true;enemyTurn()}");assert E(pg,"G.sh")==4
     E(pg,"()=>{G.on=false;$('#bt').classList.remove('on')}")
     print('elite ok')
-    E(pg,"()=>{S.night=3;startBattle('fight','lamp')}");assert E(pg,"G.shmax")==6
-    E(pg,"()=>{G.sh=0;G.fhp=Math.floor(G.fmax/2)-1;maybePhase(()=>{})}");assert E(pg,"G.ph")==2 and E(pg,"G.sh")==6
+    E(pg,"()=>{S.night=3;startBattle('fight','lamp')}");assert E(pg,"G.shmax")==4
+    E(pg,"()=>{G.sh=0;G.fhp=Math.floor(G.fmax/2)-1;maybePhase(()=>{})}");assert E(pg,"G.ph")==2 and E(pg,"G.sh")==4
     E(pg,"()=>{G.on=false;$('#bt').classList.remove('on')}")
     print('boss ok')
     # v055: 적이 휘두르는 도중 실드가 깨지면 남은 박자가 멎고 더 맞지 않는다. 암전 없이 글자만
