@@ -39,6 +39,8 @@ with sync_playwright() as p:
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg)
     pg.wait_for_selector('#ov.on h2:has-text("처음 듣는 말")',timeout=5000);t=pg.inner_text('#ov');assert '가스등' in t and '정전기가 아닙니다' in t
     choose(pg,'손을 편다');t=pg.inner_text('#ov');assert '솔레' in t;choose(pg,'그래. 주문이다');t=pg.inner_text('#ov');assert '새 주문 — 방전' in t and '교단이 알 겁니다' in t;okpop(pg)
+    # v058: 함께 있던 동료가 바로 주문 이야기를 꺼낸다
+    pg.wait_for_selector('#ov.on h2:has-text("손끝의 불")',timeout=5000);assert '문장이 끝나지 않더군요' in pg.inner_text('#ov');choose(pg,'말없이 듣는다');choose(pg,'네 비늘도 다시 깨어날까?');choose(pg,'이야기를 마친다')
     s=E(pg,"window.__k2.S");assert s['mg']==1 and 'shock' in s['sk'] and s['mgh']=='open' and s['mgs'].get('oswin')
     assert pg.locator('button[data-c=aw1]').count()==0
     # 레벨 기술 고르기에 혼불이 나오고 받은 주문은 나오지 않는다

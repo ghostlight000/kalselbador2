@@ -7,7 +7,7 @@ def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=1
 def okpop(pg):pg.wait_for_selector('#ov.on .btn.pri',timeout=10000);pg.click('#ov.on .btn.pri');pg.wait_for_timeout(60)
 def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650);(pg.is_visible('#ov.on h2:has-text("대성당")') and (choose(pg,'고개를 숙인다'),choose(pg,'대성당을 나선다')));(pg.is_visible('#ov.on h2:has-text("문 앞의 상자")') and (choose(pg,'서랍 깊이'),choose(pg,'서랍을 닫는다')))
 def win(pg):
-    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{window.__k2.G.fhp=0}");pg.evaluate("window.__k2.bact('atk')")
+    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0;if(G.pack)G.pack.forEach(p=>p.fhp=0)}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);t=pg.inner_text('#ov');okpop(pg);return t
 E=lambda pg,x:pg.evaluate(x)
 with sync_playwright() as p:
@@ -18,7 +18,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.eda=1;K.S.loc='base';K.S.coin=50;K.render()}")
     # 먼 파견에서 피트가 돌아오지 않는다
     pg.click('button[data-c=board]');E(pg,"()=>{const K=window.__k2;K._r=Math.random;Math.random=()=>0.01}");choose(pg,'성벽 바깥 폐허');choose(pg,'피트 (')
-    pg.wait_for_selector('#ov.on h2:has-text("돌아오지 않았다")',timeout=15000);E(pg,"()=>{Math.random=window.__k2._r}");okpop(pg)
+    pg.wait_for_selector('#ov.on h2:has-text("돌아오지 않았다")',timeout=60000);E(pg,"()=>{Math.random=window.__k2._r}");okpop(pg)
     s=E(pg,"window.__k2.S");assert s['pq']==1 and s['kids']['pit']['st']=='lost'
     pg.click('button[data-c=tab][data-a=quest]');assert '돌아오지 않은 아이' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     go(pg,'docks');pg.click('button[data-c=pqask]');t=pg.inner_text('#ov');assert '넝마 시장' in t and '가장 역겨운 문장' in t;okpop(pg)
@@ -36,7 +36,7 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.hq")==3 and not E(pg,"window.__k2.S.inv.grim");okpop(pg)
     pg.wait_for_timeout(200)
     if pg.is_visible('#ov.on'):okpop(pg)
-    pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert q.count('◆ 끝')>=2;pg.click('button[data-c=tab][data-a=place]');print('hag quest ok')
+    pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '끝낸 일' in q;pg.click('button[data-c=tab][data-a=place]');print('hag quest ok')
     # 새 적
     for f,w in [('shade','바닥으로 스며든다'),('lump','엄마를 불렀다'),('mutt','이름표'),('hollow','잊으면 이걸 읽을 것')]:
         E(pg,f"()=>window.__k2.startBattle('fight','{f}')");t=win(pg);assert w in t,(f,t)

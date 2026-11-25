@@ -15,7 +15,7 @@ def choose(pg,t,_to=10000):
 def okpop(pg):pg.wait_for_selector('#ov.on .btn.pri',timeout=10000);pg.click('#ov.on .btn.pri');pg.wait_for_timeout(60)
 def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650);(pg.is_visible('#ov.on h2:has-text("대성당")') and (choose(pg,'고개를 숙인다'),choose(pg,'대성당을 나선다')));(pg.is_visible('#ov.on h2:has-text("문 앞의 상자")') and (choose(pg,'서랍 깊이'),choose(pg,'서랍을 닫는다')))
 def win(pg):
-    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{window.__k2.G.fhp=0}");pg.evaluate("window.__k2.bact('atk')")
+    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0;if(G.pack)G.pack.forEach(p=>p.fhp=0)}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg)
 E=lambda pg,x:pg.evaluate(x)
 def start(pg):
@@ -68,7 +68,7 @@ with sync_playwright() as p:
         if cid=='barg':assert '내가 서 있다' in log
         E(pg,"()=>{const K=window.__k2;K.endBattle('win')}");okpop(pg)
     # 출신 반응·종족 질문
-    E(pg,"()=>{const K=window.__k2;K.S.party='eno';K.render()}");pg.click('button[data-c=talk]');assert '병사가 하나' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
+    E(pg,"()=>{const K=window.__k2;K.S.party='eno';K.S.mgt={kirien:1,oswin:1,ibre:1,barg:1,eno:1,kasimir:1};K.render()}");pg.click('button[data-c=talk]');assert '병사가 하나' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
     choose(pg,'물어보고 싶은 게 있어');choose(pg,'너에 대해 이야기해 줘');assert '지도 좀 보여 줄래?' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다');choose(pg,'이야기를 그만둔다')
     print('battle/talk ok')
     b.close()

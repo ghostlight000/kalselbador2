@@ -24,7 +24,7 @@ def go(pg,k):
     assert E(pg,f"window.__k2.S.loc==='{k}'"),k
     pg.wait_for_timeout(650)
 def win(pg):
-    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{window.__k2.G.fhp=0}");pg.evaluate("window.__k2.bact('atk')")
+    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0;if(G.pack)G.pack.forEach(p=>p.fhp=0)}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg)
 E=lambda pg,x:pg.evaluate(x)
 def sxa(pg,id):pg.click(f'button[data-c=sxa][data-a={id}]');pg.wait_for_timeout(80)
@@ -77,7 +77,7 @@ with sync_playwright() as p:
     go(pg,'outskirts');E(pg,"()=>{const K=window.__k2;K.SX.bell.steps[0].col.p=1}")
     for i in range(2):explore(pg)
     go(pg,'church');E(pg,"()=>{const K=window.__k2;K.S.inv.scrap=6;K.render()}");sxa(pg,'bell');choose(pg,'종을 단다');okpop(pg);assert E(pg,"window.__k2.S.sx.bell.e")=='ring' and E(pg,"window.__k2.S.inv.scrap")==1;print('bell ok')
-    pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '다시 울린다' in q and '나눠 마셨다' in q;pg.click('button[data-c=tab][data-a=place]')
+    pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '끝낸 일' in q;pg.click('h2.fold[data-a=done]');q=pg.inner_text('.M');assert '이름 없는 종' in q and '두 어머니' in q;pg.click('button[data-c=tab][data-a=place]')
     # 6) 연계: 모르텐의 열쇠 — 1막에 시작, 깨어나야 2단계, 3막에야 문
     E(pg,"()=>{const K=window.__k2;delete K.S.sxno.mort;K.S.mort=2;K.S.mg=0;K.S.rev=0;K.S.a3=0;K.render()}");go(pg,'docks');go(pg,'street');pg.wait_for_selector('#ov.on h2:has-text("빈 초소")',timeout=5000);assert '일곱째 문' in pg.inner_text('#ov');choose(pg,'수첩과 열쇠를 챙긴다')
     go(pg,'church');sxa(pg,'mort');assert '불의 목자' in pg.inner_text('#ov');choose(pg,'열쇠를 다시')

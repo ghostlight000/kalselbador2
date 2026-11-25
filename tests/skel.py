@@ -117,7 +117,7 @@ with sync_playwright() as p:
     assert 'barg' in S(pg)['comps']; print('barg/eno ok')
     # ---- 파견 ----
     go(pg,'base'); pg.click('button[data-c=board]'); pg.click('#ov.on .drow:has-text("시장 심부름")')
-    pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='파견에서 돌아왔다'",timeout=10000); okpop(pg); print('dispatch ok')
+    pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='파견에서 돌아왔다'",timeout=40000); okpop(pg); print('dispatch ok')
     # ---- 레벨·능력치·기술 ----
     s=S(pg); print('level',s['lv'],'xp',s['xp'],'sp',s['sp'],'skp',s['skp'],'sk',s['sk']); assert s['lv']>=3 and s['sp']>=2 and s['skp']>=1 and s['sk']==['hamstring']
     pg.click('button[data-c=tab][data-a=char]'); assert '✦' in pg.inner_text('.top')

@@ -7,7 +7,7 @@ def choose(pg,t):pg.wait_for_selector(f'#ov.on button:has-text("{t}")',timeout=1
 def okpop(pg):pg.wait_for_selector('#ov.on .btn.pri',timeout=10000);pg.click('#ov.on .btn.pri');pg.wait_for_timeout(60)
 def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650);(pg.is_visible('#ov.on h2:has-text("대성당")') and (choose(pg,'고개를 숙인다'),choose(pg,'대성당을 나선다')));(pg.is_visible('#ov.on h2:has-text("문 앞의 상자")') and (choose(pg,'서랍 깊이'),choose(pg,'서랍을 닫는다')))
 def win(pg):
-    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{window.__k2.G.fhp=0}");pg.evaluate("window.__k2.bact('atk')")
+    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0;if(G.pack)G.pack.forEach(p=>p.fhp=0)}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg)
 def drain(pg):
     for _ in range(8):
@@ -28,8 +28,11 @@ with sync_playwright() as p:
     # 2막: 깨어난 뒤
     E(pg,"()=>{const K=window.__k2;K.S.night=3;K.S.mort=2;K.joinComp('kirien');K.joinComp('oswin');K.S.party='oswin';K.grantBase()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;K.S.pit=1;K.S.manor=1;K.S.mr=3;K.S.ring=1;K.S.dec.ibre=1;K.S.dec.kasimir=1;K.S.dec.barg=1;K.S.dec.eno=1;K.S.eda=1;K.S.acad=1;K.S.vis.academy=1;K.S.mg=1;K.S.mgh='hide';K.S.orx={oswin:1,kirien:1};K.S.loc='docks';K.render()}")
-    pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '2막 · 장부와 재' in t and '지나온 길' in t;assert t.index('2막')<t.index('1막');pg.click('button[data-c=tab][data-a=place]')
-    go(pg,'street');pg.wait_for_selector('#ov.on h2:has-text("오스윈")',timeout=5000);assert '보존실' in pg.inner_text('#ov');choose(pg,'같이 가자')
+    pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '2막 · 장부와 재' in t and '끝낸 일' in t and '1막' not in t;pg.click('button[data-c=tab][data-a=place]')
+    go(pg,'street');assert not pg.is_visible('#ov.on h2:has-text("오스윈")')
+    # v058: 말을 걸면 주문 이야기 먼저, 이어서 보존실 제안
+    E(pg,"window.__k2.CMD.talk('oswin')");pg.wait_for_timeout(100);assert '촛불 셋' in pg.inner_text('#ov');choose(pg,'말없이 듣는다');choose(pg,'기록해 둘 거야?');choose(pg,'이야기를 잇는다')
+    pg.wait_for_selector('#ov.on h2:has-text("오스윈")',timeout=5000);t=pg.inner_text('#ov');assert '보존실' in t and '주문 이야기를 들은' in t,t;choose(pg,'같이 가자')
     t=pg.inner_text('.goalc');assert '공급 검사실' in t and '보존실' not in t,t;pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '동료들의 이야기' in t and '보존실의 약' in t,t;pg.click('button[data-c=tab][data-a=place]')
     go(pg,'pres');pg.click('button[data-c=oq1]');choose(pg,'들어간다');assert E(pg,"window.__k2.G.foe")=='clock';win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("보존실")',timeout=5000);choose(pg,'그 상자는 뭐야?');okpop(pg);assert E(pg,"window.__k2.S.oq")==2
@@ -38,7 +41,7 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.fac")==1 and E(pg,"window.__k2.S.oq")==3
     E(pg,"()=>{const K=window.__k2;K.S.party='kirien';K.render()}");go(pg,'docks');go(pg,'mill')
     assert pg.get_attribute('button[data-c=oq3]','disabled') is not None and '오스윈과 함께' in pg.inner_text('button[data-c=oq3]')
-    pg.click('button[data-c=tab][data-a=quest]');assert '오스윈과 함께 다녀야' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
+    pg.click('button[data-c=tab][data-a=quest]');assert '오스윈 — 지워진 쪽' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     go(pg,'works');pg.click('button[data-c=hboard]');assert '징수 명단' in pg.inner_text('#ov');okpop(pg)
     pg.click('button[data-c=talk]');assert '쇳물 냄새' in pg.inner_text('#ov') or '고개를 안 들어' in pg.inner_text('#ov') or pg.is_visible('#ov.on');pg.keyboard.press('Escape')
     E(pg,"()=>{const K=window.__k2;K.S.party='oswin';K.render()}")
@@ -60,7 +63,7 @@ with sync_playwright() as p:
     go(pg,'street');go(pg,'docks');go(pg,'base');pg.click('button[data-c=tab][data-a=quest]');assert '장부의 끝' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     pg.click('button[data-c=oq5]');choose(pg,'태운다');assert '되돌릴 수 없다' in pg.inner_text('#ov');choose(pg,'다시 생각한다');choose(pg,'이름 하나하나를');choose(pg,'이렇게 하기로');assert '평생 걸리겠군요' in pg.inner_text('#ov');okpop(pg)
     s=E(pg,"window.__k2.S");assert s['oq']==6 and s['oqe']=='return' and s['cq']['oswin']=='done'
-    pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '장부의 끝' in t and '돌려주고 있다' in t
+    pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '끝낸 일' in t and '보존실의 약' not in t
     pg.click('.M h2.fold[data-a=cq]');assert '장부의 끝' not in pg.inner_text('.M');print('ledger end ok')
     b.close()
 assert not errs,errs

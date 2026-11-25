@@ -15,7 +15,7 @@ def choose(pg,t,_to=10000):
 def okpop(pg):pg.wait_for_selector('#ov.on .btn.pri',timeout=10000);pg.click('#ov.on .btn.pri');pg.wait_for_timeout(60)
 def go(pg,k):pg.eval_on_selector(f'.map .node[data-a={k}]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))");choose(pg,'간다');pg.wait_for_function(f"window.__k2.S.loc==='{k}'",timeout=10000);pg.wait_for_timeout(650);(pg.is_visible('#ov.on h2:has-text("대성당")') and (choose(pg,'고개를 숙인다'),choose(pg,'대성당을 나선다')));(pg.is_visible('#ov.on h2:has-text("문 앞의 상자")') and (choose(pg,'서랍 깊이'),choose(pg,'서랍을 닫는다')))
 def win(pg):
-    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{window.__k2.G.fhp=0}");pg.evaluate("window.__k2.bact('atk')")
+    pg.wait_for_function('window.__k2.G.on');pg.click('#bov .btn.pri');pg.evaluate("()=>{const G=window.__k2.G;G.fhp=0;if(G.pack)G.pack.forEach(p=>p.fhp=0)}");pg.evaluate("window.__k2.bact('atk')")
     pg.wait_for_function('!window.__k2.G.on',timeout=10000);okpop(pg);pg.wait_for_selector('#ov.on h2',timeout=5000)
 S=lambda pg:pg.evaluate('window.__k2.S')
 def setup(pg):
@@ -44,7 +44,7 @@ with sync_playwright() as p:
         go(pg,'sanat');assert pg.locator('button[data-c=kq1][disabled]').count()==1
         if end=='new':
             pg.evaluate("()=>{window.__k2.S.orx={kirien:1,oswin:1,ibre:1,kasimir:1};window.__k2.S.loc='sanat';window.__k2.render()}");pg.click('button[data-c=talk]');choose(pg,'이곳은 어때?');t=pg.inner_text('#ov');assert '연구실이 있던 자리' in t;choose(pg,'이야기를 그만둔다')
-            pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '동료들의 이야기' in q and '키리엔과 함께 다녀야' in q;pg.click('button[data-c=tab][data-a=place]')
+            pg.click('button[data-c=tab][data-a=quest]');q=pg.inner_text('.M');assert '동료들의 이야기' in q and '키리엔 — 등불을 든 사람' in q;pg.click('button[data-c=tab][data-a=place]')
         pg.evaluate("()=>{const K=window.__k2;K.S.party='kirien';K.render()}")
         pg.click('button[data-c=kq1]');assert '공급 대기' in pg.inner_text('#ov');okpop(pg);assert S(pg)['kq']==1
         pg.click('button[data-c=kq2]');choose(pg,'안으로 들어간다');assert pg.evaluate('window.__k2.G.foe')=='collector';win(pg)
@@ -66,7 +66,7 @@ with sync_playwright() as p:
             assert pg.locator('#ov button:has-text("남의 기억")').count()==0;choose(pg,'빈 채로');choose(pg,'이렇게 하기로');assert '…에다.' in pg.inner_text('#ov')
         else:choose(pg,'구호소');choose(pg,'이렇게 하기로');assert '내가 기억하면 돼요' in pg.inner_text('#ov')
         okpop(pg);s=S(pg);assert s['kq']==6 and s['kqe']==end and s['cq']['kirien']=='done';results[end]=s['aff']['kirien']
-        pg.click('button[data-c=tab][data-a=quest]');assert '◆ 끝' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
+        pg.click('button[data-c=tab][data-a=quest]');assert '끝낸 일' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
         if end=='new':
             # 저택 동료의 방: 누구와도 이야기, 오스윈의 자기 이야기, 표시에 관계 수치 없음
             pg.evaluate("()=>{const K=window.__k2;K.S.aff.oswin=45;K.S.loc='base';K.render()}")
