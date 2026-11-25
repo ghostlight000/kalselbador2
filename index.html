@@ -1266,7 +1266,7 @@ function mgtScene(id,next){if(!mgtDue(id)){if(next)next();return}S.mgt=S.mgt||{}
   const head=(S.mgs||{})[id]?D.saw:S.mgh==='open'?D.open:D.hide;
   seq(id,H,head.concat(D.b),h=>tev(id,H,h,D.c.map(([l,g,r])=>[l,()=>{aff(id,g);jr(`${josa(T,'과','와')} 손끝의 불에 대해 이야기했다.`);seq(id,H,r,h2=>tev(id,H,h2,[[next?'이야기를 잇는다':'이야기를 마친다',next||null]]))}])))};
 const chNext=id=>{const L=CH[id];if(!L)return null;const n=(S.chd||{})[id]||0;return L[n]&&((S.aff||{})[id]||0)>=L[n].need&&actN()>=(L[n].act||1)?L[n]:null};
-const talkNew=id=>mgtDue(id)||(typeof rvtDue==='function'&&rvtDue(id))||(id==='oswin'&&S.mg&&!S.oq0&&S.comps.includes('oswin'))||(id==='barg'&&typeof bqDue==='function'&&bqDue())||(id==='barg'&&S.bq===4);
+const talkNew=id=>mgtDue(id)||(typeof rvtDue==='function'&&rvtDue(id))||(id==='oswin'&&S.mg&&!S.oq0&&S.comps.includes('oswin'))||(id==='barg'&&typeof bqDue==='function'&&bqDue())||(id==='barg'&&S.bq===4)||(id==='ibre'&&typeof iqDue==='function'&&iqDue())||(id==='eno'&&typeof nqDue==='function'&&nqDue());
 const talkSub=id=>talkNew(id)||chNext(id)||(typeof aevFor==='function'&&aevFor(id))?'✦ 할 이야기가 있는 것 같다':'이야기를 나눈다';
 // 호감 10단계(불의 크기). 화면에는 숫자도 이름도 보이지 않는다. 로맨스를 고르면 '마음'
 const AFT=[[0,'식은 재'],[10,'불씨'],[20,'성냥불'],[30,'촛불'],[40,'등잔불'],[50,'난롯불'],[60,'화톳불'],[70,'횃불'],[80,'등대불'],[90,'꺼지지 않는 불']]; // 화면에는 보이지 않는다
@@ -2324,6 +2324,7 @@ function placeView(){
   if(S.loc==='base'&&S.oq===5)acts.push(B('oq5','장부의 끝',{sub:'오스윈이 서재에서 기다린다',dis:busy}));
   if(S.loc==='works')acts.push(B('hboard','하칸골 게시판',{sub:S.facn?'징수 명단이 붙어 있다':'공장 문 앞 게시판에 종이가 빽빽하다',dis:busy}));
   if(typeof bqActs==='function')acts.push(...bqActs(busy));
+  if(typeof iqnqActs==='function')acts.push(...iqnqActs(busy));
   if(S.loc==='sanat'&&!S.kq)acts.push(B('kq1','하얀 요양소',{sub:kirSub('창마다 쇠창살을 단 건물'),dis:busy||!kir}));
   if(S.loc==='sanat'&&S.kq===1)acts.push(B('kq2','밤의 요양소',{sub:kirSub('회색 마차가 드나드는 뒷문'),dis:busy||!kir}));
   if(S.loc==='street'){
@@ -2411,6 +2412,8 @@ function questView(){
   if(S.acad&&(S.comps.includes('kirien')||kq)){const T='키리엔 — 등불을 든 사람';if(kq>=6)done.comp.push(T);else cb.push(`<p><b>${T}</b></p>${stp(KQ,kq)}`)}
   if(S.comps.includes('oswin')&&(S.mg||oq)){const T='오스윈 — 지워진 쪽';if(oq>=6)done.comp.push(T);else{const OQS=[['보존실의 약','장부의 지워진 쪽을 되살릴 약이 학술원 지하 보존실에 있다.'],['되살아난 이름','약으로 장부의 지워진 쪽을 되살린다. 저택 서재에서.'],['3번 방직소','오스윈의 동생 리세가 하칸골 3번 방직소에 있다.'],['리세의 담당 학자',S.vrev?'금서고에서 가져온 설계서를 오스윈에게 보여 주자.':(S.a2||0)>=6?'학술원 금서고에 원본 서명이 있다. 오스윈과 함께 가자.':'원본 서명은 학술원 금서고에 있다. 금서고에 들어갈 길을 찾아야 한다.'],['장부의 끝','장부를 어떻게 할지 오스윈과 정한다.']];
     const c=Math.max(0,oq-1);cb.push(`<p><b>${T}</b></p>${stp(OQS,c)}`)}}
+  if(S.iq){const T='이브레 — 색 없는 이름';if(S.iq>=5)done.comp.push(T);else cb.push(`<p><b>${T}</b></p>${stp(IQS,S.iq-1)}`)}
+  if(S.nq){const T='에노 — 물길 아래의 노래';if(S.nq>=4)done.comp.push(T);else cb.push(`<p><b>${T}</b></p>${stp(NQS,S.nq-1)}`)}
   if(S.bq){const T='바르그 — 맹세의 끝';if(S.bq>=5)done.comp.push(T);else cb.push(`<p><b>${T}</b></p>${stp(BQS,S.bq-1)}`)}
   const mt=[];if(S.pit&&!met(S,'eno'))mt.push(['물길 아이','부두 하수구 쪽에서 아이들이 물길 아이 이야기를 한다. 길을 알려 주는 무언가가 있다고.']);else if(S.dec.eno&&!S.comps.includes('eno'))mt.push(['물길 아이','“운하 부두 하수구 입구에 있을게요. 생각 바뀌면 불러.”']);
   if(S.pit&&!met(S,'barg'))mt.push(['회색 마차의 늑대','“밤마다 부두에 큰 늑대 아저씨가 나타나. 회색 마차만 보면 지붕에서 뛰어내려.” 피트의 말이다.']);else if(S.dec.barg&&!S.comps.includes('barg'))mt.push(['회색 마차의 늑대','“부두 창고 지붕 밑에 있겠다. 마차 다니는 길이 보이는 데.”']);
@@ -2650,7 +2653,7 @@ const CMD={
   mtalk:()=>{if(S.mort!==1)return;S.masked=S.masked||{};const back=[['다른 이야기를 한다',()=>CMD.mtalk()],['이야기를 그만둔다',null]];
     const N=MTQ.filter(n=>!S.masked[n[0]]&&(!n[1]||S.masked[n[1]])).slice(0,3),L=N.length?N:MTQ.filter(n=>S.masked[n[0]]);
     tev('morten','모르텐','<p class="m">모르텐이 막대에 몸을 기댄다.</p>'+(N.length?'':'<p class="m">더 묻고 싶은 건 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>'),L.map(([id,,q,Ls])=>[q,()=>{S.masked[id]=1;seq('morten','모르텐',typeof Ls==='function'?Ls():Ls,h=>tev('morten','모르텐',h,back))}]).concat([['이야기를 그만둔다',null]]))},
-  talk:a=>{const id=a||S.party;if(isAmn(id)){amnTalk(id);return}if(S.taken===id)return;if(id==='barg'&&S.revd&&!S.bk&&!(S.left||{}).barg){SCENE.bargKnow();return}if((S.left||{})[id])return;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.sx=S.sx||{};S.asked=S.asked||{};S.tnew=S.tnew||{};if(mgtDue(id)){mgtScene(id,()=>CMD.talk(id));return}if(typeof rvtDue==='function'&&rvtDue(id)){rvtScene(id,()=>CMD.talk(id));return}if(id==='oswin'&&S.mg&&!S.oq0){SCENE.oq0();return}if(id==='barg'&&bqDue()){SCENE.bq0();return}
+  talk:a=>{const id=a||S.party;if(isAmn(id)){amnTalk(id);return}if(S.taken===id)return;if(id==='barg'&&S.revd&&!S.bk&&!(S.left||{}).barg){SCENE.bargKnow();return}if((S.left||{})[id])return;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.sx=S.sx||{};S.asked=S.asked||{};S.tnew=S.tnew||{};if(mgtDue(id)){mgtScene(id,()=>CMD.talk(id));return}if(typeof rvtDue==='function'&&rvtDue(id)){rvtScene(id,()=>CMD.talk(id));return}if(id==='oswin'&&S.mg&&!S.oq0){SCENE.oq0();return}if(id==='barg'&&bqDue()){SCENE.bq0();return}if(id==='ibre'&&typeof iqDue==='function'&&iqDue()){SCENE.iq0();return}if(id==='eno'&&typeof nqDue==='function'&&nqDue()){SCENE.nq0();return}
     let top='';const tn=S.tnew[id];if(tn){delete S.tnew[id];const L=(TIERL[id]||{})[tn];if(L)top=tln(id,[L])}
     const back=[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]],T=cn(id);S.orx=S.orx||{};
     if(S.orx[id]){const ae=aevFor(id);if(ae){if(tn)S.tnew[id]=tn;S.aevK=ae;SCENE.aev();return}}
@@ -4050,6 +4053,61 @@ Object.assign(SCENE,{
    [['내일도 같이 가자',()=>{L.forEach(c=>aff(c,2));SCENE.a3HearthE('<p>대답은 없다. 대신 누군가 장작 하나를 더 넣고 누군가 그 옆으로 자리를 좁힌다.</p>')}],['나는 누구였을까',()=>{L.forEach(c=>aff(c,1));const top=L.slice().sort((a,b)=>((S.aff||{})[b]||0)-((S.aff||{})[a]||0))[0];SCENE.a3HearthE(top?`<p>한참 뒤 ${josa(cn(top),'이','가')} 불을 보며 말한다.</p><p>${cn(top)} — “${{kirien:'몰라. 근데 지금 누군지는 알아. 그걸로 시작하자.',oswin:'기록에 없는 쪽이 더 많습니다. 그러니 지금부터 적으면 됩니다.',ibre:'모릅니다. 저도 제 이름을 스스로 지었습니다.',kasimir:'누구였든 오늘 밤 이 의자에 앉은 사람은 그대입니다.',barg:'…알게 되면 말해 주마. 몰라도 상관없다.',eno:'여럿이었을 거예요. 나처럼.'}[top]}”</p>`:'<p>대답하는 사람은 없다. 불만 낮게 탄다.</p>')}],['말없이 불을 쬔다',()=>{L.forEach(c=>aff(c,1));SCENE.a3HearthE('<p>아무도 말하지 않는다. 그게 이상하게 편하다.</p>')}]])},
  a3HearthE:h=>{jr('2막이 끝난 밤 저택 벽난로 앞에 다들 모여 앉았다. 누구도 먼저 자러 가지 않았다.');ev('여덟 번째 종',h+'<p class="m">새벽이 가까워서야 하나둘 방으로 돌아간다.</p>',[['불을 끈다',null]],1)}
 });
+
+/* ===== 이브레 퀘스트 「색 없는 이름」 (v060) — S.iq 1 내기 결투 → 2 표본실 → 3 이름 없는 동생 → 4 명부 앞에서 → 5 끝 ===== */
+const IQS=[['내기 결투','무색 징수 명단을 쥔 판돈꾼이 하칸골 대연소로 뒤 결투장에 있다. 이브레와 함께 가자.'],['유리관 표본실','명단은 무색 4번을 하얀 요양소 지하 표본실로 보냈다고 적었다.'],['이름 없는 동생','저택에서 동생이 깨어났다. 이브레가 기다린다.'],['명부 앞에서','시계탑 광장 시청 계단의 테오도르에게 두 이름을 어떻게 할지 정한다.']];
+const IQE={reg:'이브레와 동생의 이름이 비늘 색 칸을 비운 채 시민 명부에 올랐다.',ledger:'이브레는 명부를 거부하고 결투장에 무색들의 이름 장부를 따로 세웠다.'};
+const iqDue=()=>!S.iq&&S.rev&&(S.rvt||{}).ibre&&S.comps.includes('ibre')&&!(S.left||{}).ibre&&S.taken!=='ibre'&&actN()>=2.5;
+/* ===== 에노 퀘스트 「물길 아래의 노래」 (v060) — S.nq 1 저택 지하 → 2 물길 아래 깊은 곳 → 3 맨 아래 애 → 4 끝 ===== */
+const NQS=[['막힌 물길','저택 지하의 막힌 물길을 뚫으려면 고철 다섯이 있어야 한다. 에노와 함께 내려가자.'],['물길 아래 깊은 곳','뚫린 물길이 물길 아래 깊은 곳까지 이어진다. 에노와 함께 가자.'],['맨 아래 애','에노 안의 맨 아래 조각을 어떻게 할지 정한다.']];
+const NQE={return:'에노 안의 맨 아래 조각을 돌려받았다. 에노는 가벼워졌다.',live:'에노는 맨 아래 조각까지 모두 품은 채 여럿으로 살기로 했다.',one:'에노는 제일 작은 자신 하나를 고르고 나머지 목소리를 바다로 보냈다.'};
+const nqDue=()=>!S.nq&&S.rev&&(S.rvt||{}).eno&&S.comps.includes('eno')&&!(S.left||{}).eno&&S.taken!=='eno'&&actN()>=2.5;
+const iqnqActs=busy=>{const a=[],wi=S.party==='ibre',we=S.party==='eno';
+  if(S.iq===1&&S.loc==='works')a.push(B('iq1','대연소로 뒤 결투장',{sub:wi?'판돈꾼이 장부를 끼고 앉아 있다':'이브레와 함께 가야 한다',dis:busy||!wi}));
+  if(S.iq===2&&S.loc==='sanat')a.push(B('iq2','요양소 지하 표본실',{sub:wi?'계단 끝에 유리관이 줄지어 있다':'이브레와 함께 가야 한다',dis:busy||!wi}));
+  if(S.iq===3&&S.loc==='base')a.push(B('iq3','벽난로 앞의 동생',{sub:'이브레가 기다린다',dis:busy}));
+  if(S.iq===4&&S.loc==='square')a.push(B('iq4','시청 계단의 테오도르',{sub:'두 이름을 어떻게 할지 정한다',dis:busy}));
+  if(S.nq===1&&S.loc==='base')a.push(B('nq1','저택 지하의 쇠살문',{sub:!we?'에노와 함께 가야 한다':(S.inv.scrap||0)<5?`고철 다섯이 있어야 한다 · 가진 것 ${S.inv.scrap||0}`:'물이 문을 두드린다',dis:busy||!we||(S.inv.scrap||0)<5}));
+  if(S.nq===2&&S.loc==='under')a.push(B('nq2','물길 아래 깊은 곳',{sub:we?'촛농 표시가 끝나는 곳보다 더 아래':'에노와 함께 가야 한다',dis:busy||!we}));
+  if(S.nq===3&&(S.loc==='under'||S.loc==='base'))a.push(B('nq3','맨 아래 애',{sub:'에노가 기다린다',dis:busy}));
+  return a};
+Object.assign(SCENE,{
+ iq0:()=>{S.iq0=1;save();seq('ibre','이브레 — 무색 4번',['*이브레가 결투장에서 번 동전 주머니를 탁자에 내려놓는데 묵직하다.','동생을 찾겠습니다. 이번엔 셈이 끝날 때까지 기다리지 않겠습니다.','여덟 해 전 이 돈의 반으로 동생을 학술원에 맡겼습니다. 글을 가르쳐 준다고 했습니다. 명부에 올려 준다고도.','>어디서부터 찾지?','하칸골 대연소로 뒤에 내기 결투장이 있습니다. 그곳 판돈꾼이 무색 징수 명단을 쥐고 있습니다.','명단은 돈으로 팔지 않습니다. 이겨야 줍니다.'],
+   h=>tev('ibre','이브레 — 무색 4번',h,[['같이 싸우자',()=>{aff('ibre',3);SCENE.iq0E('<p>이브레 — “예. 앞에는 제가 서겠습니다. 이번만은 옆에 서 주십시오.”</p>')}],['돈은 내가 보탤게',()=>{aff('ibre',2);SCENE.iq0E('<p>이브레 — “돈은 됐습니다. 판돈꾼은 돈보다 피를 좋아합니다.”</p><p class=\"m\">이브레가 동전 주머니를 다시 허리에 찬다.</p>')}]]))},
+ iq0E:h=>{S.iq=1;jr('이브레가 여덟 해 전 학술원에 맡긴 동생 무색 4번을 찾기로 했다. 하칸골 결투장의 판돈꾼이 무색 징수 명단을 쥐고 있다.');save();tev('ibre','이브레 — 무색 4번',h,[['이야기를 마친다',null]])},
+ iq1:()=>ev('대연소로 뒤 결투장',`<p>대연소로 굴뚝 그늘 아래 모래를 깐 자리에 사람들이 둘러서 있다. 판돈꾼이 장부를 끼고 의자에 앉아 있다.</p><p>판돈꾼 — “무색 3번이 돌아왔군. 상대는 우리가 정한다. 지치지 않는 놈으로.”</p><p class="m">반쯤 태운 일꾼 하나가 모래 위로 걸어 나오는데 눈동자가 텅 비었다.</p><p>이브레 — “…저는 저 사람을 못 칩니다. 같은 줄에 섰던 얼굴입니다. 당신이 서 주십시오.”</p>`,[['모래 위에 선다',()=>{S.bstory='iq1';save();startBattle('fight','halfw')}],['오늘은 물러난다',null]]),
+ iq1W:()=>{S.iq=2;jr('하칸골 결투장에서 무색 징수 명단을 얻었다. 첫 장 서식 승인 칸에 내 서명이 있었다. 맨 뒤 장에는 무색 4번이 하얀 요양소 지하 표본실로 옮겨졌다고 적혀 있었다.');save();
+  ev('무색 징수 명단',`<p>일꾼이 모래 위에 주저앉자 판돈꾼이 혀를 차며 장부 한 권을 던진다.</p><p class="m">「무색 징수 명단 — 첫 공급분」. 첫 장 아래 서식 승인 칸에 서명이 있는데 편지와 같은 글씨다.</p><p class="m">맨 뒤 장의 날짜는 여덟 해 전이다. “무색 4번 · 학술원 위탁 · 하얀 요양소 지하 표본실 이관.”</p>`+tln('ibre',['*이브레가 첫 장의 서명을 오래 보다가 맨 뒤 장을 펼친다.','…당신의 서명은 맨 앞에 있습니다. 동생은 맨 뒤에 있습니다.','그 사이가 스무 해입니다. 셈은 나중에 하겠습니다.','표본실로 가겠습니다.']),[['명단을 챙긴다',null]],1)},
+ iq2:()=>ev('요양소 지하 표본실',`<p>요양소 지하로 내려가는 계단 끝에 유리관이 줄지어 서 있다. 관마다 푸른 물이 차 있고 번호표가 붙었다.</p><p class="m">맨 앞의 관 하나가 깨져 있다. 깨진 유리 사이에서 무언가 몸을 일으킨다.</p><p>이브레 — “물러나 계십시오. …아닙니다. 같이 서 주십시오.”</p>`,[['맞선다',()=>{S.bstory='iq2';save();startBattle('fight','glass')}],['오늘은 물러난다',null]]),
+ iq2W:()=>{S.iq=3;jr('하얀 요양소 지하 표본실에서 이브레의 동생 무색 4번을 찾았다. 여덟 해 동안 허물을 다 벗지 못하게 물속에 잠겨 있었다. 이브레가 유리를 깨고 동생을 꺼냈다.');save();
+  ev('무색 4번',`<p>그것이 유리 조각 사이로 주저앉자 맨 안쪽 줄의 관 하나가 보인다. 번호표 — “무색 4번 · 이름 없음 · 허물 관찰 · 여덟 해.”</p><p class="m">관 속에서 이브레보다 조금 작은 무색 파볼릭이 웅크린 채 잠들어 있다. 비늘 아래로 새 비늘이 비친다.</p>`+tln('ibre',['*이브레가 큰 손바닥을 유리에 대자 비늘이 선다.','…허물을 벗는 중입니다. 여덟 해 동안 다 벗지 못하게 물속에 두었습니다.','*이브레가 주먹으로 유리를 친다. 한 번. 두 번.'])+`<p>세 번째에 유리가 갈라지고 푸른 물이 쏟아진다. 동생이 눈을 뜨고 이브레를 한참 보다가 입을 벌리는데 소리가 나오지 않는다.</p>`+tln('ibre',['괜찮다. 말은 나중에 배우면 된다. 나도 그랬다.','*이브레가 동생을 안아 드는데 삼 미터의 몸이 처음으로 작아 보인다.']),[['저택으로 데려간다',null]],1)},
+ iq3:()=>seq('ibre','이름 없는 동생',['*저택 거실 벽난로 앞. 동생이 담요를 두른 채 불을 보는데 따뜻한 돌 쪽으로 자꾸 다가앉는 것까지 이브레와 같다.','동생이 아직 말을 못 합니다. 그래도 제 손가락은 셉니다. 하나. 둘.','>이름은 어떻게 하지?','저는 제 이름을 스스로 지었습니다. 남이 지어 준 이름은 번호뿐이었습니다.','그래서 모르겠습니다. 제가 지어 주면 또 남이 지어 준 이름이 됩니다.'],
+   h=>tev('ibre','이름 없는 동생',h,[['스스로 고를 때까지 기다리자',()=>SCENE.iq3E('wait',4,['예. 기다리겠습니다. 여덟 해도 기다렸습니다.','*동생이 이브레의 손가락을 하나 더 센다. 셋.'])],['네가 지어 줘',()=>SCENE.iq3E('sun',3,['*이브레가 한참 생각한다.','…그럼 아주 작게 짓겠습니다. 「볕」. 햇볕 받은 돌에서 따왔습니다.','싫으면 버려도 된다. 나중에 네 걸로 바꿔라.','*동생이 입을 달싹인다. 소리는 없지만 모양은 「볕」이다.'])],['내가 지어 줄까?',()=>SCENE.iq3E('no',1,['*이브레가 고개를 젓는다.','…아닙니다. 당신의 글씨는 이미 동생의 명단 맨 앞에 있습니다.','이름까지 당신 글씨면 동생은 또 남의 장부에 사는 겁니다.'])]])),
+ iq3E:(k,g,L)=>{S.iqN=k;aff('ibre',g);S.iq=4;jr('이브레의 동생이 저택에서 깨어났다.'+(k==='sun'?' 이브레가 「볕」이라는 이름을 지어 주었다.':k==='wait'?' 이름은 동생이 스스로 고를 때까지 기다리기로 했다.':' 이름은 아직 없다.'));save();
+  seq('ibre','이름 없는 동생',L.concat(['시청에 테오도르라는 서기가 있다고 들었습니다. 명부 이야기를 해야겠습니다. 같이 가 주십시오.']),h=>tev('ibre','이름 없는 동생',h,[['고개를 끄덕인다',null]]))},
+ iq4:()=>ev('시청 계단',`<p>시청 계단 끝에서 테오도르가 명부를 끌어안고 있다. 이브레가 계단 맨 아래에 서자 줄 선 사람들이 슬그머니 물러난다.</p><p>테오도르 — “무색을 명부에 올리려면 비늘 색 칸을 채워야 하오. 법이 그렇소.”</p><p>테오도르 — “…그 칸을 비워 두고 올릴 수는 있소. 법은 아니지만 내 손은 떨리지 않겠지.”</p>`+tln('ibre',['*이브레가 명부를 내려다본다.','명부에 오르면 저와 동생은 사람이 됩니다. 결투장의 다른 무색은 그대로 번호입니다.','어느 쪽이든 당신이 정해 주십시오. 저는 아직 셈이 끝나지 않았습니다.']),[['두 이름을 명부에 올린다',()=>SCENE.iq4C('reg')],['무색들의 장부를 따로 세운다',()=>SCENE.iq4C('ledger')]]),
+ iq4C:k=>ev('시청 계단',`<p class="m">${{reg:'비늘 색 칸을 비운 채 두 이름을 시민 명부에 올린다',ledger:'명부를 거부하고 결투장에 무색들의 이름 장부를 따로 세운다'}[k]}. 정한 뒤에는 되돌릴 수 없다.</p>`,[['이렇게 하기로 한다',()=>SCENE.iqEnd(k)],['다시 생각한다',()=>SCENE.iq4()]]),
+ iqEnd:k=>{S.iq=5;S.iqe=k;S.cq=S.cq||{};S.cq.ibre='done';aff('ibre',k==='ledger'?5:4);jr('이브레와 「색 없는 이름」을 정했다. '+IQE[k]);log('이브레의 이야기 「색 없는 이름」을 마쳤다.');save();
+  const nm=S.iqN==='sun'?'볕':'';
+  ev('색 없는 이름',(k==='reg'?`<p>테오도르가 펜을 든다. 첫 줄에 「이브레」. 비늘 색 칸은 하얗게 비워 둔다.</p><p>둘째 줄에서 펜이 멈춘다.${nm?` 이브레가 낮게 말한다. 「${nm}」. 테오도르가 받아 적는다.`:' 이름 칸도 비워 둔다. 동생이 고르는 날 채우기로 한다.'}</p>`+tln('ibre',['*이브레가 명부를 오래 내려다본다.','제 이름이 종이에 있습니다. 번호가 아닌 이름으로.','…생각보다 가볍습니다. 그래서 더 이상합니다.']):`<p>이브레가 넝마 시장에서 빈 장부 한 권을 산다. 결투장 모래 위에 앉아 첫 줄에 삐뚤빼뚤 쓴다. 「이브레」.</p><p>둘째 줄은 ${nm?`「${nm}」`:'비워 둔다'}. 그 아래로 무색들이 하나둘 줄을 선다. 이름이 있는 사람도 없는 사람도.</p>`+tln('ibre',['*이브레가 큰 손으로 분필 가루를 털어 낸다.','명부는 저희를 셀 줄 모릅니다. 그러니 저희가 셉니다.','…당신의 서명은 그 장부 맨 앞에 있었습니다. 이 장부 맨 앞에는 제 이름이 있습니다. 셈은 그걸로 끝내겠습니다.']))+'<p class="m">이브레의 이야기 「색 없는 이름」이 끝났다.</p>',[['고개를 끄덕인다',null]],1)},
+ nq0:()=>{S.nq0=1;save();seq('eno','에노 — 막힌 물길',['*에노가 저택 지하로 내려가는 계단 앞에 쪼그려 앉아 있다.','여기 막힌 물길 있잖아요. 언젠가 뚫겠다고 했던 거.','요즘 맨 아래 애가 자꾸 그쪽으로 가자고 해요. 물이 막혀서 내려가질 못한대요.','>뚫으면 어떻게 되는데?','물길 아래까지 이어져요. 거기서 맨 아래 애를 물 위로 올릴 수 있을 것 같아요.','…무서워요. 걔가 올라오면 내가 지금 나로 남을지 모르겠어요.'],
+   h=>tev('eno','에노 — 막힌 물길',h,[['같이 내려가자',()=>{aff('eno',3);SCENE.nq0E('<p>에노 — “응. 같이면 덜 무서워요.”</p>')}],['안 해도 돼',()=>{aff('eno',2);SCENE.nq0E('<p class=\"m\">에노가 고개를 젓는다.</p><p>에노 — “안 하면 걔가 계속 물을 두드려요. 밤마다. …해야 돼요.”</p>')}]]))},
+ nq0E:h=>{S.nq=1;jr('에노가 저택 지하의 막힌 물길을 뚫자고 했다. 맨 아래 조각이 자꾸 그쪽으로 가자고 한다. 고철 다섯이 있어야 한다.');save();tev('eno','에노 — 막힌 물길',h,[['이야기를 마친다',null]])},
+ nq1:()=>{ev('저택 지하',`<p>지하 저장고 바닥 한쪽에 쇠살문이 녹슬어 붙어 있고 그 아래서 물이 문을 두드리는 소리가 난다.</p><p class="m">고철 다섯으로 쐐기를 박아 살문을 들어 올리자 검은 물이 솟구치고 그 속에서 무언가 몸을 튼다.</p><p>에노 — “장어예요. 막힌 물에 오래 갇혀서 화가 났어요.”</p>`,[['맞선다',()=>{S.bstory='nq1';save();startBattle('fight','eel')}]])},
+ nq1W:()=>{S.nq=2;add('scrap',-5);jr('저택 지하의 막힌 물길을 뚫었다. 물길 아래 깊은 곳까지 이어진다.');save();ev('저택 지하',`<p>장어가 검은 물 속으로 사라지자 막혀 있던 물이 한꺼번에 아래로 빠지고 쇠살문 아래로 좁은 물길이 열린다.</p><p class="m">멀리서 물이 노래한다. 물길 아래 갈림길의 촛농 표시가 이 아래까지 이어져 있다.</p>`+tln('eno',['열렸어요. …맨 아래 애가 조용해졌어요. 기다리는 거예요.']),[['살문을 닫는다',null]],1)},
+ nq2:()=>ev('물길 아래 깊은 곳',`<p>촛농 표시가 끝나는 곳보다 더 아래로 내려가자 물이 허리까지 차오르고 벽에 겨울 시대 글자가 반쯤 남아 있다.</p><p class="m">물이 사람 키만큼 일어서더니 얼굴이 여럿 떠올랐다 가라앉는다.</p><p>에노 — “나처럼 생긴 애예요. 근데 앞에 서는 목소리가 하나도 없어. 다들 동시에 말해.”</p>`,[['맞선다',()=>{S.bstory='nq2';save();startBattle('fight','drown')}],['오늘은 물러난다',null]]),
+ nq2W:()=>{S.nq=3;jr('물길 아래 깊은 곳에서 에노 안의 맨 아래 조각이 떠올랐다. 깨진 돔 아래서 분필을 쥐고 누군가에게 말을 가르치던 옛 나였다.');save();
+  seq('eno','맨 아래 애',['*고인 것이 무너져 내리자 물이 잔잔해진다. 에노가 물 한가운데 서서 눈을 감는다.','*에노의 얼굴이 몇 번 바뀐다. 빵 굽던 할머니. 병사. 우는 법을 잊은 아이.','*그리고 마지막으로 처음 보는 얼굴. 젊고 피곤한 얼굴이 분필을 쥐고 있다.','“원 안에 서라. 말은 목이 기억한다. 머리는 몰라도 된다.”','…이 목소리예요. 맨 아래 애.','*에노가 눈을 뜨고 나를 본다.','이 애 당신이에요. 아주 오래전의 당신. 깨진 돔 아래서 누군가한테 말을 가르치던.','…너도 나처럼 여럿이구나.'],h=>tev('eno','맨 아래 애',h,[['이 조각을 어떻게 할지 정한다',()=>SCENE.nq3()]]))},
+ nq3:()=>tev('eno','맨 아래 애','<p class="m">에노가 두 손을 모아 물을 뜬다. 물이 미지근하다.</p><p>에노 — “당신이 정해요. 걔는 당신 거니까. 근데 이제 내 것이기도 해요.”</p>',[['나에게 돌려보낸다',()=>SCENE.nq3C('return')],['함께 산다',()=>SCENE.nq3C('live')],['에노가 하나를 고르게 한다',()=>SCENE.nq3C('one')]]),
+ nq3C:k=>ev('맨 아래 애',`<p class="m">${{return:'맨 아래 조각을 나에게 돌려받는다',live:'에노가 맨 아래 조각까지 모두 품고 여럿으로 산다',one:'에노가 제일 작은 자신 하나를 고르고 나머지를 바다로 보낸다'}[k]}. 정한 뒤에는 되돌릴 수 없다.</p>`,[['이렇게 하기로 한다',()=>SCENE.nqEnd(k)],['다시 생각한다',()=>SCENE.nq3()]]),
+ nqEnd:k=>{S.nq=4;S.nqe=k;S.cq=S.cq||{};S.cq.eno='done';aff('eno',{return:3,live:5,one:4}[k]);if(k==='return')gainXp(30);jr('에노와 「물길 아래의 노래」를 정했다. '+NQE[k]);log('에노의 이야기 「물길 아래의 노래」를 마쳤다.');save();
+  const L={return:['*에노가 모은 손을 내민다. 미지근한 물을 마신다.','*분필 냄새. 계단식 의자. 맨 앞줄에서 젊은 점등꾼이 받아 적는다.','*“선생님. 그 말은 왜 끝까지 안 가르쳐 주세요?” “끝까지 가르치면 누군가 그걸로 불을 지핀다.”','*눈을 뜨면 물길 아래다. 손끝이 조금 따뜻하다.','…가벼워요. 아래가 비었어요. 이상하게 내가 더 잘 들려요.'],
+   live:['그럼 계속 같이 있을게요. 걔도. 할머니도. 병사도.','*에노가 물을 다시 손안에 쥐는데 물이 흩어지지 않는다.','내가 여럿인 게 이상한 게 아니라고 당신이 말해 준 거예요.','…그러니까 당신도 이상한 거 아니에요.'],
+   one:['*에노가 오래 망설인다.','…나를 고를게요. 제일 작은 거.','*물이 에노의 발목에서 빠져나가 바다 쪽으로 흘러간다. 목소리들이 하나씩 멀어진다. 맨 아래 애도.','조용해요. 처음으로 나 혼자 말하고 있어요.','*에노가 웃는데 그 웃음은 누구의 버릇도 아니다.']}[k];
+  seq('eno','물길 아래의 노래',L,h=>tev('eno','물길 아래의 노래',h+'<p class="m">에노의 이야기 「물길 아래의 노래」가 끝났다.</p>',[['고개를 끄덕인다',null]]))}
+});
+Object.assign(CMD,{iq1:()=>{if(!S.act&&S.iq===1&&S.party==='ibre')SCENE.iq1()},iq2:()=>{if(!S.act&&S.iq===2&&S.party==='ibre')SCENE.iq2()},iq3:()=>{if(!S.act&&S.iq===3)SCENE.iq3()},iq4:()=>{if(!S.act&&S.iq===4)SCENE.iq4()},
+ nq1:()=>{if(!S.act&&S.nq===1&&S.party==='eno'&&(S.inv.scrap||0)>=5)SCENE.nq1()},nq2:()=>{if(!S.act&&S.nq===2&&S.party==='eno')SCENE.nq2()},nq3:()=>{if(!S.act&&S.nq===3)SCENE.nq3()}});
 
 Object.assign(CMD,{recon:a=>{if(!S.act&&(S.left||{})[a])SCENE.recon(a)},a2a:()=>{if(!S.act&&(S.a2||0)===0)SCENE.a2a()},a2b:()=>{if(!S.act&&S.a2===1)SCENE.a2b()},a2c:()=>{if(!S.act&&S.a2===2)SCENE.a2c()},a2d:()=>{if(!S.act&&S.a2===3)SCENE.a2d()},a2e:()=>{if(!S.act&&S.a2===4)SCENE.a2e()},a2f:()=>{if(!S.act&&S.a2===5)SCENE.a2f()}});
 window.__k2={bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
