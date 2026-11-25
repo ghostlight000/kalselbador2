@@ -55,7 +55,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=rumor]'); assert '쉴 곳을 묻는다' not in pg.inner_text('#ov'); choose(pg,'근처의 소문'); assert '마그다' in pg.inner_text('#ov'); choose(pg,'이야기를 그만둔다')
     pg.evaluate("window.__k2.EXP.docks[0].enc=0"); go(pg,'docks'); pg.click('button[data-c=explore][data-a="0"]')
     pg.wait_for_function("document.querySelector('#ov.on h2')&&document.querySelector('#ov.on h2').textContent==='부두 창고 뒤지기'",timeout=10000); okpop(pg)
-    pg.eval_on_selector('.map .node[data-a=church]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); assert '첫 번째 밤' in pg.inner_text('#ov'); okpop(pg)
+    pg.eval_on_selector('.map .node[data-a=church]',"e=>e.dispatchEvent(new MouseEvent('click',{bubbles:true}))"); assert '꺼지지 않는 등불을 든 사람을 만나고' in pg.inner_text('#ov'); okpop(pg)
     # ---- 첫 번째 밤 ----
     go(pg,'street')
     for i in range(3):

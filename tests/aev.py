@@ -34,11 +34,13 @@ with sync_playwright() as p:
     # 8단계: 1막에는 없다 → 2막에 로맨스 선택(여성 주인공·키리엔)
     E(pg,"()=>{const K=window.__k2;K.S.aff.kirien=72;K.S.aevT=0}");assert E(pg,"window.__k2.aevFor('kirien')") is None
     E(pg,"()=>{const K=window.__k2;K.S.eda=1;K.S.acad=1;K.S.sex='f'}");assert E(pg,"window.__k2.aevFor('kirien')")=='kirien:8'
-    go(pg,'docks');pg.click('button[data-c=talk]');pg.wait_for_selector('#ov.on h2:has-text("놋등")',timeout=5000);drain(pg);assert '너는 어디에도 안 보내' not in pg.inner_text('#ov');choose(pg,'반드시 찾는다');drain(pg);choose(pg,'그대로 곁에 머문다');drain(pg);assert '너는 어디에도 안 보내' in pg.inner_text('#ov')
-    choose(pg,'너는 어디에도 안 보내');drain(pg);okpop(pg);assert E(pg,"window.__k2.S.rom")=='kirien'
+    go(pg,'docks');pg.click('button[data-c=talk]');pg.wait_for_selector('#ov.on h2:has-text("놋등")',timeout=5000);drain(pg);choose(pg,'반드시 찾는다');drain(pg);choose(pg,'그대로 곁에 머문다');drain(pg);assert '너는 어디에도 안 보내' not in pg.inner_text('#ov');
+    if pg.locator('#ov.on .btn.pri').count():okpop(pg)
+    E(pg,"()=>{window.__k2.EV0=null}");E(pg,"window.__k2.CMD.talk('kirien')");pg.wait_for_timeout(200);drain(pg);assert '냄새로 먼저 찾아' in pg.inner_text('#ov');choose(pg,'너는 어디에도 안 보내');drain(pg);assert E(pg,"window.__k2.S.rom")=='kirien'
     # 남성 주인공이면 키리엔 로맨스 선택이 없다(오스윈은 있다)
     E(pg,"()=>{const K=window.__k2;K.S.rom=null;K.S.sex='m';K.S.party='oswin';K.S.aff.oswin=72;K.S.aev.oswin=6;K.S.aevT=0}")
-    go(pg,'street');pg.click('button[data-c=talk]');pg.wait_for_selector('#ov.on h2:has-text("외워 둔 것")',timeout=5000);drain(pg);choose(pg,'나도 네 이름을');drain(pg);choose(pg,'그대로 곁에 머문다');drain(pg);assert '장부에 적어도 돼' in pg.inner_text('#ov');choose(pg,'그럼 나도 너를');drain(pg);okpop(pg)
+    go(pg,'street');pg.click('button[data-c=talk]');pg.wait_for_selector('#ov.on h2:has-text("외워 둔 것")',timeout=5000);drain(pg);choose(pg,'나도 네 이름을');drain(pg);choose(pg,'그대로 곁에 머문다');drain(pg);assert '장부에 적어도 돼' not in pg.inner_text('#ov');
+    if pg.locator('#ov.on .btn.pri').count():okpop(pg)
     assert E(pg,"window.__k2.S.rom") is None
     # 개발 버튼 동작
     E(pg,"()=>{const K=window.__k2;K.joinComp('ibre');K.S.party='ibre'}");r=E(pg,"()=>{const K=window.__k2;return Object.keys(K.AEV).map(id=>[4,6,8].every(t=>K.AEV[id][t]&&K.AEV[id][t].p().length>2&&K.AEV[id][t].p2&&K.AEV[id][t].p2().length>2&&K.AEV[id][t].c2.length>=1)).every(x=>x)}");assert r

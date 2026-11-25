@@ -225,7 +225,8 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 input[type=range]{width:100%;accent-color:var(--a)}
 
 /* ===== 개발자 창 ===== */
-#devb{position:fixed;left:10px;bottom:10px;z-index:75;opacity:.75}
+#devb{position:fixed;left:10px;bottom:10px;z-index:75;opacity:.75}body:has(.top .tbtn) #devb{display:none}
+.tbtn{display:flex;gap:6px}.dvg{border-top:1px solid var(--b);padding:6px 0}.dvg summary{cursor:pointer;font-weight:700;color:var(--a);padding:4px 0}
 #dov{z-index:95}
 .dev h3{margin:10px 0 4px}
 .dev .seg .btn{min-height:34px;font-size:12.5px}
@@ -443,7 +444,7 @@ const ROADS_SUB=[];
 const PL={
  docks:{n:'운하 부두',k:'구역',x:22,y:60,d:'짐배가 밤새 드나드는 부두. 생선 비린내와 석탄 연기가 섞여 있다. 부두 끝에 녹슨 닻 여관이 있다.'},
  street:{n:'가스등 거리',k:'구역',x:48,y:44,d:'푸른 가스등이 줄지어 선 돌길. 밤이 되면 등불 사이의 어둠이 길어진다. 골목 어귀에 경비대 초소가 있다.'},
- church:{n:'교단 구역',k:'구역',x:72,y:22,d:'꺼지지 않는 옛 불을 모신 대성당이 있다. 향 냄새와 그을음 냄새가 섞여 있다.',u:s=>s.night>=3,lk:'첫 번째 밤을 넘기면 갈 수 있다.'},
+ church:{n:'교단 구역',k:'구역',x:72,y:22,d:'꺼지지 않는 옛 불을 모신 대성당이 있다. 향 냄새와 그을음 냄새가 섞여 있다.',u:s=>s.night>=3,lk:'거리 끝에서 꺼지지 않는 등불을 든 사람을 만나고 나면 갈 수 있다.'},
  academy:{n:'학술원 언덕',k:'구역',x:82,y:56,d:'유리 지붕을 인 강의동이 언덕을 덮고 있다. 밤에도 실험동 굴뚝에서 푸른 연기가 오른다. 언덕 끝에 창마다 쇠창살을 단 하얀 요양소가 있다.',u:s=>!!s.acad,lk:'아직 갈 이유가 없다.'},
  outskirts:{n:'변두리',k:'구역',x:14,y:26,d:'성벽 바깥에 이주민 천막과 신탁 상점이 모여 있다. 천막 사이로 넝마 시장이 선다. 가스등은 여기까지 오지 않는다.',u:s=>!!s.outs,lk:'아직 갈 이유가 없다.'},
  works:{n:'하칸골 공장 지대',k:'구역',x:46,y:84,d:'제철소 굴뚝이 하늘을 메운다. 방직소 베틀 소리가 밤낮없이 이어진다. 일꾼들은 같은 박자로 걷고 아무도 고개를 들지 않는다. 깊은 갱도에서 미지근한 물이 올라온다는 소문이 있다.',u:s=>!!s.fac||!!s.mg,lk:'아직 갈 이유가 없다.'},
@@ -831,7 +832,7 @@ const FOES={
 };
 const TUTF={get n(){return S&&S.mort===2?'기억 속 모르텐':'모르텐 교관'},hp:1,tier:0};
 const mtN=()=>S&&S.mort===2?'모르텐의 말이 떠오른다':'모르텐';
-const NIGHT=['dog','thief','lamp']; // 첫 번째 밤의 순서
+const NIGHT=['dog','thief','lamp']; // 순찰 세 번(골목개 → 도둑 → 등불을 든 사람)
 const TS=[
   {mv:'t1',goal:'dodge',need:3,say:'막대가 내려오는 걸 보게. 바깥 고리가 가운데 원에 닿을 때 피하게. 조금 일찍이면 스치기만 하네.',key:'아래 「회피」 버튼 세 번 — 고리가 가운데 원에 닿을 때',ok:'좋아. 피하는 건 쉬워야 하네. 살아남는 게 먼저니까.'},
   {mv:'t1',goal:'parry',need:2,say:'이번엔 받아치게. 회피보다 훨씬 짧은 순간이야. 맞히면 상대가 아프고, 놓치면 자네가 아프네.',key:'아래 「받아치기」 버튼 두 번 — 고리가 원에 딱 닿는 순간',ok:'그 소리야. 쇠가 쇠를 밀어내는 소리.'},
@@ -967,7 +968,13 @@ const RCX={kirien:{p:['비늘이 있네. 파볼릭은 다 무섭게 생긴 줄 �
  oswin:{p:['같은 파볼릭이시군요. 비늘 색은… 학술원식으로 말하지 않겠습니다.','그냥 좋은 색입니다.'],i:['잉그라드시군요. 학술원은 잉그라드를 이주민 표본이라 불렀지요.','저는 그 단어를 쓰지 않습니다.'],b:['벨데인이시군요. 이 도시 법을 만든 사람들 얼굴이지요.','당신이 만든 건 아니니 원망하진 않겠습니다.']},
  ibre:{p:['비늘 색이 있으십니다. 명부에 이름이 있는 쪽입니다.','부럽다는 말은 아닙니다. 그냥 다르다는 말입니다.'],i:['잉그라드. 부두에서 같이 일했습니다.','힘은 약해도 계산이 빠릅니다. 칭찬입니다.'],b:['벨데인은 저를 올려다봐야 합니다. 다들 싫어합니다.','당신은 괜찮아 보입니다.']},
  kasimir:{p:['파볼릭이시군요. 이백 년 전 무도회에서는 비늘 색으로 자리를 정했습니다.','지금 그 자리를 정하는 사람들은 그때보다 못합니다.'],i:['잉그라드시군요. 벨데인 살롱에서는 잉그라드 점쟁이를 장식처럼 두었습니다.','그대에게는 점보다 칼이 어울립니다.'],b:['같은 벨데인이시군요. 어느 가문인지는 묻지 않겠습니다.','저도 대답하기 어려운 질문이니까요.']}};
-const QAT=[1,1,2,3,4]; // 질문마다 필요한 호감 단계(앞 질문을 먼저 물어야 열린다)
+const QAT=[1,2,3,5,7,8]; // 질문은 호감 단계에 따라 하나씩 열린다(사용자: 마음을 열어 주는 느낌으로) — 식은 재·불씨·성냥불·난롯불·횃불·등대불
+const QA6={kirien:['네가 무서운 건 뭐야?',['…사람들이 나를 잊는 거.','엄마가 그랬으니까. 다음엔 네가 그럴까 봐.','*키리엔이 내 소매를 잡았다가 놓는다.','그래서 냄새를 외워. 잊혀도 내가 먼저 찾아가면 되니까.']],
+ oswin:['장부 말고 적고 싶은 게 있어?',['…시를 쓰던 때가 있었습니다. 학술원에 들어가기 전에.','리세가 제 시를 외웠지요. 지금은 저를 모르지만 그 시는 흥얼거릴지도 모릅니다.','*꼬리 끝 불꽃이 아주 작게 튄다.','언젠가 당신에 대해 한 줄 쓰겠습니다. 서식 없이.']],
+ ibre:['이름을 고른 날 기억해?',['기억합니다. 결투장 모래 위였습니다.','상대가 번호를 불렀습니다. 그래서 칼을 내리고 말했습니다. 이브레라고.','*이브레가 비늘을 쓰다듬는다.','처음으로 제 이름을 불러 준 사람은 당신입니다. 셈에 넣었습니다. 맨 앞에.']],
+ kasimir:['연기하지 않는 너는 어떤 사람이야?',['…모르겠습니다. 이백삼십 년 동안 무대에서 내려온 적이 없어서.','*카시미르가 장갑을 벗는다.','다만 그대 앞에서는 대사가 틀립니다. 틀리는 쪽이 아마 저겠지요.']],
+ barg:['맹세 말고 네가 바란 건 뭐였어?',['…아침.','*바르그가 한참 말이 없다.','눈 뜨면 누가 옆에 있는 아침. 맹세하면 그게 생기는 줄 알았다.','지금은 맹세 안 해도 있다. 이상하지.']],
+ eno:['너만의 기억도 있어?',['…하나 있어요. 당신이랑 처음 물길을 걸은 날.','그건 빌린 게 아니에요. 누가 버린 것도 아니고.','*에노의 얼굴이 아주 잠깐 에노 자신의 얼굴이 된다. 처음 보는 얼굴이다.','그래서 그 기억만은 꼭 쥐고 있어요. 물에 안 풀리게.']]}; // 질문마다 필요한 호감 단계(앞 질문을 먼저 물어야 열린다)
 const GREET={kirien:'키리엔이 귀를 이쪽으로 돌린다.',oswin:'오스윈이 읽던 장부에서 눈을 든다.'};
 // 호감 단계가 오르면 다음 대화에서 한 번 드러나는 몸짓(숫자 대신)
 const TIERL={
@@ -1278,7 +1285,7 @@ function mgtScene(id,next){if(!mgtDue(id)){if(next)next();return}S.mgt=S.mgt||{}
   const head=(S.mgs||{})[id]?D.saw:S.mgh==='open'?D.open:D.hide;
   seq(id,H,head.concat(D.b),h=>tev(id,H,h,D.c.map(([l,g,r])=>[l,()=>{aff(id,g);jr(`${josa(T,'과','와')} 손끝의 불에 대해 이야기했다.`);seq(id,H,r,h2=>tev(id,H,h2,[[next?'이야기를 잇는다':'이야기를 마친다',next||null]]))}])))};
 const chNext=id=>{const L=CH[id];if(!L)return null;const n=(S.chd||{})[id]||0;return L[n]&&((S.aff||{})[id]||0)>=L[n].need&&actN()>=(L[n].act||1)?L[n]:null};
-const talkNew=id=>mgtDue(id)||(typeof rvtDue==='function'&&rvtDue(id))||(id==='oswin'&&S.mg&&!S.oq0&&S.comps.includes('oswin'))||(id==='barg'&&typeof bqDue==='function'&&bqDue())||(id==='barg'&&S.bq===4)||(id==='ibre'&&typeof iqDue==='function'&&iqDue())||(id==='eno'&&typeof nqDue==='function'&&nqDue())||(id==='kasimir'&&typeof zqDue==='function'&&zqDue());
+const talkNew=id=>mgtDue(id)||(typeof rvtDue==='function'&&rvtDue(id))||(id==='oswin'&&S.mg&&!S.oq0&&S.comps.includes('oswin'))||(id==='barg'&&typeof bqDue==='function'&&bqDue())||(id==='barg'&&S.bq===4)||(id==='ibre'&&typeof iqDue==='function'&&iqDue())||(id==='eno'&&typeof nqDue==='function'&&nqDue())||(id==='kasimir'&&typeof zqDue==='function'&&zqDue())||(typeof romDue==='function'&&(romDue(id)||S.romAsk===id||S.romBk===id));
 const amnQ=id=>typeof isAmn==='function'&&isAmn(id);
 const talkSub=id=>!amnQ(id)&&(talkNew(id)||chNext(id)||(typeof aevFor==='function'&&aevFor(id)))?'✦ 할 이야기가 있는 것 같다':'이야기를 나눈다';
 // 호감 10단계(불의 크기). 화면에는 숫자도 이름도 보이지 않는다. 로맨스를 고르면 '마음'
@@ -1598,7 +1605,7 @@ const SCENE={
    const say=h==='hide'?'<p>솔레가 입술을 꼭 다물고 고개를 끄덕인다.</p><p>솔레 — “안 해요. 아무한테도. …대신 다음에 또 보여 줘요.”</p>':yes?'<p>솔레의 눈이 커진다. 무서워하는 얼굴이 아니다.</p><p>솔레 — “진짜구나. 할머니한테 말해야지. 아니 다들한테!”</p><p class="m">솔레가 말릴 틈도 없이 언덕길을 뛰어 내려간다.</p>':'<p>솔레 — “모르는데 그걸 해요? …그게 더 무섭다.”</p><p class="m">솔레는 몇 번이나 뒤돌아보며 언덕길을 내려간다. 아이의 입은 무겁지 않을 것이다.</p>';
    ev('처음 듣는 말',say+'<p class="m">언덕길 가스등이 하나씩 다시 켜진다. 처음보다 조금 흐리게.</p>'+pline({kirien:h==='hide'?'잘했어. 이 도시에선 다른 건 몰라도 그건 숨겨.':'…소문 금방 돌 거야. 각오해.',oswin:h==='hide'?'아이 입을 믿으시는군요. 저보다 낙관적이십니다.':'내일 아침이면 교단이 알 겁니다. 아니, 오늘 밤일지도.',ibre:'아이는 무사합니다. 그거면 됐습니다.',kasimir:h==='hide'?'비밀은 지키는 사람보다 아는 사람 수가 중요하시죠. 지금은 셋입니다.':'아아. 이제 이 도시가 당신을 찾기 시작할 겁니다. 재미있어지겠군요.'})+`<p class="m">새 주문 — ${SKL[k].n}</p>`,[['언덕을 내려간다',()=>{if(S.party&&mgtDue(S.party))mgtScene(S.party)}]],1)},
  aev:()=>{const k=S.aevK;S.aevK=null;if(!k)return;const [id,t]=k.split(':');const e=(AEV[id]||{})[t];if(!e)return;S.aev[id]=+t;S.aevT=Date.now();
-   const T=cn(id),H1=`${T} — ${e.h}`,H2=`${T} — ${e.h2||e.h}`,opts2=(e.c2||[]).slice();if(e.rom&&romReady(id))opts2.push([e.rom[0],0,e.rom[1],0,1]);
+   const T=cn(id),H1=`${T} — ${e.h}`,H2=`${T} — ${e.h2||e.h}`,opts2=(e.c2||[]).slice();
    const pick=(H,L,next)=>L.map(([l,g,r,coin,rom])=>[l,()=>{if(g)aff(id,g);if(coin)S.coin+=coin;if(rom){S.rom=id;jr(`${josa(T,'과','와')} 마음을 나누었다.`)}seq(id,H,r,h=>ev(H,h,next(rom)))}]);
    const two=()=>seq(id,H2,e.p2(),h=>ev(H2,h,pick(H2,opts2,()=>[['고개를 끄덕인다',null]])));
    jr(`${T} — 「${e.h}」`);
@@ -1640,7 +1647,7 @@ const SCENE={
    S.pm=1;jr('저택 벽난로에 손끝으로 불을 붙였다. 피트가 보았다.');
    ev('벽난로 앞의 피트','<p>손끝이 닿자 젖은 장작 속에서 불이 일어난다. 푸른 재 냄새가 나지 않는 불이다.</p><p class="m">피트가 뒤로 엉덩방아를 찧고는 한참 입을 벌리고 있다.</p><p>피트 — “…그거 또 해 봐.”</p><p>피트 — “하수구에 할머니가 하나 있었는데 옛날엔 그런 걸로 불을 켰대. 다들 거짓말이라 그랬어.”</p>'+
    (S.mgh==='open'?'<p>피트 — “부두 애들이 다 떠들던 게 진짜였네. 손에서 불 나는 사람.”</p>':'<p>피트 — “아무한테도 말 안 해. 하수구 애들은 비밀 잘 지켜. 넬한테는 말해도 돼? 안 돼? …알았어.”</p>'),[['피트 머리를 쓰다듬는다',null]],1)},
- kq1:()=>ev('하얀 요양소',`<p>언덕 끝의 하얀 건물. 창마다 쇠창살이 있고 문지기가 장부를 펼친 채 졸고 있다.</p><p>키리엔이 장부를 슬쩍 돌려 보다가 손가락을 한 줄에서 멈춘다.</p><p class="m">“석 달 전 실종 신고. 첫 번째 밤 이튿날 거리에서 수거해 입소. 점등꾼 토벤. 분류: 공급 대기.”</p>
+ kq1:()=>ev('하얀 요양소',`<p>언덕 끝의 하얀 건물. 창마다 쇠창살이 있고 문지기가 장부를 펼친 채 졸고 있다.</p><p>키리엔이 장부를 슬쩍 돌려 보다가 손가락을 한 줄에서 멈춘다.</p><p class="m">“석 달 전 실종 신고. 가스등 거리 끝 등불이 처음 꺼진 이튿날 거리에서 수거해 입소. 점등꾼 토벤. 분류: 공급 대기.”</p>
    <p>키리엔 — “공급 대기. 사람한테 쓰는 말이 아니잖아.”</p><p>키리엔 — “낮엔 못 들어가. 밤에 다시 오자. 문지기 말고 다른 게 지킨대.”</p>`,
    [['밤에 다시 오기로 한다',()=>{S.kq=1;jr('학술원 요양소 장부에서 토벤의 이름을 찾았다. 분류는 “공급 대기”였다.')}]],1),
  kq2:()=>ev('밤의 요양소',`<p>달이 가려진 밤. 요양소 뒷문의 자물쇠는 키리엔의 머리핀 하나에 열린다.</p><p>복도 안쪽에서 풀무가 숨 쉬는 소리가 들리고 바닥에는 푸른 재가 길게 끌린 자국이 있다.</p><p>키리엔 — “저 소리. 회색 마차 사람들이야.”</p>`,
@@ -2210,7 +2217,7 @@ function create(){
 /* --- 게임 --- */
 function game(){
   const tabs=[['place','장소'],['char','캐릭터'+(S.sp||skCan()||tlCan()?' <i class="hbn">✦</i>':'')],['quest','임무'],['story','이야기']];
-  return `<div class="top"><div class="brand">칼셀바도르 <b>푸른 재</b></div><nav class="tabs">${tabs.map(([k,n])=>`<button class="tab${V===k?' on':''}" data-c="tab" data-a="${k}">${n}</button>`).join('')}</nav>${B('settings','설정',{cls:'sm'})}</div>
+  return `<div class="top"><div class="brand">칼셀바도르 <b>푸른 재</b></div><nav class="tabs">${tabs.map(([k,n])=>`<button class="tab${V===k?' on':''}" data-c="tab" data-a="${k}">${n}</button>`).join('')}</nav><span class="tbtn">${DEV?B('devp','개발',{cls:'sm'}):''}${B('settings','설정',{cls:'sm'})}</span></div>
   <div class="grid"><aside class="L">${statusCard()}</aside><section class="M">${V==='place'?placeView():V==='char'?charView():V==='quest'?questView():storyView()}</section><aside class="Rr">${sideCards()}</aside></div>`;
 }
 function statusCard(){
@@ -2676,10 +2683,11 @@ const CMD={
   mtalk:()=>{if(S.mort!==1)return;S.masked=S.masked||{};const back=[['다른 이야기를 한다',()=>CMD.mtalk()],['이야기를 그만둔다',null]];
     const N=MTQ.filter(n=>!S.masked[n[0]]&&(!n[1]||S.masked[n[1]])).slice(0,3),L=N.length?N:MTQ.filter(n=>S.masked[n[0]]);
     tev('morten','모르텐','<p class="m">모르텐이 막대에 몸을 기댄다.</p>'+(N.length?'':'<p class="m">더 묻고 싶은 건 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>'),L.map(([id,,q,Ls])=>[q,()=>{S.masked[id]=1;seq('morten','모르텐',typeof Ls==='function'?Ls():Ls,h=>tev('morten','모르텐',h,back))}]).concat([['이야기를 그만둔다',null]]))},
-  talk:a=>{const id=a||S.party;if(isAmn(id)){amnTalk(id);return}if(S.taken===id)return;if(id==='barg'&&S.revd&&!S.bk&&!(S.left||{}).barg){SCENE.bargKnow();return}if((S.left||{})[id])return;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.sx=S.sx||{};S.asked=S.asked||{};S.tnew=S.tnew||{};if(mgtDue(id)){mgtScene(id,()=>CMD.talk(id));return}if(typeof rvtDue==='function'&&rvtDue(id)){rvtScene(id,()=>CMD.talk(id));return}if(id==='oswin'&&S.mg&&!S.oq0){SCENE.oq0();return}if(id==='barg'&&bqDue()){SCENE.bq0();return}if(id==='ibre'&&typeof iqDue==='function'&&iqDue()){SCENE.iq0();return}if(id==='eno'&&typeof nqDue==='function'&&nqDue()){SCENE.nq0();return}if(id==='kasimir'&&typeof zqDue==='function'&&zqDue()){SCENE.zq0();return}
+  talk:a=>{const id=a||S.party;if(isAmn(id)){amnTalk(id);return}if(S.taken===id)return;if(id==='barg'&&S.revd&&!S.bk&&!(S.left||{}).barg){SCENE.bargKnow();return}if((S.left||{})[id])return;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.sx=S.sx||{};S.asked=S.asked||{};S.tnew=S.tnew||{};if(typeof romAskScene==='function'){if(S.romAsk===id){romAskScene(id);return}if(S.romBk===id){romBkScene(id);return}}if(mgtDue(id)){mgtScene(id,()=>CMD.talk(id));return}if(typeof rvtDue==='function'&&rvtDue(id)){rvtScene(id,()=>CMD.talk(id));return}if(id==='oswin'&&S.mg&&!S.oq0){SCENE.oq0();return}if(id==='barg'&&bqDue()){SCENE.bq0();return}if(id==='ibre'&&typeof iqDue==='function'&&iqDue()){SCENE.iq0();return}if(id==='eno'&&typeof nqDue==='function'&&nqDue()){SCENE.nq0();return}if(id==='kasimir'&&typeof zqDue==='function'&&zqDue()){SCENE.zq0();return}
     let top='';const tn=S.tnew[id];if(tn){delete S.tnew[id];const L=(TIERL[id]||{})[tn];if(L)top=tln(id,[L])}
     const back=[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]],T=cn(id);S.orx=S.orx||{};
     if(S.orx[id]){const ae=aevFor(id);if(ae){if(tn)S.tnew[id]=tn;S.aevK=ae;SCENE.aev();return}}
+    if(typeof romDue==='function'&&romDue(id)){if(tn)S.tnew[id]=tn;romScene(id);return}
     if(!S.orx[id]&&ORX[id]){S.orx[id]=1;aff(id,1);seq(id,T,ORX[id][S.og]||ORX[id][0],h=>tev(id,T,top+h,[['다른 이야기를 한다',()=>CMD.talk(id)],['이야기를 그만둔다',null]]));return}
     const loc=(TALK[id]||{})[S.loc]||(TALK[id]||{})[pk(S.loc)],qs=[];
     if(loc)qs.push([QD('이곳은 어때?',S.talked[id+':'+S.loc]),()=>{const key=id+':'+S.loc,first=!S.talked[key],rk=id+':'+pk(S.loc)+':r';S.talked[key]=1;if(first&&!S.talked[rk]){S.talked[rk]=1;aff(id,1)}seq(id,T,loc,h=>tev(id,T,h,back))}]);
@@ -2706,9 +2714,9 @@ const CMD={
     if(RCX[id]&&!S.asked[id+':r']&&affTier(id)>=2)L.push(['내가 어떻게 보여?',()=>run(id+':r',RCX[id][S.race]||RCX[id].b)]);
     (CH[id]||[]).forEach((c,i)=>{const pick=((S.chc||{})[id]||{})[i];if(!c.fu||i>=(S.chd[id]||0)||pick===undefined||pick===0||S.asked[id+':f'+i])return;
       L.unshift([c.c[0][0].replace(/\.$/,''),()=>{S.asked[id+':f'+i]=1;aff(id,2);seq(id,T,['!'+c.c[0][0]].concat(c.c[0][2]),h=>tev(id,T,h,back))}])});
-    let note='';
-    if(!L.length){note='<p class="m">지금은 더 묻고 싶은 게 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>';L=Q.map((x,i)=>[x,i]).filter(([x,i])=>x&&S.asked[id+':'+i]).map(([x,i])=>[QD(lab(i),1),()=>run(id+':'+i,typeof x[1]==='function'?x[1](S):x[1])]);if(RCX[id]&&S.asked[id+':r'])L.push([QD('내가 어떻게 보여?',1),()=>run(id+':r',RCX[id][S.race]||RCX[id].b)])}
-    tev(id,`${T} — 너에 대해`,`<p class="m">${greet(id)}</p>`,(CHI[id]?[CHI[id]]:[]).concat(L,[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]]))},
+    let note='';{const nx=Q.findIndex((x,i)=>x&&!S.asked[id+':'+i]);if(nx>=0&&!open.includes(nx)&&affTier(id)<QAT[Math.min(nx,QAT.length-1)])note='<p class="m">더 묻고 싶은 게 있다. 하지만 아직은 이르다. 조금 더 가까워지면 물어볼 수 있을 것 같다.</p>'}
+    if(!L.length){note=note||'<p class="m">지금은 더 묻고 싶은 게 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>';L=Q.map((x,i)=>[x,i]).filter(([x,i])=>x&&S.asked[id+':'+i]).map(([x,i])=>[QD(lab(i),1),()=>run(id+':'+i,typeof x[1]==='function'?x[1](S):x[1])]);if(RCX[id]&&S.asked[id+':r'])L.push([QD('내가 어떻게 보여?',1),()=>run(id+':r',RCX[id][S.race]||RCX[id].b)])}
+    tev(id,`${T} — 너에 대해`,`<p class="m">${greet(id)}</p>`+note,(CHI[id]?[CHI[id]]:[]).concat(L,[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]]))},
   manorIn:()=>{if(!S.act&&met(S,'kasimir'))SCENE.manorIn()},ibreM:()=>{if(!S.act&&S.night>=3&&!met(S,'ibre'))SCENE.ibreM()},ibreAgain:()=>{if(!S.act&&S.dec.ibre)SCENE.ibreAgain()},kasM:()=>{if(!S.act&&S.manor&&!met(S,'kasimir'))SCENE.kasM()},kasAgain:()=>{if(!S.act&&S.dec.kasimir)SCENE.kasAgain()},kqM:()=>{if(!S.act&&S.kq===3&&S.party==='kirien')SCENE.kqM()},kqD:()=>{if(!S.act&&S.kq===4&&S.party==='kirien'&&actN()>=2.5)SCENE.kqD()},kqC:()=>{if(!S.act&&S.kq===5&&S.party==='kirien')SCENE.kqC()},eda:()=>{if(!S.act&&S.pit&&!S.eda)SCENE.eda()},enoM:()=>{if(!S.act&&S.pit&&!met(S,'eno'))SCENE.enoM()},enoAgain:()=>{if(!S.act&&S.dec.eno)SCENE.enoAgain()},bargM:()=>{if(!S.act&&S.pit&&!met(S,'barg'))SCENE.bargM()},bargAgain:()=>{if(!S.act&&S.dec.barg)SCENE.bargAgain()},brita:()=>{if(!S.act&&S.mr===1)SCENE.brita()},tomb:()=>{if(!S.act&&S.mr===2&&!S.manor)SCENE.tomb()},pqask:()=>{if(!S.act&&S.pq===1)SCENE.pqask()},pqtent:()=>{if(!S.act&&S.pq===2)SCENE.pqtent()},hag:()=>{if(!S.act&&S.outs)SCENE.hag()},kq1:()=>{if(!S.act&&!S.kq&&S.party==='kirien')SCENE.kq1()},oq1:()=>{if(!S.act&&S.mg&&!S.oq&&S.party==='oswin')SCENE.oq1()},oq2:()=>{if(!S.act&&S.oq===2)SCENE.oq2()},oq3:()=>{if(!S.act&&S.oq===3&&S.party==='oswin')SCENE.oq3()},oq4:()=>{if(!S.act&&S.oq===4&&S.party==='oswin'&&!S.rev)SCENE.oq4()},vaultS:()=>{if(!S.act&&(S.a2||0)>=6&&!S.rev)SCENE.vaultS()},oq4s:()=>{if(!S.act&&S.oq===4&&S.rev&&S.vrev)SCENE.oq4s()},revOut:()=>{if(!S.act&&S.rev&&!S.revd)SCENE.revOut()},oq5:()=>{if(!S.act&&S.oq===5)SCENE.oq5()},hboard:()=>{if(!S.act)SCENE.board()},aw1:()=>{if(!S.act&&S.eda&&!S.mg)SCENE.aw1()},britaM:()=>{if(!S.act&&S.mg&&S.bm!==1)SCENE.britaM()},hagM:()=>{if(!S.act&&S.mg&&S.hq===3&&S.hm!==1)SCENE.hagM()},pitM:()=>{if(!S.act&&S.mg&&S.pit&&S.pm!==1)SCENE.pitM()},kq2:()=>{if(!S.act&&S.kq===1&&S.party==='kirien')SCENE.kq2()},kq3:()=>{if(!S.act&&S.kq===2&&S.party==='kirien')SCENE.kq3()},kqbuy:()=>{if(!S.act&&S.kq>=3&&S.kq<6&&!S.inv.mem)SCENE.kqBuy(1)},archive:()=>{if(!S.act)SCENE.archive()},kirAgain:()=>{if(!S.act)SCENE.kirAgain()},oswAgain:()=>{if(!S.act)SCENE.oswAgain()},
   rumor:()=>{const back=[['다른 걸 묻는다',()=>CMD.rumor()],['이야기를 그만둔다',null]],first=!S.magda;S.magda=1;
     const O=[[QD('개인적인 이야기',(S.magp||0)>=MAGP.length),()=>{const n=Math.min(MAGP.length-1,S.magp||0);S.magp=n+1;save();tev('magda','마그다',MAGP[n].map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:`<p>마그다 — “${x}”</p>`).join(''),back)}],
@@ -2755,7 +2763,7 @@ const CMD={
   popok:()=>{POP=null;render()},
   fold:a=>{S.fold=S.fold||{};const def=a==='done'||a.startsWith('a')&&+a.slice(1)<((MS[Math.max(0,MS.findIndex((m,i)=>i>0&&!m[2](S)))]||[])[4]||1);const cur=S.fold[a]!=null?S.fold[a]:def;S.fold[a]=!cur;save();render()},
   csel:a=>{CSEL=a;render()},
-  settings:()=>settings()
+  settings:()=>settings(),devp:()=>{if(DEV)devOpen()}
 };
 /* ===================== 채집·제작·요리 (v042) =====================
    채집 장부: 아이 하나를 한 곳에 맡겨 두면 게임을 닫아 둔 동안에도 재료가 쌓인다(한도 2·6·10시간치).
@@ -3918,7 +3926,7 @@ function endBattle(res){
       const dropI=EQDROP[G.foe],dropN=dropI&&eqGive(dropI,false)?[`<b>${EQI[dropI].n}</b>을(를) 얻었다. ${EQI[dropI].d} 캐릭터 탭에서 갖출 수 있다.`]:[];log(F.n+'을(를) 물리쳤다.');const XPS=PKL?PKL.reduce((t,f)=>t+(FOES[f].xp||5),0):(F.xp||5),XPL=gainXp(Math.round(XPS*XPM)).concat(compXp(XPS));
       if(story&&G.foe==='lamp'){S.pend=S.mort===1&&!S.party?'mortDie':'kirien';jr('편지가 가리킨 사람을 쓰러뜨리자 꺼지지 않는 등불이 돌바닥을 굴렀다. 그 사람은 “돌아오는 길은 모두 이곳으로”라고 중얼거리고 이름 하나를 붙였다. 그 이름은 끝내 알아듣지 못했다. 잊은 것은 아직 찾지 못했다. 교단 구역으로 가는 길이 열렸다.');S.hp=Math.max(S.hp,1)}
       else if(story)jr(F.win);
-      pop('물리쳤다 — '+(PKL?PKL.map(f=>FOES[f].n).join(' · '):F.n),{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([PKL?'적들이 모두 쓰러졌다.':F.win,`<span class="m">${line}</span>`]).concat(dropN).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">첫 번째 밤이 끝났다.</b>']:[])});
+      pop('물리쳤다 — '+(PKL?PKL.map(f=>FOES[f].n).join(' · '):F.n),{i:L.i,g:L.g,n:(XL?[XL.t+' 중에 맞닥뜨렸다.']:[]).concat([PKL?'적들이 모두 쓰러졌다.':F.win,`<span class="m">${line}</span>`]).concat(dropN).concat(XPL).concat(story&&G.foe==='lamp'?['<b class="g">긴 밤이 끝났다.</b>']:[])});
     }else{
       S.hp=Math.ceil(S.mhp*.3);S.loc=S.base?'base':'inn';S.act=null;log(F.n+' 앞에서 쓰러졌다.');
       pop('쓰러졌다',{n:[F.n+' 앞에서 돌바닥이 차가웠다.',(S.base?'눈을 뜨니 본거지 화로 앞이다.':`눈을 뜨니 ${LODGE} 방이다.`)+' 누군가 끌고 와 준 모양이다. 체력이 조금 돌아왔다.',`<span class="m">${line}</span>`]});
@@ -3954,21 +3962,25 @@ if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener
 /* ===================== 개발자 창 ===================== */
 function devInit(){
   try{FAST=localStorage.getItem('k2fast')==='1';FMOVE=localStorage.getItem('k2fmove')==='1'}catch(e){}
-  $('#devb').hidden=false;$('#bdev').classList.add('on');
+  $('#devb').hidden=false;$('#bdev').classList.add('on');try{if(S)render()}catch(e){}
 }
 function devOpen(){
-  const s=S;const b=(c,l,a)=>`<button class="btn" data-dv="${c}"${a!=null?` data-a="${a}"`:''}>${l}</button>`;
+  const s=S;const b=(c,l,a)=>`<button class="btn" data-dv="${c}"${a!=null?` data-a="${a}"`:''}>${l}</button>`,G=(h,x)=>`<details class="dvg" open><summary>${h}</summary><div class="seg">${x}</div></details>`;
   $('#dov').innerHTML=`<div class="pcard dev"><h2>개발</h2>
-  <div class="seg">${b('fast','즉시 완료: '+(FAST||TEST?'켬':'끔'))}${b('fmove','이동 건너뛰기: '+(FMOVE?'켬':'끔'))}${S?b('mz','노래하는 저택 열기(처음부터)'):''}${s?b('finish','진행 중인 일 끝내기'):''}</div>
-  ${s?`<h3>진행</h3><div class="seg">${b('night','밤 0',0)}${b('night','밤 1',1)}${b('night','밤 2',2)}${b('night','밤 3',3)}</div>
-  <div class="seg">${b('heal','체력 가득')}${b('coin','동전 +50')}${b('band','붕대 +5')}${b('tut','가르침 처음부터')}${b('comp','다음 동료 합류 ('+s.comps.length+')')}${b('aff','데려간 동료 호감 +20')}${b('base','본거지 얻기')}${b('pit','피트 얻기')}${b('scrap','고철 +10')}${b('h2go','2막 후반으로(언덕길 뒤)')}${b('chInn','추격: 여관(짧게)')}${b('chDoor','추격: 대성당(길게)')}${b('fixall','저택 모두 고치기')}${b('mats','재료 +5씩')}${b('smith','오틸리에 들이기')}${b('crN','공방에서 만든 수 +4 ('+(s.crN||0)+')')}${b('away','자리를 비운 지 3시간으로')}${b('enc','길 위 마주침: '+(ENC_ON?'켬':'끔'))}${b('act1','1막 끝으로 (에다 직전)')}${b('pqgo','피트 실종 일으키기')}${b('rev','이야기 단계: '+({1:'1막',2:'2막',2.5:'2막 후반',3:'3막'})[actN()]+' → 다음')}${b('outs','변두리 열기')}${b('kq','키리엔 퀘스트 다음 단계 ('+(s.kq||0)+')')}${b('mg','주문: '+(s.mg?'깨어남':'아직'))}${b('aev','데려간 동료 다음 호감 이벤트')}</div>
-  <h3>전투</h3><div class="seg">${b('fight','골목개','dog')}${b('fight','도둑','thief')}${b('fight','점등꾼','lamp')}${b('fight','점등꾼 격노 직전','lamp2')}${b('fight','정화자','warden')}${b('fight','노래하는 옛 주인','singer')}${b('fight','쥐 떼','rats')}${b('fight','태엽 경비','clock')}${b('fight','유리관에서 나온 것','glass')}${b('fight','회색 수거인','collector')}${b('fight','그림자','shade')}${b('fight','덩어리','lump')}${b('fight','변이한 들개','mutt')}${b('fight','텅 빈 자','hollow')}${b('fight','재 짜는 사람','ashman')}${b('fight','유리 지붕 수거인 격노 직전','awc2')}${b('fight','교단 추적자','hunter')}</div>
-  <h3>이야기</h3><div class="seg">${b('pro','시작 연출 다시')}${b('leg','1편 기억: '+(s.legacy?(s.legacy.end||'없음'):'없음'))}${b('state','상태 보기')}</div>
-  <textarea id="dvs" readonly style="display:none"></textarea>`:'<p class="m">캐릭터를 만들면 진행 도구가 나온다.</p>'}
-  <div class="btns">${'<button class="btn pri" data-dv="close">닫기</button>'}</div><p class="m" style="text-align:center">${VER} · 이 창은 게임 주인과 내 컴퓨터에서만 보인다</p></div>`;
+  ${G('시간',b('fast','즉시 완료: '+(FAST||TEST?'켬':'끔'))+b('fmove','이동 건너뛰기: '+(FMOVE?'켬':'끔'))+(s?b('finish','진행 중인 일 끝내기')+b('away','자리를 비운 지 3시간으로')+b('enc','길 위 마주침: '+(ENC_ON?'켬':'끔')):''))}
+  ${s?G('막 이동',b('night','밤 0',0)+b('night','밤 1',1)+b('night','밤 2',2)+b('night','밤 3',3)+b('act1','1막 끝으로 (에다 직전)')+b('h2go','2막 후반으로(언덕길 뒤)')+b('rev','이야기 단계: '+({1:'1막',2:'2막',2.5:'2막 후반',3:'3막'}[actN()]||actN()))+b('a3go','3막 시작으로')+b('c3go','세 통의 부름 직전으로'))
+  +G('자원',b('heal','체력 가득')+b('coin','동전 +50')+b('band','붕대 +5')+b('scrap','고철 +10')+b('mats','재료 +5씩')+b('crN','공방에서 만든 수 +4 ('+(s.crN||0)+')'))
+  +G('저택·동료',b('base','본거지 얻기')+b('pit','피트 얻기')+b('smith','오틸리에 들이기')+b('fixall','저택 모두 고치기')+b('mz','노래하는 저택 열기(처음부터)')+b('comp','다음 동료 합류 ('+s.comps.length+')')+b('aff','데려간 동료 호감 +20')+b('aev','데려간 동료 다음 호감 이벤트')+b('kq','키리엔 퀘스트 다음 단계 ('+(s.kq||0)+')'))
+  +G('사건',b('mg','주문: '+(s.mg?'깨어남':'아직'))+b('outs','변두리 열기')+b('pqgo','피트 실종 일으키기')+b('tut','가르침 처음부터')+b('chInn','추격: 여관(짧게)')+b('chDoor','추격: 대성당(길게)'))
+  +G('전투',`${b('fight','골목개','dog')}${b('fight','도둑','thief')}${b('fight','점등꾼','lamp')}${b('fight','점등꾼 격노 직전','lamp2')}${b('fight','정화자','warden')}${b('fight','노래하는 옛 주인','singer')}${b('fight','쥐 떼','rats')}${b('fight','태엽 경비','clock')}${b('fight','유리관에서 나온 것','glass')}${b('fight','회색 수거인','collector')}${b('fight','그림자','shade')}${b('fight','덩어리','lump')}${b('fight','변이한 들개','mutt')}${b('fight','텅 빈 자','hollow')}${b('fight','재 짜는 사람','ashman')}${b('fight','유리 지붕 수거인 격노 직전','awc2')}${b('fight','교단 추적자','hunter')}`)
+  +G('이야기·확인',b('pro','시작 연출 다시')+b('leg','1편 기억: '+(s.legacy?(s.legacy.end||'없음'):'없음'))+b('state','상태 보기'))
+  +'<textarea id="dvs" readonly style="display:none"></textarea>':'<p class="m">캐릭터를 만들면 진행 도구가 나온다.</p>'}
+  <div class="btns"><button class="btn pri" data-dv="close">닫기</button></div><p class="m" style="text-align:center">${VER} · 이 창은 게임 주인과 내 컴퓨터에서만 보인다</p></div>`;
   $('#dov').classList.add('on');
 }
 const DV={
+  a3go:()=>{Object.assign(S,{eda:1,acad:1,mg:1,a2:6,rev:1,revd:1,hunt:1,h2:6,a3:1,a3h:1,rq:3});S.vis.academy=1;S.vis.works=1;S.vis.stairs=1;log('[개발] 3막 시작');save()},
+  c3go:()=>{Object.assign(S,{eda:1,acad:1,mg:1,a2:6,rev:1,revd:1,hunt:1,h2:6,a3:1,a3h:1,rq:3,c3:4,route:null,end:null});S.vis.stairs=1;S.loc='base';log('[개발] 세 통의 부름 직전');save()},
   fast:()=>{FAST=!FAST;try{localStorage.setItem('k2fast',FAST?'1':'0')}catch(e){}},
   mz:()=>{devClose();S.mz={};S.manor=0;SCENE.manorIn();return 1},
   fmove:()=>{FMOVE=!FMOVE;try{localStorage.setItem('k2fmove',FMOVE?'1':'0')}catch(e){}},
@@ -4055,7 +4067,7 @@ Object.assign(SCENE,{
    bound:['*손을 거두자 바르그가 끈을 내려다본다.','…그래. 그 사람도 못 풀었고 너도 안 푸는군.','그럼 끝까지 베렌한테 묶여 있겠다. 네가 누구로 돌아오든.','*바르그가 끈 위에 손을 얹는다. 화난 얼굴이 아니다.','이상하군. 이십 년 동안 이게 사슬 같았는데.'],
    free:['*끈을 풀어 바르그의 손바닥에 올려놓는다.','*바르그가 끈을 쥔 채 한참 움직이지 않는다.','…가서 너로 살아라. 그 사람이 울릭한테 한 말이군.','너는 그 말을 나한테 해 주는구나. 이십 년 늦게.','*바르그가 대검을 등에 멘다.','북쪽에 씨족 무덤이 있다. 이 끈은 거기 묻겠다. 그다음은… 모르겠다. 처음으로 모르겠다.','언젠가 네가 불 앞에 서는 날이 오면 그때는 부르지 않아도 가겠다. 맹세가 아니라 내가 가고 싶어서.']}[k];
   if(k==='new')aff('barg',6);else if(k==='bound')aff('barg',3);
-  const romB=k==='new'&&romReady('barg')?[['맹세 말고 곁에 있어 줘',()=>{S.rom='barg';jr('바르그와 마음을 나누었다.');save();seq('barg','맹세의 끝',['*바르그가 잡힌 손을 내려다본다. 한참 동안 놓지 않는다.','…맹세는 이제 안 한다고 했지.','대신 이건 맹세보다 무겁다. 알고 한 말이냐.','*대답하기 전에 바르그가 먼저 웃는다. 짖는 소리 같은 웃음이다.','…나도 같은 마음이다. 이십 년 동안 한 번도 못 해 본 말이다.'],h2=>tev('barg','맹세의 끝',h2,[['고개를 끄덕인다',null]]))}]]:[];
+  const romB=false?[['맹세 말고 곁에 있어 줘',()=>{S.rom='barg';jr('바르그와 마음을 나누었다.');save();seq('barg','맹세의 끝',['*바르그가 잡힌 손을 내려다본다. 한참 동안 놓지 않는다.','…맹세는 이제 안 한다고 했지.','대신 이건 맹세보다 무겁다. 알고 한 말이냐.','*대답하기 전에 바르그가 먼저 웃는다. 짖는 소리 같은 웃음이다.','…나도 같은 마음이다. 이십 년 동안 한 번도 못 해 본 말이다.'],h2=>tev('barg','맹세의 끝',h2,[['고개를 끄덕인다',null]]))}]]:[];
   seq('barg','맹세의 끝',L,h=>tev('barg','맹세의 끝',h+'<p class="m">바르그의 이야기 「맹세의 끝」이 끝났다.</p>',romB.concat([[k==='free'?'떠나는 등을 본다':'고개를 끄덕인다',()=>{if(k==='free'){S.left=S.left||{};S.left.barg=1;S.recon=S.recon||{};S.recon.barg=1;if(S.party==='barg')S.party=S.comps.find(c=>!S.left[c])||null}save();render()}]])))}
 });
 Object.assign(CMD,{bq1:()=>{if(!S.act&&S.bq===1&&S.party==='barg')SCENE.bq1()},bq2:()=>{if(!S.act&&S.bq===2&&S.party==='barg'&&(S.h2||0)>=5)SCENE.bq2()},bq3:()=>{if(!S.act&&S.bq===3&&S.party==='barg')SCENE.bq3()},bq4:()=>{if(!S.act&&S.bq===4)SCENE.bq4()}});
@@ -4514,6 +4526,31 @@ Object.assign(SCENE,{
 });
 Object.assign(CMD,{xt1:()=>{if(!S.act&&S.route==='ext'&&S.xt===1)SCENE.xt1()},xt2:()=>{if(!S.act&&S.route==='ext'&&S.xt===2)SCENE.xt2()},xt3:()=>{if(!S.act&&S.route==='ext'&&S.xt===3)SCENE.xt3()},xt4:()=>{if(!S.act&&S.route==='ext'&&S.xt>=4&&!S.end)SCENE.xt4()}});
 
+/* ===== 로맨스 다시 짜기 (v072, 사용자) — 호감이 일정 이상이면 그 동료가 먼저 마음을 꺼낸다(동료 퀘스트와 따로). 이미 다른 사람과 마음을 나눴다면 “나야, 쟤야?”를 묻고, 새 사람을 고르면 원래 상대가 나중에 “정말 끝낼 거야?”를 묻는다(다시 고를 수 있다) ===== */
+const ROMT={kirien:60,oswin:60,kasimir:60,barg:75};
+const romNoOK=id=>{const n=(S.romNo||{})[id];return n==null||((S.aff||{})[id]||0)>=n+15};
+const romDue=id=>romOK(id)&&ROMT[id]&&S.rom!==id&&actN()>=2&&((S.aff||{})[id]||0)>=ROMT[id]&&romNoOK(id)&&!S.romAsk&&!isAmn(id)&&S.taken!==id;
+const ROMI={kirien:['*키리엔이 지붕 위로 올라오라며 손짓한다. 담요가 한 장뿐이다.','요즘 이상해. 네가 어디 가면 냄새로 먼저 찾아. 일도 아닌데.','*꼬리가 내 발목에 감겼다가 풀린다.','…말 안 하면 계속 이럴 것 같아서.'],
+ oswin:['*오스윈이 서재 촛불 아래서 장부를 덮는다. 꼬리 끝에서 불꽃이 쉬지 않고 튄다.','학자로서 정확하게 말하겠습니다. 요즘 당신이 방에 들어오면 계산이 틀립니다.','*안경을 벗었다가 다시 쓴다.','이걸 뭐라고 부르는지 압니다. 당신 입으로 듣고 싶을 뿐이지요.'],
+ barg:['*바르그가 마당에서 대검을 내려놓는다. 숫돌도 내려놓는다.','나는 이런 걸 잘 모른다. 맹세는 알아도 이건 모른다.','*한참 말이 없다.','네가 곁에 없으면 등이 춥다. …그게 다다.'],
+ kasimir:['*카시미르가 장갑을 벗어 탁자에 가지런히 놓는다.','이백삼십 년 동안 연기를 해 왔습니다. 그런데 그대 앞에서는 대사가 자꾸 틀립니다.','*그가 웃는다. 이번엔 반 박자 늦지 않게.','틀린 대사로 하나 묻겠습니다. 그대도 같은 마음입니까.']};
+const ROMD={kirien:['…응. 알았어.','*귀가 천천히 눕는다.','그래도 냄새로 찾는 건 계속할 거야. 그건 못 끊어.'],oswin:['…정확한 답변이군요. 기록해 두지는 않겠습니다.','*오스윈이 장부를 다시 편다. 같은 쪽을 오래 본다.'],barg:['…그래. 그럼 됐다.','*대검을 다시 집어 든다.','곁에는 있겠다. 그건 네가 뭐라 해도 한다.'],kasimir:['우아한 거절이군요. 제가 가르쳐 드린 것보다 낫습니다.','*장갑을 다시 낀다. 손가락 하나하나 천천히.']};
+const ROMQ={kirien:A=>`${A} 말이야. 너랑 그런 사이잖아. …나야, ${A}야?`,oswin:A=>`${josa(A,'과','와')} 그런 사이라고 알고 있습니다. 기록이 틀렸습니까. 저입니까, ${A}입니까.`,barg:A=>`${josa(A,'이랑','랑')} 그런 사이 아니었냐. 둘 다는 안 된다. 나냐, ${A}냐.`,kasimir:A=>`${josa(A,'과','와')} 춤을 추시는 사이로 압니다만. 무도회장에서 파트너는 한 명입니다. 저입니까, ${A}입니까.`};
+const ROMKEEP={kirien:['…그럴 줄 알았어.','*키리엔이 웃는데 귀는 웃지 않는다.','괜찮아. 말해 줘서 고마워. 진짜야.'],oswin:['명확하군요. 감사합니다.','*꼬리 끝 불꽃이 한 번 튀고 꺼진다.'],barg:['…그래. 그 사람 잘 지켜라.'],kasimir:['현명한 선택입니다. 저라도 저를 고르지 않았을 겁니다.','*그 말이 농담인지 아닌지 끝내 알 수 없다.']};
+const ROMA={kirien:B=>['*키리엔이 현관 계단에 앉아 있다. 나를 보고도 일어서지 않는다.',`${B} 얘기 들었어.`,'…정말이야? 나 말고 그쪽이야?'],oswin:B=>['*오스윈이 장부를 펴 놓고 아무것도 적지 않는다.',`${B} 일은 들었습니다.`,'하나만 확인하겠습니다. 정말 끝내시는 겁니까.'],barg:B=>['*바르그가 손목의 끈을 만지작거린다.',`${B} 얘기 들었다.`,'…끈 풀까. 네가 정해라.'],kasimir:B=>['*카시미르가 오르골을 감다가 멈춘다.',`${B} 이야기를 들었습니다.`,'춤은 여기서 끝입니까.']};
+const ROMEND={kirien:['…알았어.','*키리엔이 한참 땅을 본다.','찾아 줄 사람이 하나 줄었네. 괜찮아. 익숙해.'],oswin:['…그렇군요.','*오스윈이 장부의 첫 장을 조용히 넘긴다.','지우지는 않겠습니다. 그건 제 기록이니까요.'],barg:['*바르그가 끈을 풀어 손바닥에 올려놓는다.','…가져가라. 버려도 된다.','곁에는 있겠다. 그건 맹세 아니어도 한다.'],kasimir:['알겠습니다.','*오르골 뚜껑이 닫힌다.','한 곡이 끝났을 뿐입니다. 이백 년 동안 많이 들어 본 소리지요.']};
+const ROMBACK={kirien:['…진짜지? 다시 바꾸면 물어.','*키리엔이 내 소매를 꽉 쥔다.'],oswin:['…다행입니다. 정말로.','*오스윈이 펜을 들어 첫 장 아래에 한 줄을 더 적는다.'],barg:['…그럼 끈은 그대로 둔다.','*바르그가 내 손목의 매듭을 한 번 더 조인다.'],kasimir:['그렇다면 다음 곡을 청하겠습니다.','*오르골이 다시 돈다.']};
+const ROMBK={kirien:['…그럼 왜 나라고 했어.','*키리엔이 등을 돌린다.','됐어. 나중에 얘기해.'],oswin:['기록을 정정하겠습니다.','*펜을 쥔 오스윈의 손에 힘이 들어간다.','…두 번 정정하는 일은 없었으면 합니다.'],barg:['…그래. 그럴 줄 알았다.','*바르그가 대검을 집어 들고 마당으로 나간다.'],kasimir:['아, 무대가 바뀌었군요.','*카시미르가 장갑을 낀다.','괜찮습니다. 저는 원래 대역이었으니까요.']};
+const romAcc=id=>{const e=(AEV[id]||{})[8];return e&&e.rom?e.rom:['좋아해',['…나도.']]};
+function romScene(id){const T=cn(id),A=S.rom&&S.rom!==id&&S.comps.includes(S.rom)&&!(S.left||{})[S.rom]?S.rom:null,acc=romAcc(id);S.romO=S.romO||{};S.romO[id]=1;
+  const take=()=>{const prev=A;S.rom=id;if(prev){S.romAsk=prev;S.romPrev=prev}jr(`${josa(T,'과','와')} 마음을 나누었다.`+(prev?` ${cn(prev)}에게는 아직 말하지 못했다.`:''));save();seq(id,`${T} — 마음`,acc[1],h=>tev(id,`${T} — 마음`,h,[['곁에 있는다',null]]))};
+  const no=(L)=>{S.romNo=S.romNo||{};S.romNo[id]=(S.aff||{})[id]||0;save();seq(id,`${T} — 마음`,L,h=>tev(id,`${T} — 마음`,h,[['이야기를 마친다',null]]))};
+  seq(id,`${T} — 마음`,ROMI[id].concat(A?[ROMQ[id](cn(A))]:[]),h=>tev(id,`${T} — 마음`,h,A?[['너야. '+acc[0],take],[josa(cn(A),'이야','야'),()=>no(ROMKEEP[id])]]:[[acc[0],take],['지금처럼 지내자',()=>no(ROMD[id])]]))}
+function romAskScene(id){const B=S.rom,T=cn(id);
+  seq(id,`${T} — 정말이야?`,ROMA[id](cn(B)),h=>tev(id,`${T} — 정말이야?`,h,[[`응. 미안해`,()=>{S.romAsk=null;S.romPrev=null;aff(id,-8);jr(`${josa(T,'과','와')} 헤어졌다. 이제 ${josa(cn(B),'과','와')} 마음을 나눈다.`);save();seq(id,T,ROMEND[id],h2=>tev(id,T,h2,[['자리를 뜬다',null]]))}],
+   [`아니. 너야`,()=>{S.romBk=B;S.rom=id;S.romAsk=null;S.romPrev=null;jr(`${josa(T,'에게','에게')} 돌아왔다. ${cn(B)}에게 말해야 한다.`);save();seq(id,T,ROMBACK[id],h2=>tev(id,T,h2,[['곁에 있는다',null]]))}]]))}
+function romBkScene(id){const T=cn(id);S.romBk=null;aff(id,-8);S.romNo=S.romNo||{};S.romNo[id]=(S.aff||{})[id]||0;jr(`${josa(T,'은','는')} 내가 원래 상대에게 돌아간 걸 알았다.`);save();seq(id,T,ROMBK[id],h=>tev(id,T,h,[['자리를 뜬다',null]]))}
+
 /* ===== 저택의 동료들 (v061, 사용자: 동료끼리 대화·말다툼·질투) — 저택에 있으면 가끔 거실에서 말소리가 들린다(S.duo, 쿨다운 S.duoT 20분).
    chat: 엿듣기(둘 다 +1) · argue: 편들기(편든 쪽 +3, 다른 쪽 −1, 말리면 둘 다 +1) · 질투(JEAL): 호감 50 넘는 동료가 나와 더 가까운 동료를 볼 때 */
 const DUO=[
@@ -4573,6 +4610,7 @@ Object.assign(SCENE,{
 Object.assign(CMD,{duo:()=>{if(!S.act&&S.loc==='base')SCENE.duo()}});
 
 Object.assign(CMD,{recon:a=>{if(!S.act&&(S.left||{})[a])SCENE.recon(a)},a2a:()=>{if(!S.act&&(S.a2||0)===0)SCENE.a2a()},a2b:()=>{if(!S.act&&S.a2===1)SCENE.a2b()},a2c:()=>{if(!S.act&&S.a2===2)SCENE.a2c()},a2d:()=>{if(!S.act&&S.a2===3)SCENE.a2d()},a2e:()=>{if(!S.act&&S.a2===4)SCENE.a2e()},a2f:()=>{if(!S.act&&S.a2===5)SCENE.a2f()}});
+Object.keys(QA6).forEach(k=>{if(QA[k]&&!QA[k].includes(QA6[k]))QA[k].push(QA6[k])});
 window.__k2={PL,isAmn,easyB,MV,CFG,shNext:()=>shNext(),shStep:()=>{const x=shStepAct(false);return x?String(x).slice(0,80):null},bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>

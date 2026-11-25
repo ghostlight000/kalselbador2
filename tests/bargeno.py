@@ -30,7 +30,7 @@ with sync_playwright() as p:
     pg.goto(url);pg.wait_for_timeout(200)
     bad=E(pg,"""()=>{const K=window.__k2,out=[];
       for(const id of ['kirien','oswin','ibre','kasimir','barg','eno']){
-        if((K.QA[id]||[]).length!==5)out.push(id+' QA');if((K.CH[id]||[]).length!==4)out.push(id+' CH');if(Object.keys(K.CSK[id]||{}).length!==3)out.push(id+' CSK');
+        if((K.QA[id]||[]).length!==6)out.push(id+' QA');if((K.CH[id]||[]).length!==4)out.push(id+' CH');if(Object.keys(K.CSK[id]||{}).length!==3)out.push(id+' CSK');
         if(!K.AEV[id]||![4,6,8].every(t=>K.AEV[id][t]))out.push(id+' AEV');
         for(const l of ['docks','street','church','base','academy','outskirts'])if(!(K.TALK[id]||{})[l])out.push(id+' TALK '+l);
         for(const o of Object.keys(K.COMP))if(o!==id&&!(K.COMP[id].hello||{})[o])out.push(id+' hello '+o)}

@@ -12,18 +12,18 @@ with sync_playwright() as p:
     pg.goto(base+'#dev');pg.reload();pg.wait_for_timeout(300);assert pg.is_visible('#devb');print('#dev: visible')
     pg.goto(base+'?test');pg.wait_for_timeout(300)
     pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
-    pg.click('#devb');assert pg.is_visible('#dov .dev')
+    pg.click('button[data-c=devp]');assert pg.is_visible('#dov .dev')
     pg.click('#dov [data-dv=coin]');pg.click('#dov [data-dv=band]');S=pg.evaluate('window.__k2.S');assert S['coin']==55 and S['inv']['band']==7
     pg.click('#dov [data-dv=leg]');assert pg.evaluate('window.__k2.S.legacy.end')=='k'
     pg.click('#dov [data-dv=comp]');pg.click('#dov [data-dv=comp]');pg.click('#dov [data-dv=aff]');pg.click('#dov [data-dv=close]');pg.wait_for_timeout(300)
     s=pg.evaluate('window.__k2.S');assert s['comps']==['kirien','oswin'] and s['night']==3 and s['aff']['kirien']==30, s
-    pg.click('#devb');pg.click('#dov [data-dv=base]');pg.wait_for_timeout(200)
+    pg.click('button[data-c=devp]');pg.click('#dov [data-dv=base]');pg.wait_for_timeout(200)
     assert pg.inner_text('#ov h2')=='오르빌 저택' and '여우 모양 문진' in pg.inner_text('#ov');pg.click('#ov .btn.pri');assert pg.evaluate('window.__k2.S.base')==1
-    pg.click('#devb');pg.click('#dov [data-dv=pit]');pg.wait_for_timeout(200);assert pg.inner_text('#ov h2')=='피트';pg.click('#ov .btn.pri');assert pg.evaluate('window.__k2.S.pit')==1;print('dev comps/base/pit ok')
+    pg.click('button[data-c=devp]');pg.click('#dov [data-dv=pit]');pg.wait_for_timeout(200);assert pg.inner_text('#ov h2')=='피트';pg.click('#ov .btn.pri');assert pg.evaluate('window.__k2.S.pit')==1;print('dev comps/base/pit ok')
     # 즉시 완료: ?test에서는 이미 빠르니 끄고 켜는 표시만 확인
-    pg.click('#devb');t=pg.inner_text('#dov [data-dv=fast]');print('fast btn:',t);pg.click('#dov [data-dv=close]')
+    pg.click('button[data-c=devp]');t=pg.inner_text('#dov [data-dv=fast]');print('fast btn:',t);pg.click('#dov [data-dv=close]')
     # 격노 직전 점등꾼 → 공격 한 번이면 격노 → 즉시 승리
-    pg.click('#devb');pg.click('#dov [data-dv=fight][data-a=lamp2]');pg.wait_for_timeout(200)
+    pg.click('button[data-c=devp]');pg.click('#dov [data-dv=fight][data-a=lamp2]');pg.wait_for_timeout(200)
     assert pg.is_visible('#bdev');pg.click('#bov .btn.pri');pg.evaluate("window.__k2.bact('heavy')")
     pg.wait_for_function("window.__k2.G.st==='qte'");pg.wait_for_timeout(500);pg.keyboard.press('Space')
     pg.wait_for_function("window.__k2.G.ph===2",timeout=5000);print('phase 2 reached')
@@ -31,14 +31,14 @@ with sync_playwright() as p:
     h=pg.inner_text('#ov h2');print('win ->',h);assert '점등꾼' in h;pg.click('#ov .btn.pri')
     # 즉시 패배
     for f in ['warden','singer','rats']:
-        pg.click('#devb');pg.click(f'#dov [data-dv=fight][data-a={f}]');pg.click('#bov .btn.pri');pg.click('#bdev [data-bdev=win]');pg.wait_for_function('!window.__k2.G.on',timeout=5000);pg.click('#ov .btn.pri');pg.wait_for_timeout(100)
+        pg.click('button[data-c=devp]');pg.click(f'#dov [data-dv=fight][data-a={f}]');pg.click('#bov .btn.pri');pg.click('#bdev [data-bdev=win]');pg.wait_for_function('!window.__k2.G.on',timeout=5000);pg.click('#ov .btn.pri');pg.wait_for_timeout(100)
     print('new foes ok')
-    pg.click('#devb');pg.click('#dov [data-dv=fight][data-a=dog]');pg.click('#bov .btn.pri');pg.click('#bdev [data-bdev=lose]');pg.wait_for_function('!window.__k2.G.on',timeout=5000)
+    pg.click('button[data-c=devp]');pg.click('#dov [data-dv=fight][data-a=dog]');pg.click('#bov .btn.pri');pg.click('#bdev [data-bdev=lose]');pg.wait_for_function('!window.__k2.G.on',timeout=5000)
     pg.wait_for_timeout(300);assert pg.inner_text('#ov h2')=='쓰러졌다';pg.click('#ov .btn.pri')
     # 진행 중인 일 끝내기(빠른 모드 끄고)
     pg.evaluate("()=>{window.__k2.TEST}")
-    pg.click('#devb');pg.click('#dov [data-dv=state]');assert '"night": 3' in pg.input_value('#dvs');pg.click('#dov [data-dv=close]')
+    pg.click('button[data-c=devp]');pg.click('#dov [data-dv=state]');assert '"night": 3' in pg.input_value('#dvs');pg.click('#dov [data-dv=close]')
     # 시작 연출 다시
-    pg.click('#devb');pg.click('#dov [data-dv=pro]');assert pg.is_visible('#pv .eo');print('prologue replay ok')
+    pg.click('button[data-c=devp]');pg.click('#dov [data-dv=pro]');assert pg.is_visible('#pv .eo');print('prologue replay ok')
     b.close()
 print('errors',errs);assert not errs;print('ALL OK')
