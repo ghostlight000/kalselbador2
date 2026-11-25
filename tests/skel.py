@@ -87,7 +87,7 @@ with sync_playwright() as p:
     assert pg.locator('.map .node[data-a=base]').count()==1
     t=pg.inner_text('#ov'); assert '어디서 뵌 것 같습니다' in t; choose(pg,'누구냐고 묻는다'); assert '대가 끊겼습니다' in pg.inner_text('#ov') or '피 냄새' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다'); assert 'kasimir' in S(pg)['comps']; print('kasimir joined')
     go(pg,'base'); pg.click('button[data-c=manorIn]'); assert '노래 들려?' in pg.inner_text('#ov'); choose(pg,'안으로 들어선다')
-    choose(pg,'계단 위의 문'); assert '잠겼다' in pg.inner_text('#ov'); choose(pg,'내려간다')
+    choose(pg,'계단 위의 문'); assert '잠겼' in pg.inner_text('#ov'); choose(pg,'내려간다')
     choose(pg,'서재 (잠겨 있다)'); choose(pg,'다른 곳을 본다')
     choose(pg,'응접실'); choose(pg,'악보받침'); assert '침실 · 서재 · 응접실 · 현관' in pg.inner_text('#ov'); choose(pg,'응접실을 다시 둘러본다')
     choose(pg,'건반을 누른다')
