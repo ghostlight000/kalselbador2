@@ -71,7 +71,7 @@ with sync_playwright() as p:
             # 저택 동료의 방: 누구와도 이야기, 오스윈의 자기 이야기, 표시에 관계 수치 없음
             pg.evaluate("()=>{const K=window.__k2;K.S.aff.oswin=45;K.S.loc='base';K.render()}")
             assert '할 이야기가' in pg.inner_text('button[data-c=rooms]')
-            pg.click('button[data-c=rooms]');assert '레벨' in pg.inner_text('#ov') and '촛불' not in pg.inner_text('#ov');choose(pg,'동료와 이야기한다');choose(pg,'오스윈과 이야기한다');choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '칼라쉬의 후예' in pg.inner_text('#ov');choose(pg,'책을 좋아하는구나');choose(pg,'다른 이야기를 한다')
+            pg.evaluate("()=>{const K=window.__k2;const all={kirien:1,oswin:1,ibre:1,barg:1,eno:1,kasimir:1};K.S.mgt=Object.assign({},all);K.S.rvt=Object.assign({},all);K.S.oq0=1}");pg.click('button[data-c=rooms]');assert '레벨' in pg.inner_text('#ov') and '촛불' not in pg.inner_text('#ov');choose(pg,'동료와 이야기한다');choose(pg,'오스윈과 이야기한다');choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '칼라쉬의 후예' in pg.inner_text('#ov');choose(pg,'책을 좋아하는구나');choose(pg,'다른 이야기를 한다')
             choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '지워진 아침' in pg.inner_text('#ov');choose(pg,'그래도 넌 여기 있어');choose(pg,'다른 이야기를 한다')
             s=S(pg);assert s['chd']['oswin']==2 and s['aff']['oswin']==52,s['aff']
             choose(pg,'너에 대해');choose(pg,'지난 이야기를 들려줘');assert '각주가 너무 많습니다' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
