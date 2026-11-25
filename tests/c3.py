@@ -38,7 +38,7 @@ with sync_playwright() as p:
     go(pg,'stairs','ibre');pg.click('button[data-c=c3b]');assert '돌아보지 않는다' in pg.inner_text('#ov');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on button:has-text("맞선다")',timeout=5000);assert E(pg,"window.__k2.S.c3")==2;choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("일곱째 문")',timeout=5000);assert '고개를 끄덕인다' not in pg.inner_text('#ov');choose(pg,'문 안으로');choose(pg,'너는 누구야');assert '차를 내던 방' not in pg.inner_text('#ov');choose(pg,'계단을 뛰어');choose(pg,'문을 잠근다')
-    go(pg,'base','ibre');pg.click('button[data-c=c3r]');assert pg.locator('#ov.on button:has-text("목자의 길")').count()==0 and '열리지 않았다' in pg.inner_text('#ov');choose(pg,'불을 끄는 길');choose(pg,'이 길로 간다');choose(pg,'고개를 끄덕인다')
+    go(pg,'base','ibre');pg.click('button[data-c=c3r]');assert pg.locator('#ov.on button:has-text("목자의 길")').count()==0 and '열리지 않았다' in pg.inner_text('#ov');choose(pg,'불을 끄는 길');choose(pg,'이 길로 간다');choose(pg,'하수구로 내려간다');choose(pg,'하수구를 나선다')
     assert E(pg,"window.__k2.S.route")=='ext'
     print('betray + ext ok')
     b.close()
