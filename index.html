@@ -1300,7 +1300,7 @@ function gainXp(n){if(S.lv>=LVMAX){S.xp=0;return []}const out=[`경험 +${n}`];S
     const m0=S.mhp;S.mhp=calcMhp(S.st,S.lv);S.hp=Math.min(S.mhp,S.hp+(S.mhp-m0));
     out.push(`<b class="g">레벨 ${S.lv}</b> — 능력치 점수 +1${skCan()?' · 새 기술을 배울 수 있다':''}${TLV.includes(S.lv)?' · 새 재능을 고를 수 있다':''}. 캐릭터 탭에서 고른다.`);log('레벨 '+S.lv+'에 올랐다.')}
   return out}
-function aff(id,n){if(!id||!COMP[id])return;if(n>1){const m=n*AFFK;n=Math.floor(m)+(Math.random()<m%1?1:0)}if(n>0){if(stal('seas'))n++;if(lin('i',1)&&Math.random()<.25)n++}S.aff=S.aff||{};const t0=affTier(id),b0=affBad(id);S.aff[id]=Math.max(-50,Math.min(100,(S.aff[id]||0)+n));const t1=affTier(id);if(t1>t0){S.tnew=S.tnew||{};S.tnew[id]=t1}
+function aff(id,n){if(!id||!COMP[id])return;if((S.left||{})[id]||S.shLeft===id)return;if(n>1){const m=n*AFFK;n=Math.floor(m)+(Math.random()<m%1?1:0)}if(n>0){if(stal('seas'))n++;if(lin('i',1)&&Math.random()<.25)n++}S.aff=S.aff||{};const t0=affTier(id),b0=affBad(id);S.aff[id]=Math.max(-50,Math.min(100,(S.aff[id]||0)+n));const t1=affTier(id);if(t1>t0){S.tnew=S.tnew||{};S.tnew[id]=t1}
   if(n&&met(S,id))affToast(id,n);if(n<0&&met(S,id)){log(GES[id][Math.min(2,affBad(id))]);if(affBad(id)>=3&&b0<3&&!(S.left||{})[id]&&!S.pend)S.pend='leave:'+id}}
 /* 선택 뒤 호감이 오르내린 것만 잠깐 보여 준다. 전체 값은 보이지 않는다 */
 const AFQ={};
