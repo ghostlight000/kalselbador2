@@ -1266,7 +1266,7 @@ function mgtScene(id,next){if(!mgtDue(id)){if(next)next();return}S.mgt=S.mgt||{}
   const head=(S.mgs||{})[id]?D.saw:S.mgh==='open'?D.open:D.hide;
   seq(id,H,head.concat(D.b),h=>tev(id,H,h,D.c.map(([l,g,r])=>[l,()=>{aff(id,g);jr(`${josa(T,'과','와')} 손끝의 불에 대해 이야기했다.`);seq(id,H,r,h2=>tev(id,H,h2,[[next?'이야기를 잇는다':'이야기를 마친다',next||null]]))}])))};
 const chNext=id=>{const L=CH[id];if(!L)return null;const n=(S.chd||{})[id]||0;return L[n]&&((S.aff||{})[id]||0)>=L[n].need&&actN()>=(L[n].act||1)?L[n]:null};
-const talkNew=id=>mgtDue(id)||(typeof rvtDue==='function'&&rvtDue(id))||(id==='oswin'&&S.mg&&!S.oq0&&S.comps.includes('oswin'))||(id==='barg'&&typeof bqDue==='function'&&bqDue())||(id==='barg'&&S.bq===4)||(id==='ibre'&&typeof iqDue==='function'&&iqDue())||(id==='eno'&&typeof nqDue==='function'&&nqDue());
+const talkNew=id=>mgtDue(id)||(typeof rvtDue==='function'&&rvtDue(id))||(id==='oswin'&&S.mg&&!S.oq0&&S.comps.includes('oswin'))||(id==='barg'&&typeof bqDue==='function'&&bqDue())||(id==='barg'&&S.bq===4)||(id==='ibre'&&typeof iqDue==='function'&&iqDue())||(id==='eno'&&typeof nqDue==='function'&&nqDue())||(id==='kasimir'&&typeof zqDue==='function'&&zqDue());
 const talkSub=id=>talkNew(id)||chNext(id)||(typeof aevFor==='function'&&aevFor(id))?'✦ 할 이야기가 있는 것 같다':'이야기를 나눈다';
 // 호감 10단계(불의 크기). 화면에는 숫자도 이름도 보이지 않는다. 로맨스를 고르면 '마음'
 const AFT=[[0,'식은 재'],[10,'불씨'],[20,'성냥불'],[30,'촛불'],[40,'등잔불'],[50,'난롯불'],[60,'화톳불'],[70,'횃불'],[80,'등대불'],[90,'꺼지지 않는 불']]; // 화면에는 보이지 않는다
@@ -2325,6 +2325,7 @@ function placeView(){
   if(S.loc==='works')acts.push(B('hboard','하칸골 게시판',{sub:S.facn?'징수 명단이 붙어 있다':'공장 문 앞 게시판에 종이가 빽빽하다',dis:busy}));
   if(typeof bqActs==='function')acts.push(...bqActs(busy));
   if(typeof iqnqActs==='function')acts.push(...iqnqActs(busy));
+  if(typeof zqActs==='function')acts.push(...zqActs(busy));
   if(S.loc==='base'&&typeof duoNext==='function'&&duoNext())acts.push(B('duo','거실에서 말소리가 들린다',{sub:'✦ 동료들이 무언가 이야기하고 있다',dis:busy}));
   if(S.loc==='sanat'&&!S.kq)acts.push(B('kq1','하얀 요양소',{sub:kirSub('창마다 쇠창살을 단 건물'),dis:busy||!kir}));
   if(S.loc==='sanat'&&S.kq===1)acts.push(B('kq2','밤의 요양소',{sub:kirSub('회색 마차가 드나드는 뒷문'),dis:busy||!kir}));
@@ -2415,6 +2416,7 @@ function questView(){
     const c=Math.max(0,oq-1);cb.push(`<p><b>${T}</b></p>${stp(OQS,c)}`)}}
   if(S.iq){const T='이브레 — 색 없는 이름';if(S.iq>=5)done.comp.push(T);else cb.push(`<p><b>${T}</b></p>${stp(IQS,S.iq-1)}`)}
   if(S.nq){const T='에노 — 물길 아래의 노래';if(S.nq>=4)done.comp.push(T);else cb.push(`<p><b>${T}</b></p>${stp(NQS,S.nq-1)}`)}
+  if(S.zq){const T='카시미르 — 마지막 상속자';if(S.zq>=4)done.comp.push(T);else cb.push(`<p><b>${T}</b></p>${stp(ZQS,S.zq-1)}`)}
   if(S.bq){const T='바르그 — 맹세의 끝';if(S.bq>=5)done.comp.push(T);else cb.push(`<p><b>${T}</b></p>${stp(BQS,S.bq-1)}`)}
   const mt=[];if(S.pit&&!met(S,'eno'))mt.push(['물길 아이','부두 하수구 쪽에서 아이들이 물길 아이 이야기를 한다. 길을 알려 주는 무언가가 있다고.']);else if(S.dec.eno&&!S.comps.includes('eno'))mt.push(['물길 아이','“운하 부두 하수구 입구에 있을게요. 생각 바뀌면 불러.”']);
   if(S.pit&&!met(S,'barg'))mt.push(['회색 마차의 늑대','“밤마다 부두에 큰 늑대 아저씨가 나타나. 회색 마차만 보면 지붕에서 뛰어내려.” 피트의 말이다.']);else if(S.dec.barg&&!S.comps.includes('barg'))mt.push(['회색 마차의 늑대','“부두 창고 지붕 밑에 있겠다. 마차 다니는 길이 보이는 데.”']);
@@ -2654,7 +2656,7 @@ const CMD={
   mtalk:()=>{if(S.mort!==1)return;S.masked=S.masked||{};const back=[['다른 이야기를 한다',()=>CMD.mtalk()],['이야기를 그만둔다',null]];
     const N=MTQ.filter(n=>!S.masked[n[0]]&&(!n[1]||S.masked[n[1]])).slice(0,3),L=N.length?N:MTQ.filter(n=>S.masked[n[0]]);
     tev('morten','모르텐','<p class="m">모르텐이 막대에 몸을 기댄다.</p>'+(N.length?'':'<p class="m">더 묻고 싶은 건 떠오르지 않는다. 들었던 이야기를 다시 청할 수는 있다.</p>'),L.map(([id,,q,Ls])=>[q,()=>{S.masked[id]=1;seq('morten','모르텐',typeof Ls==='function'?Ls():Ls,h=>tev('morten','모르텐',h,back))}]).concat([['이야기를 그만둔다',null]]))},
-  talk:a=>{const id=a||S.party;if(isAmn(id)){amnTalk(id);return}if(S.taken===id)return;if(id==='barg'&&S.revd&&!S.bk&&!(S.left||{}).barg){SCENE.bargKnow();return}if((S.left||{})[id])return;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.sx=S.sx||{};S.asked=S.asked||{};S.tnew=S.tnew||{};if(mgtDue(id)){mgtScene(id,()=>CMD.talk(id));return}if(typeof rvtDue==='function'&&rvtDue(id)){rvtScene(id,()=>CMD.talk(id));return}if(id==='oswin'&&S.mg&&!S.oq0){SCENE.oq0();return}if(id==='barg'&&bqDue()){SCENE.bq0();return}if(id==='ibre'&&typeof iqDue==='function'&&iqDue()){SCENE.iq0();return}if(id==='eno'&&typeof nqDue==='function'&&nqDue()){SCENE.nq0();return}
+  talk:a=>{const id=a||S.party;if(isAmn(id)){amnTalk(id);return}if(S.taken===id)return;if(id==='barg'&&S.revd&&!S.bk&&!(S.left||{}).barg){SCENE.bargKnow();return}if((S.left||{})[id])return;if(!COMP[id]||!S.comps.includes(id))return;if(id!==S.party&&S.loc!=='base')return;S.chd=S.chd||{};S.sx=S.sx||{};S.asked=S.asked||{};S.tnew=S.tnew||{};if(mgtDue(id)){mgtScene(id,()=>CMD.talk(id));return}if(typeof rvtDue==='function'&&rvtDue(id)){rvtScene(id,()=>CMD.talk(id));return}if(id==='oswin'&&S.mg&&!S.oq0){SCENE.oq0();return}if(id==='barg'&&bqDue()){SCENE.bq0();return}if(id==='ibre'&&typeof iqDue==='function'&&iqDue()){SCENE.iq0();return}if(id==='eno'&&typeof nqDue==='function'&&nqDue()){SCENE.nq0();return}if(id==='kasimir'&&typeof zqDue==='function'&&zqDue()){SCENE.zq0();return}
     let top='';const tn=S.tnew[id];if(tn){delete S.tnew[id];const L=(TIERL[id]||{})[tn];if(L)top=tln(id,[L])}
     const back=[['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]],T=cn(id);S.orx=S.orx||{};
     if(S.orx[id]){const ae=aevFor(id);if(ae){if(tn)S.tnew[id]=tn;S.aevK=ae;SCENE.aev();return}}
@@ -2706,8 +2708,8 @@ const CMD={
   tutor:()=>startBattle('tut'),practice:()=>startBattle('practice'),
   sxa:a=>{if(S.act)return;const q=sxQ(a),D=SX[a];if(!q||q.e)return;const st=D.steps[q.i];if(!st||!st.run||st.at!==S.loc||(st.need&&!st.need(S)))return;st.run()},
   board:()=>{if(!S.base||!S.pit)return;const free=Object.keys(S.kids||{}).filter(kidOk),fc=freeComps(),ok=free.length>0;
-    const L=(far)=>'<div class="dlist">'+Object.entries(DSP).filter(([,d])=>!!d.far===far).map(([k,d])=>`<button class="drow"${ok||far&&fc.length?` data-c="dpick" data-a="${k}"`:' disabled'}><b>${d.n}</b><span class="m">${fmt(d.d*SEC())}${d.risk?' · 위험':''}</span></button>`).join('')+'</div>';
-    ev('파견 게시판',`<p class="m">${ok?`맡길 수 있는 아이 ${free.length}명. 일을 고르면 바로 보낸다.`:'지금은 쉬고 있는 아이가 없다.'}</p><h3>가까운 곳</h3>${L(false)}<h3>먼 곳 <span class="m">오래 걸리고 위험하지만 얻는 것이 많다. 함께 걷지 않는 동료를 보내면 다치지 않고 더 많이 가져온다</span></h3>${L(true)}`,[['닫기',null]],1)},
+    const L=(far)=>'<div class="dlist">'+Object.entries(DSP).filter(([,d])=>!!d.far===far).map(([k,d])=>`<button class="drow"${ok||far&&fc.length?` data-c="dpick" data-a="${k}"`:' disabled'}><b>${d.n}</b><span class="m">${fmt(d.d)}${d.risk?' · 위험':''}</span></button>`).join('')+'</div>';
+    ev('파견 게시판',`<p class="m">${ok?`맡길 수 있는 아이 ${free.length}명. 일을 고르면 바로 보낸다.`:'지금은 쉬고 있는 아이가 없다.'}</p>${FAST?'<p class="m">설정의 즉시 완료가 켜져 있다. 적힌 시간과 달리 몇 초 만에 돌아온다.</p>':''}<h3>가까운 곳</h3>${L(false)}<h3>먼 곳 <span class="m">오래 걸리고 위험하지만 얻는 것이 많다. 함께 걷지 않는 동료를 보내면 다치지 않고 더 많이 가져온다</span></h3>${L(true)}`,[['닫기',null]],1)},
   dpick:k=>{EV0=null;CMD.dsend(k);render()},
   dsend:k=>{const D=DSP[k];if(!D)return;const free=Object.keys(S.kids||{}).filter(kidOk),fc=D.far?freeComps():[];if(!free.length&&!fc.length)return;
     const go=c=>{S.kids[c].st='out';S.disp.push({id:k,kid:c,t0:Date.now(),d:D.d*SEC()});log(`${KIDS[c].n}를 ${D.n}에 보냈다.`);save();render()};
@@ -4109,6 +4111,40 @@ Object.assign(SCENE,{
 });
 Object.assign(CMD,{iq1:()=>{if(!S.act&&S.iq===1&&S.party==='ibre')SCENE.iq1()},iq2:()=>{if(!S.act&&S.iq===2&&S.party==='ibre')SCENE.iq2()},iq3:()=>{if(!S.act&&S.iq===3)SCENE.iq3()},iq4:()=>{if(!S.act&&S.iq===4)SCENE.iq4()},
  nq1:()=>{if(!S.act&&S.nq===1&&S.party==='eno'&&(S.inv.scrap||0)>=5)SCENE.nq1()},nq2:()=>{if(!S.act&&S.nq===2&&S.party==='eno')SCENE.nq2()},nq3:()=>{if(!S.act&&S.nq===3)SCENE.nq3()}});
+
+/* ===== 카시미르 퀘스트 「마지막 상속자」 (v062) — S.zq 1 꼭대기 저택 지하 → 2 하인 묘역 → 3 마지막 병 → 4 끝. 결말 S.zqe name/keep/age ===== */
+const ZQS=[['꼭대기 저택 지하','카시미르의 붉은 물은 은방울 언덕 꼭대기의 옛 에스베르 저택 지하에서 나왔다. 카시미르와 함께 가자.'],['하인 묘역','교단 묘지 에스베르 납골당 뒤에 확인할 무덤이 하나 있다. 카시미르와 함께 가자.'],['마지막 병','저택 거실에서 카시미르가 마지막 붉은 병을 어떻게 할지 기다린다.']];
+const ZQE={name:'카시미르는 진짜 이름 안셀을 되찾고 도련님의 이름을 비석 아래로 돌려보냈다.',keep:'카시미르는 장부로 언덕을 눌러 붉은 물을 다시 받는다. 이름은 끝까지 카시미르다.',age:'카시미르는 마지막 붉은 병을 깼다. 이제 하루씩 늙어 간다.'};
+const zqDue=()=>!S.zq&&S.rev&&(S.rvt||{}).kasimir&&S.comps.includes('kasimir')&&!(S.left||{}).kasimir&&S.taken!=='kasimir'&&actN()>=2.5;
+Object.assign(FOES,{redold:{xp:20,n:'이름을 마신 자',hp:180,tier:3,pool:['bowc','late','stab'],intro:'낡은 연미복의 젊은이가 빈 붉은 병을 떨어뜨리고 손을 뻗는다. 입술이 누군가의 이름을 찾다가 번번이 놓친다.',win:'젊은이가 비석 사이에 주저앉는다. 그리고 처음 보는 얼굴로 제 손을 내려다본다.',loot:()=>({i:{wax:1},g:R(4,8)})}});
+const zqActs=busy=>{const a=[],wk=S.party==='kasimir';
+  if(S.zq===1&&S.loc==='silver')a.push(B('zq1','꼭대기 저택 지하 저장고',{sub:wk?'카시미르가 뒷문 열쇠를 안다':'카시미르와 함께 가야 한다',dis:busy||!wk}));
+  if(S.zq===2&&S.loc==='church')a.push(B('zq2','납골당 뒤 하인 묘역',{sub:wk?'이름이 반쯤 닳은 비석들':'카시미르와 함께 가야 한다',dis:busy||!wk}));
+  if(S.zq===3&&S.loc==='base')a.push(B('zq3','마지막 병',{sub:'카시미르가 거실에서 기다린다',dis:busy}));
+  return a};
+Object.assign(SCENE,{
+ zq0:()=>{S.zq0=1;save();seq('kasimir','카시미르 — 빈 병',['*카시미르가 붉은 병을 거꾸로 들어 가스등에 비추는데 바닥에 한 모금쯤 남았다.','이 병이 마지막입니다. 석 달째 다음 병이 오지 않았습니다.','이백 년 동안 하루도 늦은 적이 없는 배달이었지요. 은방울 언덕 꼭대기 저택 지하에서 나왔습니다.','>거기가 어딘데?','예전의 에스베르 저택입니다. 지금은 남의 문장이 걸려 있지요.','배달이 끊긴 까닭을 알아야겠습니다. 물이 떨어지면 제가 어떻게 되는지 저도 모르니까요.','*카시미르가 웃는다. 반 박자 늦게.'],
+   h=>tev('kasimir','카시미르 — 빈 병',h,[['같이 가자',()=>{aff('kasimir',3);SCENE.zq0E('<p>카시미르 — “고맙습니다. 대리인 없이 남의 집 뒷문을 여는 건 처음입니다.”</p>')}],['물이 떨어지면 끊어 버려',()=>{aff('kasimir',1);SCENE.zq0E('<p>카시미르 — “쉽게 말씀하십니다. 이백삼십 년 치 시간이 한꺼번에 청구서를 보낼지도 모르는데요.”</p><p class=\"m\">카시미르가 병을 품에 넣는다.</p><p>카시미르 — “그래도 같이 가 주십시오. 끊을지 말지는 그다음에 정하지요.”</p>')}]]))},
+ zq0E:h=>{S.zq=1;jr('카시미르의 붉은 물 배달이 석 달째 끊겼다. 물은 은방울 언덕 꼭대기의 옛 에스베르 저택 지하에서 나왔다. 카시미르와 함께 가 보기로 했다.');save();tev('kasimir','카시미르 — 빈 병',h,[['이야기를 마친다',null]])},
+ zq1:()=>ev('꼭대기 저택 지하',`<p>꼭대기 저택 뒷문은 이백 년 전 열쇠로 아직 열린다. 카시미르가 대문 은방울을 손바닥으로 감싸 소리를 죽인다.</p><p class="m">지하 저장고에는 포도주 대신 붉은 병이 상자째 쌓여 있다. 상자마다 같은 낙인이 찍혔다. 「하칸골 대연소로 · 3번 노 출고」.</p><p>카시미르 — “제 물이 연소로에서 왔군요. 이백 년 동안 몰랐습니다. 알고 싶지 않았던 거겠지요.”</p><p class="m">계단 위에서 흰 장갑 하나가 내려온다.</p><p>흰 장갑 사병 — “나리의 병을 세러 오셨나. 그 이름은 석 달 전에 명단에서 빠졌소.”</p>`,[['맞선다',()=>{S.bstory='zq1';save();startBattle('fight','glove')}],['오늘은 물러난다',null]]),
+ zq1W:()=>{S.zq=2;jr('옛 에스베르 저택 지하에서 붉은 물 장부를 찾았다. 언덕의 가문들은 대연소로 기금에 돈을 대고 그 값으로 붉은 물을 받아 왔다. 에스베르 줄은 석 달 전에 그어졌다. 맨 앞 장의 첫 공급은 겨울 시대 마지막 해이고 건넨 이의 글씨가 편지와 같다.');save();
+  const ch4=((S.chd||{}).kasimir||0)>=4;
+  ev('붉은 물 장부',`<p>사병이 쓰러지자 저장고 구석 책상 위에 장부 한 권이 보인다.</p><p class="m">「연소로 기금 출자 가문 · 붉은 물 배분」. 언덕의 가문 이름이 줄줄이 적혔고 출자금 옆마다 병 수가 적혀 있다.</p><p class="m">맨 아래 줄 「에스베르 · 출자 없음 · 이백삼십 년 공급」 위로 붉은 줄이 그어졌다. 옆에 작은 글씨가 있다. “이름의 쓸모가 다했다.”</p><p class="m">맨 앞 장만 다른 종이를 덧댔다. 「겨울 시대 마지막 해 · 첫 공급 · 받는 이 에스베르 도련님」. 건넨 이의 이름 칸은 비었는데 글씨는 편지와 같다.</p>`+tln('kasimir',(ch4?['*카시미르가 맨 앞 장을 오래 본다.','그 마법사의 글씨입니다. 이제 확실해졌군요.','…그대는 그때도 이름을 남기지 않았습니다.']:['*카시미르가 맨 앞 장의 글씨를 손끝으로 짚는다. 품 안의 병이 미지근해진다.','…이 장은 나중에 이야기하지요. 지금은 제 줄이 먼저입니다.']).concat(['이름의 쓸모가 다했다. 저를 두고 한 말입니다.','언덕 사람들은 제가 누군지 알고 있었던 겁니다. 알면서 이백 년을 모른 척했지요. 쓸모가 있었으니까요.','*카시미르가 장부를 덮는다.','교단 묘지에 가야겠습니다. 확인할 무덤이 하나 있습니다.'])),[['장부를 챙긴다',null]],1)},
+ zq2:()=>ev('하인 묘역',`<p>에스베르 가문 납골당 뒤로 돌아가자 이름이 반쯤 닳은 작은 비석들이 풀 속에 줄지어 있다. 언덕 집안의 하인들이 묻히는 자리다.</p><p class="m">비석 사이에서 누군가 일어선다. 젊은 얼굴에 낡은 연미복을 입었고 손에 빈 붉은 병을 쥐었다. 눈이 아무것도 보지 않는다.</p><p>카시미르 — “하르텐 가의 셋째 도련님입니다. 저보다 백 년 늦게 마시기 시작했지요. 이름을 다 마셔 버린 모양입니다.”</p><p>카시미르 — “제가 저렇게 되기까지 얼마나 남았을까요.”</p>`,[['맞선다',()=>{S.bstory='zq2';save();startBattle('fight','redold')}],['오늘은 물러난다',null]]),
+ zq2W:()=>{S.zq=3;jr('교단 묘지 하인 묘역에서 에스베르 가 시종의 비석을 찾았다. 「안셀 · 에스베르 가의 시종 · 스물아홉 · 열병」. 그 아래 누운 것은 진짜 도련님이다. 카시미르는 비석의 이름을 읽지 못해 내가 읽어 주었다.');save();
+  seq('kasimir','두 개의 비석',['*쓰러진 젊은이 뒤에 비석 하나가 기울어 있다. 겨울 시대 글씨체다.','*「에스베르 가의 시종 · 스물아홉 · 열병」. 이름이 새겨진 자리만 이끼가 걷혀 있다. 누군가 오래 닦아 온 자리다.','…제가 닦았습니다. 해마다 겨울에. 그런데 이름이 읽히지 않습니다.','*카시미르의 눈이 글자 위에서 미끄러진다. 몇 번을 봐도 같은 자리에서.','도련님은 이 아래 계십니다. 시종의 이름으로. 저는 납골당의 빈 자리를 기다리고 있지요. 도련님의 이름으로.','>내가 읽어 줄까?','*카시미르가 한참 말이 없다.','…예. 읽어 주십시오.','*비석의 글자를 소리 내어 읽는다. 「안셀」.','안셀.','*카시미르가 그 이름을 입안에서 굴린다. 처음 먹어 보는 음식처럼.','낯설군요. 그런데 목이 기억합니다. 누가 그렇게 부르면 고개를 숙이던 각도까지.','*카시미르의 품에서 마지막 병이 미지근하다.','저택으로 돌아가지요. 이 병을 어떻게 할지 정해야겠습니다. 그대 앞에서.'],h=>tev('kasimir','두 개의 비석',h,[['고개를 끄덕인다',null]]))},
+ zq3:()=>tev('kasimir','마지막 병','<p class="m">거실 벽난로 위에 마지막 붉은 병이 놓여 있다. 카시미르가 장갑을 벗어 그 옆에 가지런히 둔다.</p><p>카시미르 — “길은 셋입니다. 안셀이라는 이름을 되찾고 카시미르를 비석 아래 도련님께 돌려드리는 길. 장부로 언덕을 눌러 물을 다시 받고 이 이름을 끝까지 쓰는 길.”</p><p>카시미르 — “그리고 이 병을 깨고 늙는 길.”</p><p>카시미르 — “그대가 골라 주십시오. 제 이름을 처음 읽어 준 사람이니까요.”</p>',[['진짜 이름을 밝힌다',()=>SCENE.zq3C('name')],['카시미르로 산다',()=>SCENE.zq3C('keep')],['붉은 물을 끊고 늙는다',()=>SCENE.zq3C('age')]]),
+ zq3C:k=>ev('마지막 병',`<p class="m">${{name:'안셀이라는 이름을 되찾고 카시미르를 도련님께 돌려드린다',keep:'장부로 언덕을 눌러 붉은 물을 다시 받고 카시미르로 산다',age:'마지막 병을 깨고 붉은 물을 끊는다'}[k]}. 정한 뒤에는 되돌릴 수 없다.</p>`,[['이렇게 하기로 한다',()=>SCENE.zqEnd(k)],['다시 생각한다',()=>SCENE.zq3()]]),
+ zqEnd:k=>{S.zq=4;S.zqe=k;S.cq=S.cq||{};S.cq.kasimir='done';aff('kasimir',{name:4,keep:4,age:5}[k]);jr('카시미르와 「마지막 상속자」를 정했다. '+ZQE[k]);log('카시미르의 이야기 「마지막 상속자」를 마쳤다.');save();
+  const P={name:'<p>새벽 교단 묘지. 카시미르가 납골당의 빈 자리 앞에 무릎을 꿇고 지팡이 칼끝으로 이름판을 긁는다. 「카시미르 에스베르」 아래에 작게 새긴다. 「여기 눕지 않음 — 안셀」.</p><p class="m">하인 묘역의 비석 앞에는 꼭대기 저택 대문에서 떼어 온 은방울 하나를 놓는다.</p>',
+   keep:'<p>카시미르가 붉은 물 장부를 봉투에 넣고 봉랍을 찍는다. 받는 이는 꼭대기 저택의 새 주인이다.</p><p class="m">사흘 뒤 저택 문 앞에 붉은 병 한 상자가 놓인다. 쪽지는 없다.</p>',
+   age:'<p>카시미르가 마지막 병을 벽난로 불 속에 던진다. 유리가 터지고 붉은 김이 굴뚝으로 빨려 올라간다.</p><p class="m">그 밤 카시미르의 관자놀이에 처음으로 흰 머리카락 한 올이 보인다.</p>'}[k];
+  const L={name:['*카시미르가 장갑을 다시 낀다. 손가락 하나하나 천천히.','이름을 돌려드리니 몸이 가볍습니다. 결투장에서는 계속 카시미르라 부르라고 하겠습니다. 그쪽이 삯이 비싸니까요.','*카시미르가 웃는데 이번에는 박자가 맞는다.','저택에서는 그대 마음대로 부르십시오. 어느 쪽이든 대답하겠습니다.'],
+   keep:['장부 한 권이면 언덕은 다시 병을 보냅니다. 우아한 협박이지요.','*카시미르가 새 병을 가스등에 비추자 붉은 물이 천천히 내 쪽으로 기운다.','안셀은 비석 아래 두겠습니다. 이백삼십 년을 그 이름으로 산 건 카시미르였으니까요.','…다만 해마다 겨울에 그 비석을 닦으러 가겠습니다. 이제는 이름을 읽을 수 있으니.'],
+   age:['*카시미르가 거울 앞에서 그 한 올을 오래 본다.','이백삼십 년 치가 한꺼번에 오지는 않는군요. 다행입니다. 하루씩 오는 모양입니다.','안셀인지 카시미르인지는 아직 모르겠습니다. 늙어 가면서 정하지요. 이제는 시간이 있으니까요.','*카시미르가 피곤한 얼굴을 처음으로 숨기지 않는다.','피곤합니다. 좋은 피곤입니다.']}[k];
+  ev('마지막 상속자',P+tln('kasimir',L)+'<p class="m">카시미르의 이야기 「마지막 상속자」가 끝났다.</p>',[['고개를 끄덕인다',null]],1)}
+});
+Object.assign(CMD,{zq1:()=>{if(!S.act&&S.zq===1&&S.party==='kasimir')SCENE.zq1()},zq2:()=>{if(!S.act&&S.zq===2&&S.party==='kasimir')SCENE.zq2()},zq3:()=>{if(!S.act&&S.zq===3)SCENE.zq3()}});
 
 /* ===== 저택의 동료들 (v061, 사용자: 동료끼리 대화·말다툼·질투) — 저택에 있으면 가끔 거실에서 말소리가 들린다(S.duo, 쿨다운 S.duoT 20분).
    chat: 엿듣기(둘 다 +1) · argue: 편들기(편든 쪽 +3, 다른 쪽 −1, 말리면 둘 다 +1) · 질투(JEAL): 호감 50 넘는 동료가 나와 더 가까운 동료를 볼 때 */
