@@ -3385,8 +3385,8 @@ function resolveQte(perfect){
   setTimeout(()=>{if(G.on&&!checkEnd())maybePhase(enemyTurn)},650);
 }
 function dmgFoe(d,sh){sh=sh==null?1:sh;if(G.kind==='fight'){let m=1;if(G.shmax)m*=G.sh>0?(bfoe().boss?.25:.35):1.5;if(G.first)m*=1.5;if(G.spell)m*=(tal('voice')?1.15:1)*(lin('p',3)?1.15:1);if(stal('ledger')&&['warden','purL','hunter'].includes(G.foe))m*=1.15;m*=eqAtkM();d=Math.max(1,Math.round(d*m))}bfloat('#bfhp','-'+d,'gold');if(bsafe())return;G.fhp-=d;if(G.shmax&&G.sh>0&&sh>0){G.sh=Math.max(0,G.sh-sh);if(G.sh===0)shBreak()}bbars()}
-/* 실드(v049, 엘리트·보스): 실드가 있는 동안 피해 25%(엘리트 35%). 받아치기·강타·주문으로 깎는다. 깨지면 적이 한 차례 무너지고 피해 150%. 적의 다음 차례에 다시 차오른다 */
-function shBreak(){G.brk=1;G.fx.push({k:'parry',t:now(),r:Math.random()});try{SND.perfect()}catch(e){}bjudge('무너졌다','parry');let cut=0;if(G.st==='enemy'&&G.beats){G.beats.forEach(b=>{if(!b.res){b.res='brk';cut++}});if(cut)G.res.brk=(G.res.brk||0)+cut}blog(bfoe().n+'의 자세가 무너졌다!'+(cut?' 휘두르던 공격이 그 자리에서 멎는다.':'')+' 다음 차례를 잃고 피해가 크게 들어간다.');const d=document.createElement('div');d.className='phase brk';d.innerHTML='<b>무너졌다</b><span>지금이다</span>';document.body.appendChild(d);setTimeout(()=>d.remove(),1100)}
+/* 실드(v049, 엘리트·보스): 실드가 있는 동안 피해 25%(엘리트 35%). 받아치기·강타·주문으로 깎는다. 깨지면 적이 한 차례 무너지고 피해 150%. 적의 다음 차례에 다시 차오른다. 휘두르던 공격은 그 자리에서 멎는다(v055). 큰 글자 연출은 우두머리 둘째 국면에서만, 나머지는 판정 글자와 기록만(v055b) */
+function shBreak(){G.brk=1;G.fx.push({k:'parry',t:now(),r:Math.random()});try{SND.perfect()}catch(e){}bjudge('무너졌다','parry');let cut=0;if(G.st==='enemy'&&G.beats){G.beats.forEach(b=>{if(!b.res){b.res='brk';cut++}});if(cut)G.res.brk=(G.res.brk||0)+cut}blog(bfoe().n+'의 자세가 무너졌다!'+(cut?' 휘두르던 공격이 그 자리에서 멎는다.':'')+' 다음 차례를 잃고 피해가 크게 들어간다.');if(bfoe().boss&&G.ph===2){const d=document.createElement('div');d.className='phase brk';d.innerHTML='<b>무너졌다</b><span>지금이다</span>';document.body.appendChild(d);setTimeout(()=>d.remove(),1200)}}
 function maybePhase(then){
   if(G.ph===1&&bfoe().boss&&G.fhp<=G.fmax/2&&!bsafe()){
     G.ph=2;G.next=bpick();G.st='wait';if(G.shmax){G.sh=G.shmax;G.brk=0}brender();

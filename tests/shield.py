@@ -38,9 +38,12 @@ with sync_playwright() as p:
     n=E(pg,"G.beats.length");assert n>=2,n
     h0=E(pg,"G.hp");E(pg,"resolveBeat(G.beats[0],'parry',0)")
     assert E(pg,"G.brk")==1 and E(pg,"G.beats.slice(1).every(b=>b.res==='brk')")
-    pg.wait_for_timeout(120);assert E(pg,"getComputedStyle(document.querySelector('.phase.brk')).backgroundColor")=='rgba(0, 0, 0, 0)'
+    assert E(pg,"document.querySelector('.phase.brk')")is None
     pg.wait_for_function("window.__k2.G.st==='player'",timeout=6000);assert E(pg,"G.hp")==h0
     assert '무너져 멎음' in pg.inner_text('#blog') or True
+    E(pg,"()=>{G.on=false;$('#bt').classList.remove('on')}")
+    E(pg,"()=>{S.night=3;startBattle('fight','lamp')}");E(pg,"()=>{G.ph=2;G.sh=1;dmgFoe(10,1)}");pg.wait_for_timeout(100)
+    assert E(pg,"getComputedStyle(document.querySelector('.phase.brk')).backgroundColor")=='rgba(0, 0, 0, 0)'
     E(pg,"()=>{G.on=false;$('#bt').classList.remove('on')}")
     print('break-cancel ok')
     b.close()
