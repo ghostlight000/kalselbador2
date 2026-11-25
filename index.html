@@ -721,8 +721,8 @@ const MS=[
  ['계단 아래',s=>(s.c3||0)>=2?'이데른이 계단을 내려온다. 일곱째 문 앞이다.':'자정에 대성당 뒤에서 마그다를 만난다. 계단 경비가 빈다고 했다.',s=>(s.c3||0)>=3,'마그다',3],
  ['옛 불','일곱째 문이 내 목소리에 열렸다. 문 너머에 옛 불이 있다.',s=>(s.c3||0)>=4,'일곱째 문',3],
  ['세 통의 부름','할데온의 편지, 대문 앞의 맨발들, 하수구의 등잔. 갈 길을 정한다.',s=>!!s.route,'사건',3],
- ['고른 길',s=>{const r=routeStep(s);return `${r[0]} — ${r[1]}`},s=>!!s.end,'사건',3],
- ['이야기의 끝',s=>s.end&&ENDS[s.end]?`엔딩 「${ENDS[s.end].n}」에 닿았다. 도시는 그 뒤로도 계속된다.`:'',s=>false,'엔딩',3]
+ ['고른 길',s=>{const r=routeStep(s);return `${r[0]} — ${r[1]}`},s=>!!s.end,'사건',4],
+ ['이야기의 끝',s=>s.end&&ENDS[s.end]?`엔딩 「${ENDS[s.end].n}」에 닿았다. 도시는 그 뒤로도 계속된다.`:'',s=>false,'엔딩',4]
 ];
 const ACTS={1:'1막 · 꺼지지 않는 등불',2:'2막 · 장부와 재',3:'3막 · 다시 짠 배'};
 const msTxt=m=>typeof m[1]==='function'?m[1](S):m[1],msSrc=m=>typeof m[3]==='function'?m[3](S):(m[3]||'');
@@ -3044,7 +3044,7 @@ Object.assign(CMD,{
  h2door:()=>{if(!S.act&&S.h2===5)SCENE.door7()},
  h2abelA:()=>{if(!S.act&&S.h2>=6&&!S.abel)SCENE.abelA()}
 });
-Object.assign(GOAL,{'고른 길':[s=>routeStep(s)[2],['sh1','sh2','sh3','sh4','rt1','rt2','rt3','rt4','xt1','xt2','xt3','xt4']],'마지막 잔':['inn',['c3a']],'계단 아래':['stairs',['c3b']],'옛 불':['stairs',['c3b']],'세 통의 부름':['base',['c3r']],'잊은 사람':[s=>(s.rq||0)===1?((s.hq||0)>=3?'church':'pawn'):'base',['rq0','rq1a','rq1b','rq2']],'얼굴 없는 수배서':['inn',['h2wanted']],'설계서의 나머지 장':['base',['h2plan']],'대연소로':['furn',['h2furn']],'종지기의 사다리':['church',['h2abel']],'형제단의 밤':['outskirts',['h2broth']],'일곱째 문':['stairs',['h2door']]});
+Object.assign(GOAL,{'고른 길':[s=>routeStep(s)[2],['sh1','sh2','sh3','sh4','rt1','rt2','rt3','rt4','xt1','xt2','xt3','xt4','shx','shwalk']],'마지막 잔':['inn',['c3a']],'계단 아래':['stairs',['c3b']],'옛 불':['stairs',['c3b']],'세 통의 부름':['base',['c3r']],'잊은 사람':[s=>(s.rq||0)===1?((s.hq||0)>=3?'church':'pawn'):'base',['rq0','rq1a','rq1b','rq2']],'얼굴 없는 수배서':['inn',['h2wanted']],'설계서의 나머지 장':['base',['h2plan']],'대연소로':['furn',['h2furn']],'종지기의 사다리':['church',['h2abel']],'형제단의 밤':['outskirts',['h2broth']],'일곱째 문':['stairs',['h2door']]});
 
 /* ===================== 내러티브 보강 (v047) =====================
    ① 할데온을 무대 위로: 저택으로 온 편지, 이름 바치기 축일  ② 가장 아끼는 동료가 끌려가 나를 잊는다(저택에 남은 동료 중 호감 최고, 없으면 피트)
@@ -4320,7 +4320,8 @@ function endShow(k,lead){const E=ENDS[k],g=E.g?1:0;S.end=k;jr(`엔딩 「${E.n}�
   for(let i=0;i<ep.length;i+=3)sl.push({h:i?'':'그 뒤로',L:ep.slice(i,i+3)});
   sl.push({h:'',L:[E.n,'<span class="esub">엔딩</span>'],c:'fin'});
   cine(sl,sum,'이야기를 덮는다')}
-const routeStep=s=>{if(s.route==='shep'){const q=s.sh||0;return q<=1?['교단 안쪽','할데온과 함께 정화자 숙소에 간다. 회색 옷들이 기다린다.','barracks',['sh1']]:q===2?['언덕의 헌금','은방울 언덕 꼭대기 저택에서 가문들이 기억을 바친다. 할데온과 함께 간다.','silver',['sh2']]:q===3?['불 앞에서 쉬는 일','일곱째 밤을 사흘 앞두고 할데온이 옛 불 앞에서 쉬자고 한다.','stairs',['sh3']]:s.shc==='turn'?['흰 옷의 문','이데른이 흰 옷 사제들 쪽 문을 안다. 대성당 아래 계단으로 간다.','stairs',['sh4']]:['일곱째 밤','일곱 의자가 찬다. 대성당 아래 계단으로 간다.','stairs',['sh4']]}
+const routeStep=s=>{if(s.route==='shep'&&typeof shNext==='function'){const k=shNext(s);const T={robe:['흰 옷을 입다','할데온이 대성당에서 흰 옷 한 벌을 내민다.','church'],sh1:['교단 안쪽','할데온과 함께 정화자 숙소에 간다.','barracks'],conf:['고해소의 하루','할데온 곁에서 고해를 받는다.','confess'],idq:['이데른의 질문','숙소 뒤뜰에서 이데른이 기다린다.','barracks'],walk:['할데온과 걷는 날',`할데온과 구역을 걷는다. 부두·학술원·하칸골·변두리·가스등 거리·시계탑 광장 가운데 셋. (${s.shWk||0}/3)`,null],sh2:['언덕의 헌금','은방울 언덕 꼭대기 저택에서 가문들이 기억을 바친다.','silver'],acad:['학술원과의 거래','학술원장이 할데온과 표본실을 두고 흥정한다.','academy'],ulrik:['형제단 토벌','정화자들과 지하 예배실로 내려간다.','chapel'],winter:['겨울의 기록','회랑 할데온의 방에 표지 없는 장부가 있다.','church'],oppose:['동료들의 반대','저택에서 동료들이 기다린다.','base'],sh3:['불 앞에서 쉬는 일','일곱째 밤을 사흘 앞두고 할데온이 옛 불 앞에서 쉬자고 한다.','stairs'],b1:s.shc==='turn'?['흰 옷 사제들 모으기','구호소 뒷방에 이데른이 사제들을 모은다.','church']:['일곱 의자 채우기','옛 불의 방에 헌금 병을 놓는다.','stairs'],b2:s.shc==='turn'?['숙소 장악','정화자 숙소를 되찾는다.','barracks']:['마지막 축일','이름 바치기 축일. 할데온 옆 발코니.','church'],sh4:s.shc==='turn'?['흰 옷의 문','대성당 아래 계단으로 간다.','stairs']:['일곱째 밤','일곱 의자가 찬다. 대성당 아래 계단으로 간다.','stairs']}[k];if(T)return [T[0],T[1],T[2],['sh1','sh2','sh3','sh4','shx','shwalk']]}
+  if(s.route==='shep'){const q=s.sh||0;return q<=1?['교단 안쪽','할데온과 함께 정화자 숙소에 간다. 회색 옷들이 기다린다.','barracks',['sh1']]:q===2?['언덕의 헌금','은방울 언덕 꼭대기 저택에서 가문들이 기억을 바친다. 할데온과 함께 간다.','silver',['sh2']]:q===3?['불 앞에서 쉬는 일','일곱째 밤을 사흘 앞두고 할데온이 옛 불 앞에서 쉬자고 한다.','stairs',['sh3']]:s.shc==='turn'?['흰 옷의 문','이데른이 흰 옷 사제들 쪽 문을 안다. 대성당 아래 계단으로 간다.','stairs',['sh4']]:['일곱째 밤','일곱 의자가 찬다. 대성당 아래 계단으로 간다.','stairs',['sh4']]}
   if(s.route==='ret'){const q=s.rt||0;return q<=1?['빈 이마','지하 예배실에서 울릭이 기다린다. 이마에 첫 줄을 긋는다.','chapel',['rt1']]:q===2?['천막촌의 노래','천막촌 끝에 이름을 부르는 노래가 있다.','outskirts',['rt2']]:q===3?['불 앞의 거울','대성당 아래 계단. 불 속의 목소리가 기다린다.','stairs',['rt3']]:['불로 된 사람','불이 사람 모양으로 일어섰다. 대성당 아래 계단.','stairs',['rt4']]}
   if(s.route==='ext'){const q=s.xt||0;return q<=1?['첫 번째 밸브','가스등 거리 끝 초소 밑에 첫 밸브가 있다.','street',['xt1']]:q===2?['3번 노의 불','하칸골 대연소로 3번 노. 가스관이 모두 여기서 시작한다.','furn',['xt2']]:q===3?['찬 밤','가스등이 꺼진 첫 밤. 저택에 사람들이 모인다.','base',['xt3']]:['옛 불 앞에서','남은 불은 대성당 아래 옛 불 하나다.','stairs',['xt4']]}
   return['고른 길','이 길의 이야기는 다음 판에서 이어진다.',null,[]]};
@@ -4328,8 +4329,8 @@ const routeStep=s=>{if(s.route==='shep'){const q=s.sh||0;return q<=1?['교단 �
 /* ===== 목자의 길 (v066) — S.sh 1 교단 안쪽(숙소, 순례자) → 2 언덕의 헌금 → 3 불 앞에서(두 번째 갈림 S.shc follow/turn) → 4 일곱째 밤(follow, 울릭) / 흰 옷의 문(turn, 할데온) → 엔딩
    할데온은 손님 동행(S.hg) — 전투에서 스스로 불을 다루고 어디서든 말을 걸 수 있다. 키리엔·에노는 호감 70 미만이고 마음을 나누지 않았으면 함께 나서지 않는다 ===== */
 const hGuest=()=>S.route==='shep'&&S.hg===1;
-const shepRef=id=>hGuest()&&(id==='kirien'||id==='eno')&&S.rom!==id&&((S.aff||{})[id]||0)<70;
-const SHREF={kirien:['…그 사람이랑 같이 걷는 데는 안 가. 너만 오면 따라갈게. 그 사람은 빼고.'],eno:['그 사람 곁에 있으면 내 안이 말라요. 미안해요. 오늘은 물길에 있을게요.']};
+const shepRef=id=>hGuest()&&(S.shLeft===id||S.shStay===id||((id==='kirien'||id==='eno')&&S.rom!==id&&((S.aff||{})[id]||0)<70));
+const SHREF={kirien:['…그 사람이랑 같이 걷는 데는 안 가. 너만 오면 따라갈게. 그 사람은 빼고.'],eno:['그 사람 곁에 있으면 내 안이 말라요. 미안해요. 오늘은 물길에 있을게요.'],oswin:['저 사람 곁에서는 펜이 움직이지 않습니다. 오늘은 빼 주십시오.'],barg:['흰 옷 옆에는 안 선다. 네 옆에는 서겠다. 저놈이 없을 때.'],kasimir:['오늘은 사양하겠습니다. 저 사람 찻잔은 너무 따뜻합니다.'],ibre:['오늘은 빠지겠습니다. 셈이 맞지 않는 사람 옆에는 서지 않습니다.']};
 function haldAct(){G.hT=(G.hT||0)+1;if(G.hT%3===0&&G.hp<G.mhp){const h=Math.min(Math.round(G.mhp*.12),G.mhp-G.hp);G.hp+=h;bfloat('#bphp','+'+h,'heal');blog(`할데온 — 내 어깨에 손을 얹는다. 따뜻하다. 체력 ${h} 회복.`)}
   else{const d=Math.round(6+G.mhp*.05);G.fx.push({k:'parry',t:now(),r:Math.random()});SND.parry();dmgFoe(d);blog(`할데온 — 흰 불이 적을 감싼다. ${d} 피해.`)}bbars()}
 const HTALK=[['일곱 의자',['제 의자는 첫째입니다. 둘째 의자는 오래 비어 있었지요.','*할데온이 찻잔을 돌린다.','그 자리 주인이 돌아오기를 기다리는 동안 저는 늙는 법을 잊었습니다.']],
@@ -4339,10 +4340,12 @@ const HLOC={church:'제 집입니다. 그대 집이기도 했지요.',silver:'�
 const hln=L=>L.map(x=>x[0]==='*'?`<p class="m">${x.slice(1)}</p>`:`<p>할데온 — “${x}”</p>`).join('');
 const shActs=busy=>{const a=[];if(S.route!=='shep')return a;const q=S.sh||0;
   if(hGuest())a.push(B('htalk','할데온과 이야기한다',{sub:'곁에서 걷는 불의 목자',dis:busy}));
-  if(q===1&&S.loc==='barracks')a.push(B('sh1','회색 옷의 경례',{sub:'✦ 할데온이 앞장선다',dis:busy}));
-  if(q===2&&S.loc==='silver')a.push(B('sh2','언덕 꼭대기 저택',{sub:'✦ 가문들이 줄을 선다',dis:busy}));
-  if(q===3&&S.loc==='stairs')a.push(B('sh3','옛 불 앞에서 쉰다',{sub:'✦ 일곱째 밤 사흘 전',dis:busy}));
-  if(q===4&&S.loc==='stairs'&&!S.end)a.push(B('sh4',S.shc==='turn'?'흰 옷의 문':'일곱째 밤',{sub:'✦ 마지막',dis:busy}));
+  const nk=typeof shNext==='function'?shNext():null;
+  if(nk==='sh1'&&S.loc==='barracks')a.push(B('sh1','회색 옷의 경례',{sub:'✦ 할데온이 앞장선다',dis:busy}));
+  if(nk==='sh2'&&S.loc==='silver')a.push(B('sh2','언덕 꼭대기 저택',{sub:'✦ 가문들이 줄을 선다',dis:busy}));
+  if(nk==='sh3'&&S.loc==='stairs')a.push(B('sh3','옛 불 앞에서 쉰다',{sub:'✦ 일곱째 밤 사흘 전',dis:busy}));
+  if(nk==='sh4'&&S.loc==='stairs')a.push(B('sh4',S.shc==='turn'?'흰 옷의 문':'일곱째 밤',{sub:'✦ 마지막',dis:busy}));
+  if(typeof shStepAct==='function'){const x=shStepAct(busy);if(x)a.push(x)}
   return a};
 Object.assign(FOES,{haldF:{xp:80,n:'할데온',hp:340,tier:3,tier2:4,boss:true,pool:['hum','brand','late'],pool2:['hum','wail','voices','triple'],ph2:'할데온 뒤에서 옛 불이 일어선다. 불 속의 목소리가 그의 손을 빌린다.',intro:'할데온이 바닥에 떨어진 흰 천을 집어 다시 두른다. “그대에게 불을 쓰는 건 처음입니다.”',win:'흰 불이 꺼진다. 할데온이 첫째 의자 앞에 주저앉는다.',loot:()=>({i:{},g:R(20,30)})}});
 BOSSP.haldF={ep:'첫째 마법사',pre:['할데온 — “백 년을 기다렸습니다. 조금 더 기다리게 되는군요.”'],p2:'할데온 — “그대는 예전에도 이랬습니다. 마지막에 꼭 등을 돌리지요.”'};
@@ -4375,6 +4378,60 @@ Object.assign(SCENE,{
  shT2:c=>endShow('shepT',(c?'<p>할데온 — “…예. 그 목소리입니다.”</p><p class="m">할데온이 눈을 감는다. 불 속의 목소리가 무언가 외치지만 문이 닫히자 들리지 않는다. 일곱 매듭이 다시 묶인다. 이번엔 내 목소리로만 열린다.</p>':'<p class="m">문을 닫는다. 등 뒤에서 할데온이 아무 이름이나 부른다. 대답하는 사람은 없다. 일곱 매듭이 다시 묶인다.</p>')+'<p class="m">봄이 오기 전 대성당은 축일의 이름을 바꾼다. 이름 바치기 축일은 이제 이름을 부르는 날이다. 흰 옷을 입은 이데른이 종을 친다. 종이 울릴 때마다 누군가 이름을 부른다.</p><p class="m">가스등은 하나씩 줄어든다. 겨울이 올지도 모른다. 그래도 도시는 그 겨울을 이름을 부르며 맞기로 한다.</p>')
 });
 Object.assign(CMD,{htalk:()=>{if(!S.act&&hGuest())SCENE.htalk()},sh1:()=>{if(!S.act&&S.route==='shep'&&S.sh===1)SCENE.sh1()},sh2:()=>{if(!S.act&&S.route==='shep'&&S.sh===2)SCENE.sh2()},sh3:()=>{if(!S.act&&S.route==='shep'&&S.sh===3)SCENE.sh3()},sh4:()=>{if(!S.act&&S.route==='shep'&&S.sh===4&&!S.end)SCENE.sh4()}});
+
+/* ===== 4막 목자의 길 확장 (v071, 사용자: 갈래 하나가 1~2막 메인보다 크게) — 단계 순서 shNext(): 흰 옷을 입다 → 회색 옷의 경례 → 고해소의 하루 → 이데른의 질문 → 할데온과 걷는 날(구역 셋) → 언덕의 헌금 → 학술원과의 거래 → 형제단 토벌 → 겨울의 기록 → 동료들의 반대 → 불 앞에서 쉬는 일 → (따른다) 일곱 의자 채우기 · 마지막 축일 / (등을 돌린다) 흰 옷 사제들 모으기 · 숙소 장악 → 마지막 ===== */
+const SHORD=[['robe',s=>!s.shW],['sh1',s=>s.sh===1],['conf',s=>!s.shC],['idq',s=>!s.shI],['walk',s=>(s.shWk||0)<3],['sh2',s=>s.sh===2],['acad',s=>!s.shA],['ulrik',s=>!s.shU],['winter',s=>!s.shR],['oppose',s=>!s.shO],['sh3',s=>s.sh===3],['b1',s=>s.sh===4&&!s.shB1],['b2',s=>s.sh===4&&!s.shB2],['sh4',s=>s.sh===4&&!s.end]];
+const shNext=(s=S)=>{if(s.route!=='shep'||!s.sh)return null;const r=SHORD.find(([k,f])=>f(s));return r?r[0]:null};
+const HWALK={docks:'<p>부두 끝 첫 가스등 아래. 할데온이 등 기둥에 손을 댄다.</p><p>할데온 — “이 등을 축복하던 날 그대가 옆에 있었습니다. 등이 켜지자 그대는 웃었지요. 겨울이 끝났다고. 그날은 정말 그런 줄 알았습니다.”</p><p class="m">부두 아이들이 흰 옷을 보고 길을 비킨다. 그중 하나가 피트와 같은 갈고리를 들었다.</p>',
+ academy:'<p>깨진 돔 아래. 할데온이 바닥의 분필 원을 내려다본다.</p><p>할데온 — “그대는 여기서 학생들에게 말을 가르쳤습니다. 주문이 아니라 말을. 주문은 이미 묻은 뒤였으니까요.”</p><p>할데온 — “학생 하나가 물었지요. 선생님은 왜 마법을 묻으셨나요. 그대는 대답하지 않았습니다. 저도 아직 그 대답을 듣지 못했습니다.”</p>',
+ works:'<p>하칸골 굴뚝 아래. 일꾼들이 흰 옷을 보고 모자를 벗는다.</p><p>할데온 — “굴뚝이 하나 늘 때마다 아이 하나가 덜 언다고 셉니다. 일꾼들 손이 상하는 건 따로 셉니다. 셈은 언제나 두 장이지요.”</p><p class="m">그가 모자를 벗은 일꾼 하나하나에게 고개를 숙인다. 일꾼들은 그 인사를 어떻게 받아야 할지 모르는 얼굴이다.</p>',
+ outskirts:'<p>천막촌 끝. 노래하는 바람 부족 노인이 할데온을 보고 노래를 멈춘다.</p><p>노인 — “당신 얼굴은 우리 할머니의 할머니 노래에도 나오오. 흰 천을 쓴 사람. 이름을 거두러 오는 사람.”</p><p>할데온 — “노래가 정확하군요.”</p><p class="m">할데온이 노인에게 고개를 숙인다. 노인은 받지 않는다.</p>',
+ street:'<p>가스등 거리. 할데온이 등 하나하나의 이름을 부른다. 등마다 이름이 있다는 걸 처음 안다.</p><p>할데온 — “점등꾼들이 붙인 이름입니다. 토벤은 이 등을 「에다」라고 불렀지요. 딸 이름입니다.”</p><p class="m">「에다」 아래를 지날 때 할데온이 걸음을 늦춘다. 그 등이 꺼지지 않게 지켜 온 사람의 얼굴로.</p>',
+ square:'<p>시계탑 광장. 명부 앞에 사람들이 줄을 서 있다. 할데온은 줄 끝에 서서 차례를 기다린다. 흰 옷이라고 앞으로 가지 않는다.</p><p>할데온 — “명부에서 이름이 사라지는 걸 막을 수는 없습니다. 다만 사라지는 순서는 늦출 수 있지요. 아이들 이름은 맨 뒤로.”</p>'};
+const SHOPP={kirien:()=>'그 사람 옆에서 웃는 너 보기 싫어. 흰 옷 입은 날 너한테서 냄새가 하나도 안 났어. 그 사람처럼.',oswin:()=>S.oqe==='burn'?'장부를 태운 제가 할 말은 아니지만… 저 사람의 셈은 두 장입니다. 우리는 늘 둘째 장에 있어요.':'기록을 지우는 사람 곁에 서 계시는군요. 적어 둡니다. 당신이 어디 서 있었는지.',barg:()=>S.bqe==='bound'?'…베렌이 저 사람 옆에 서는 건 처음 본다. 예전엔 등을 돌렸다고 했지. 이번엔 안 돌리냐.':'흰 옷이 안 어울린다. 네 등에 칼 꽂을 놈이 앞에서 웃고 있다.',kasimir:()=>'대담하군요. 적의 찻잔으로 차를 마시다니. 저는 그런 쪽이 좋습니다. 다만 마지막 잔은 확인하십시오.',ibre:()=>'저 사람은 아이들 이름을 맨 뒤로 보낸다고 했습니다. 무색들 이름은 어디로 보내는지 아무도 묻지 않았습니다.',eno:()=>'그 사람 곁에 있으면 당신 안이 말라 가요. 벌써 조금 말랐어요. 손이 차가워요.'};
+const SHGO={kirien:'변두리 엄마 천막에 있을게',eno:'물길에 내려가 있을게요',oswin:'학술원 꼭대기 열람실에 있겠습니다',barg:'운하 다리에 있겠다'};
+const shStepAct=(busy)=>{const k=shNext();if(!k)return null;const L={robe:['church','흰 옷을 입다','✦ 할데온이 옷 한 벌을 든다'],conf:['confess','고해소의 하루','✦ 창 너머 사람들이 기다린다'],idq:['barracks','이데른의 질문','✦ 숙소 뒤뜰'],acad:['academy','학술원과의 거래','✦ 원장이 장부를 편다'],ulrik:['chapel','형제단 토벌','✦ 정화자들과 함께 내려간다'],winter:['church','겨울의 기록','✦ 회랑의 작은 방'],oppose:['base','동료들의 반대','✦ 거실이 조용하다'],b1:[S.shc==='turn'?'church':'stairs',S.shc==='turn'?'흰 옷 사제들 모으기':'일곱 의자 채우기','✦ 일곱째 밤이 다가온다'],b2:[S.shc==='turn'?'barracks':'church',S.shc==='turn'?'숙소 장악':'마지막 축일','✦ 일곱째 밤 전날']}[k];
+  if(k==='walk'){if(HWALK[S.loc]&&!(S.shWkL||[]).includes(S.loc))return B('shwalk','할데온과 걷는다',{sub:`✦ 할데온이 이 구역의 옛일을 안다 (${(S.shWk||0)+1}/3)`,dis:busy});return null}
+  if(L&&S.loc===L[0])return B('shx',L[1],{sub:L[2],dis:busy});return null};
+const shPick=(n,fn)=>()=>{fn&&fn();save();ev(n.h,n.t,[[n.b||'자리를 뜬다',null]],1)};
+Object.assign(SCENE,{
+ shwalk:()=>{const l=S.loc;(S.shWkL=S.shWkL||[]).push(l);S.shWk=(S.shWk||0)+1;jr(`할데온과 ${PL[l]?PL[l].n:'거리'}을(를) 걸었다.`);save();ev('할데온과 걷는 날',HWALK[l]+(S.shWk>=3?'<p>할데온 — “오늘 하루 고맙습니다. 그대와 이렇게 걸은 게 백 년 만입니다.”</p>':''),[['걸음을 맞춘다',null]],1)},
+ shx:()=>{const k=shNext();if(k&&SCENE['sx_'+k])SCENE['sx_'+k]()},
+ sx_robe:()=>ev('대성당','<p>아침 예배가 끝난 대성당에 흰 옷 사제들이 줄을 선다. 할데온이 흰 옷 한 벌을 두 손으로 내민다. 소매 끝에 일곱 매듭이 수놓여 있다.</p><p>할데온 — “입어 보시겠습니까. 쫓기는 옷은 이제 벗으셔도 됩니다.”</p><p class="m">흰 옷을 걸치고 대성당 문을 나선다. 계단 아래 신자들이 고개를 숙인다. 어제까지 수배서를 붙이던 손들이다. 한 노파가 다가와 내 소매에 이마를 댄다.</p><p>노파 — “축복해 주십시오. 손자가 오늘 첫 등을 켭니다.”</p>'+pline({kirien:'…그 옷 벗어. 아니, 아니야. 나중에 말할게.',oswin:'흰 옷의 서식이군요. 소매 매듭 일곱. 기록해 두겠습니다.',ibre:'다들 고개를 숙입니다. 어제는 돌을 던지던 사람들입니다.',kasimir:'잘 어울리십니다. 그게 문제지요.',barg:'…흰색은 피가 잘 보인다.',eno:'그 옷에서 아무 맛도 안 나요. 새 옷 맛도.'}),
+  [['축복해 준다',shPick({h:'대성당',t:'<p class="m">노파의 이마에 손을 얹는다. 할데온이 뒤에서 작게 고개를 끄덕인다. 노파가 운다. 고마워서 우는 얼굴이다.</p><p class="m">처음으로 쫓기지 않는 하루가 간다. 이상하게 그게 제일 무섭다.</p>'},()=>{S.shW=1;jr('대성당에서 흰 옷을 입었다. 신자들이 고개를 숙였다. 처음으로 쫓기지 않는 하루였다.')})],
+   ['나는 사제가 아니라고 말한다',shPick({h:'대성당',t:'<p>노파 — “…그럼 누구신데요.”</p><p class="m">대답하지 못한다. 할데온이 대신 노파의 손을 잡는다. “지나가는 형제입니다. 축복은 제가 하지요.”</p><p class="m">처음으로 쫓기지 않는 하루가 간다. 이상하게 그게 제일 무섭다.</p>'},()=>{S.shW=1;jr('대성당에서 흰 옷을 입었다. 사제가 아니라고 말하자 노파가 나는 누구냐고 물었다.')})]]),
+ sx_conf:()=>ev('고해소','<p>고해소의 작은 창 너머로 사람들이 차례로 무릎을 꿇는다. 할데온은 옆 칸에서 듣기만 하고 병은 내가 받는다.</p><p class="m">첫째는 빚 문서를 든 짐꾼이다. 아내가 떠난 밤을 덜어 달라고 한다. 둘째는 해빙 전쟁에서 돌아온 병사다. 소년병의 얼굴 하나를 지워 달라고 한다.</p><p class="m">셋째는 아이다. 엄마가 자기를 못 알아본다고 한다. 그 기억을 덜어 달라고. 그러면 안 슬플 거라고.</p><p>옆 칸에서 할데온이 낮게 말한다. “받으십시오. 덜면 가벼워집니다. 그게 이 방의 일입니다.”</p>',
+  [['병을 받아 바친다',shPick({h:'고해소',t:'<p class="m">병 셋이 푸르게 찬다. 사람들이 가벼운 얼굴로 나간다. 아이도 웃으며 나간다. 무엇 때문에 울었는지 잊었다.</p>'},()=>{S.shC=1;S.hald=(S.hald||0)+1;if(S.party)aff(S.party,-1);jr('고해소에서 짐꾼과 병사와 아이의 기억을 받아 바쳤다.')})],
+   ['아이의 병만 돌려준다',shPick({h:'고해소',t:'<p class="m">아이 손에 빈 병을 쥐여 준다. “슬픈 건 들고 가. 엄마한테 네 이름을 계속 말해 줘.” 아이가 고개를 갸웃거리다 병을 품에 안고 나간다.</p><p class="m">옆 칸에서 할데온이 한참 말이 없다. 그러다 찻잔을 내려놓는 소리가 난다.</p>'},()=>{S.shC=1;S.shCk=1;if(S.party)aff(S.party,1);jr('고해소에서 아이의 기억만은 돌려주었다.')})],
+   ['아무것도 받지 않는다',shPick({h:'고해소',t:'<p class="m">창을 닫는다. 사람들이 무거운 얼굴 그대로 돌아간다. 옆 칸에서 할데온이 일어서는 소리가 난다. 아무 말도 하지 않는다.</p>'},()=>{S.shC=1;S.hald=(S.hald||0)-1;jr('고해소에서 아무 기억도 받지 않았다.')})]]),
+ sx_idq:()=>ev('정화자 숙소','<p>숙소 뒤뜰. 이데른이 칼을 닦다가 나를 보고 손을 멈춘다. 주위에 아무도 없다.</p><p>이데른 — “하나만 묻겠다. 목자를 믿는가.”</p><p>이데른 — “나는 열두 살에 목자께 거두어졌다. 겨울 거리에 버려진 아이였지. 그분 손이 따뜻했다. 그래서 그분이 하라는 건 다 했다. 사냥도.”</p><p>이데른 — “그런데 그대를 쫓던 밤마다 꿈을 꿨다. 내가 그대를 불 속에 밀어 넣는 꿈.”</p>',
+  [['믿는다',shPick({h:'정화자 숙소',t:'<p>이데른 — “…그런가. 그럼 나도 믿겠다. 아직은.”</p>'},()=>{S.shI=1;S.idT=(S.idT||0);jr('이데른이 목자를 믿느냐고 물었다. 믿는다고 대답했다.')})],
+   ['모르겠다',shPick({h:'정화자 숙소',t:'<p>이데른 — “모르겠다고 말하는 사람은 처음이군. 목자 곁에서는 다들 안다고 하지.”</p><p class="m">이데른이 칼을 칼집에 넣는다. 처음으로 나를 똑바로 본다.</p>'},()=>{S.shI=1;S.idT=(S.idT||0)+1;jr('이데른이 목자를 믿느냐고 물었다. 모르겠다고 대답했다.')})],
+   ['너는?',shPick({h:'정화자 숙소',t:'<p class="m">이데른이 한참 대답하지 않는다.</p><p>이데른 — “…믿고 싶다. 그게 내 대답이다. 그대가 아니라 내가 문제인 모양이다.”</p>'},()=>{S.shI=1;S.idT=(S.idT||0)+2;jr('이데른이 목자를 믿느냐고 물었다. 되묻자 믿고 싶다고 했다.')})]]),
+ sx_acad:()=>ev('학술원장실','<p>학술원장실. 회색 학자복의 원장이 할데온 앞에서 장부를 편다.</p><p>원장 — “푸른 재 공급량이 석 달째 줄었소. 노 하나를 더 돌려야 하오. 표본실의 칼라쉬 후예 셋을 내주시오. 그 비늘이면 노 하나가 반년은 돈다.”</p><p>할데온 — “둘. 셋째는 아직 어립니다.”</p><p class="m">두 사람이 나를 본다. 결정은 내 몫이라는 얼굴이다.</p>'+pline({oswin:'…칼라쉬의 후예. 저와 같은 비늘입니다. 저도 저 표본실 유리 너머에 있었습니다.',kirien:'사람을 노에 넣는 얘기를 차 마시듯 하네.',ibre:'셋이든 둘이든 셈이 틀렸습니다. 사람은 비늘로 세는 게 아닙니다.',kasimir:'흥정은 제 전문입니다. 다만 이건 흥정할 물건이 아니군요.',barg:'…애를 셋째로 세는 놈들이다.',eno:'유리관 안에서 셋이 같이 숨 쉬어요. 하나를 떼면 둘이 울어요.'}),
+  [['할데온의 말대로 둘만',shPick({h:'학술원장실',t:'<p class="m">원장이 장부에 줄을 긋는다. 할데온이 고개를 숙인다. “고맙습니다. 셋째는 제가 지켜보겠습니다.”</p><p class="m">돌아 나오는 복도에서 유리관 두드리는 소리가 들린다. 돌아보지 않는다.</p>'},()=>{S.shA=1;S.hald=(S.hald||0)+1;if(S.comps.includes('oswin'))aff('oswin',-4);jr('학술원과의 거래에서 칼라쉬 후예 둘을 내주었다.')})],
+   ['아무도 내주지 않는다',shPick({h:'학술원장실',t:'<p>할데온 — “…그럼 노 하나가 멈춥니다. 그 거리는 이번 겨울 춥겠지요. 그대가 고른 겁니다.”</p><p class="m">원장이 장부를 덮는다. 할데온은 나를 탓하지 않는다. 그게 더 무겁다.</p>'},()=>{S.shA=1;S.hald=(S.hald||0)-1;if(S.comps.includes('oswin'))aff('oswin',3);jr('학술원과의 거래에서 아무도 내주지 않았다. 노 하나가 멈춘다.')})],
+   ['셋 다 데리고 나간다',shPick({h:'학술원장실',t:'<p class="m">원장 책상에서 표본실 열쇠를 집어 든다. 원장이 경비를 부르려다 할데온을 본다. 할데온이 고개를 젓는다.</p><p>할데온 — “보내 드리십시오. 이번만은.”</p><p class="m">유리관에서 나온 셋이 서로의 손을 꼭 잡는다. 비늘이 오스윈처럼 붉게 번쩍인다.</p>'},()=>{S.shA=1;S.shAk=1;if(S.comps.includes('oswin'))aff('oswin',5);jr('학술원 표본실의 칼라쉬 후예 셋을 데리고 나왔다. 할데온이 보내 주라고 했다.')})]]),
+ sx_ulrik:()=>ev('지하 예배실','<p>정화자들과 함께 지하 예배실로 내려간다. 맨발들이 벽에 붙어 가스등 수를 센다. 울릭이 대검을 들고 앞에 선다.</p><p>울릭 — “돌아오는 이여. 목자 옆에 서 있군. 그분이 슬퍼하신다.”</p><p>울릭 — “목자는 그대 몸을 불에 넣을 것이다. 우리는 그대 몸을 그분께 돌려드릴 것이다. 무엇이 다른지 그대는 아는가.”</p>'+pline({barg:'울릭. …같은 날 무릎 꿇었던 놈이다. 내가 앞에 선다.',kirien:'저 사람 말 듣지 마. …근데 무슨 말인지는 궁금해.',oswin:'불에 넣는다. 돌려드린다. 같은 문장을 두 번 쓰는군요.',ibre:'맨발들은 다치게 하지 않겠습니다. 저 사람만.',kasimir:'두 쪽 다 그대 몸을 원하는군요. 인기 있으십니다.',eno:'저 사람 이마 줄마다 하나씩 울어요.'}),[['맞선다',()=>{S.bstory='shu';save();startBattle('fight','ulrik')}],['물러난다',null]]),
+ shuW:()=>{S.shU=1;jr('지하 예배실에서 울릭을 쓰러뜨렸다. 울릭은 일곱째 밤에 내 몸을 누구에게 주기로 했는지 목자에게 물어보라고 했다.');save();ev('지하 예배실','<p>울릭이 무릎을 꿇는다. 이마의 줄 하나가 피에 번진다.</p><p>울릭 — “…목자에게 물어보아라. 일곱째 밤에 그대 몸을 누구에게 주기로 했는지.”</p><p class="m">정화자들이 울릭을 끌고 간다. 예배실 입구에서 기다리던 할데온이 내 손의 피를 손수건으로 닦는다. 울릭의 말은 듣지 못한 얼굴이다. 정말로 듣지 못했는지는 모르겠다.</p>',[['예배실을 나선다',null]],1)},
+ sx_winter:()=>ev('회랑의 작은 방','<p>할데온이 자리를 비운 사이 회랑 작은 방에 혼자 남는다. 책장 맨 아래 칸에 표지 없는 장부가 꽂혀 있다.</p><p class="m">겨울 시대의 날짜가 한 장에 하루씩 적혀 있다. 날마다 숫자 하나. 「셋」 「일곱」 「열하나」. 얼어 죽은 아이의 수다. 글씨는 할데온의 것이다. 이백 년이 넘은 종이에 같은 글씨.</p><p class="m">마지막 장. 「겨울이 끝났다. 둘째가 등을 돌렸다. 그래도 셈은 계속한다.」 그 아래 날짜가 백이십 년 동안 하루도 빠짐없이 이어진다. 숫자는 모두 영이다.</p>',
+  [['장부를 제자리에 꽂는다',shPick({h:'회랑의 작은 방',t:'<p class="m">장부를 꽂는다. 등 뒤에서 할데온이 들어온다. 아무것도 묻지 않고 차를 따른다. 찻잔이 따뜻하다.</p>'},()=>{S.shR=1;S.hald=(S.hald||0)+1;jr('할데온의 방에서 겨울 시대의 장부를 보았다. 얼어 죽은 아이의 수가 날마다 적혀 있었다. 겨울이 끝난 뒤로는 모두 영이었다.')})],
+   ['할데온에게 묻는다',shPick({h:'회랑의 작은 방',t:'<p>할데온 — “…보셨군요. 영이라고 적는 날이 제일 좋았습니다. 그 영을 지키려고 무엇을 태웠는지는 따로 적지 않았지요.”</p><p>할데온 — “그대가 둘째였습니다, 베렌. 등을 돌린 둘째.”</p>'},()=>{S.shR=1;jr('할데온의 겨울 장부를 보았다. 등을 돌린 둘째가 나였다고 그가 말했다.')})]]),
+ sx_oppose:()=>{const here=S.comps.filter(c=>!(S.left||{})[c]&&S.taken!==c&&!isAmn(c)&&SHOPP[c]);
+  const go=here.filter(c=>SHGO[c]&&S.rom!==c&&((S.aff||{})[c]||0)<55).sort((a,b)=>(S.aff[a]||0)-(S.aff[b]||0))[0];
+  const h='<p class="m">저택 거실이 조용하다. 동료들이 나를 기다리고 있었다. 흰 옷을 벗지 않은 채로 들어선다.</p>'+here.map(c=>`<p>${cn(c)} — “${SHOPP[c]()}”</p>`).join('')+(go?`<p>${cn(go)} — “나는 저택을 나갈게. ${SHGO[go]}. 네가 그 옷 벗으면 와.”</p>`:'<p class="m">아무도 떠나지는 않는다. 다만 저녁 식탁이 오래 조용하다.</p>');
+  ev('동료들의 반대',h,go?[['붙잡는다',shPick({h:'동료들의 반대',t:`<p class="m">${josa(cn(go),'이','가')} 문 앞에서 멈춘다. 오래 서 있다가 돌아와 앉는다. 함께 나서지는 않겠지만 저택에는 남겠다고 한다.</p>`},()=>{S.shO=1;S.shStay=go;aff(go,2);jr(`${cn(go)}이(가) 저택을 떠나려다 남았다. 할데온과는 함께 다니지 않겠다고 했다.`)})],['보내 준다',shPick({h:'동료들의 반대',t:`<p class="m">${josa(cn(go),'이','가')} 문을 나선다. 돌아보지 않는다. 거실에 빈자리가 하나 생긴다.</p>`},()=>{S.shO=1;S.shLeft=go;jr(`${cn(go)}이(가) 저택을 떠났다. 내가 흰 옷을 벗으면 오겠다고 했다.`)})]]:[['고개를 끄덕인다',()=>{S.shO=1;jr('동료들이 저마다 목자의 길에 대한 생각을 말했다.');save();render()}]])},
+ sx_b1:()=>{if(S.shc==='turn'){const back=S.shLeft;
+   return ev('구호소 뒷방','<p>구호소 뒷방. 이데른이 흰 옷 사제들을 하나씩 데려온다. 장례를 치르는 손, 붕대를 감는 손들이다.</p><p>이데른 — “목자의 뜻을 모르는 사람들이다. 알려 줘야 한다. 그대가 말하라. 내가 말하면 명령이 된다.”</p><p class="m">사제들 앞에서 문틈으로 들은 말을 그대로 옮긴다. 몸은 약속대로 돌려드린다는 말을. 사제 하나가 성호를 긋다 말고 손을 내린다.</p>'+(S.abel==='f'?'<p class="m">맨 뒤에서 아벨이 손을 든다. “종탑 문은 제가 엽니다.”</p>':'')+(back?`<p class="m">구호소 문이 열리고 ${josa(cn(back),'이','가')} 들어온다. 흰 옷을 벗은 나를 보고 아무 말 없이 옆에 선다.</p>`:''),[['사제들에게 고개를 숙인다',()=>{S.shB1=1;S.shLeft=null;jr('이데른과 흰 옷 사제들을 모았다. 목자의 약속을 그들에게 전했다.'+(back?` ${cn(back)}이(가) 돌아왔다.`:''));save();render()}]])}
+  ev('옛 불의 방','<p>옛 불의 방. 할데온과 함께 헌금 병을 빈 의자들 앞에 하나씩 놓는다. 병을 놓을 때마다 의자가 조금씩 푸르게 찬다.</p><p class="m">셋째 의자 앞에서 손이 멈춘다. 병 꼬리표에 아는 글씨가 있다. 고해소의 짐꾼. 「아내가 떠난 밤」.</p><p>할데온 — “다섯째까지 찼습니다. 여섯째는 일곱째 밤에 도시가 채울 겁니다. 둘째는… 그대 자리입니다. 제 옆자리지요.”</p>'+(S.shCk?'<p class="m">아이의 병은 어디에도 없다. 할데온이 그 자리를 비워 둔 것이다.</p>':''),[['병을 마저 놓는다',()=>{S.shB1=1;jr('할데온과 일곱 의자에 헌금 병을 놓았다. 다섯째까지 찼다. 둘째 의자는 내 자리라고 했다.');save();render()}]])},
+ sx_b2:()=>{if(S.shc==='turn')return ev('정화자 숙소','<p>숙소 마당. 할데온에게 남은 회색 옷들이 향로를 든다. 이데른이 그 앞에 선다.</p><p>이데른 — “어제까지 내 부하였다. 칼을 쓰지 말라고 부탁하겠다. 안 되면 그대가 길을 열어라.”</p>',[['맞선다',()=>{S.bstory='shb2';save();startBattle('fight','squad')}],['물러난다',null]]);
+  ev('대성당 발코니','<p>일곱째 밤 전날. 대성당 앞 광장에 이름 바치기 축일이 열린다. 올해는 내가 발코니에 선다. 할데온 옆에.</p><p class="m">아래에서 사람들이 이름을 적은 종이를 불에 던진다. 종이가 탈 때마다 발밑에서 의자가 차오르는 소리가 들린다.</p><p>할데온 — “한 말씀 하시겠습니까. 사람들이 그대 목소리를 기다립니다.”</p>',
+   [['“태워라”라고 말한다',shPick({h:'대성당 발코니',t:'<p class="m">목소리가 광장을 덮는다. 사람들이 환호하며 더 많은 종이를 던진다. 거리의 가스등 불꽃이 일제히 내 쪽으로 눕는다.</p>'},()=>{S.shB2=1;S.hald=(S.hald||0)+1;jr('마지막 축일에 발코니에서 “태워라”라고 말했다.')})],
+    ['아무 말도 하지 않는다',shPick({h:'대성당 발코니',t:'<p class="m">입을 열지 않는다. 광장이 조금씩 조용해진다. 누군가 아래에서 이름 하나를 소리 내어 부른다. 종이에 적혀 있던 이름이다. 할데온이 그쪽을 오래 본다.</p>'},()=>{S.shB2=1;S.shFq=1;jr('마지막 축일에 발코니에서 아무 말도 하지 않았다. 누군가 이름 하나를 소리 내어 불렀다.')})]])},
+ shb2W:()=>{S.shB2=1;S.sh4s=1;jr('이데른과 정화자 숙소를 되찾았다.');save();ev('정화자 숙소','<p>숙소 마당의 회색 옷들이 무기를 내려놓는다. 이데른이 그들 이름을 하나씩 부른다. 부를 때마다 하나씩 향로가 꺼진다.</p><p>이데른 — “일곱째 밤이다. 같이 내려가자.”</p>',[['고개를 끄덕인다',null]],1)}
+});
+Object.assign(CMD,{shwalk:()=>{if(!S.act&&shNext()==='walk'&&HWALK[S.loc]&&!(S.shWkL||[]).includes(S.loc))SCENE.shwalk()},shx:()=>{if(!S.act)SCENE.shx()}});
+Object.defineProperty(ACTS,4,{get(){return '4막 · '+({shep:'흰 천의 안쪽',ret:'빈 이마',ext:'찬 밤'}[S&&S.route]||'갈래')},enumerable:true});
 
 /* ===== 돌아오는 이의 길 (v067) — S.rt 1 빈 이마(지하 예배실, 기억을 태운다 + 학술원 수거인) → 2 천막촌의 노래(막아서는 바르그 또는 정화자) → 3 불 앞의 거울(두 번째 갈림 S.rtc give/stand) → 엔딩 「베렌」/「지금의 이름」
    기억을 태울수록(S.rburn) 싸움에서 주는 피해가 10%씩 늘고 그 동료와 나눈 밤 하나가 하얗게 빈다(호감 −6). 오스윈과 바르그(맹세를 베렌에게 묶지 않았다면)는 호감 70 미만이면 함께 나서지 않는다 ===== */
@@ -4516,7 +4573,7 @@ Object.assign(SCENE,{
 Object.assign(CMD,{duo:()=>{if(!S.act&&S.loc==='base')SCENE.duo()}});
 
 Object.assign(CMD,{recon:a=>{if(!S.act&&(S.left||{})[a])SCENE.recon(a)},a2a:()=>{if(!S.act&&(S.a2||0)===0)SCENE.a2a()},a2b:()=>{if(!S.act&&S.a2===1)SCENE.a2b()},a2c:()=>{if(!S.act&&S.a2===2)SCENE.a2c()},a2d:()=>{if(!S.act&&S.a2===3)SCENE.a2d()},a2e:()=>{if(!S.act&&S.a2===4)SCENE.a2e()},a2f:()=>{if(!S.act&&S.a2===5)SCENE.a2f()}});
-window.__k2={PL,isAmn,easyB,MV,CFG,bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={PL,isAmn,easyB,MV,CFG,shNext:()=>shNext(),shStep:()=>{const x=shStepAct(false);return x?String(x).slice(0,80):null},bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>
