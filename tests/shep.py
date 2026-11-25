@@ -59,7 +59,7 @@ with sync_playwright() as p:
     go(pg,'church','ibre');pg.click('.M button[data-c=shx]');choose(pg,'아무 말도 하지 않는다');choose(pg,'자리를 뜬다')
     go(pg,'stairs','ibre');pg.click('button[data-c=sh4]');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("일곱째 밤")',timeout=5000);t=pg.inner_text('#ov');assert '키리엔이 부른다' in t,t;choose(pg,'문 안으로');choose(pg,'말한다');skipcine(pg)
-    t=pg.inner_text('#ov');assert '하늘의 불' in t and '놋등' in t and '이브레는 저택 문 앞에' in t and '처음으로 눈을' in t,t;choose(pg,'이야기를 덮는다')
+    t=pg.inner_text('#ov');assert '하늘의 불' in t and '놋등' in t and '이브레는 저택 문 앞에' in t and '처음 보는 것처럼 눈을' in t,t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='shepF' and pg.locator('button[data-c=sh4]').count()==0
     print('shep follow ok')
     E(pg,base);E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{sh:0,shc:null,shKid:0,sh4s:0,hg:0,rom:null,abel:'i',shB1:0,shB2:0,shStay:null,shLeft:null,shFq:0});K.render()}")
