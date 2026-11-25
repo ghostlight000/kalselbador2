@@ -1926,13 +1926,15 @@ Object.assign(SCENE,{
 /* 탐사 중 작은 일들 — 반복 탐사에 우연을 섞는다 */
 const XEV=[
  {at:['docks'],h:'젖은 편지',p:'<p>널빤지 사이에 끼어 있는 젖은 편지 한 통에서 동전 무게가 느껴진다.</p>',b:[['뜯어 본다',()=>{S.coin+=3;pop('젖은 편지',{g:3,n:['“어머니께. 이번 달은 이것뿐이에요.” 받는 사람 주소는 번져서 읽을 수 없다.']})}],['그대로 둔다',()=>pop('젖은 편지',{n:['편지를 널빤지 사이에 다시 끼워 둔다. 누가 찾으러 올지도 모른다.']})]]},
- {at:['street','church'],h:'길 잃은 노인',p:'<p>가스등 아래 노인이 같은 자리를 맴돌고 있다.</p><p>노인 — “우리 집이 이 근처였는데. 문 색깔이 뭐였더라.”</p>',b:[['집을 같이 찾아 준다',()=>{add('band',1);if(S.party)aff(S.party,1);pop('길 잃은 노인',{i:{band:1},n:['한참을 헤맨 끝에 파란 문 앞에서 멈춘 노인이 고맙다며 붕대 한 묶음을 쥐여 준다.']})}],['경비대에 맡긴다',()=>pop('길 잃은 노인',{n:['초소 경비가 노인을 데려간다. 노인은 끝내 문 색깔을 기억하지 못했다.']})]]},
+ {at:['street','church'],max:2,h:'길 잃은 노인',p:'<p>가스등 아래 노인이 같은 자리를 맴돌고 있다.</p><p>노인 — “우리 집이 이 근처였는데. 문 색깔이 뭐였더라.”</p>',b:[['집을 같이 찾아 준다',()=>{add('band',1);if(S.party)aff(S.party,1);pop('길 잃은 노인',{i:{band:1},n:['한참을 헤맨 끝에 파란 문 앞에서 멈춘 노인이 고맙다며 붕대 한 묶음을 쥐여 준다.']})}],['경비대에 맡긴다',()=>pop('길 잃은 노인',{n:['초소 경비가 노인을 데려간다. 노인은 끝내 문 색깔을 기억하지 못했다.']})]]},
  {at:['academy','works'],h:'봉인된 상자',p:'<p>폐기물 더미 위에 학술원 봉인이 찍힌 작은 상자가 있다.</p>',b:[['봉인을 뜯는다',()=>{add('ash',1);add('scrap',1);pop('봉인된 상자',{i:{ash:1,scrap:1},n:['유리관 하나와 쇳조각이 들었다. 유리관 꼬리표는 지워져 있다.']})}],['건드리지 않는다',()=>pop('봉인된 상자',{n:['상자를 그대로 두었는데 다음에 와 보니 없어졌다.']})]]},
  {at:['outskirts','docks'],h:'굶은 개',p:'<p>갈비뼈가 드러난 개 한 마리가 멀찍이서 따라온다.</p>',b:[['먹을 걸 나눠 준다',()=>{S.coin+=4;pop('굶은 개',{g:4,n:['개가 허겁지겁 먹고 나서 넝마 더미를 앞발로 판다. 흙 속에서 동전 몇 닢이 나온다.']})}],['쫓아낸다',()=>pop('굶은 개',{n:['개가 꼬리를 말고 물러난다.']})]]},
  {at:['works'],h:'노래하는 굴뚝',p:'<p>식은 굴뚝 안에서 노랫소리가 흘러나온다. 여러 사람이 부르는 노래다.</p>',b:[['귀를 기울인다',()=>{add('ash',1);pop('노래하는 굴뚝',{i:{ash:1},n:['노래가 멎자 굴뚝 바닥에 푸른 재가 한 줌 쌓여 있다. 따뜻하다.']})}],['지나간다',()=>pop('노래하는 굴뚝',{n:['노래는 한참 뒤까지 들렸다.']})]]},
- {at:['church'],h:'수녀의 질문',p:'<p>묘지 길에서 젊은 수녀가 다가온다.</p><p>수녀 — “이름을 여쭤도 될까요. 기도할 때 부르려고요.”</p>',b:[['이름을 알려 준다',()=>{add('band',1);pop('수녀의 질문',{i:{band:1},n:['수녀가 이름을 입속으로 몇 번 되뇌고는 구호소 붕대 하나를 건넨다.']})}],['웃으며 사양한다',()=>pop('수녀의 질문',{n:['수녀가 고개를 숙이고 물러난다.']})]]}
+ {at:['church'],h:'수녀의 질문',p:'<p>묘지 길에서 젊은 수녀가 다가온다.</p><p>수녀 — “이름을 여쭤도 될까요. 기도할 때 부르려고요.”</p>',b:[['이름을 알려 준다',()=>{add('band',1);pop('수녀의 질문',{i:{band:1},n:['수녀가 이름을 입속으로 몇 번 되뇌고는 구호소 붕대 하나를 건넨다.']})}],['웃으며 사양한다',()=>pop('수녀의 질문',{n:['수녀가 고개를 숙이고 물러난다.']})]]},
+ {at:['street','square'],h:'떨어진 이름표',p:'<p>가스등 기둥 밑에 놋쇠 이름표 하나가 떨어져 있다. 줄이 끊어진 채 이름 두 글자가 반쯤 닳았다.</p><p class="m">요즘 이 거리 사람들은 이름을 이렇게 목에 걸고 다닌다.</p>',b:[['초소에 맡긴다',()=>{S.coin+=2;pop('떨어진 이름표',{g:2,n:['초소 경비가 이름표를 못에 걸어 둔다. 벌써 열 개 넘게 걸려 있다. 찾으러 오는 사람은 드물다며 동전 두 닢을 내민다.']})}],['고철로 챙긴다',()=>{add('scrap',1);pop('떨어진 이름표',{i:{scrap:1},n:['이름표를 주머니에 넣는다. 놋쇠가 생각보다 따뜻하다.']})}]]},
+ {at:['street'],h:'견습 점등꾼',p:'<p>사다리 위에서 견습 점등꾼 아이가 버너 덮개와 씨름하고 있다. 사다리 다리 하나가 돌 틈에서 자꾸 미끄러진다.</p>',b:[['사다리를 잡아 준다',()=>{S.coin+=3;if(S.party)aff(S.party,1);pop('견습 점등꾼',{g:3,n:['아이가 덮개를 닫고 내려와 동전 세 닢을 내민다. 브리타 할머니가 등마다 이름이 있다던데 이 등 이름은 아직 모른다고 한다.']})}],['지나간다',()=>pop('견습 점등꾼',{n:['몇 걸음 뒤에서 사다리가 덜컹거린다. 돌아보니 아이가 기둥에 매달려 버티고 있다.']})]]},
 ];
-function xevRoll(at){if(S.pend||TEST&&!S.sxon)return false;const L=XEV.filter(e=>e.at.includes(at));if(!L.length||Math.random()>(stal('dig')?.3:.2))return false;S.xev=XEV.indexOf(L[Math.random()*L.length|0]);S.pend='xev';return true}
+function xevRoll(at){if(S.pend||TEST&&!S.sxon)return false;S.xn=S.xn||{};S.xlast=S.xlast||{};const L=XEV.filter((e,i)=>e.at.includes(at)&&(S.xn[i]||0)<(e.max||3)&&S.xlast[at]!==i);if(!L.length||Math.random()>(stal('dig')?.3:.2))return false;S.xev=XEV.indexOf(L[Math.random()*L.length|0]);S.xn[S.xev]=(S.xn[S.xev]||0)+1;S.xlast[at]=S.xev;S.pend='xev';return true}
 SCENE.xev=()=>{const e=XEV[S.xev];S.xev=null;if(!e)return;ev(e.h,e.p,e.b)};
 
 function pending(){const k=S.pend;S.pend=null;save();if(k&&k.startsWith('leave:')){compLeave(k.slice(6));return}if(k&&k.startsWith('sx:')){const D=SX[k.slice(3)];if(D&&!sxQ(k.slice(3)))D.open();return}if(SCENE[k])SCENE[k]()}
@@ -2605,13 +2607,13 @@ const CMD={
     if(loc)qs.push([QD('이곳은 어때?',S.talked[id+':'+S.loc]),()=>{const key=id+':'+S.loc,first=!S.talked[key],rk=id+':'+pk(S.loc)+':r';S.talked[key]=1;if(first&&!S.talked[rk]){S.talked[rk]=1;aff(id,1)}seq(id,T,loc,h=>tev(id,T,h,back))}]);
     qs.push(['요즘 어때?',()=>{const M=MOOD[id]||[['…']];tev(id,T,tln(id,M[Math.random()*M.length|0]),back)}]);
     const ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));S.oask=S.oask||{};if(ot.length)qs.push([QD('다른 사람들 이야기',ot.every(o=>S.oask[id+':'+o])),()=>CMD.talkO(id)]);
-    CHI[id]=([QD('지난 이야기를 들려줘',!chNext(id)),()=>{const ch=chNext(id);
+    const chN=chNext(id),chAll=((S.chd||{})[id]||0)>=(CH[id]||[]).length;CHI[id]=([chN?'지난 이야기를 들려줘 <i class="hbn">✦</i>':QD('지난 이야기를 들려줘',chAll),()=>{const ch=chNext(id);
       if(!ch){const D=DEFL[id]||[['…'],['…']];tev(id,T,tln(id,(S.chd[id]||0)>=(CH[id]||[]).length?D[1]:D[0]),back);return}
       const ci=S.chd[id]||0;
       seq(id,`${T} — ${ch.t}`,ch.p,h=>tev(id,`${T} — ${ch.t}`,h,ch.c.map(([l,g,r],k)=>[l,()=>{aff(id,g);S.chc=S.chc||{};(S.chc[id]=S.chc[id]||{})[ci]=k;S.chd[id]=(S.chd[id]||0)+1;jr(`${josa(T,'이','가')} 「${ch.t}」 이야기를 들려주었다.`);seq(id,`${T} — ${ch.t}`,r,h2=>tev(id,`${T} — ${ch.t}`,h2,back))}])))}]);
-    {const Q=QA[id]||[];const all=Q.every((x,i)=>!x||S.asked[id+':'+i])&&(!RCX[id]||S.asked[id+':r']);qs.push([QD('너에 대해 이야기해 줘',all),()=>CMD.about(id)])}
+    {const Q=QA[id]||[];const all=Q.every((x,i)=>!x||S.asked[id+':'+i])&&(!RCX[id]||S.asked[id+':r']);qs.push([chN?'너에 대해 이야기해 줘 <i class="hbn">✦</i>':QD('너에 대해 이야기해 줘',all&&chAll),()=>CMD.about(id)])}
     TG[id]=qs;
-    tev(id,T,top+`<p class="m">${greet(id)}</p>`,[['물어보고 싶은 게 있어',()=>CMD.ask(id)],['이야기를 그만둔다',null]])},
+    tev(id,T,top+`<p class="m">${greet(id)}</p>`,[['물어보고 싶은 게 있어'+(chN?' <i class="hbn">✦</i>':''),()=>CMD.ask(id)],['이야기를 그만둔다',null]])},
   talkO:id=>{const T=cn(id),ot=Object.keys(CMT[id]||{}).filter(o=>o!==id&&(COMP[o]?met(S,o):o==='pit'?!!S.pit:true));tev(id,T,`<p class="m">${greet(id)}</p>`,ot.map(o=>[QD(josa(cn(o),'은','는')+' 어때?',(S.oask||{})[id+':'+o]),()=>{(S.oask=S.oask||{})[id+':'+o]=1;save();tev(id,`${T} — ${cn(o)} 이야기`,tln(id,CMT[id][o]),[['다른 사람 이야기',()=>CMD.talkO(id)],['다른 것도 묻는다',()=>CMD.ask(id)],['이야기를 그만둔다',null]])}]).concat([['다른 것도 묻는다',()=>CMD.ask(id)]]))},
   ntalk:id=>{const N=NPCT[id];if(!N||!N.met(S))return;S.nmet=S.nmet||{};const first=!S.nmet[id];S.nmet[id]=1;S.nask=S.nask||{};
     const back=[['다른 것도 묻는다',()=>CMD.ntalk(id)],['이야기를 그만둔다',null]];
