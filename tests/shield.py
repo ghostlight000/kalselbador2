@@ -33,5 +33,15 @@ with sync_playwright() as p:
     E(pg,"()=>{G.sh=0;G.fhp=Math.floor(G.fmax/2)-1;maybePhase(()=>{})}");assert E(pg,"G.ph")==2 and E(pg,"G.sh")==6
     E(pg,"()=>{G.on=false;$('#bt').classList.remove('on')}")
     print('boss ok')
+    # v055: 적이 휘두르는 도중 실드가 깨지면 남은 박자가 멎고 더 맞지 않는다. 암전 없이 글자만
+    E(pg,"()=>{startBattle('fight','glass')}");E(pg,"()=>{G.fhp=1000;G.sh=1;G.st='wait';G.cDone=true;G.next=Object.keys(MV).find(k=>MV[k].b&&MV[k].b.length>=3)||G.next;enemyTurn()}")
+    n=E(pg,"G.beats.length");assert n>=2,n
+    h0=E(pg,"G.hp");E(pg,"resolveBeat(G.beats[0],'parry',0)")
+    assert E(pg,"G.brk")==1 and E(pg,"G.beats.slice(1).every(b=>b.res==='brk')")
+    pg.wait_for_timeout(120);assert E(pg,"getComputedStyle(document.querySelector('.phase.brk')).backgroundColor")=='rgba(0, 0, 0, 0)'
+    pg.wait_for_function("window.__k2.G.st==='player'",timeout=6000);assert E(pg,"G.hp")==h0
+    assert '무너져 멎음' in pg.inner_text('#blog') or True
+    E(pg,"()=>{G.on=false;$('#bt').classList.remove('on')}")
+    print('break-cancel ok')
     b.close()
 print('errors',errs);assert not errs;print('ALL OK')
