@@ -31,9 +31,9 @@ with sync_playwright() as p:
     choose(pg,'문을 잠근다');s=E(pg,"window.__k2.S");assert s['c3']==4 and s['mgB']=='h'
     go(pg,'base','kirien');pg.click('button[data-c=r3b]');listen(pg);choose(pg,'그때는 내 이름을');listen(pg);t=pg.inner_text('#ov');choose(pg,'곁에 있는다')
     pg.click('button[data-c=c3r]');assert pg.locator('#ov.on button:has-text("목자의 길")').count()==1;choose(pg,'목자의 길');choose(pg,'이 길로 간다')
-    assert '오래 함께 걷겠습니다' in pg.inner_text('#ov');choose(pg,'고개를 끄덕인다');assert E(pg,"window.__k2.S.route")=='shep'
+    assert '오래 함께 걷겠습니다' in pg.inner_text('#ov');choose(pg,'자리에 앉는다');choose(pg,'찻잔을 든다');assert E(pg,"window.__k2.S.route")=='shep' and E(pg,"window.__k2.S.hg")==1
     print('hes + shep ok')
-    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{c3:0,mgB:null,mgK:0,route:null,r3a:1,r3b:1,hald:0,magp:1,loc:'inn'});K.render()}")
+    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{c3:0,mgB:null,mgK:0,route:null,hg:0,sh:0,r3a:1,r3b:1,hald:0,magp:1,loc:'inn'});K.render()}")
     pg.click('button[data-c=c3a]');choose(pg,'같이 가자');choose(pg,'여관을 나선다')
     go(pg,'stairs','ibre');pg.click('button[data-c=c3b]');assert '돌아보지 않는다' in pg.inner_text('#ov');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on button:has-text("맞선다")',timeout=5000);assert E(pg,"window.__k2.S.c3")==2;choose(pg,'맞선다');win(pg)
