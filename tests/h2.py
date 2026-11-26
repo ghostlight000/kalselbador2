@@ -39,7 +39,7 @@ with sync_playwright() as p:
     E(pg,"()=>{window.__k2.S.loc='furn';window.__k2.render()}");pg.click('button[data-c=h2furn]');choose(pg,'막아선다');assert E(pg,"G.foe")=='pourer' and E(pg,"G.fmax")==round(180*1.45*1.3);win(pg)
     choose(pg,'맞선다');assert E(pg,"G.foe")=='keeper';win(pg);pg.wait_for_selector('#ov.on h2:has-text("시험 연소 기록")',timeout=5000);t=pg.inner_text('#ov');assert '할데온' in t and '흉내' in t;okpop(pg);pg.wait_for_selector('#ov.on h2:has-text("3번 노 뒤 줄")',timeout=5000);assert '실례지만 누구신지요' in pg.inner_text('#ov');okpop(pg);assert E(pg,"window.__k2.S.h2")==3 and E(pg,"window.__k2.S.amn")=='oswin';print('furnace ok')
     E(pg,"()=>{window.__k2.S.loc='base';window.__k2.render()}");E(pg,"CMD.talk('oswin')");assert '처음 뵙겠습니다' in pg.inner_text('#ov');choose(pg,'곁에 앉아')
-    E(pg,"()=>{window.__k2.S.loc='church';window.__k2.render()}");pg.click('button[data-c=h2abel]');assert '아줌마 누구야' in pg.inner_text('#ov');choose(pg,'광장을 빠져나간다');t=pg.inner_text('#ov');assert '거짓말' in t;choose(pg,'어머니는');assert '목소리를 바쳤어' in pg.inner_text('#ov');okpop(pg)
+    E(pg,"()=>{window.__k2.S.loc='church';window.__k2.render()}");pg.click('button[data-c=idM]');choose(pg,'곁에 앉는다');choose(pg,'빵을 나눠 먹는다');okpop(pg);pg.click('button[data-c=h2abel]');assert '아줌마 누구야' in pg.inner_text('#ov');choose(pg,'광장을 빠져나간다');t=pg.inner_text('#ov');assert '거짓말' in t;choose(pg,'어머니는');assert '목소리를 바쳤어' in pg.inner_text('#ov');okpop(pg)
     s=E(pg,"window.__k2.S");assert s['h2']==4 and s['abelN']==1
     E(pg,"()=>{const S=window.__k2.S;S.party='barg';S.loc='outskirts';window.__k2.render()}");pg.click('button[data-c=h2broth]');t=pg.inner_text('#ov');assert '울릭' in t and '…울릭.' in t and '바르그' in t;choose(pg,'맞선다');assert E(pg,"G.foe")=='ulrik';win(pg);pg.wait_for_selector('#ov.on h2:has-text("천막촌 끝")',timeout=5000);assert '겨울 아침' in pg.inner_text('#ov');okpop(pg)
     assert E(pg,"window.__k2.S.h2")==5;print('abel/brotherhood ok')
@@ -47,7 +47,7 @@ with sync_playwright() as p:
     t=pg.inner_text('#ov');assert '여관도 내가 알려 줬어' in t and '냄새가 달랐어' in t;choose(pg,'계단 아래 어둠')
     runchase(pg,False);choose(pg,'맞선다');assert E(pg,"G.foe")=='squad';win(pg);pg.wait_for_selector('#ov.on h2:has-text("운하")',timeout=5000);t=pg.inner_text('#ov');assert '분대를 쓰러뜨리고' in t;choose(pg,'저택으로');okpop(pg)
     s=E(pg,"window.__k2.S");assert s['h2']==6 and s['a3']==1 and s.get('gvU')==1 and not s['inv'].get('gvial');print('door ok')
-    t=pg.inner_text('.goalc');assert '잊은 사람' in t,t
+    t=pg.inner_text('.goalc');assert '바뀐 공고' in t,t
     E(pg,"()=>{window.__k2.S.loc='church';window.__k2.render()}");pg.click('button[data-c=h2abelA]');choose(pg,'용서한다');okpop(pg);assert E(pg,"window.__k2.S.abel")=='f'
     print('abel after ok')
     b.close()

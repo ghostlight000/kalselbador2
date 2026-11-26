@@ -20,7 +20,7 @@ with sync_playwright() as p:
     pg.click('button[data-c=start]');pg.click('#pv [data-pv=skip]');pg.click('#pv .eo');pg.click('#pv [data-pv=close]');pg.click('#ov.on button:has-text("막대를 쥔 노인을 따라간다")');pg.click('#ov.on button:has-text("막대 앞에 선다")');pg.wait_for_function('window.__k2.G.on');pg.evaluate("window.__k2.endBattle('tut')");pg.click('#ov.on .btn.pri')
     E(pg,"()=>{const K=window.__k2;K.S.night=3;K.S.mort=2;K.joinComp('kasimir');K.joinComp('ibre');K.S.party='kasimir';K.grantBase()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{pit:1,manor:1,mr:3,eda:1,acad:1,fac:1,mg:1,mgh:'hide',rev:1,revd:1,a2:6,h2:5,orx:{kasimir:1,ibre:1},mgt:{kasimir:1,ibre:1},rvt:{kasimir:1,ibre:1},loc:'base'});K.S.vis.academy=1;K.render()}")
-    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{a3:1,a3h:1,h2:6,abel:'f',amn:'kasimir',taken:null,hq:3,hald:1,loc:'base',party:'ibre',rvt:{kasimir:1,ibre:1},mgt:{kasimir:1,ibre:1}});K.render()}")
+    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{a3:1,a3h:1,br:5,h2:6,abel:'f',amn:'kasimir',taken:null,hq:3,hald:1,loc:'base',party:'ibre',rvt:{kasimir:1,ibre:1},mgt:{kasimir:1,ibre:1}});K.render()}")
     pg.click('button[data-c=rq0]');t=pg.inner_text('#ov');assert '이유는 모름' in t and '전당포' in t;choose(pg,'병을 찾으러 간다')
     assert E(pg,"window.__k2.S.rq")==1 and E(pg,"window.__k2.PL.pawn.hide(window.__k2.S)")==False
     go(pg,'church','ibre');pg.click('button[data-c=rq1a]');assert '약속드린 것입니다' in pg.inner_text('#ov');choose(pg,'고맙다고 말하고')
@@ -29,7 +29,7 @@ with sync_playwright() as p:
     s=E(pg,"window.__k2.S");assert s['amn'] is None and s['rq']==3 and s['aff']['kasimir']==a0+4
     assert E(pg,"window.__k2.isAmn('kasimir')")==False
     print('path hald ok')
-    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{amn:'pit',rq:0,rqId:null,rqW:null,hq:1,loc:'base'});K.render()}")
+    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{amn:'pit',rq:0,br:5,rqId:null,rqW:null,hq:1,loc:'base'});K.render()}")
     pg.click('button[data-c=rq0]');choose(pg,'병을 찾으러 간다')
     go(pg,'church','ibre');assert pg.locator('button[data-c=rq1a]').count()==0
     go(pg,'pawn','ibre');pg.click('button[data-c=rq1b]');choose(pg,'맞선다');win(pg)
