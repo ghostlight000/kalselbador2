@@ -35,8 +35,8 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.joinComp('kasimir');Object.assign(K.S,{loc:'base',party:'kirien',amn:'kasimir',rev:1,rvt:{kirien:1,ibre:1},mgt:{kirien:1,ibre:1},aev:{kirien:99,ibre:99},chd:{kirien:9,ibre:9},iq:5});K.S.aff.kasimir=90;K.S.aff.kirien=0;K.render()}")
     assert E(pg,"window.__k2.talkSub?window.__k2.talkSub('kasimir'):'x'") in ('이야기를 나눈다','x')
     print(E(pg,"(()=>{const K=window.__k2;return K.S.comps.map(id=>id+':'+[K.talkNew&&K.talkNew(id),K.chNext&&!!K.chNext(id),K.aevFor&&!!K.aevFor(id)].join(','))})()"))
-    E(pg,"window.__k2.CMD.rooms()");pg.wait_for_timeout(100);t=pg.inner_text('#ov');assert '동료와 이야기한다 ✦' not in t,t
-    choose(pg,'문을 닫는다');E(pg,"()=>{window.__k2.S.amn=null}");E(pg,"window.__k2.CMD.rooms()");pg.wait_for_timeout(100);assert '동료와 이야기한다 ✦' in pg.inner_text('#ov')
+    E(pg,"window.__k2.CMD.rooms()");pg.wait_for_timeout(100);t=pg.inner_text('#ov');assert '✦' not in t,t
+    choose(pg,'문을 닫는다');E(pg,"()=>{window.__k2.S.amn=null}");E(pg,"window.__k2.CMD.rooms()");pg.wait_for_timeout(100);assert '✦' in pg.inner_text('#ov')
     print('amn mark ok')
     b.close()
 print('errors',errs);assert not errs;print('ALL OK')

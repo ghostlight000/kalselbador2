@@ -68,7 +68,7 @@ with sync_playwright() as p:
         if cid=='barg':assert '내가 서 있다' in log
         E(pg,"()=>{const K=window.__k2;K.endBattle('win')}");okpop(pg)
     # 출신 반응·종족 질문
-    E(pg,"()=>{const K=window.__k2;K.S.party='eno';K.S.mgt={kirien:1,oswin:1,ibre:1,barg:1,eno:1,kasimir:1};K.render()}");pg.click('button[data-c=talk]');assert '병사가 하나' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
+    E(pg,"()=>{const K=window.__k2;K.S.party='eno';K.S.mgt={kirien:1,oswin:1,ibre:1,barg:1,eno:1,kasimir:1};K.render()}");(pg.click('button[data-c=talk]') if pg.locator('button[data-c=talk]').count() else (pg.click('button[data-c=rooms]'),pg.click('#ov.on button[data-c=talk][data-a='+pg.evaluate('window.__k2.S.party')+']')));assert '병사가 하나' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다')
     choose(pg,'물어보고 싶은 게 있어');choose(pg,'너에 대해 이야기해 줘');assert '지도 좀 보여 줄래?' in pg.inner_text('#ov');choose(pg,'다른 이야기를 한다');choose(pg,'이야기를 그만둔다')
     print('battle/talk ok')
     b.close()

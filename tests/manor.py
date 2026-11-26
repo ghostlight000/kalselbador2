@@ -23,7 +23,7 @@ with sync_playwright() as p:
     # 여관에서 바꾸기 (여관 소문 창이 먼저 뜰 수 있다)
     pg.wait_for_timeout(700)
     if pg.is_visible('#ov.on'):choose(pg,'브리타를 찾아가')
-    pg.click('button[data-c=rooms]');assert '여관 1층' in pg.inner_text('#ov h2');assert pg.locator('#ov.on button').count()==2;choose(pg,'함께 나갈 동료를 고른다');choose(pg,'오스윈과 나간다');assert S(pg)['party']=='oswin';print('inn swap ok')
+    pg.click('button[data-c=rooms]');assert '여관 1층' in pg.inner_text('#ov h2');pg.click('#ov.on button[data-c=pickC][data-a=oswin]');choose(pg,'문을 닫는다');assert S(pg)['party']=='oswin';print('inn swap ok')
     # 길 위 마주침
     pg.evaluate("()=>{const K=window.__k2;K.ENC_ON=true;K._r=Math.random;Math.random=()=>0.01}")
     go(pg,'street');pg.wait_for_selector('#ov.on h2:has-text("길 위에서")',timeout=5000);assert '지름길이' in pg.inner_text('#ov')
@@ -38,7 +38,7 @@ with sync_playwright() as p:
     c0=S(pg)['coin'];pg.click('button[data-c=fix]');choose(pg,'마차 창고 고치기');assert S(pg)['coin']==c0-8;pg.click('button[data-c=cancel]');assert S(pg)['coin']==c0 and S(pg)['inv']['scrap']==18;print('refund ok')
     for k in ['벽난로와 거실','부엌','서재','마차 창고']:
         pg.click('button[data-c=fix]');choose(pg,k+' 고치기');waitact(pg);okpop(pg)
-    s=S(pg);assert all(s['fix'].get(k) for k in ['roof','hearth','kitchen','study','coach']);assert '고친 곳 5 / 8' in pg.inner_text('.M')
+    s=S(pg);assert all(s['fix'].get(k) for k in ['roof','hearth','kitchen','study','coach']);assert '고친 곳 5 / 8' in pg.get_attribute('button[data-c=fix]','title')
     assert pg.evaluate("window.__k2.travelSec('docks','street')")<t if False else pg.evaluate("window.__k2.travelSec('docks','street')")<=0.6*210;print('all fixed, coach travel',pg.evaluate("window.__k2.travelSec('docks','street')"))
     # 꾸미기
     c0=S(pg)['coin'];pg.click('button[data-c=deco]');choose(pg,'벽지 바꾸기');choose(pg,'짙은 포도주빛');t=pg.inner_text('#ov');assert '잉크 얼룩' in t;choose(pg,'좋다');assert S(pg)['coin']==c0-6

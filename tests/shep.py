@@ -76,7 +76,7 @@ with sync_playwright() as p:
     E(pg,base);E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{sh:0,shc:null,shKid:0,sh4s:0,hg:0,rom:null,abel:'i',shB1:0,shB2:0,shStay:null,shLeft:null,shFq:0});K.render()}")
     pg.click('button[data-c=c3r]');choose(pg,'목자의 길');choose(pg,'이 길로 간다');choose(pg,'자리에 앉는다')
     assert '키리엔은 할데온과 함께라면' in pg.inner_text('#ov');choose(pg,'찻잔을 든다')
-    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{sh:3,shW:1,shC:1,shI:1,shWk:3,shA:1,shU:1,shR:1,shO:1,shLeft:'barg',loc:'base'});K.render()}");E(pg,"window.__k2.CMD.rooms()");choose(pg,'함께 나갈 동료를');choose(pg,'키리엔과 나간다');assert '그 사람은 빼고' in pg.inner_text('#ov');choose(pg,'돌아간다');choose(pg,'문을 닫는다')
+    E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{sh:3,shW:1,shC:1,shI:1,shWk:3,shA:1,shU:1,shR:1,shO:1,shLeft:'barg',loc:'base'});K.render()}");E(pg,"window.__k2.CMD.rooms()");pg.click('#ov.on button[data-c=pickC][data-a=kirien]');assert '그 사람은 빼고' in pg.inner_text('#ov');choose(pg,'돌아간다');choose(pg,'문을 닫는다')
     go(pg,'stairs','ibre');pg.click('button[data-c=sh3]');choose(pg,'이데른과 함께');choose(pg,'이렇게 하기로 한다');choose(pg,'계단을 올라간다')
     assert E(pg,"window.__k2.S.hg")==0 and pg.locator('button[data-c=htalk]').count()==0
     go(pg,'church','ibre');pg.click('.M button[data-c=shx]');assert '바르그가 들어온다' in pg.inner_text('#ov');choose(pg,'사제들에게')

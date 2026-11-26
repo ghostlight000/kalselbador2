@@ -20,7 +20,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.pit=1;K.S.loc='base';K.S.aff.kirien=30;K.S.orx={kirien:1,oswin:1};K.render()}")
     assert E(pg,"window.__k2.aevFor('kirien')") is None  # 4단계는 길에서
     go(pg,'docks');pg.wait_for_timeout(300);assert not pg.is_visible('#ov.on')  # 저절로 시작하지 않는다
-    assert '✦' in pg.inner_text('button[data-c=talk]');pg.click('button[data-c=talk]');pg.wait_for_selector('#ov.on h2:has-text("처마 밑")',timeout=5000);drain(pg);t=pg.inner_text('#ov');assert '밤을 까먹었어' in t
+    assert '✦' in pg.inner_text('button[data-c=talk]');(pg.click('button[data-c=talk]') if pg.locator('button[data-c=talk]').count() else (pg.click('button[data-c=rooms]'),pg.click('#ov.on button[data-c=talk][data-a='+pg.evaluate('window.__k2.S.party')+']')));pg.wait_for_selector('#ov.on h2:has-text("처마 밑")',timeout=5000);drain(pg);t=pg.inner_text('#ov');assert '밤을 까먹었어' in t
     choose(pg,'나는 비 오는 날이');drain(pg);choose(pg,'그대로 곁에 머문다');assert '웅덩이' in pg.inner_text('#ov');drain(pg);choose(pg,'같이 들여다본다');drain(pg);okpop(pg)
     s=E(pg,"window.__k2.S");assert s['aev']['kirien']==4 and s['aff']['kirien']==36
     # 숫자 숨김
@@ -29,7 +29,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.aff.kirien=50;K.S.aevT=Date.now()}");assert E(pg,"window.__k2.aevFor('kirien')") is None
     E(pg,"()=>{window.__k2.S.aevT=0}");go(pg,'base');assert E(pg,"window.__k2.aevFor('kirien')")=='kirien:6'
     # 저택에서 말을 걸면 6단계
-    pg.click('button[data-c=talk]')
+    (pg.click('button[data-c=talk]') if pg.locator('button[data-c=talk]').count() else (pg.click('button[data-c=rooms]'),pg.click('#ov.on button[data-c=talk][data-a='+pg.evaluate('window.__k2.S.party')+']')))
     pg.wait_for_selector('#ov.on h2:has-text("지붕 위")',timeout=5000);drain(pg);assert '서른여덟' in pg.inner_text('#ov');choose(pg,'옆에 앉는다');drain(pg);choose(pg,'그대로 곁에 머문다');drain(pg);choose(pg,'내일 밤엔');drain(pg);okpop(pg)
     # 8단계: 1막에는 없다 → 2막에 로맨스 선택(여성 주인공·키리엔)
     E(pg,"()=>{const K=window.__k2;K.S.aff.kirien=72;K.S.aevT=0}");assert E(pg,"window.__k2.aevFor('kirien')") is None
