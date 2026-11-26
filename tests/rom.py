@@ -27,7 +27,7 @@ with sync_playwright() as p:
     E(pg,"window.__k2.CMD.talk('barg')");pg.wait_for_timeout(150);assert '등이 춥다' not in pg.inner_text('#ov');E(pg,"()=>{window.__k2.EV0=null;window.__k2.render()}")
     if pg.locator('#ov.on').count():pg.keyboard.press('Escape')
     E(pg,"()=>{const K=window.__k2;K.S.aff.oswin=66;K.render()}")
-    E(pg,"window.__k2.CMD.talk('oswin')");pg.wait_for_timeout(150);listen(pg);t=pg.inner_text('#ov');assert '저입니까, 키리엔입니까' in t,t[-300:];choose(pg,'너야.');listen(pg);choose(pg,'곁에 있는다')
+    E(pg,"window.__k2.CMD.talk('oswin')");pg.wait_for_timeout(150);listen(pg);t=pg.inner_text('#ov');assert '기록이 틀렸습니까' in t,t[-300:];choose(pg,'너야.');listen(pg);choose(pg,'곁에 있는다')
     s=E(pg,"window.__k2.S");assert s['rom']=='oswin' and s['romAsk']=='kirien'
     E(pg,"window.__k2.CMD.talk('kirien')");pg.wait_for_timeout(150);listen(pg);t=pg.inner_text('#ov');assert '오스윈 얘기 들었어' in t;choose(pg,'아니. 너야');listen(pg);choose(pg,'곁에 있는다')
     s=E(pg,"window.__k2.S");assert s['rom']=='kirien' and s['romBk']=='oswin' and not s['romAsk']

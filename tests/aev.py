@@ -20,7 +20,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.pit=1;K.S.loc='base';K.S.aff.kirien=30;K.S.orx={kirien:1,oswin:1};K.render()}")
     assert E(pg,"window.__k2.aevFor('kirien')") is None  # 4단계는 길에서
     go(pg,'docks');pg.wait_for_timeout(300);assert not pg.is_visible('#ov.on')  # 저절로 시작하지 않는다
-    assert '✦' in pg.inner_text('button[data-c=talk]');pg.click('button[data-c=talk]');pg.wait_for_selector('#ov.on h2:has-text("처마 밑")',timeout=5000);drain(pg);t=pg.inner_text('#ov');assert '여우가 비' in t
+    assert '✦' in pg.inner_text('button[data-c=talk]');pg.click('button[data-c=talk]');pg.wait_for_selector('#ov.on h2:has-text("처마 밑")',timeout=5000);drain(pg);t=pg.inner_text('#ov');assert '밤을 까먹었어' in t
     choose(pg,'나는 비 오는 날이');drain(pg);choose(pg,'그대로 곁에 머문다');assert '웅덩이' in pg.inner_text('#ov');drain(pg);choose(pg,'같이 들여다본다');drain(pg);okpop(pg)
     s=E(pg,"window.__k2.S");assert s['aev']['kirien']==4 and s['aff']['kirien']==36
     # 숫자 숨김

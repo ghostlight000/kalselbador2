@@ -30,7 +30,7 @@ with sync_playwright() as p:
     pg.goto(url);pg.wait_for_timeout(200)
     bad=E(pg,"""()=>{const K=window.__k2,out=[];
       for(const id of ['kirien','oswin','ibre','kasimir','barg','eno']){
-        if((K.QA[id]||[]).length!==6)out.push(id+' QA');if((K.CH[id]||[]).length!==4)out.push(id+' CH');if(Object.keys(K.CSK[id]||{}).length!==3)out.push(id+' CSK');
+        if((K.QA[id]||[]).length!==(id==='kasimir'?8:6))out.push(id+' QA');if((K.CH[id]||[]).length!==4)out.push(id+' CH');if(Object.keys(K.CSK[id]||{}).length!==3)out.push(id+' CSK');
         if(!K.AEV[id]||![4,6,8].every(t=>K.AEV[id][t]))out.push(id+' AEV');
         for(const l of ['docks','street','church','base','academy','outskirts'])if(!(K.TALK[id]||{})[l])out.push(id+' TALK '+l);
         for(const o of Object.keys(K.COMP))if(o!==id&&!(K.COMP[id].hello||{})[o])out.push(id+' hello '+o)}
@@ -48,7 +48,7 @@ with sync_playwright() as p:
     t=pg.inner_text('.goalc');assert '회색 마차의 늑대' not in t,t;pg.click('button[data-c=tab][data-a=quest]');assert '회색 마차의 늑대' in pg.inner_text('.M');pg.click('button[data-c=tab][data-a=place]')
     # 여관 부엌 → 헌병과 싸운다 → 바르그
     pg.click('button[data-c=bargM]');choose(pg,'자루를 연다');t=pg.inner_text('#ov');assert '이번에도 아니다' in t;assert '탈영병 바르그' in t and '무서운 걸 다 써 버렸대' in t;choose(pg,'늑대 옆에 선다');assert E(pg,"window.__k2.G.foe")=='mp';win(pg)
-    pg.wait_for_selector('#ov.on h2:has-text("운하 계단")',timeout=5000);choose(pg,'같이 알아보자');choose(pg,'밤길로 나선다');assert '맹세했다' in pg.inner_text('#ov');choose(pg,'도망친 사람을 넘기기 싫어서');assert '헌병들을 막아섰다' in E(pg,"JSON.stringify(window.__k2.S.jr)");choose(pg,'갈 길을 가라');okpop(pg)
+    pg.wait_for_selector('#ov.on h2:has-text("운하 계단")',timeout=5000);choose(pg,'모르겠지만 도와주겠다');choose(pg,'밤길로 나선다');assert '맹세했다' in pg.inner_text('#ov');choose(pg,'도망친 사람을 넘기기 싫어서');assert '헌병들을 막아섰다' in E(pg,"JSON.stringify(window.__k2.S.jr)");choose(pg,'갈 길을 가라');okpop(pg)
     pg.click('button[data-c=bargAgain]');choose(pg,'저택에서 지내라');choose(pg,'계속 다닌다');assert 'barg' in E(pg,"window.__k2.S.comps")
     go(pg,'street');assert pg.locator('button[data-c=eda]').count()==1;print('meet ok')
     go(pg,'base');E(pg,"()=>{const K=window.__k2;K.S.party='barg';K.S.hp=5;K.render()}");pg.click('button[data-c=rest]');pg.wait_for_function('!window.__k2.S.act',timeout=20000);t=pg.inner_text('#ov');assert '꼬리표' in t,t;okpop(pg)
