@@ -64,7 +64,7 @@ with sync_playwright() as p:
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='모르텐' and '박자가' in pg.inner_text('#ov'); choose(pg,'그의 눈을 감겨 준다'); assert '공급 하나' in pg.inner_text('#ov'); choose(pg,'막대를 줍는다')
     assert S(pg)['mort']==2 and S(pg)['inv'].get('mstaff')==1 and '모르텐이 나를 밀쳐' in pg.evaluate("JSON.stringify(window.__k2.S.jr||window.__k2.S.journal||'')")+pg.evaluate("JSON.stringify(window.__k2.S)")
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert pg.inner_text('#ov h2')=='여우 머리의 여자' and '죽은 사람 냄새' in pg.inner_text('#ov')
-    choose(pg,'누구냐고 묻는다'); choose(pg,'편지를 보여 준다'); assert '글씨체가 다른데' in pg.inner_text('#ov'); assert pg.locator('#ov button:has-text("혼자 하겠다")').count()==1; choose(pg,'같이 가자'); choose(pg,'좋다')
+    choose(pg,'누구냐고 묻는다'); choose(pg,'편지를 보여 준다'); assert '앞뒤 글씨체가 다르네' in pg.inner_text('#ov'); assert pg.locator('#ov button:has-text("혼자 하겠다")').count()==1; choose(pg,'같이 가자'); choose(pg,'좋다')
     s=S(pg); assert s['comps']==['kirien'] and s['party']=='kirien' and s['aff']['kirien']==18, s['aff']; print('kirien joined, aff',s['aff'])
     assert pg.evaluate("window.__k2.romOK('kirien')") and not pg.evaluate("window.__k2.romOK('kasimir')")
     # 대화(이곳에 대해) → 호감 +4 한 번만
