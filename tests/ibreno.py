@@ -28,7 +28,7 @@ with sync_playwright() as p:
     pg.wait_for_selector('#ov.on h2:has-text("무색 징수 명단")',timeout=5000);assert '표본실 이관' in pg.inner_text('#ov');choose(pg,'명단을 챙긴다')
     go(pg,'sanat','ibre');pg.click('button[data-c=iq2]');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("무색 4번")',timeout=5000);assert '허물 관찰' in pg.inner_text('#ov');choose(pg,'저택으로 데려간다')
-    go(pg,'base','ibre');pg.click('button[data-c=iq3]');listen(pg);choose(pg,'네가 지어 줘');listen(pg);choose(pg,'고개를 끄덕인다')
+    go(pg,'base','ibre');pg.evaluate("window.__k2.CMD.iq3()");listen(pg);choose(pg,'네가 지어 줘');listen(pg);choose(pg,'고개를 끄덕인다')
     assert E(pg,"window.__k2.S.iqN")=='sun' and E(pg,"window.__k2.S.iq")==4
     pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '이브레 — 색 없는 이름' in t and '명부 앞에서' in t;pg.click('button[data-c=tab][data-a=place]')
     go(pg,'square','ibre');pg.click('button[data-c=iq4]');choose(pg,'무색들의 장부를');choose(pg,'이렇게 하기로 한다')

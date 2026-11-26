@@ -21,15 +21,15 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.night=3;K.S.mort=2;K.joinComp('kirien');K.joinComp('ibre');K.S.party='kirien';K.grantBase()}");okpop(pg)
     E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{pit:1,manor:1,mr:3,eda:1,acad:1,fac:1,mg:1,mgh:'hide',rev:1,revd:1,a2:6,h2:5,orx:{kasimir:1,ibre:1},mgt:{kasimir:1,ibre:1},rvt:{kasimir:1,ibre:1},loc:'base'});K.S.vis.academy=1;K.render()}")
     E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{a3:1,a3h:1,h2:6,abel:'f',amn:null,rq:3,n7:7,rqId:'oswin',taken:null,hq:3,hald:2,loc:'base',party:'kirien',rom:'kirien',sex:'f',magp:3,rvt:{kirien:1,ibre:1},mgt:{kirien:1,ibre:1}});K.render()}")
-    pg.click('button[data-c=r3a]');listen(pg);assert '지붕 위' in pg.inner_text('#ov');choose(pg,'다른 사람이 돼도');listen(pg);choose(pg,'곁에 있는다')
-    assert E(pg,"window.__k2.S.r3a")==1 and pg.locator('button[data-c=r3a]').count()==0
+    pg.evaluate("window.__k2.CMD.r3a()");listen(pg);assert '지붕 위' in pg.inner_text('#ov');choose(pg,'다른 사람이 돼도');listen(pg);choose(pg,'곁에 있는다')
+    assert E(pg,"window.__k2.S.r3a")==1 and not E(pg,"window.__k2.QTALK(window.__k2.S.rom).length")
     go(pg,'inn','kirien');pg.click('button[data-c=c3a]');assert '오늘은 닫음' in pg.inner_text('#ov');choose(pg,'그 사람 것도');choose(pg,'여관을 나선다')
     assert E(pg,"window.__k2.S.c3")==1
     go(pg,'stairs','kirien');pg.click('button[data-c=c3b]');t=pg.inner_text('#ov');assert '못 하겠어' in t and '감싼 거야' in t;choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("일곱째 문")',timeout=5000);t=pg.inner_text('#ov');assert '목소리에 열렸다' in t and '고개를 끄덕인다' in t;choose(pg,'문 안으로')
     assert '돌아왔구나, 나' in pg.inner_text('#ov');choose(pg,'너는 누구야');t=pg.inner_text('#ov');assert '오랜만입니다, 베렌' in t and '차를 내던 방' in t;choose(pg,'계단을 뛰어')
     choose(pg,'문을 잠근다');s=E(pg,"window.__k2.S");assert s['c3']==4 and s['mgB']=='h'
-    go(pg,'base','kirien');pg.click('button[data-c=r3b]');listen(pg);choose(pg,'그때는 내 이름을');listen(pg);t=pg.inner_text('#ov');choose(pg,'곁에 있는다')
+    go(pg,'base','kirien');pg.evaluate("window.__k2.CMD.r3b()");listen(pg);choose(pg,'그때는 내 이름을');listen(pg);t=pg.inner_text('#ov');choose(pg,'곁에 있는다')
     pg.click('button[data-c=c3r]');assert pg.locator('#ov.on button:has-text("목자의 길")').count()==1;choose(pg,'목자의 길');choose(pg,'이 길로 간다')
     assert '오래 함께 걷겠습니다' in pg.inner_text('#ov');choose(pg,'자리에 앉는다');choose(pg,'찻잔을 든다');assert E(pg,"window.__k2.S.route")=='shep' and E(pg,"window.__k2.S.hg")==1
     print('hes + shep ok')

@@ -28,10 +28,10 @@ with sync_playwright() as p:
     go(pg,'silver','kasimir');pg.click('button[data-c=zq1]');assert '3번 노 출고' in pg.inner_text('#ov');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("붉은 물 장부")',timeout=5000);t=pg.inner_text('#ov');assert '이름의 쓸모가 다했다' in t and '제 줄이 먼저' in t;choose(pg,'장부를 챙긴다')
     pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '카시미르 — 마지막 상속자' in t and '하인 묘역' in t;pg.click('button[data-c=tab][data-a=place]')
-    go(pg,'church','kasimir');pg.click('button[data-c=zq2]');choose(pg,'맞선다');win(pg)
+    go(pg,'grave','kasimir');pg.click('button[data-c=zq2]');choose(pg,'맞선다');win(pg)
     pg.wait_for_timeout(300);listen(pg);t=pg.inner_text('#ov');assert '「안셀」' in t,t[:300];choose(pg,'고개를 끄덕인다')
     assert E(pg,"window.__k2.S.zq")==3
-    go(pg,'base','ibre');pg.click('button[data-c=zq3]');choose(pg,'붉은 물을 끊고');choose(pg,'다시 생각한다');choose(pg,'진짜 이름을 밝힌다');choose(pg,'이렇게 하기로 한다')
+    go(pg,'base','ibre');pg.evaluate("window.__k2.CMD.zq3()");choose(pg,'붉은 물을 끊고');choose(pg,'다시 생각한다');choose(pg,'진짜 이름을 밝힌다');choose(pg,'이렇게 하기로 한다')
     t=pg.inner_text('#ov');assert '여기 눕지 않음' in t and '마지막 상속자」가 끝났다' in t;choose(pg,'고개를 끄덕인다')
     s=E(pg,"window.__k2.S");assert s['zq']==4 and s['zqe']=='name' and s['cq']['kasimir']=='done'
     pg.click('button[data-c=tab][data-a=quest]');pg.click('h2.fold[data-a=done]');t=pg.inner_text('.M');assert '카시미르 — 마지막 상속자' in t

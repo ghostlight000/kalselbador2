@@ -43,7 +43,7 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.loc='docks';K.render()}");pg.click('button[data-c=bq3]');listen(pg);choose(pg,'기다려 줘서 고마워');listen(pg);choose(pg,'지붕을 내려간다')
     assert E(pg,"window.__k2.S.bq")==4
     # 4 푸른 끈
-    E(pg,"()=>{const K=window.__k2;K.S.loc='base';K.render()}");pg.click('button[data-c=bq4]');listen(pg);choose(pg,'끈을 풀고 새 맹세를 받는다');choose(pg,'다시 생각한다');listen(pg);choose(pg,'끈을 풀고 새 맹세를 받는다');choose(pg,'이렇게 하기로 한다');listen(pg)
+    E(pg,"()=>{const K=window.__k2;K.S.loc='base';K.render()}");assert pg.locator('button[data-c=bq4]').count()==0;E(pg,"window.__k2.CMD.talk('barg')");listen(pg);choose(pg,'푸른 끈');listen(pg);choose(pg,'끈을 풀고 새 맹세를 받는다');choose(pg,'다시 생각한다');listen(pg);choose(pg,'끈을 풀고 새 맹세를 받는다');choose(pg,'이렇게 하기로 한다');listen(pg)
     t=pg.inner_text('#ov');assert '맹세의 끝」이 끝났다' in t;choose(pg,'고개를 끄덕인다')
     s=E(pg,"window.__k2.S");assert s['bq']==5 and s['bqe']=='new' and s['cq']['barg']=='done'
     pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '끝낸 일' in t and '천막의 기록' not in t;pg.click('button[data-c=tab][data-a=place]')
@@ -51,8 +51,8 @@ with sync_playwright() as p:
     # v082 끈 질문이 결말에 따라 바뀐다 · 다시 벼린 대검
     lab=lambda i:E(pg,f"(()=>{{const q=window.__k2.dlg().QA.barg[{i}][0];return typeof q==='function'?q(window.__k2.S):q}})()")
     assert lab(1)=='내 손목에 감아 준 끈 말이야.' and lab(0)=='그 대검은 어쩌다 부러졌어?'
-    E(pg,"()=>{const K=window.__k2;K.S.loc='base';K.render()}");assert pg.locator('button[data-c=bsw]').count()==1
-    pg.click('button[data-c=bsw]');listen(pg);choose(pg,'하칸골에 같이 가기로 한다');assert E(pg,"window.__k2.S.bsw")==1
+    E(pg,"()=>{const K=window.__k2;K.S.loc='base';K.render()}");assert E(pg,"window.__k2.QTALK('barg').map(x=>x[1]).join()")=='bsw'
+    pg.evaluate("window.__k2.CMD.bsw()");listen(pg);choose(pg,'하칸골에 같이 가기로 한다');assert E(pg,"window.__k2.S.bsw")==1
     E(pg,"()=>{const K=window.__k2;K.S.loc='works';K.S.party='barg';K.render()}");pg.click('button[data-c=bswF]')
     pg.wait_for_selector('#ov.on:has-text("다시 벼리는 날")',timeout=5000);assert '늙은 대장장이' in pg.inner_text('#ov')
     choose(pg,'지금 내 이름을 새긴다');listen(pg);choose(pg,'날이 식기를 기다린다');listen(pg);assert '내 이름이 작게' in pg.inner_text('#ov')
@@ -60,7 +60,7 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.bsw")==2 and lab(0)=='검을 다시 벼리니까 어때?'
     print('bsw ok')
     # 떠나는 결말
-    E(pg,"()=>{const K=window.__k2;K.S.bq=4;K.S.cq.barg=null;K.S.loc='base';K.render()}");pg.click('button[data-c=bq4]');listen(pg);choose(pg,'끈을 풀어 그의 손에');choose(pg,'이렇게 하기로 한다');listen(pg);choose(pg,'떠나는 등을 본다')
+    E(pg,"()=>{const K=window.__k2;K.S.bq=4;K.S.cq.barg=null;K.S.loc='base';K.render()}");pg.evaluate("window.__k2.CMD.bq4()");listen(pg);choose(pg,'끈을 풀어 그의 손에');choose(pg,'이렇게 하기로 한다');listen(pg);choose(pg,'떠나는 등을 본다')
     s=E(pg,"window.__k2.S");assert s['bqe']=='free' and s['left']['barg'] and s['party']!='barg'
     print('free ok')
     b.close()

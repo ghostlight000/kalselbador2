@@ -37,7 +37,7 @@ with sync_playwright() as p:
     s=E(pg,"window.__k2.S");assert s['rev']==1 and s.get('vrev')==1;choose(pg,'맞선다');win(pg);pg.wait_for_selector('#ov.on h2:has-text("언덕길")',timeout=5000);okpop(pg)
     assert E(pg,"window.__k2.S.revd")==1;print('solo vault ok')
     # 오스윈 퀘스트를 나중에: 설계서를 보여 준다
-    E(pg,"()=>{const K=window.__k2;K.S.oq=4;K.S.loc='base';K.render()}");pg.click('button[data-c=oq4s]');choose(pg,'서명을 가리킨다');choose(pg,'나는 기억이 없다');drain(pg);choose(pg,'설계서를 덮는다')
+    E(pg,"()=>{const K=window.__k2;K.S.oq=4;K.S.loc='base';K.render()}");pg.evaluate("window.__k2.CMD.oq4s()");choose(pg,'서명을 가리킨다');choose(pg,'나는 기억이 없다');drain(pg);choose(pg,'설계서를 덮는다')
     s=E(pg,"window.__k2.S");assert s['oq']==5;pg.wait_for_timeout(300);assert not pg.is_visible('#ov.on h2:has-text("언덕길")')
     print('late oswin ok')
     b.close()

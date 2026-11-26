@@ -83,7 +83,7 @@ with sync_playwright() as p:
     pg.wait_for_selector('#ov.on h2',timeout=5000); assert '브리타' in pg.inner_text('#ov'); choose(pg,'이름이 뭐야?'); assert '그 이름을 물은 사람은 처음' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다'); assert 'ibre' in S(pg)['comps']; print('ibre joined')
     assert pg.locator('.map .node[data-a=base]').count()==0
     go(pg,'street'); pg.click('button[data-c=brita]'); assert '한 줄도 말이 안 돼' in pg.inner_text('#ov'); choose(pg,'주문이 사라졌다는 거야?'); assert '겨울 시대 노인들' in pg.inner_text('#ov'); choose(pg,'묘지로 가 보기로 한다')
-    go(pg,'church'); pg.click('button[data-c=tomb]'); t=pg.inner_text('#ov'); assert '불을 거둔 이' in t; choose(pg,'열쇠를 챙긴다'); print('pre-manor story ok')
+    go(pg,'grave'); pg.click('button[data-c=tomb]'); t=pg.inner_text('#ov'); assert '불을 거둔 이' in t; choose(pg,'열쇠를 챙긴다'); print('pre-manor story ok')
     assert pg.locator('.map .node[data-a=base]').count()==1
     t=pg.inner_text('#ov'); assert '어디서 뵌 것 같습니다' in t; choose(pg,'누구냐고 묻는다'); assert '대가 끊겼습니다' in pg.inner_text('#ov') or '피 냄새' in pg.inner_text('#ov'); choose(pg,'함께하자'); choose(pg,'계속 다닌다'); assert 'kasimir' in S(pg)['comps']; print('kasimir joined')
     go(pg,'base'); pg.click('button[data-c=manorIn]'); assert '노래 들려?' in pg.inner_text('#ov'); choose(pg,'안으로 들어선다')
