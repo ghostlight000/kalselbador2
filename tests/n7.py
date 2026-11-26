@@ -39,7 +39,7 @@ with sync_playwright() as p:
     go(pg,'outskirts','kasimir');pg.click('.M button[data-c=n7b]');assert '첫 불 자리' in pg.inner_text('#ov');choose(pg,'판을 찾아보겠다')
     go(pg,'dome','kasimir');pg.click('.M button[data-c=n7p]');choose(pg,'맞선다');win2(pg,'오르테아');t=pg.inner_text('#ov');assert '오르테아' in t and '남쪽 바다' in t and '기계의 조각' in t,t;choose(pg,'판을 챙긴다')
     go(pg,'square','kasimir');pg.click('.M button[data-c=n7p]');choose(pg,'판을 뽑는다');assert '이스벤' in pg.inner_text('#ov');choose(pg,'판을 챙긴다')
-    go(pg,'under','kasimir');pg.click('.M button[data-c=n7p]');choose(pg,'맞선다');win2(pg,'코스마');choose(pg,'판을 챙긴다')
+    go(pg,'under','kasimir');pg.click('.M button[data-c=n7p]');choose(pg,'맞선다');win2(pg,'테살');choose(pg,'판을 챙긴다')
     go(pg,'furn','kasimir');pg.click('.M button[data-c=n7p]');choose(pg,'맞선다');win2(pg,'노르엘');t=pg.inner_text('#ov');assert '판 넷이 다 모였다' in t;choose(pg,'판을 챙긴다')
     assert E(pg,'window.__k2.S.n7')==3
     go(pg,'barracks','kasimir');pg.click('.M button[data-c=n7i]');assert '천이백' in pg.inner_text('#ov');choose(pg,'대성당 아래로');choose(pg,'우물가를 떠난다');assert E(pg,'window.__k2.S.idS')==2
