@@ -32,6 +32,12 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.loc='outskirts';K.render()}");assert pg.locator('button[data-c=bq2][disabled]').count()==1
     E(pg,"()=>{const K=window.__k2;K.S.h2=5;K.render()}");pg.click('button[data-c=bq2]');choose(pg,'맞선다');win(pg)
     pg.wait_for_selector('#ov.on h2:has-text("겨울 아침")',timeout=5000);t=pg.inner_text('#ov');assert '끝내 못 풀고 갔다' in t;choose(pg,'이마의 재를 닦아 준다');choose(pg,'원을 떠난다')
+    # v082 울릭 이야기: 질문 넷
+    listen(pg);pg.wait_for_selector('#ov.on:has-text("울릭 이야기")',timeout=5000)
+    for q in ['울릭은 어떤 사람이었어','맹세하던 날은 어땠어','교단 쪽에 섰어','다시 나란히 설 수 있을까']:
+        choose(pg,q);listen(pg)
+    t=pg.inner_text('#ov');assert '제 발로 걸었다' in t,t;choose(pg,'저택으로 돌아간다');listen(pg);choose(pg,'고개를 끄덕인다')
+    assert len(E(pg,"window.__k2.S.bqUq"))==4
     s=E(pg,"window.__k2.S");assert s['bq']==3 and s['bqU']=='wipe'
     # 3 부두 지붕
     E(pg,"()=>{const K=window.__k2;K.S.loc='docks';K.render()}");pg.click('button[data-c=bq3]');listen(pg);choose(pg,'기다려 줘서 고마워');listen(pg);choose(pg,'지붕을 내려간다')
@@ -42,6 +48,17 @@ with sync_playwright() as p:
     s=E(pg,"window.__k2.S");assert s['bq']==5 and s['bqe']=='new' and s['cq']['barg']=='done'
     pg.click('button[data-c=tab][data-a=quest]');t=pg.inner_text('.M');assert '끝낸 일' in t and '천막의 기록' not in t;pg.click('button[data-c=tab][data-a=place]')
     print('quest ok')
+    # v082 끈 질문이 결말에 따라 바뀐다 · 다시 벼린 대검
+    lab=lambda i:E(pg,f"(()=>{{const q=window.__k2.dlg().QA.barg[{i}][0];return typeof q==='function'?q(window.__k2.S):q}})()")
+    assert lab(1)=='내 손목에 감아 준 끈 말이야.' and lab(0)=='그 대검은 어쩌다 부러졌어?'
+    E(pg,"()=>{const K=window.__k2;K.S.loc='base';K.render()}");assert pg.locator('button[data-c=bsw]').count()==1
+    pg.click('button[data-c=bsw]');listen(pg);choose(pg,'하칸골에 같이 가기로 한다');assert E(pg,"window.__k2.S.bsw")==1
+    E(pg,"()=>{const K=window.__k2;K.S.loc='works';K.S.party='barg';K.render()}");pg.click('button[data-c=bswF]')
+    pg.wait_for_selector('#ov.on:has-text("다시 벼리는 날")',timeout=5000);assert '늙은 대장장이' in pg.inner_text('#ov')
+    choose(pg,'지금 내 이름을 새긴다');listen(pg);choose(pg,'날이 식기를 기다린다');listen(pg);assert '내 이름이 작게' in pg.inner_text('#ov')
+    choose(pg,'새 칼을 축하한다');listen(pg);assert '20%' in pg.inner_text('#ov');choose(pg,'공방을 나선다')
+    assert E(pg,"window.__k2.S.bsw")==2 and lab(0)=='검을 다시 벼리니까 어때?'
+    print('bsw ok')
     # 떠나는 결말
     E(pg,"()=>{const K=window.__k2;K.S.bq=4;K.S.cq.barg=null;K.S.loc='base';K.render()}");pg.click('button[data-c=bq4]');listen(pg);choose(pg,'끈을 풀어 그의 손에');choose(pg,'이렇게 하기로 한다');listen(pg);choose(pg,'떠나는 등을 본다')
     s=E(pg,"window.__k2.S");assert s['bqe']=='free' and s['left']['barg'] and s['party']!='barg'
