@@ -55,7 +55,15 @@ with sync_playwright() as p:
     pg.evaluate("window.__k2.CMD.bsw()");listen(pg);choose(pg,'하칸골에 같이 가기로 한다');assert E(pg,"window.__k2.S.bsw")==1
     E(pg,"()=>{const K=window.__k2;K.S.loc='works';K.S.party='barg';K.render()}");pg.click('button[data-c=bswF]')
     pg.wait_for_selector('#ov.on:has-text("다시 벼리는 날")',timeout=5000);assert '늙은 대장장이' in pg.inner_text('#ov')
-    choose(pg,'지금 내 이름을 새긴다');listen(pg);choose(pg,'날이 식기를 기다린다');listen(pg);assert '내 이름이 작게' in pg.inner_text('#ov')
+    choose(pg,'지금 내 이름을 새긴다');listen(pg)
+    for k in range(3):
+        assert f'망치질 {k+1}/3' in pg.inner_text('#ov')
+        if k==0:
+            pos=lambda:E(pg,"(()=>{const b=document.getElementById('fgb').getBoundingClientRect(),m=document.getElementById('fgm').getBoundingClientRect();return (m.left+m.width/2-b.left)/b.width})()")
+            x1=pos();pg.wait_for_timeout(250);x2=pos();assert 0<=x1<=1 and 0<=x2<=1 and abs(x1-x2)>0.02,(x1,x2)
+        if k==1:E(pg,"()=>{window.__fgMiss=1}")
+        choose(pg,'망치를 내리친다');E(pg,"()=>{window.__fgMiss=0}")
+    assert E(pg,"window.__k2.S.bswH")==2;listen(pg);choose(pg,'날이 식기를 기다린다');listen(pg);assert '내 이름이 작게' in pg.inner_text('#ov')
     choose(pg,'새 칼을 축하한다');listen(pg);assert '20%' in pg.inner_text('#ov');choose(pg,'공방을 나선다')
     assert E(pg,"window.__k2.S.bsw")==2 and lab(0)=='검을 다시 벼리니까 어때?'
     print('bsw ok')

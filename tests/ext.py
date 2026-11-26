@@ -25,6 +25,17 @@ def skipcine(pg):
     pg.wait_for_timeout(100);assert '엔딩' in pg.inner_text('#pv');pg.click('#pv [data-pv=close]');pg.wait_for_timeout(150)
 E=lambda pg,x:pg.evaluate(x)
 def go(pg,loc,party):E(pg,f"()=>{{const K=window.__k2;K.S.loc='{loc}';K.S.party='{party}';K.render()}}")
+def lastn(pg,party):
+    if not pg.evaluate("window.__k2.lnDue()"):return
+    go(pg,'base',party);pg.click('button[data-c=lastN]');listen(pg) if 'listen' in globals() else None
+    choose(pg,'살아서 다 같이')
+    if pg.locator('#ov.on button:has-text("곁에 남는다")').count():
+        choose(pg,'곁에 남는다');listen(pg) if 'listen' in globals() else None
+        pg.locator('#ov.on .btn').first.click();pg.wait_for_timeout(150)
+        listen(pg) if 'listen' in globals() else None
+        choose(pg,'새벽을 맞는다')
+    else: choose(pg,'방으로 올라간다')
+    assert pg.evaluate("window.__k2.S.lastN")==1
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto(url);pg.wait_for_timeout(200)
@@ -56,14 +67,14 @@ with sync_playwright() as p:
     go(pg,'stairs','ibre');pg.click('button[data-c=xt4]');t=pg.inner_text('#ov');assert '처음부터' in t and '이름을 먹지 않는' in t;choose(pg,'이름을 먹지 않는 불지기');choose(pg,'이렇게 하기로 한다');choose(pg,'계단을 올라간다')
     go(pg,'square','ibre');pg.click('.M button[data-c=xtx]');assert '명부' in pg.inner_text('#ov');choose(pg,'이름을 하나씩');choose(pg,'자리를 뜬다')
     go(pg,'church','ibre');pg.click('.M button[data-c=xtx]');assert '일곱째 의자' not in pg.inner_text('#ov');choose(pg,'세레인이 앉던');assert '일곱째 의자' in pg.inner_text('#ov');choose(pg,'자리를 뜬다')
-    go(pg,'stairs','ibre');pg.click('button[data-c=xt4]');choose(pg,'맞선다');win2(pg,'엔딩');skipcine(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '이름을 먹지 않는 불' in t and '세레인' in t;choose(pg,'이야기를 덮는다')
+    lastn(pg,'ibre');go(pg,'stairs','ibre');pg.click('button[data-c=xt4]');choose(pg,'맞선다');win2(pg,'엔딩');skipcine(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '이름을 먹지 않는 불' in t and '세레인' in t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='extK'
     print('ext keep ok')
     E(pg,base);E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{route:'ext',xt:4,xdk:['street'],loc:'stairs',xtK:1,xtCu:1,xtO:1,xtD:1,xtA:1,xtCo:1,xtSv:1,xtO1:0,xtO2:0});K.render()}")
     pg.click('button[data-c=xt4]');choose(pg,'옛 불을 끈다');choose(pg,'이렇게 하기로 한다');choose(pg,'계단을 올라간다')
     go(pg,'base','ibre');pg.click('.M button[data-c=xtx]');assert '장작 패는' in pg.inner_text('#ov') or '담요를' in pg.inner_text('#ov');choose(pg,'장작을 나른다');choose(pg,'자리를 뜬다')
     go(pg,'square','ibre');pg.click('.M button[data-c=xtx]');choose(pg,'손을 든다');choose(pg,'자리를 뜬다')
-    go(pg,'stairs','ibre');pg.click('button[data-c=xt4]');assert '마지막으로 이 불을' in pg.inner_text('#ov');choose(pg,"맞선다");win2(pg,"엔딩")
+    lastn(pg,'ibre');go(pg,'stairs','ibre');pg.click('button[data-c=xt4]');assert '마지막으로 이 불을' in pg.inner_text('#ov');choose(pg,"맞선다");win2(pg,"엔딩")
     skipcine(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '다시 짠 배' in t and '정직한 쪽' in t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='extF'
     print('ext out ok')

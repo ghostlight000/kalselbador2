@@ -23,6 +23,17 @@ def popd(pg,btn):
         if pg.locator('#ov.on .btn.pri').count():pg.click('#ov.on .btn.pri');pg.wait_for_timeout(300)
 E=lambda pg,x:pg.evaluate(x)
 def go(pg,loc,party):E(pg,f"()=>{{const K=window.__k2;K.S.loc='{loc}';K.S.party='{party}';K.render()}}")
+def lastn(pg,party):
+    if not pg.evaluate("window.__k2.lnDue()"):return
+    go(pg,'base',party);pg.click('button[data-c=lastN]');listen(pg) if 'listen' in globals() else None
+    choose(pg,'살아서 다 같이')
+    if pg.locator('#ov.on button:has-text("곁에 남는다")').count():
+        choose(pg,'곁에 남는다');listen(pg) if 'listen' in globals() else None
+        pg.locator('#ov.on .btn').first.click();pg.wait_for_timeout(150)
+        listen(pg) if 'listen' in globals() else None
+        choose(pg,'새벽을 맞는다')
+    else: choose(pg,'방으로 올라간다')
+    assert pg.evaluate("window.__k2.S.lastN")==1
 with sync_playwright() as p:
     b=p.chromium.launch();pg=b.new_page(viewport={'width':1200,'height':1000});pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto(url);pg.wait_for_timeout(200)
@@ -49,7 +60,7 @@ with sync_playwright() as p:
     go(pg,'stairs','kirien');pg.click('button[data-c=rt3]');t=pg.inner_text('#ov');assert '할데온의 웃음' in t and '이브레' in t,t;choose(pg,'지금의 이름으로 선다');choose(pg,'이렇게 하기로 한다');choose(pg,'계단을 올라간다')
     go(pg,'base','kirien');pg.click('.M button[data-c=rtx]');assert '셈의 맨 앞' in pg.inner_text('#ov');choose(pg,'이름을 되뇐다');choose(pg,'자리를 뜬다')
     go(pg,'outskirts','kirien');pg.click('.M button[data-c=rtx]');assert '그대 쪽이다' in pg.inner_text('#ov');choose(pg,'고개를 끄덕인다');choose(pg,'자리를 뜬다')
-    go(pg,'stairs','kirien');pg.click('button[data-c=rt4]');choose(pg,'맞선다');win(pg);skipcine(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '지금의 이름' in t and '내 이름이다' in t,t;choose(pg,'이야기를 덮는다')
+    lastn(pg,'kirien');go(pg,'stairs','kirien');pg.click('button[data-c=rt4]');choose(pg,'맞선다');win(pg);skipcine(pg);pg.wait_for_selector('#ov.on h2:has-text("엔딩")',timeout=5000);t=pg.inner_text('#ov');assert '지금의 이름' in t and '내 이름이다' in t,t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='retS'
     print('ret stand ok')
     E(pg,base);E(pg,"()=>{const K=window.__k2;Object.assign(K.S,{route:'ret',rt:3,bqe:'bound',loc:'stairs',rtM:1,rtT:1,rtL:1,rtR:1,rtS:1,rtC:1,rtB:1,rtMi:1,rtG1:0,rtG2:0,rtS1:0,rtS2:0,aff:Object.assign(K.S.aff,{kirien:10,ibre:10,barg:10,oswin:10})});K.render()}")
@@ -57,7 +68,7 @@ with sync_playwright() as p:
     choose(pg,'몸을 넘긴다');choose(pg,'이렇게 하기로 한다');choose(pg,'계단을 올라간다')
     go(pg,'chapel','kirien');pg.click('.M button[data-c=rtx]');choose(pg,'긋는다');choose(pg,'자리를 뜬다')
     go(pg,'church','kirien');pg.click('.M button[data-c=rtx]');assert '가지 마' in pg.inner_text('#ov');choose(pg,'고개를 돌린다');choose(pg,'자리를 뜬다')
-    go(pg,'stairs','kirien');pg.click('.M button[data-c=rtx]');skipcine(pg);t=pg.inner_text('#ov');assert '「베렌」' in t and '바르그만은' in t;choose(pg,'이야기를 덮는다')
+    lastn(pg,'kirien');go(pg,'stairs','kirien');pg.click('.M button[data-c=rtx]');skipcine(pg);t=pg.inner_text('#ov');assert '「베렌」' in t and '바르그만은' in t;choose(pg,'이야기를 덮는다')
     assert E(pg,"window.__k2.S.end")=='retG'
     print('ret give ok')
     b.close()

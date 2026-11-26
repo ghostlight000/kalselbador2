@@ -1246,7 +1246,7 @@ Object.assign(CH,{
   {need:80,act:2.5,t:'너도 나처럼',p:['요즘 당신 옆에 있으면 내 안의 누군가가 자꾸 일어나요.','아주 오래된 조각이에요. 맨 아래에 가라앉아 있던 거요.','*에노가 눈을 감고 내 얼굴을 손끝으로 더듬는다.','…당신도 나처럼 여럿이네요.'],
    c:[['그 조각을 보여 줄 수 있어?',4,['아직은 물이 탁해요. 가라앉으면요. 약속해요.']],['여럿이어도 괜찮을까?',5,['나는 괜찮았어요. 당신도 괜찮을 거예요. 내가 옆에 있으니까요.']]]}]});
 Object.assign(CSK,{
- barg:{cleave:{get n(){return S&&S.bsw===2?'다시 벼린 대검':'반쪽 대검'},d:r=>`내 차례 뒤에 ${S&&S.bsw===2?'다시 벼린 대검으로 내리친다. 피해 20% 더':'부러진 대검으로 내리친다'}${r?` (피해 +${r*3})`:''}`},stew:{n:'맹세의 외침',d:r=>r?`싸움이 시작되고 처음 움직일 때 내 체력을 ${r*6} 되찾게 한다`:'싸우기 전에 외치는 맹세가 숨을 고르게 한다'},back:{n:'방패기사',d:r=>r?`${r*15}% 확률로 다음에 맞는 공격을 함께 받아 절반으로 줄인다`:'넓은 등으로 공격을 함께 받는다'}},
+ barg:{cleave:{get n(){return S&&S.bsw===2?'다시 벼린 대검':'반쪽 대검'},d:r=>`내 차례 뒤에 ${S&&S.bsw===2?`다시 벼린 대검으로 내리친다. 피해 ${bswPct()}% 더`:'부러진 대검으로 내리친다'}${r?` (피해 +${r*3})`:''}`},stew:{n:'맹세의 외침',d:r=>r?`싸움이 시작되고 처음 움직일 때 내 체력을 ${r*6} 되찾게 한다`:'싸우기 전에 외치는 맹세가 숨을 고르게 한다'},back:{n:'방패기사',d:r=>r?`${r*15}% 확률로 다음에 맞는 공격을 함께 받아 절반으로 줄인다`:'넓은 등으로 공격을 함께 받는다'}},
  eno:{hook:{n:'갈고리 장대',d:r=>`내 차례 뒤에 장대로 걸어 당긴다${r?` (피해 +${r*2}, 적이 느려질 수 있다)`:''}`},read:{n:'물길 읽기',d:r=>r?`${r*15}% 확률로 다음 적의 차례 판정이 넓어진다`:'적의 움직임을 물길처럼 읽는다'},voices:{n:'여럿의 목소리',d:r=>r?`${r*12}% 확률로 적이 다음 공격의 첫 박자를 잊는다`:'여러 목소리로 적을 헷갈리게 한다'}}});
 Object.assign(ORX,{
  barg:[['…전쟁 물 먹었군.','*바르그가 오래 나를 본다.','어느 연대였나. …아니, 묻지 않겠다. 나도 대답하기 싫으니까.'],['용 사냥꾼. 북쪽에서 들었다. 눈 속에서 용 뼈 찾던 놈들.','다들 얼어 죽었지. 넌 안 죽었으니 다행이지.'],['죽은 사람을 부른다고?','…내 쪽은 부르지 마라. 대답할까 봐 무섭다.'],['등에 번호라.','*바르그가 걷은 소매 아래 팔뚝에 숫자가 새겨져 있다.','군대도 번호를 준다. 똑같지.'],['회색 옷이었다고.','*바르그의 털이 곤두섰다가 천천히 가라앉는다.','…지금은 안 입었군. 그럼 됐다.'],['기억 맡아 두는 데.','나도 맡기고 싶은 게 있다. 근데 맡기면 이름까지 가져간다더군.'],['무덤을 팠다고.','…전쟁터엔 무덤도 없었다. 너 같은 놈이 있었으면 좋았을걸.'],['하수구. 나도 거기 숨어 살았다.','쥐가 많지. 칼 쓰는 감은 안 녹슬더군.']],
@@ -1309,6 +1309,7 @@ const QTALK=id=>{if(!S||S.loc!=='base'||amnQ(id)||(S.left||{})[id])return [];con
  if(id==='ibre'&&S.iq===3)L.push(['이름 없는 동생','iq3']);
  if(id==='kasimir'&&S.zq===3)L.push(['마지막 병','zq3']);
  if(typeof romP==='function'&&romP()===id&&typeof R3!=='undefined'&&R3[id]){const q=S.c3||0;if(typeof c3Due==='function'&&c3Due()&&q<=1&&!S.r3a)L.push(['둘만의 시간','r3a']);if(q>=4&&!S.route&&!S.r3b)L.push(['둘만의 시간','r3b'])}
+ if(typeof romxDue==='function'){const k=romxDue(id);if(k)L.push([`연인의 시간 — ${ROMX[id][k-1].h}`,'romx'])}
  return L};
 const qtDue=id=>QTALK(id).length>0;
 const talkNew=id=>qtDue(id)||mgtDue(id)||(typeof rvtDue==='function'&&rvtDue(id))||(id==='oswin'&&S.mg&&!S.oq0&&S.comps.includes('oswin'))||(id==='barg'&&typeof bqDue==='function'&&bqDue())||(id==='barg'&&S.bq===4)||(id==='ibre'&&typeof iqDue==='function'&&iqDue())||(id==='eno'&&typeof nqDue==='function'&&nqDue())||(id==='kasimir'&&typeof zqDue==='function'&&zqDue())||(typeof romDue==='function'&&(romDue(id)||S.romAsk===id||S.romBk===id))||(typeof payDue==='function'&&payDue(id));
@@ -3090,7 +3091,7 @@ Object.assign(CMD,{
  h2door:()=>{if(!S.act&&S.h2===5)SCENE.door7()},
  h2abelA:()=>{if(!S.act&&S.h2>=6&&!S.abel)SCENE.abelA()}
 });
-Object.assign(GOAL,{'이름판 조각':[s=>(s.n7||0)>=1?'outskirts':'base',['n7a','n7b']],'일곱 의자의 이름':[s=>N7ORD.find(k=>!(s.n7p||{})[k])||'dome',['n7p']],'이데른의 첫 흔들림':['barracks',['n7i']],'운반 일지':['docks',['n7d']],'막힌 물길':['base',['n7w']],'세레인의 이름':['outskirts',['n7s','n7h']],'고른 길':[s=>routeStep(s)[2],['sh1','sh2','sh3','sh4','rt1','rt2','rt3','rt4','xt1','xt2','xt3','xt4','shx','shwalk']],'마지막 잔':['inn',['c3a']],'계단 아래':['stairs',['c3b']],'옛 불':['stairs',['c3b']],'세 통의 부름':['base',['c3r']],'잊은 사람':[s=>(s.rq||0)===1?((s.hq||0)>=3?'church':'pawn'):'base',['rq0','rq1a','rq1b','rq2']],'얼굴 없는 수배서':['inn',['h2wanted']],'설계서의 나머지 장':['base',['h2plan']],'대연소로':['furn',['h2furn']],'종지기의 사다리':['church',['h2abel']],'형제단의 밤':['outskirts',['h2broth']],'일곱째 문':['stairs',['h2door']]});
+Object.assign(GOAL,{'이름판 조각':[s=>(s.n7||0)>=1?'outskirts':'base',['n7a','n7b']],'일곱 의자의 이름':[s=>N7ORD.find(k=>!(s.n7p||{})[k])||'dome',['n7p']],'이데른의 첫 흔들림':['barracks',['n7i']],'운반 일지':['docks',['n7d']],'막힌 물길':['base',['n7w']],'세레인의 이름':['outskirts',['n7s','n7h']],'고른 길':[s=>routeStep(s)[2],['lastN','sh1','sh2','sh3','sh4','rt1','rt2','rt3','rt4','xt1','xt2','xt3','xt4','shx','shwalk']],'마지막 잔':['inn',['c3a']],'계단 아래':['stairs',['c3b']],'옛 불':['stairs',['c3b']],'세 통의 부름':['base',['c3r']],'잊은 사람':[s=>(s.rq||0)===1?((s.hq||0)>=3?'church':'pawn'):'base',['rq0','rq1a','rq1b','rq2']],'얼굴 없는 수배서':['inn',['h2wanted']],'설계서의 나머지 장':['base',['h2plan']],'대연소로':['furn',['h2furn']],'종지기의 사다리':['church',['h2abel']],'형제단의 밤':['outskirts',['h2broth']],'일곱째 문':['stairs',['h2door']]});
 
 /* ===================== 내러티브 보강 (v047) =====================
    ① 할데온을 무대 위로: 저택으로 온 편지, 이름 바치기 축일  ② 가장 아끼는 동료가 끌려가 나를 잊는다(저택에 남은 동료 중 호감 최고, 없으면 피트)
@@ -3854,7 +3855,7 @@ function compAct(){
   else if(id==='kasimir'){if(G.bleedN>0){dmgFoe(G.bleedD);G.bleedN--;blog(`상처에서 피가 흐른다. ${G.bleedD} 피해.`)}const cr=cpr()<.1+.12*(r.thrust||0);d=(4+2*C.lv)*(cr?2:1);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`카시미르 — ${cr?'급소를 ':''}찌른다. ${d} 피해.`);
     if(r.bleed){G.bleedN=3;G.bleedD=2*r.bleed}if(r.feint&&cpr()<.15*r.feint){G.wide=true;blog('카시미르 — 칼끝으로 적의 박자를 흐트러뜨린다.')}}
   else if(id==='barg'){if(r.stew&&!G.stewD){G.stewD=1;const h=Math.min(6*r.stew,G.mhp-G.hp);if(h>0){G.hp+=h;bfloat('#bphp','+'+h,'heal');blog(`바르그 — “버텨라. 내가 서 있다.” 체력 ${h} 회복.`)}}
-    d=7+3*C.lv+3*(r.cleave||0);if(S.bsw===2)d=Math.round(d*1.2);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`바르그 — ${S.bsw===2?'다시 벼린 대검으로':'두꺼운 칼로'} 내리친다. ${d} 피해.`);
+    d=7+3*C.lv+3*(r.cleave||0);if(S.bsw===2)d=Math.round(d*(1+bswPct()/100));G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`바르그 — ${S.bsw===2?'다시 벼린 대검으로':'두꺼운 칼로'} 내리친다. ${d} 피해.`);
     if(r.back&&!G.ward&&cpr()<.15*r.back){G.ward=1;G.wardT='바르그가 등으로 함께 받아';blog('바르그 — 내 앞에 등을 들이민다.')}}
   else if(id==='eno'){d=4+2*C.lv+2*(r.hook||0);G.fx.push({k:'slash',t:now()});SND.slash();dmgFoe(d);blog(`에노 — 갈고리 장대로 걸어 당긴다. ${d} 피해.`);if(r.hook&&cpr()<.1*r.hook)G.slow=true;
     if(r.read&&cpr()<.15*r.read){G.wide=true;blog('에노 — “다음은 왼쪽이에요.” 적의 움직임이 읽힌다.')}if(r.voices&&!G.forget&&cpr()<.12*r.voices){G.forget=1;blog('에노 — 여러 목소리가 한꺼번에 적을 부른다. 적이 헷갈린다.')}}
@@ -4113,6 +4114,10 @@ Object.assign(CMD,{bq1:()=>{if(!S.act&&S.bq===1&&S.party==='barg')SCENE.bq1()},b
    새로 맹세받은 뒤(bqe new) 반쪽 대검을 다시 벼린다(S.bsw 1→2). 공방에 오틸리에가 있으면 저택에서, 없으면 하칸골 제련소 화덕에서.
    천막촌 「겨울 아침」 뒤 돌아오는 길에 바르그가 울릭 이야기를 한다(질문 넷, S.bqUq). 질문 0·1은 벼린 뒤·끈의 결말에 따라 바뀐다 */
 const bswDue=()=>S.bqe==='new'&&!S.bsw&&S.comps.includes('barg')&&!(S.left||{}).barg&&!amnQ('barg');
+const FGZ=[[.36,.64,1.3],[.40,.60,1.05],[.43,.57,.85]];
+const FGOK=['*쨍. 불티가 곧게 튄다. 바르그의 집게가 꿈쩍도 하지 않는다.','*쨍. 두 번째 망치가 같은 자리에 떨어진다. 바르그가 짧게 코웃음을 친다.','*쨍. 마지막 망치에 쇠가 곧게 펴진다.'],FGNO=['*망치가 비껴 맞는다. 바르그가 집게를 고쳐 잡는다.','*둔탁한 소리가 나고 쇠가 조금 휜다. 바르그는 아무 말도 하지 않는다.','*망치가 모서리를 친다. 불티가 엉뚱한 데로 튄다.'];
+const fgHit=Z=>{const b=document.getElementById('fgb'),m=document.getElementById('fgm');if(!b||!m)return false;const B=b.getBoundingClientRect(),M=m.getBoundingClientRect(),x=(M.left+M.width/2-B.left)/B.width;return x>=Z[0]&&x<=Z[1]};
+const bswPct=()=>S&&S.bswH>=3?25:20;
 const BSWQ=['…무겁다.','*바르그가 새 날을 엄지로 쓸어 본다. 이번엔 손이 멈추지 않는다.','부러진 칼은 가벼웠다. 지킬 게 없었으니까.','이건 무겁다. 네 등 뒤를 서야 하니까.','…나쁘지 않다. 이 무게.'];
 const BQC={
  new:['내 손목에 감아 준 끈 말이야.',['*바르그가 내 손목을 본다. 매듭 없이 한 번 감긴 끈이다.','네 마음대로 해라. 묶지 않았다고 했지.','…다만 풀 때는 나한테 말하고 풀어라.','그날처럼 아무 말 없이 사라지면 이번엔 쫓아가서 따진다.']],
@@ -4141,15 +4146,22 @@ Object.assign(SCENE,{
     ['지금 내 이름을 새긴다',()=>SCENE.bswG('name',3,['*바르그가 내 이름을 소리 내어 한 번 읽는다.','{B:베렌. …같은 이름인데 이번엔 다르게 들린다.|@N. …베렌이 아니라 이 이름이다. 내가 고른 건.}','새겨라. 날이 닳으면 내가 다시 새기겠다.'])],
     ['잿빛 송곳니 문장을 새긴다',()=>SCENE.bswG('clan',2,['…씨족 문장 말이냐.','*바르그가 한참 말이 없다.','핏줄 맹세는 끝냈다. 그래도 내가 어디서 왔는지는 남겨 두지. 울릭 몫까지.'])]]))},
  bswG:(k,g,L)=>{S.bswM=k;aff('barg',g);save();const SN=smithIn()?'오틸리에':'늙은 대장장이';
-  seq('barg','다시 벼리는 날',L.concat(['*화덕에 넣은 쇠가 붉어졌다가 하얗게 달아오른다. 부러진 자리부터 먼저 녹는다.',`^${SN}|망치 하나는 손님이 잡으시오. 기사 칼은 맹세받은 사람이 한 번은 쳐야 선다고 들었소.`,'*바르그가 말없이 내게 망치를 건넨다. 자루가 손바닥에 무겁게 감긴다.','>어디를 치면 돼?','내가 집게로 잡은 데. 세게 말고 똑바로.','*망치가 떨어질 때마다 불티가 튄다. 바르그는 한 번도 집게를 흔들지 않는다.','*세 번째 담금질에서 쇠가 물을 먹고 길게 운다. 늑대 울음 같은 소리다.','…들었냐. 칼이 대답했다.']),
+  seq('barg','다시 벼리는 날',L.concat(['*화덕에 넣은 쇠가 붉어졌다가 하얗게 달아오른다. 부러진 자리부터 먼저 녹는다.',`^${SN}|망치 하나는 손님이 잡으시오. 기사 칼은 맹세받은 사람이 한 번은 쳐야 선다고 들었소.`,'*바르그가 말없이 내게 망치를 건넨다. 자루가 손바닥에 무겁게 감긴다.','>어디를 치면 돼?','내가 집게로 잡은 데. 세게 말고 똑바로.']),
+   h=>SCENE.bswH(0,0,h))},
+ /* v084 망치질 미니게임(사용자): 흰 표시가 달군 자리에 들어올 때 내리친다. 세 번, 갈수록 자리가 좁고 빠르다. 셋 다 맞히면 피해 +25% */
+ bswH:(i,n,log)=>{const Z=FGZ[i];
+  ev('다시 벼리는 날',log+`<style>@keyframes fgsw{from{left:0}to{left:calc(100% - 6px)}}.fgb{position:relative;height:22px;margin:14px 0 8px;border:1px solid var(--k4);background:var(--g)}.fgz{position:absolute;top:0;bottom:0;background:rgba(214,138,58,.5);border-left:1px solid #e3a15c;border-right:1px solid #e3a15c}.fgm{position:absolute;top:-5px;bottom:-5px;width:6px;background:var(--t);box-shadow:0 0 0 1px var(--c),0 0 8px var(--kb);animation:fgsw ${Z[2]}s ease-in-out infinite alternate}</style><p class="m">망치질 ${i+1}/3 — 움직이는 표시가 달군 자리(주황)에 들어올 때 내리친다.</p><div class="fgb" id="fgb"><i class="fgz" style="left:${Z[0]*100}%;width:${(Z[1]-Z[0])*100}%"></i><b class="fgm" id="fgm"></b></div>`,
+   [['망치를 내리친다',()=>{const ok=TEST?!window.__fgMiss:fgHit(Z);const r=(ok?FGOK:FGNO)[i],lg=log+`<p class="m">${r}</p>`;if(i<2)SCENE.bswH(i+1,n+(ok?1:0),lg);else SCENE.bswR(n+(ok?1:0))}]],1)},
+ bswR:n=>{S.bswH=n;save();const SN=smithIn()?'오틸리에':'늙은 대장장이';
+  seq('barg','다시 벼리는 날',n>=3?['*세 번째 담금질에서 쇠가 물을 먹고 길게 운다. 늑대 울음 같은 소리다.','…들었냐. 칼이 대답했다.',`^${SN}|손이 곧은 손님이구려. 날도 곧게 서겠소.`]:n===2?['*세 번째 담금질에서 쇠가 물을 먹고 길게 운다. 늑대 울음 같은 소리다.','…들었냐. 칼이 대답했다.','한 번 틀린 건 칼이 기억한다. 괜찮다. 나도 그렇게 기억되는 놈이니까.']:[`^${SN}|…나머지는 내가 두드리겠소.`,'*늙은 손이 망치를 받아 남은 자리를 몇 번 고르게 친다. 담금질에서 쇠가 짧게 운다.','…괜찮다. 맹세하던 날 나도 두 번 틀렸다.','틀린 자국은 날에 남는다. 그게 네 자국이면 됐다.'],
    h=>tev('barg','다시 벼리는 날',h,[['날이 식기를 기다린다',()=>SCENE.bswE()]]))},
  bswE:()=>{const sm=smithIn(),SN=sm?'오틸리에':'늙은 대장장이',k=S.bswM;
-  seq('barg','다시 벼리는 날',['*날이 식자 바르그가 새 대검을 들어 올린다. 전보다 한 뼘 짧고 날이 곧다.',{name:'*날 밑동에 내 이름이 작게 박혀 있다.',clan:'*날 밑동에 늑대 송곳니 두 개가 엇갈려 새겨져 있다.',none:'*날에는 아무것도 새겨져 있지 않다. 망치 자국만 고르게 남았다.'}[k]||'','*바르그가 마당으로 나가 한 번 휘두른다. 바람 가르는 소리가 낮고 길다.','…가볍군. 칼이 가벼운 게 아니다.','이십 년 들고 다닌 게 칼이 아니었던 모양이다.',`^${SN}|값은 됐소. 이런 쇠를 다시 두드려 본 걸로 치겠소.`],
+  seq('barg','다시 벼리는 날',['*날이 식자 바르그가 새 대검을 들어 올린다. 전보다 한 뼘 짧고 날이 곧다.',S.bswH>=3?'*망치 자국이 하나도 어긋나지 않았다. 불빛이 칼등을 한 번에 미끄러져 내려간다.':'',{name:'*날 밑동에 내 이름이 작게 박혀 있다.',clan:'*날 밑동에 늑대 송곳니 두 개가 엇갈려 새겨져 있다.',none:'*날에는 아무것도 새겨져 있지 않다. 망치 자국만 고르게 남았다.'}[k]||'','*바르그가 마당으로 나가 한 번 휘두른다. 바람 가르는 소리가 낮고 길다.','…가볍군. 칼이 가벼운 게 아니다.','이십 년 들고 다닌 게 칼이 아니었던 모양이다.',`^${SN}|값은 됐소. 이런 쇠를 다시 두드려 본 걸로 치겠소.`],
    h=>tev('barg','다시 벼리는 날',h,[
     ['새 칼을 축하한다',()=>SCENE.bswEnd(3,['*바르그가 짖는 소리 같은 웃음을 한 번 터뜨린다.','축하는 무슨. …그래도 받아 두마.'])],
     ['이제 네 등은 걱정 안 해도 되겠다',()=>SCENE.bswEnd(4,['그건 내가 할 말이다.','*바르그가 새 대검을 등에 멘다. 그리고 내 왼쪽 반 걸음 뒤에 선다. 늘 서던 자리다.'])]]))},
  bswEnd:(g,L)=>{S.bsw=2;aff('barg',g);if(S.asked)delete S.asked['barg:0'];jr('바르그의 반쪽 대검을 다시 벼렸다. 한 뼘 짧아지고 날이 곧게 섰다.'+({name:' 날 밑동에 내 이름을 새겼다.',clan:' 날 밑동에 잿빛 송곳니 문장을 새겼다.'}[S.bswM]||''));log('바르그의 대검을 다시 벼렸다.');save();
-  seq('barg','다시 벼리는 날',L,h=>tev('barg','다시 벼리는 날',h+'<p class="m">바르그의 「반쪽 대검」이 「다시 벼린 대검」이 되었다. 싸움에서 내리치는 피해가 20% 오른다.</p>',[['공방을 나선다',()=>render()]]))}
+  seq('barg','다시 벼리는 날',L,h=>tev('barg','다시 벼리는 날',h+`<p class="m">바르그의 「반쪽 대검」이 「다시 벼린 대검」이 되었다. 싸움에서 내리치는 피해가 ${bswPct()}% 오른다.</p>`,[['공방을 나선다',()=>render()]]))}
 });
 Object.assign(CMD,{bsw:()=>{if(!S.act&&bswDue()&&S.loc==='base')SCENE.bswA()},bswF:()=>{if(!S.act&&S.bsw===1&&(S.loc==='base'&&smithIn()||S.loc==='works'&&S.party==='barg'))SCENE.bswF()}});
 
@@ -4348,7 +4360,7 @@ const R3={
    c:[['손을 잡는다',3,['*첫 박자에 그의 발을 밟는다. 카시미르가 반 박자도 늦지 않게 소리 내어 웃는다.','…이백 년 만에 처음 춘 춤입니다. 끝나지 않았으면 좋겠군요.']],['네가 이끌어 줘',2,['*카시미르가 내 허리에 손을 얹고 천천히 돈다.','이끄는 건 익숙합니다. 누군가 따라와 준 건 처음이지만요.']]]},
   b:{h:'기우는 촛불',p:['*카시미르가 촛대 앞에 서 있다. 불꽃이 내 쪽으로 기운다.','이백삼십 년 전 도련님께 붉은 물을 가져온 그 마법사. 오늘 그 불 앞에서 확실해졌습니다. 그대였습니다.','…그러니까 저는 처음부터 그대를 쫓고 있었던 겁니다. 물을 훔친 날부터.','>실망했어?','실망은 기대한 사람만 한다고 했지요. 저는 기대했습니다. 그래서 이제야 압니다.','그대가 어떤 이름을 고르든 저는 그 이름을 부르겠습니다. 이름을 바꾸는 일이라면 이 도시에서 제가 제일 잘 압니다.'],
    c:[['네 이름도 내가 불러 줄게',3,['*카시미르가 눈을 감는다.','…그대가 부르는 쪽이 제 이름입니다. 앞으로는.']],['곁에 있어 줘',2,['*카시미르가 장갑 낀 손으로 내 손을 잡는다. 그리고 장갑을 벗는다.','…이쪽이 낫군요. 그대 손이 따뜻합니다.']]]}}};
-const c3Acts=busy=>{const a=[];if(!S.a3)return a;const q=S.c3||0,r=romP();if(typeof n7Acts==='function')a.push(...n7Acts(busy));if(typeof r4Acts==='function')a.push(...r4Acts(busy));
+const c3Acts=busy=>{const a=[];if(!S.a3)return a;const q=S.c3||0,r=romP();if(typeof lnDue==='function'&&lnDue()&&S.loc==='base')a.push(B('lastN','벽난로 앞의 마지막 밤',{sub:'✦ 모두 거실에 모였다',dis:busy}));if(typeof n7Acts==='function')a.push(...n7Acts(busy));if(typeof r4Acts==='function')a.push(...r4Acts(busy));
   if(c3Due()&&!q&&S.loc==='inn')a.push(B('c3a','마그다가 문을 닫는다',{sub:'✦ 「오늘은 닫음」',dis:busy}));
   if(q>=1&&q<=3&&S.loc==='stairs')a.push(B('c3b',q===1?'대성당 아래 계단 — 마그다와 함께':q===2?'계단 아래의 이데른':'일곱째 문',{sub:q===3?'문이 열려 있다':'자정의 계단',dis:busy}));
   if(q>=4&&!S.route&&S.loc==='base')a.push(B('c3r','세 통의 부름',{sub:'✦ 갈 길을 정한다',dis:busy}));
@@ -4411,7 +4423,8 @@ function endShow(k,lead){const E=ENDS[k],g=E.g?1:0;S.end=k;jr(`엔딩 「${E.n}�
   for(let i=0;i<ep.length;i+=3)sl.push({h:i?'':'그 뒤로',L:ep.slice(i,i+3)});
   sl.push({h:'',L:[E.n,'<span class="esub">엔딩</span>'],c:'fin'});
   cine(sl,sum,'이야기를 덮는다')}
-const routeStep=s=>{if(s.route==='shep'&&typeof shNext==='function'){const k=shNext(s);const T={robe:['흰 옷을 입다','할데온이 대성당에서 흰 옷 한 벌을 내민다.','church'],sh1:['교단 안쪽','할데온과 함께 정화자 숙소에 간다.','barracks'],conf:['고해소의 하루','할데온 곁에서 고해를 받는다.','confess'],idq:['이데른의 질문','숙소 뒤뜰에서 이데른이 기다린다.','barracks'],walk:['할데온과 걷는 날',`할데온과 구역을 걷는다. 부두·학술원·하칸골·변두리·가스등 거리·시계탑 광장 가운데 셋. (${s.shWk||0}/3)`,null],sh2:['언덕의 헌금','은방울 언덕 꼭대기 저택에서 가문들이 기억을 바친다.','silver'],acad:['학술원과의 거래','학술원장이 할데온과 표본실을 두고 흥정한다.','academy'],ulrik:['형제단 토벌','정화자들과 지하 예배실로 내려간다.','chapel'],winter:['겨울의 기록','회랑 할데온의 방에 표지 없는 장부가 있다.','church'],oppose:['동료들의 반대','저택에서 동료들이 기다린다.','base'],sh3:['불 앞에서 쉬는 일','일곱째 밤을 사흘 앞두고 할데온이 옛 불 앞에서 쉬자고 한다.','stairs'],b1:s.shc==='turn'?['흰 옷 사제들 모으기','구호소 뒷방에 이데른이 사제들을 모은다.','church']:['일곱 의자 채우기','옛 불의 방에 헌금 병을 놓는다.','stairs'],b2:s.shc==='turn'?['숙소 장악','정화자 숙소를 되찾는다.','barracks']:['마지막 축일','이름 바치기 축일. 할데온 옆 발코니.','church'],sh4:s.shc==='turn'?['흰 옷의 문','대성당 아래 계단으로 간다.','stairs']:['일곱째 밤','일곱 의자가 찬다. 대성당 아래 계단으로 간다.','stairs']}[k];if(T)return [T[0],T[1],T[2],['sh1','sh2','sh3','sh4','shx','shwalk']]}
+const routeStep=s=>typeof lnDue==='function'&&lnDue(s)?['마지막 밤','갈 곳이 하나 남았다. 그 전에 저택에서 모두와 밤을 보내자.','base']:routeStep0(s);
+const routeStep0=s=>{if(s.route==='shep'&&typeof shNext==='function'){const k=shNext(s);const T={robe:['흰 옷을 입다','할데온이 대성당에서 흰 옷 한 벌을 내민다.','church'],sh1:['교단 안쪽','할데온과 함께 정화자 숙소에 간다.','barracks'],conf:['고해소의 하루','할데온 곁에서 고해를 받는다.','confess'],idq:['이데른의 질문','숙소 뒤뜰에서 이데른이 기다린다.','barracks'],walk:['할데온과 걷는 날',`할데온과 구역을 걷는다. 부두·학술원·하칸골·변두리·가스등 거리·시계탑 광장 가운데 셋. (${s.shWk||0}/3)`,null],sh2:['언덕의 헌금','은방울 언덕 꼭대기 저택에서 가문들이 기억을 바친다.','silver'],acad:['학술원과의 거래','학술원장이 할데온과 표본실을 두고 흥정한다.','academy'],ulrik:['형제단 토벌','정화자들과 지하 예배실로 내려간다.','chapel'],winter:['겨울의 기록','회랑 할데온의 방에 표지 없는 장부가 있다.','church'],oppose:['동료들의 반대','저택에서 동료들이 기다린다.','base'],sh3:['불 앞에서 쉬는 일','일곱째 밤을 사흘 앞두고 할데온이 옛 불 앞에서 쉬자고 한다.','stairs'],b1:s.shc==='turn'?['흰 옷 사제들 모으기','구호소 뒷방에 이데른이 사제들을 모은다.','church']:['일곱 의자 채우기','옛 불의 방에 헌금 병을 놓는다.','stairs'],b2:s.shc==='turn'?['숙소 장악','정화자 숙소를 되찾는다.','barracks']:['마지막 축일','이름 바치기 축일. 할데온 옆 발코니.','church'],sh4:s.shc==='turn'?['흰 옷의 문','대성당 아래 계단으로 간다.','stairs']:['일곱째 밤','일곱 의자가 찬다. 대성당 아래 계단으로 간다.','stairs']}[k];if(T)return [T[0],T[1],T[2],['sh1','sh2','sh3','sh4','shx','shwalk']]}
   if(s.route==='shep'){const q=s.sh||0;return q<=1?['교단 안쪽','할데온과 함께 정화자 숙소에 간다. 회색 옷들이 기다린다.','barracks',['sh1']]:q===2?['언덕의 헌금','은방울 언덕 꼭대기 저택에서 가문들이 기억을 바친다. 할데온과 함께 간다.','silver',['sh2']]:q===3?['불 앞에서 쉬는 일','일곱째 밤을 사흘 앞두고 할데온이 옛 불 앞에서 쉬자고 한다.','stairs',['sh3']]:s.shc==='turn'?['흰 옷의 문','이데른이 흰 옷 사제들 쪽 문을 안다. 대성당 아래 계단으로 간다.','stairs',['sh4']]:['일곱째 밤','일곱 의자가 찬다. 대성당 아래 계단으로 간다.','stairs',['sh4']]}
   if(s.route==='ret'&&typeof rtNext==='function'){const k=rtNext(s),L=k&&RTL[k];if(L)return [L[3],L[4],L[0],['rt1','rt2','rt3','rt4','rtx']]}
   if(s.route==='ret'){const q=s.rt||0;return q<=1?['빈 이마','지하 예배실에서 울릭이 기다린다. 이마에 첫 줄을 긋는다.','chapel',['rt1']]:q===2?['천막촌의 노래','천막촌 끝에 이름을 부르는 노래가 있다.','outskirts',['rt2']]:q===3?['불 앞의 거울','대성당 아래 계단. 불 속의 목소리가 기다린다.','stairs',['rt3']]:['불로 된 사람','불이 사람 모양으로 일어섰다. 대성당 아래 계단.','stairs',['rt4']]}
@@ -4437,7 +4450,7 @@ const shActs=busy=>{const a=[];if(S.route!=='shep')return a;const q=S.sh||0;
   if(nk==='sh1'&&S.loc==='barracks')a.push(B('sh1','회색 옷의 경례',{sub:'✦ 할데온이 앞장선다',dis:busy}));
   if(nk==='sh2'&&S.loc==='silver')a.push(B('sh2','언덕 꼭대기 저택',{sub:'✦ 가문들이 줄을 선다',dis:busy}));
   if(nk==='sh3'&&S.loc==='stairs')a.push(B('sh3','옛 불 앞에서 쉰다',{sub:'✦ 일곱째 밤 사흘 전',dis:busy}));
-  if(nk==='sh4'&&S.loc==='stairs')a.push(B('sh4',S.shc==='turn'?'흰 옷의 문':'일곱째 밤',{sub:'✦ 마지막',dis:busy}));
+  if(nk==='sh4'&&S.loc==='stairs')a.push(B('sh4',S.shc==='turn'?'흰 옷의 문':'일곱째 밤',{sub:lnDue()?'저택에서 마지막 밤을 보낸 뒤':'✦ 마지막',dis:busy||lnDue()}));
   if(typeof shStepAct==='function'){const x=shStepAct(busy);if(x)a.push(x)}
   return a};
 Object.assign(FOES,{haldF:{xp:80,n:'할데온',hp:340,tier:3,tier2:4,boss:true,pool:['hum','brand','late'],pool2:['hum','wail','voices','triple'],ph2:'할데온 뒤에서 옛 불이 일어선다. 불 속의 목소리가 그의 손을 빌린다.',intro:'할데온이 바닥에 떨어진 흰 천을 집어 다시 두른다. “그대에게 불을 쓰는 건 처음입니다.”',win:'흰 불이 꺼진다. 할데온이 첫째 의자 앞에 주저앉는다.',loot:()=>({i:{},g:R(20,30)})}});
@@ -4541,7 +4554,7 @@ const rtBargBlock=()=>S.comps.includes('barg')&&!(S.left||{}).barg&&S.bqe!=='bou
 Object.assign(FOES,{oldB:{xp:90,n:'불 속의 베렌',hp:360,tier:3,tier2:4,boss:true,pool:['hum','wail','ash'],pool2:['wail','voices','ash','late'],ph2:'불로 된 사람이 내 목소리로 노래한다. 내가 잊은 노래다.',intro:'불이 사람 모양으로 일어선다. 나와 같은 키. 같은 어깨. 얼굴만 타오른다.',win:'불로 된 사람이 무너진다. 무너지면서도 내 목소리로 말한다.',loot:()=>({i:{},g:0})}});
 BOSSP.oldB={ep:'예전의 나',pre:['불 속의 베렌 — “그 이름은 남의 거야. 돌려줘.”'],p2:'불 속의 베렌 — “나는 마법을 아꼈어. 너는 뭘 아꼈는데?”'};
 const rtActs=busy=>{const a=[];if(S.route!=='ret'||S.end)return a;const k=typeof rtNext==='function'?rtNext():null;if(!k)return a;const L=RTL[k];
-  if(L&&S.loc===L[0]){const legacy={rt1:'rt1',rt2:'rt2',rt3:'rt3',rt4:'rt4'}[k];a.push(B(legacy||'rtx',L[1],{sub:L[2],dis:busy}))}
+  if(L&&S.loc===L[0]){const legacy={rt1:'rt1',rt2:'rt2',rt3:'rt3',rt4:'rt4'}[k],ln=lnDue();a.push(B(legacy||'rtx',L[1],{sub:ln?'저택에서 마지막 밤을 보낸 뒤':L[2],dis:busy||ln}))}
   return a};
 Object.assign(SCENE,{
  rt0:()=>{S.rt=1;if(retRef(S.party))S.party=null;jr('불 속의 목소리가 꿈에 왔다. 지하 예배실에서 울릭이 빈 이마를 줄 거라고 했다. 무거운 걸 덜수록 내 목소리가 그 목소리를 닮아 간다고.');save();
@@ -4885,7 +4898,7 @@ const extRef=id=>S.route==='ext'&&!S.end&&id==='kasimir'&&S.zqe==='keep'&&S.rom!
 const XTREF={kasimir:['그 노가 꺼지면 제 붉은 물도 끊깁니다. 저는 아직 늙을 준비가 안 됐습니다. 오늘은 저택에 있겠습니다.']};
 const xDark=k=>(S.xdk||[]).includes(k);
 const xtActs=busy=>{const a=[];if(S.route!=='ext'||S.end)return a;const k=typeof xtNext==='function'?xtNext():null;if(!k)return a;const L=XTL[k];
-  if(L&&S.loc===L[0]){const legacy={xt1:'xt1',xt2:'xt2',xt3:'xt3',xt4:'xt4',xt5:'xt4'}[k];a.push(B(legacy||'xtx',L[1],{sub:L[2],dis:busy}))}
+  if(L&&S.loc===L[0]){const legacy={xt1:'xt1',xt2:'xt2',xt3:'xt3',xt4:'xt4',xt5:'xt4'}[k],ln=lnDue();a.push(B(legacy||'xtx',L[1],{sub:ln?'저택에서 마지막 밤을 보낸 뒤':L[2],dis:busy||ln}))}
   return a};
 Object.assign(SCENE,{
  xt0:()=>{S.xt=1;S.xdk=[];if(extRef(S.party))S.party=null;jr('불을 끄는 길. 가스관은 하칸골 대연소로 3번 노에서 도시로 뻗는다. 거리마다 밸브가 있다. 가스등 거리부터 끈다.');save();
@@ -5065,7 +5078,69 @@ Object.assign(CMD,{duo:()=>{if(!S.act&&S.loc==='base')SCENE.duo()}});
 
 Object.assign(CMD,{recon:a=>{if(!S.act&&(S.left||{})[a]){if(a==='barg'&&(S.bk==='leave'||S.bk==='duel'||!S.bk)&&S.bqe!=='free'){if(!S.brRet)SCENE.brec1();return}SCENE.recon(a)}},a2a:()=>{if(!S.act&&(S.a2||0)===0)SCENE.a2a()},a2b:()=>{if(!S.act&&S.a2===1)SCENE.a2b()},a2c:()=>{if(!S.act&&S.a2===2)SCENE.a2c()},a2d:()=>{if(!S.act&&S.a2===3)SCENE.a2d()},a2e:()=>{if(!S.act&&S.a2===4)SCENE.a2e()},a2f:()=>{if(!S.act&&S.a2===5)SCENE.a2f()}});
 Object.keys(QA6).forEach(k=>{if(QA[k]&&!QA[k].includes(QA6[k]))QA[k].push(QA6[k])});
-window.__k2={get EV0(){return EV0},QTALK,BQU:()=>BQU,BQC:()=>BQC,dlg:()=>({TALK,QA,QAT,QATX,QA6,MOOD,MOODT,TALKT,DEFL,ORX,RCX,CH,CHX,CMT,CMTN,MGT,RVT,GREETS,TIERL,JEAL,JEALR,QEND}),dbgR:()=>({ROMI,ROMD,ROMQ,ROMKEEP,ROMA,ROMEND,ROMBACK,ROMBK,romAcc}),MS,R4X,payDue,payLines,moodT,talkT,KNOW,PL,isAmn,easyB,MV,CFG,shNext:()=>shNext(),shStep:()=>{const x=shStepAct(false);return x?String(x).slice(0,80):null},bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+/* ===== v084 로맨스 이후 · 마지막 밤 (사용자: 로맨스 뒤 장면이 없다 · 최후 전투 전에 다 같이 이야기하고 로맨스 상대와 깊은 교감) =====
+   마음을 나눈 뒤 10분이 지나면 연인 장면 1, 그 뒤 20분이 지나면 2(이야기하기 ✦, S.romx).
+   갈래 마지막 단계(sh4·gin·rt4·xt5) 앞에서 저택 「마지막 밤」(S.lastN): 남은 동료 모두와 피트, 이어서 로맨스 상대와 단둘이(ROMF) */
+const ROMX={
+ kirien:[
+  {h:'다음 날 아침',p:['*아침 일찍 부엌에 내려가 보니 키리엔이 먼저 와 있다. 찻물이 이미 끓고 있다.','*키리엔이 잔 두 개를 꺼냈다가 하나를 도로 넣는다. 그리고 다시 꺼낸다.','…일찍 일어났네.','*꼬리가 바닥을 한 번 쓴다. 들킨 얼굴이다.','어제 그거. 진짜였지?','>꿈인 줄 알았어?','꿈이면 내가 알아. 나는 남의 꿈을 많이 봤거든.','근데 내 건 잘 안 보여. 엄마가 그랬어. 점쟁이는 제 앞날만 못 본다고.','*키리엔이 잔을 내 앞에 밀어 놓는다. 손가락 끝이 잔에 오래 남는다.','그래서 확인하는 거야. 한 번만 더 말해 봐.'],
+   c:[['좋아해. 어제도 오늘도',3,['*키리엔이 고개를 숙이는데 귀 끝이 붉다.','…됐어. 내일 또 물어볼 거야.','*찻잔 너머로 키리엔이 웃는다. 숨기지 않는 웃음이다.']],['차부터 마시고',2,['…치사해.','*그래도 키리엔은 내가 잔을 다 비울 때까지 기다린다.','다 마셨지. 이제 말해.','*끝내 대답을 들은 뒤에야 키리엔이 제 잔을 든다. 차는 이미 식었다.']]]},
+  {h:'안 잃어버릴 사람 목록',p:['*키리엔이 서재 책상에 낡은 수첩을 펼쳐 둔다. 사라진 사람들의 이름이 빽빽하다.','*몇몇 이름 위에는 줄이 그어져 있다. 찾은 사람이다. 대부분은 그대로다.','엄마가 쓰던 거야. 지금은 내가 써.','*키리엔이 맨 뒤 장을 넘긴다. 빈 장 맨 위에 내 이름이 적혀 있다.','…놀라지 마. 사라진 사람 목록 아니야.','이건 안 잃어버릴 사람 목록이야. 지금은 하나뿐이고.','>왜 내 이름을 적었어?','적어 두면 찾으러 갈 수 있으니까. 네가 어디로 사라져도.','*키리엔이 펜을 내민다.','너도 하나 적어. 누구든 상관없어.'],
+   c:[['키리엔의 이름을 적는다',3,['*내가 이름을 적자 키리엔이 한참 그 글씨를 들여다본다.','…글씨 진짜 못 쓴다.','*그래 놓고 키리엔은 수첩을 덮어 품 안쪽에 넣는다. 놋등이 들어 있던 자리다.']],['키리엔의 엄마 이름을 적는다',3,['*키리엔의 손이 멈춘다.','…엄마는 사라진 사람 목록 맨 앞에 있는데.','*그래도 지우지 않는다. 내 이름 바로 아래에 미라라는 글자가 남는다.','두 사람이면 이제 목록 같네.']]]}],
+ oswin:[
+  {h:'정정할 기록',p:['*아침 서재. 오스윈이 장부 한 장을 펴 놓고 나를 기다리고 있다.','앉으십시오. 정정할 기록이 있습니다.','*장부 맨 아래 줄에 어젯밤 날짜가 적혀 있다. 그 옆은 비어 있다.','어젯밤 일을 적으려다 말았습니다. 적으면 장부가 되고 적지 않으면 외워야 하지요.','*비늘 사이에서 불꽃이 연달아 튄다. 오스윈은 모르는 척한다.','>뭐라고 적으려고 했는데?','그게 문제입니다. 열한 번 고쳐 썼는데 열한 번 다 틀렸습니다.','학자가 문장 하나를 못 쓰다니. 학술원이 알면 저를 한 번 더 지우겠군요.','*오스윈이 펜을 내 쪽으로 돌려놓는다.','당신이 적어 주십시오. 그게 정확할 것 같습니다.'],
+   c:[['짧게 한 줄 적는다. 「서로 좋아함.」',3,['*오스윈이 그 짧은 줄을 오래 본다.','…간결하군요. 제가 쓴 열한 장보다 낫습니다.','*오스윈이 장부를 덮지 않고 펼친 채 창가에 둔다. 잉크가 마르는 동안 꼬리를 둘러 불꽃이 그 위에 떨어지지 않게 막는다.']],['아무것도 적지 않는다',2,['…외워 두자는 뜻이군요.','*오스윈이 빈칸을 손가락으로 한 번 쓸어 본다.','좋습니다. 이 칸은 평생 비워 두겠습니다. 누가 물으면 기록 누락이라고 하지요.']]]},
+  {h:'칼라쉬 이름',p:['*밤늦게 오스윈이 서재 촛불 아래에서 낡은 족보를 펼친다. 칼라쉬 글자가 불꽃처럼 휘어 있다.','학술원에 들어갈 때 버린 이름이 있습니다. 칼라쉬 이름이지요.','어머니만 그 이름으로 불렀습니다. 어머니가 돌아가신 뒤로는 아무도 몰라요.','*오스윈이 족보 한 귀퉁이를 짚는다. 글자가 너무 작아서 읽을 수 없다.','>들려줄 수 있어?','…발음이 어렵습니다. 혀를 두 번 굴려야 하거든요.','*오스윈이 그 이름을 낮게 한 번 말한다. 불꽃 튀는 소리 같은 이름이다.','*그리고 내가 따라 하기를 기다린다. 기다리는 동안 꼬리 끝이 쉬지 않고 바닥을 두드린다.'],
+   c:[['서툴게 따라 해 본다',3,['*내 발음에 오스윈이 웃음을 터뜨린다. 비꼬는 기색이 하나도 없다.','틀렸습니다. 완전히 틀렸어요.','…그런데 어머니도 처음엔 그렇게 틀리셨다고 합니다. 칼라쉬가 아니셨거든요.','앞으로는 그렇게 틀리게 불러 주십시오. 그게 제 이름입니다.']],['오스윈이라고 부를래',2,['*오스윈이 족보를 덮는다.','…그것도 좋습니다. 그 이름도 당신이 부르면 제 것 같으니까요.','그래도 하나쯤은 외워 두십시오. 저를 잃어버렸을 때 찾을 이름으로.']]]}],
+ barg:[
+  {h:'지붕 위의 두 사람',p:['*밤에 지붕 위로 올라가 보니 바르그가 용마루에 앉아 있다. 옆자리가 한 사람 몫 비어 있다.','…왔냐. 앉아라.','*바르그가 자기 외투를 벗어 기와 위에 깔고 말없이 턱으로 가리킨다.','이런 건 처음이라 어떻게 하는지 모른다.','기사단에선 맹세한 다음 날 칼을 닦았다. 그 사람 문 앞에서.','*바르그가 헛기침을 한다.','>그래서 오늘은 뭘 닦을 거야?','…닦을 게 없어서 여기 앉아 있다.','*바르그의 꼬리가 내 쪽 기와를 한 번 툭 친다. 그리고 거기 그대로 머문다.'],
+   c:[['어깨에 기댄다',3,['*바르그가 굳는다. 숨도 멈춘 것 같다.','…무겁지 않다. 그대로 있어라.','*한참 뒤 바르그의 큰 손이 아주 조심스럽게 내 등에 얹힌다. 방패를 드는 손이다.']],['아무 말 없이 앉아 있는다',3,['*둘이 한참 운하 쪽 불빛을 본다.','…이게 좋군. 말 안 해도 되는 거.','*바르그가 낮게 한 번 운다. 짧게. 대답할 필요가 없는 울음이다.']]]},
+  {h:'등 쪽의 엉킨 털',p:['*바르그가 빗 하나를 들고 거실에 들어온다. 이가 굵은 늑대털 빗이다.','…등 쪽이 엉켰다. 손이 안 닿는다.','*바르그가 내 앞에 등을 돌리고 앉는다. 등을 내주는 일이 이 사람에게 어떤 뜻인지 안다.','씨족에선 짝끼리만 털을 빗어 준다. 형제끼리도 안 한다.','*빗이 엉킨 털에 걸린다. 바르그가 숨을 짧게 들이쉬지만 움직이지 않는다.','>아파?','안 아프다. …아프다. 계속해라.','*빗질이 길어질수록 바르그의 어깨가 내려간다. 늘 세우고 있던 어깨다.','이십 년 동안 아무도 내 등을 만지지 않았다. 칼 말고는.'],
+   c:[['끝까지 빗어 준다',3,['*마지막 엉킴이 풀리자 바르그가 몸을 부르르 턴다. 늑대가 물에서 나올 때처럼.','…가볍다.','*그리고 돌아앉아 내 손에서 빗을 가져간다.','이번엔 네 차례다. 털은 없어도 머리는 있지.']],['등에 이마를 댄다',3,['*바르그의 등이 크게 한 번 오르내린다.','…반칙이다.','*바르그는 그대로 오래 앉아 있다. 거실 불이 다 탈 때까지.']]]}],
+ kasimir:[
+  {h:'첫 아침',p:['*아침 응접실. 카시미르가 창가에서 붉은 병을 들고 서 있다. 마개는 닫혀 있다.','좋은 아침입니다. 이 말을 진심으로 해 보는 건 처음이군요.','*카시미르가 병을 탁자에 내려놓는다. 오늘은 마시지 않을 모양이다.','어젯밤 일을 잃고 싶지 않아서요. 이 물은 하루치를 가져가니까.','>그럼 오늘은 늙는 거야?','하루만큼요. 그대와 같은 속도로 하루를.','*카시미르가 거울에 비친 제 얼굴을 흘끗 본다. 달라진 데는 없다.','…아직은 모르겠군요. 그래도 왠지 주름 하나쯤 생긴 기분입니다.','*카시미르가 장갑을 벗고 맨손을 내민다.'],
+   c:[['맨손을 잡는다',3,['*카시미르의 손은 차갑다가 금세 데워진다.','…장갑 없이 남의 손을 잡아 본 게 언제였는지 기억나지 않습니다.','붉은 물이 가져간 게 아니라 정말로 없었던 것 같군요.','*카시미르가 그 손을 한참 놓지 않는다. 시계가 아홉 번 울릴 때까지.']],['같이 늙자',3,['*카시미르가 눈을 크게 뜨더니 소리 내어 웃는다.','이백 년 넘게 들어 본 말 중에 가장 무서운 말이군요.','…받겠습니다. 천천히요. 하루씩.']]]},
+  {h:'타는 봉투',p:['*저녁에 카시미르가 봉랍이 두꺼운 봉투 하나를 벽난로에 던져 넣는다.','대리 결투 의뢰였습니다. 보수가 좋았지요.','*봉투가 타오르는 동안 카시미르는 끝까지 지켜본다.','마흔세 번째가 될 뻔했습니다.','>왜 거절했어?','지는 날 그만두겠다고 했지요. 그런데 이기는 날에도 그만두고 싶어졌습니다.','칼끝에 걸린 목숨이 이제 제 것 하나가 아니라서요. 제가 다치면 그대가 걱정하실 테니.','*카시미르가 지팡이를 벽에 기대 세운다. 칼이 든 지팡이다.','…이렇게 이유가 생기는군요. 살고 싶은 이유가.'],
+   c:[['잘했어',3,['*카시미르가 어색하게 웃는다. 칭찬받는 데 익숙지 않은 얼굴이다.','이백 년 동안 칭찬은 늘 칼 솜씨에만 받았습니다.','칼을 내려놓고 받는 건 처음이군요. 생각보다 무겁습니다.']],['그래도 칼은 버리지 마',2,['물론입니다. 그대를 지킬 때는 쓰겠습니다.','*카시미르가 지팡이를 다시 집어 손잡이를 쓰다듬는다.','남을 대신해서가 아니라 제 이름으로요. 그 정도는 허락해 주시겠지요.']]]}]};
+const ROMF={
+ kirien:()=>({h:'꺼지지 않은 놋등',p:['*모두 방으로 올라간 뒤에도 키리엔은 벽난로 앞을 떠나지 않는다.','*키리엔이 품에서 엄마의 놋등을 꺼낸다. 오래 꺼져 있던 등이다.','내일 일 끝나면 이거 켤 거야.','…아니. 지금 켤래. 내일 못 켤 수도 있으니까.','*키리엔이 성냥을 긋는다. 손이 떨려서 두 번 실패한다.','>내가 켤까?','아니. 같이 잡아.','*둘이 성냥을 함께 쥐자 불이 붙는다. 작은 등 안에서 노란 불이 흔들린다.','*키리엔이 내 어깨에 머리를 기댄다. 무게가 생각보다 가볍다.','엄마는 이 불로 남이 잃은 걸 찾아 줬어. 나는 이걸로 내 걸 지킬 거야.','…그러니까 내일 꼭 돌아와. 네가 내가 찾은 마지막 사람이니까.'],
+   c:[['약속할게',3,['*키리엔이 고개를 들어 나를 본다. 놋등 불빛이 키리엔의 눈에 고인다.','…약속은 깨라고 있는 거라고 엄마가 그랬어.','그래도 이번 거는 깨지 마.','*키리엔이 내 손을 놋등 손잡이 위에 포개어 놓는다. 둘이 등을 든 채 불이 사위어 갈 때까지 아무 말도 하지 않는다.']],['오늘은 같이 있자',3,['*키리엔이 대답 대신 담요를 끌어와 둘의 무릎을 덮는다.','…그 말 기다렸어.','*놋등 불빛 아래 키리엔의 숨이 천천히 고르게 바뀐다. 새벽이 올 때까지 등은 꺼지지 않는다.']]]}),
+ oswin:()=>({h:'장부의 마지막 장',p:['*모두 잠든 서재. 오스윈이 장부의 마지막 장을 펼쳐 두고 펜을 들었다 놓았다 한다.','내일 일이 끝나면 이 장부도 끝납니다. 빈 장이 한 장 남았어요.','지워진 이름들은 할 만큼 옮겨 적었습니다. 남은 건 이 한 장입니다.','*비늘 사이 불꽃이 촛불보다 밝게 튄다. 오스윈의 손이 떨린다.','>무엇을 적을 거야?','당신과 보낸 날을 적고 싶습니다. 하나도 빠짐없이.','그런데 한 장에 다 들어가지 않습니다. 계산해 봤어요. 글씨를 아무리 작게 써도.','*오스윈이 펜을 내려놓고 내 손을 잡는다. 손바닥이 뜨겁다. 칼라쉬의 피가 끓는 온도다.','그래서 이렇게 하기로 했습니다. 내일 돌아와서 새 장부를 사지요. 당신 이름으로 된 장부를.'],
+   c:[['그 장부는 둘이 같이 쓰자',3,['…둘이 쓰는 장부라. 오탈자가 두 배겠군요.','*오스윈이 웃으며 마지막 장 맨 위에 한 줄만 적는다. 「다음 권에 계속.」','*그리고 장부를 덮고 촛불을 끈다. 어둠 속에서 비늘 불꽃만 작게 깜빡인다. 내 손을 놓지 않은 채로.']],['오늘 밤은 아무것도 적지 말자',3,['*오스윈이 펜을 집어 들었다가 필통에 꽂는다.','…처음입니다. 기록하지 않기로 한 밤은.','*오스윈이 내 어깨에 이마를 댄다. 비늘이 서늘하고 그 아래가 뜨겁다.','외워 두겠습니다. 이 밤은 처음부터 끝까지.']]]}),
+ barg:()=>({h:'맹세 아닌 것',p:['*모두 올라간 뒤 바르그가 마당으로 나가자고 턱짓한다. 달이 밝다.',S.bsw===2?'*바르그가 다시 벼린 대검을 땅에 꽂고 그 옆에 선다.':'*바르그가 반쪽 대검을 땅에 꽂고 그 옆에 선다.','기사단은 큰 싸움 전날 맹세를 다시 외웠다. 다 같이.','나는 오늘 안 외우겠다. 외울 맹세가 없어서가 아니다.','*바르그가 칼에서 손을 뗀다. 칼 없이 서 있는 바르그는 처음 본다.','맹세는 지키지 못하면 부러진다. 이건 부러지면 안 된다.','그래서 맹세로 안 하겠다. 그냥 말하겠다.','>뭐라고?','…내일 끝나도 네 옆에 있겠다. 기사로서가 아니라 바르그로서.','*달빛 아래 금빛 눈이 흔들리지 않는다.'],
+   c:[['나도 바르그 옆에 있을게',3,['*바르그가 고개를 끄덕이고는 한참 아무 말도 하지 않는다.','*그러다 나를 끌어당겨 안는다. 갑옷 없는 가슴에서 심장 소리가 크게 울린다.','…이런 건 처음이라고 했지. 거짓말이 아니다.','*바르그가 내 머리 위에 턱을 얹고 아주 낮게 운다. 대답이 필요 없는 울음이다.']],['손을 잡는다',3,['*바르그가 내 손을 내려다본다. 자기 손에 비하면 반만 하다.','…작군.','*그래도 놓지 않는다. 칼자루를 쥐던 손으로 아주 살살 쥔다.','이 손은 내일 아무것도 들지 마라. 드는 건 내가 한다.']]]}),
+ kasimir:()=>{const Z={
+   name:['*카시미르가 장갑을 벗고 촛불 앞에 맨손을 펼친다. 하인의 손이다. 굳은살이 겹겹이다.','안셀. 이 이름은 이미 그대가 돌려주셨지요.','오늘은 그대만 아는 이름을 드리고 싶습니다. 어머니가 저를 재울 때 부르던 짧은 이름이요.','*카시미르가 내 귀에 대고 한 음절을 속삭인다. 이백 년 동안 아무도 부르지 않은 이름이다.'],
+   keep:['*카시미르가 장갑을 벗고 촛불 앞에 맨손을 펼친다. 하인의 손이다. 굳은살이 겹겹이다.','세상에는 계속 카시미르로 남겠습니다. 그렇게 정했지요.','하지만 그대에게까지 연기하고 싶지는 않습니다.','*카시미르가 내 귀에 대고 속삭인다. 안셀. 이백 년 동안 제 입으로 말하지 못한 이름이다.'],
+   age:['*카시미르가 촛불 쪽으로 고개를 숙인다. 관자놀이에 흰 머리카락이 몇 올 늘었다.','보이십니까. 붉은 물을 끊은 뒤로 매일 하나씩 늘어납니다.','이백 년 동안 무서웠던 게 이것이었는데 지금은 하나도 무섭지 않군요.','그대와 같은 속도로 하얘지는 거니까요.']}[S.zqe]||['*카시미르가 붉은 병을 촛불 앞에 놓는다. 마지막 남은 병이다.','이걸 마시면 내일까지 하루가 멈춥니다. 대신 오늘 밤을 잃겠지요.','그래서 마시지 않겠습니다. 오늘 밤은 잃고 싶지 않아서요.','*카시미르가 병을 창밖 화단에 비운다. 붉은 물이 흙에 스며든다.'];
+  return {h:'기울지 않는 촛불',p:['*모두 잠든 뒤 카시미르가 응접실 촛대에 불을 하나만 켠다. 불꽃이 내 쪽으로 기운다.','내일 그 불 앞에 서면 이 촛불처럼 저도 기울지 모릅니다.','그래서 오늘 밤 그대에게 하나 드리고 싶은 게 있습니다.','>무엇을?'].concat(Z,['*촛불이 기울었다가 다시 곧게 선다.','…연기하지 않는 얼굴로 그대를 보는 건 아직도 서툽니다.','내일 이후에도 서툰 채로 곁에 있게 해 주십시오.']),
+   c:[['계속 곁에 있어 줘',3,['*카시미르가 맨손으로 내 뺨을 감싼다. 손끝이 조금 떨린다.','…명령이시라면. 아니, 부탁이시라면 더 기쁘게.','*촛불 하나가 다 탈 때까지 카시미르는 내 이마에 이마를 대고 있다. 대사 없이.']],['오늘은 내가 이끌게',3,['*내가 손을 내밀자 카시미르가 웃는다.','이번엔 그대가 박자를 세시는군요.','*음악 없는 응접실에서 둘이 천천히 돈다. 하나. 둘. 셋. 카시미르가 처음으로 따라가는 쪽이 된다.','…좋군요. 이끌려 가는 것도.']]]}}};
+const LNL={kirien:'내일 일 끝나면 다 같이 변두리에 가자. 엄마 천막에서 점 봐 줄게. 공짜로.',oswin:'내일 일은 기록하지 않겠습니다. 기록할 사람이 다 여기 있으니까요.',barg:'앞은 네가 본다. 뒤는 내가 본다. 옆은… 여기 있는 놈들이 보겠지.',ibre:'문틀은 다 높였습니다. 돌아와서 부딪칠 데가 없습니다.',eno:'안에 있는 사람들이 다 조용해요. 오늘은 저 혼자 말해도 된대요.',kasimir:'마지막 밤이라고 하지 맙시다. 저는 마지막이라는 말을 이백 년째 믿지 않습니다.'};
+const LNB=[[['kirien','barg'],['^바르그|…점은 사양하겠다.','^키리엔|겁나지?','^바르그|겁난다. 맞을까 봐.']],[['oswin','kasimir'],['^오스윈|이백 년이라니. 기록상으로는 서른도 안 되어 보이십니다만.','^카시미르|기록은 늘 저를 젊게 봐주더군요.']],[['ibre','eno'],['*에노가 이브레의 무릎 위로 올라가 앉는다. 이브레는 그대로 둔다.','^이브레|…따뜻합니다.']]];
+const lnHere=()=>S.comps.filter(id=>!(S.left||{})[id]&&!isAmn(id)&&S.taken!==id&&!(S.shLeft&&(S.shLeft===id||S.shLeft[id])));
+const lnKey=(s=S)=>s.route==='shep'&&typeof shNext==='function'?shNext(s):s.route==='ret'&&typeof rtNext==='function'?rtNext(s):s.route==='ext'&&typeof xtNext==='function'?xtNext(s):null;
+const lnDue=(s=S)=>!!s&&!s.lastN&&!s.end&&['sh4','gin','rt4','xt5'].includes(lnKey(s))&&lnHere().length>0;
+const romxDue=id=>{if(!S.rom||S.rom!==id||romP()!==id||!ROMX[id])return 0;if(S.romAtId!==id){S.romAtId=id;S.romAt=Date.now()}const X=(S.romx||{})[id]||{};
+ if(!X[1])return Date.now()-S.romAt>=600e3*SEC()?1:0;if(!X[2])return Date.now()-X[1]>=1200e3*SEC()?2:0;return 0};
+Object.assign(SCENE,{
+ romx:id=>{const k=romxDue(id);if(!k)return;const R=ROMX[id][k-1],T=cn(id);
+  seq(id,`${T} — ${R.h}`,R.p,h=>tev(id,`${T} — ${R.h}`,h,R.c.map(([l,g,r])=>[l,()=>{aff(id,g);S.romx=S.romx||{};(S.romx[id]=S.romx[id]||{})[k]=Date.now();jr(`${josa(T,'과','와')} 단둘이 「${R.h}」의 시간을 보냈다.`);save();seq(id,`${T} — ${R.h}`,r,h2=>tev(id,`${T} — ${R.h}`,h2,[['곁에 머문다',null]]))}])))},
+ lastN:()=>{const H=lnHere(),N=H.map(id=>`^${cn(id)}|${LNL[id]}`),B=[];LNB.forEach(([p,L])=>{if(p.every(x=>H.includes(x)))B.push(...L)});
+  const rl={shep:S.shc==='turn'?'*현관에 걸어 둔 흰 옷이 불빛에 희다. 내일은 그 옷을 입지 않는다.':'*현관에 흰 옷이 걸려 있다. 내일 그 옷을 입고 일곱째 밤으로 간다.',ret:'*이마의 재 줄이 벽난로 불빛에 희게 드러난다. 아무도 그걸 묻지 않는다.',ext:'*창밖 거리가 어둡다. 꺼진 가스등 대신 집집마다 촛불이 켜져 있다.'}[S.route]||'';
+  const L=['*저녁 늦게 저택 거실에 모두 모였다. 누가 부르지 않았는데도 하나둘 벽난로 앞으로 왔다.',rl,S.pit?'*피트가 부엌에서 빵을 한 아름 안고 나온다. 마그다 아줌마가 싸 줬다고 한다.':'','*한동안 장작 타는 소리만 난다. 그러다 한 사람씩 입을 연다.'].filter(Boolean).concat(N,B,['*모두의 눈이 나에게로 모인다.']);
+  const all=g=>H.forEach(id=>aff(id,g));
+  const end=R=>{S.lastN=1;all(2);jr('마지막 싸움 전날 밤 저택 거실에 모두 모였다. '+H.map(cn).join(' · ')+(S.pit?' · 피트':'')+'.');save();const r=romP();
+   seq('',`마지막 밤`,R.concat(['*밤이 깊어 하나둘 방으로 올라간다. 문 닫히는 소리가 차례로 들린다.'],r&&ROMF[r]?[`*${josa(cn(r),'만','만')} 벽난로 앞에 남는다.`]:['*마지막으로 남아 불을 끈다. 재 속에 불씨 하나가 오래 붉다.']),h=>ev('마지막 밤',h,r&&ROMF[r]?[['곁에 남는다',()=>SCENE.romF(r)]]:[['방으로 올라간다',()=>render()]],1))};
+  seq('','마지막 밤',L,h=>ev('마지막 밤',h,[
+   ['모두 고마워',()=>end(['*잠깐 아무도 말하지 않는다. 벽난로 장작이 한 번 무너진다.','*누군가 헛기침을 하고 누군가 웃는다. 누군가는 고개를 돌린다.',S.pit?'*피트가 코를 훌쩍이며 빵을 하나씩 나눠 준다.':''].filter(Boolean))],
+   ['살아서 다 같이 돌아오자',()=>end(['*하나둘 잔을 든다. 물이든 술이든 차든.','*잔이 부딪치는 소리가 거실을 채운다. 박자가 하나도 맞지 않는다.',S.pit?'^피트|저도요! 저도 살아서 돌아올 거예요. 저는 집에 있지만요.':''].filter(Boolean))],
+   ['내일 내 이름을 불러 줘',()=>end(['*누가 먼저랄 것 없이 내 이름을 부른다. 한 사람씩 다른 목소리로.','*이름이 거실을 한 바퀴 돈다. 불은 불린 이름을 먹지 못한다는 걸 다들 안다.',S.pit?'^피트|@N! 저도 불렀어요. 제일 크게요.':''].filter(Boolean))]]))},
+ romF:id=>{const R=ROMF[id](),T=cn(id);
+  seq(id,`${T} — ${R.h}`,R.p,h=>tev(id,`${T} — ${R.h}`,h,R.c.map(([l,g,r])=>[l,()=>{aff(id,g);S.romF=id;jr(`마지막 싸움 전날 밤 ${josa(T,'과','와')} 단둘이 「${R.h}」의 밤을 보냈다.`);save();seq(id,`${T} — ${R.h}`,r,h2=>tev(id,`${T} — ${R.h}`,h2,[['새벽을 맞는다',()=>render()]]))}])))}
+});
+Object.assign(CMD,{romx:()=>{const r=romP();if(!S.act&&r&&romxDue(r))SCENE.romx(r)},lastN:()=>{if(!S.act&&S.loc==='base'&&lnDue())SCENE.lastN()}});
+
+window.__k2={get EV0(){return EV0},lnDue:()=>lnDue(),romxDue:id=>romxDue(id),QTALK,BQU:()=>BQU,BQC:()=>BQC,dlg:()=>({TALK,QA,QAT,QATX,QA6,MOOD,MOODT,TALKT,DEFL,ORX,RCX,CH,CHX,CMT,CMTN,MGT,RVT,GREETS,TIERL,JEAL,JEALR,QEND}),dbgR:()=>({ROMI,ROMD,ROMQ,ROMKEEP,ROMA,ROMEND,ROMBACK,ROMBK,romAcc}),MS,R4X,payDue,payLines,moodT,talkT,KNOW,PL,isAmn,easyB,MV,CFG,shNext:()=>shNext(),shStep:()=>{const x=shStepAct(false);return x?String(x).slice(0,80):null},bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>
