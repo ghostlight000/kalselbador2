@@ -86,7 +86,9 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 .bgh .bgl{font-size:17px;font-weight:700;letter-spacing:.02em}
 .bgs{margin-left:auto;font-size:13px;color:var(--m)}.bgs b{color:var(--t)}
 .bgx{flex:none;width:7px;height:7px;margin:0 3px 2px;border-right:1.5px solid var(--a);border-bottom:1.5px solid var(--a);transform:rotate(45deg);transition:transform .15s;align-self:center}
-.bagp.fold .bgx{transform:rotate(-45deg)}
+.bagp.fold .bgx,.mapcard.fold .bgx{transform:rotate(-45deg)}
+.mph{display:flex;align-items:baseline;gap:8px;cursor:pointer;user-select:none}.mph .m{flex:1}
+.mapcard.fold h2{margin-bottom:0}.mapcard.fold{padding-bottom:12px}
 .bgtr{display:flex;gap:6px;align-items:stretch;margin:6px 0 2px}
 .bgtr .bgt{flex:1;min-width:0;flex-wrap:nowrap}
 .bgt .btn{min-height:34px;white-space:nowrap}
@@ -391,7 +393,7 @@ body:has(#bt.on) #devb{display:none}
    ============================================================ */
 const $=s=>document.querySelector(s),now=()=>performance.now(),R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const K='kalsel2',VER='v0.1 뼈대';
+const K='kalsel2',VER='v087';
 // 테스트: 내 컴퓨터에서 연 파일(file://)에 ?test를 붙였을 때만. 배포 사이트에서는 켜지지 않는다.
 const TEST=location.protocol==='file:'&&/[?&]test\b/.test(location.search);
 // 개발자 모드: claude.ai에서 게임 주인이 열 때(caps에서 켬), 또는 내 컴퓨터(file:·localhost)에서 #dev·?dev로 열 때만. 배포 사이트에서는 켜지지 않는다.
@@ -2458,7 +2460,8 @@ function placeView(){
   h+=`</div>`;
   /* v086b 가방은 어디서나 장소 카드 바로 아래에(사용자: 가방이 안 보인다) */
   h+=`<div class="card bagp${S.bgx?' fold':''}">${bagHtml()}</div>`;
-  h+=`<div class="card"><h2>오렌하르트 <span class="m">${S.act&&S.act.t==='m'?PL[S.act.fr].n+' → '+PL[S.act.to].n:'지도의 장소를 누르면 그곳으로 간다'}</span></h2><div class="mapw" id="mapw"><div class="mapc"><button class="btn" data-c="mapzoom" data-a="1.3" title="확대">＋</button><button class="btn" data-c="mapzoom" data-a="0.77" title="축소">－</button><button class="btn" data-c="mapcenter" title="현재 위치로">현재 위치로</button></div>${mapSvg()}</div></div>`;
+  /* v087 지도는 맨 위에, 접을 수 있게(사용자) */
+  h=`<div class="card mapcard${S.mapx?' fold':''}"><h2 class="mph" data-c="mapfold" role="button" aria-expanded="${S.mapx?'false':'true'}">오렌하르트 <span class="m">${S.act&&S.act.t==='m'?PL[S.act.fr].n+' → '+PL[S.act.to].n:'지도의 장소를 누르면 그곳으로 간다'}</span><i class="bgx"></i></h2>${S.mapx?'':`<div class="mapw" id="mapw"><div class="mapc"><button class="btn" data-c="mapzoom" data-a="1.3" title="확대">＋</button><button class="btn" data-c="mapzoom" data-a="0.77" title="축소">－</button><button class="btn" data-c="mapcenter" title="현재 위치로">현재 위치로</button></div>${mapSvg()}</div>`}</div>`+h;
   return h;
 }
 function sideCards(){
@@ -5285,6 +5288,7 @@ function itip(el){let t=document.getElementById('itip');const k=el&&el.dataset.t
 document.addEventListener('mouseover',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');itip(el)});
 window.addEventListener('scroll',()=>itip(null),{passive:true});
 Object.assign(CMD,{
+  mapfold:()=>{S.mapx=S.mapx?0:1;if(!S.mapx)MP.k='';save();render()},
   bgfold:()=>{S.bgx=S.bgx?0:1;itip(null);save();render()},
   btab:c=>{S.bt=c;itip(null);save();render()},
   bview:a=>{const [c,v]=String(a).split(':');S.bv=S.bv||{};S.bv[c]=v;itip(null);save();render()},
