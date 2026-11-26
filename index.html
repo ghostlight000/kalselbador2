@@ -1459,15 +1459,15 @@ const SCENE={
    ev('새벽 전',(c?'<p>“모르텐.” 대답은 없다.</p>':'')+`<p>새벽이 오기 전에 회색 마차가 온다. 풀무를 멘 사내들이 말없이 모르텐을 자루에 담는 동안 아무도 묻지 않는다. 누구였는지도. 무슨 일이 있었는지도.</p>
    <p>뒤늦게 나타난 경비대장이 서류에 도장을 찍는다.</p><p>경비대장 — “사망자 기억 수거. 공급 하나. 늙은이 하나면 등불 서른 개는 켜지. 운이 좋았어.”</p><p class="m">돌바닥에는 부러진 막대 반쪽만 남았다.</p>`,
    [['막대를 줍는다',()=>SCENE.kirien()]])},
- kirien:()=>ev('여우 머리의 여자',(S.mort===2?'<p class="m">회색 마차가 모퉁이를 돌아 사라진다.</p>':'')+`<p>등불이 꺼진 자리에 누군가 쪼그려 앉아 있다. 뾰족한 귀를 단 그림자가 내 발끝까지 길게 드리우고 여우 머리의 잉그라드가 금방이라도 바스러질 것 같은 식은 심지를 손끝으로 뒤집어 본다.</p>
-   <p>키리엔 — “늦었네. 석 달을 쫓았는데 네가 먼저 쓰러뜨렸어.”</p>${S.mort===2?'<p>키리엔이 마차가 사라진 쪽을 본다.</p><p>키리엔 — “회색 마차가 벌써 왔네. 저것들은 냄새를 맡고 와. 죽은 사람 냄새.”</p>':''}<p>키리엔 — “이 사람이 마지막에 뭐라고 했는지 들었어? 이름이나 뭐 그런 거.”</p>`,
+ kirien:()=>ev('여우 머리의 여자',(S.mort===2?'<p class="m">회색 마차가 모퉁이를 돌아 사라진다.</p>':'')+`<p>등불이 꺼진 자리에 누군가 쪼그려 앉아 있다. 당신의 얼굴 위로 개과 동물의 그림자가 그려진다. 여우 머리의 잉그라드는 금방이라도 바스러질 것 같은 식은 심지를 손끝으로 뒤집어 본다.</p>
+   <p>키리엔 — “늦어 버렸네. 석 달을 쫓았는데. 네가 먼저 쓰러뜨렸어.”</p>${S.mort===2?'<p>키리엔이 마차가 사라진 쪽을 본다.</p><p>키리엔 — “회색 마차가 벌써 왔네? 저것들은 냄새를 맡고 와. 말 안 해도 알지? 죽은 사람 냄새 말이야.”</p>':''}<p>키리엔 — “이 사람이 마지막에 뭐라고 했는지 들었어? 이름이나, 뭐 그런 거.”</p>`,
    [['못 알아들었다고 말한다',()=>SCENE.kir2(0)],['누구냐고 묻는다',()=>SCENE.kir2(1)]]),
- kir2:c=>ev('키리엔',(c?'<p>키리엔 — “나? …키리엔. 변두리에서 사라진 사람을 찾아. 찾으면 돈을 받고 못 찾으면 안 받아.”</p>':'<p>키리엔 — “나도 못 들었어. 석 달 동안 그 한마디를 들으려고 쫓았는데.”</p>')+
-   `<p>키리엔 — “이 점등꾼은 석 달 전에 사라졌어. 의뢰인은 딸이야. 아빠가 등불을 들고 나가서 안 돌아왔대.”</p><p>키리엔이 식은 심지를 코끝에 대자 귀가 뒤로 눕는다.</p><p>키리엔 — “재 냄새가 이렇게 진한 건 처음이야. 넌 이 사람을 왜 찾았어?”</p>`,
+ kir2:c=>ev('키리엔',(c?'<p>키리엔 — “나? 왜, 궁금해? 그럼 한 번만 말해 줄 테니 잘 들어. 내 이름은 키리엔. 변두리에서 사람 찾는 일을 해.”</p>':'<p>키리엔 — “그래. 나도 못 들었어. 꼭 듣고 싶었거든.”</p>')+
+   `<p>키리엔 — “이 점등꾼은 석 달 전에 사라진 사람이야. 의뢰인은 이 사람 딸이고. 아빠가 등불을 들고 나가서 안 돌아왔다지 뭐야.”</p><p>키리엔이 식은 심지를 코끝에 대자 귀가 뒤로 눕는다.</p><p>키리엔 — “재 냄새가 이렇게 진한 건 처음이야. 그런데 넌 이 사람을 왜 찾았어?”</p>`,
    [['편지를 보여 준다',()=>SCENE.kir3(1)],['말하지 않는다',()=>SCENE.kir3(0)]]),
  kir3:show=>{S.kshow=show?1:0;
-   ev('키리엔',(show?'<p>키리엔이 편지를 받아 앞면을 읽고 뒷면으로 뒤집는다. 다시 앞면으로 돌아가던 손가락이 한 줄에서 멈춘다.</p><p>키리엔 — “…글씨체가 다른데?”</p>':'<p>키리엔 — “말하기 싫으면 됐어. 다들 하나씩은 말 안 하고 다녀.”</p>')+
-   `<p>키리엔 — “이 사람 머릿속은 재로 꽉 찼어. 누가 이렇게 만들었는지 알아야 내 일이 끝나.”</p><p>키리엔 — “너도 뭘 찾고 있잖아. 같이 다니면 둘 중 하나는 찾겠지.”</p>`,
+   ev('키리엔',(show?'<p>키리엔이 편지를 받아 앞면을 읽고 뒷면으로 뒤집는다. 다시 앞면으로 돌아가던 손가락이 한 줄에서 멈춘다. 붉은 귀가 한 번 뒤로 젖혀진다.</p><p>키리엔 — “…글씨체가 다른데?”</p>':'<p>키리엔 — “말하기 싫으면 하지 마. 별로 궁금하지도 않아.”</p>')+
+   `<p>키리엔 — “아무튼 이 사람 머릿속은 재로 꽉 찼어. 누가 이렇게 만들었는지 알아내야 내 일도 끝나니까.”</p><p>키리엔 — “너도 뭘 찾고 있잖아. 같이 다니면 둘 중 하나는 찾겠지.”</p>`,
    [[joinL('kirien'),()=>{joinComp('kirien');aff('kirien',(S.kshow?6:0)+2);jr('점등꾼을 쫓던 여우 머리의 잉그라드 키리엔을 만났다. 함께 다니기로 했다.');SCENE.joined('kirien','키리엔 — “좋아. 내 몫은 내가 챙겨. 네 몫도 네가 챙기고.”','교단 구역으로 가는 길이 열렸다.')}],
     ['혼자 하겠다',()=>SCENE.kirNo()]])},
  kirNo:()=>{S.dec.kirien=1;jr('점등꾼을 쫓던 키리엔을 만났다. 함께 다니자는 말에 혼자 하겠다고 했다.');
@@ -3511,7 +3511,7 @@ const MGB={barg:'바르그가 칼을 떨어뜨릴 뻔한다.',eno:'에노의 눈
 const AEVT=[4,6,8];
 const AEV={
  kirien:{
-  4:{w:'road',h:'처마 밑',h2:'비가 그친 뒤',p2:()=>['*비가 그치자 키리엔이 처마 밖으로 한 발 내딛다가 멈춘다.','물웅덩이에 가스등이 거꾸로 비치네.','엄마가 그랬어. 물에 비친 불은 잊은 사람 얼굴을 보여 준대.','*키리엔이 웅덩이를 오래 들여다본다.','>뭐가 보여?','…아무것도. 다행인지 아닌지 모르겠다.'],c2:[['같이 들여다본다',3,['*두 얼굴이 웅덩이에 나란히 비친다.','둘이 보니까 좀 덜 이상하네.','*키리엔이 발끝으로 물을 톡 치자 작은 동심원에 얼굴들이 이리저리 흩어진다.']],['그만 가자고 한다',2,['응. 가자. 오래 보면 진짜 뭐가 보일 것 같아.']]],p:()=>['*소나기가 쏟아져 키리엔과 낡은 처마 밑으로 뛰어든다.','*키리엔이 귀를 털어 물을 사방에 튀긴다.','여우가 비 싫어하는 거 알아? 몰랐으면 지금 알게 됐네.','*처마 끝 물줄기를 세다가 키리엔이 말한다.','엄마는 비 오는 날엔 손님을 안 받았어. 비 오는 날엔 사람들이 잊은 게 너무 많이 보인대.'],
+  4:{w:'road',h:'처마 밑',h2:'비가 그친 뒤',p2:()=>['*비가 그치자 키리엔이 처마 밖으로 한 발 내딛다가 멈춘다.','물웅덩이에 가스등이 거꾸로 비치네.','엄마가 그랬어. 물에 비친 불은 잊은 사람 얼굴을 보여 준대.','*키리엔이 웅덩이를 오래 들여다본다.','>뭐가 보여?','…아무것도. 다행인지 아닌지 모르겠다.'],c2:[['같이 들여다본다',3,['*두 얼굴이 웅덩이에 나란히 비친다.','둘이 보니까 좀 덜 이상하네.','*키리엔이 발끝으로 물을 톡 친다. 작은 동심원 때문에 얼굴들이 이리저리 흩어진다.']],['그만 가자고 한다',2,['응. 가자. 오래 보면 진짜 뭐가 보일 것 같아.']]],p:()=>['*소나기가 쏟아져 키리엔과 낡은 처마 밑으로 뛰어든다.','*키리엔이 귀를 털어 물을 사방에 튀긴다.','여우가 비 싫어하는 거 알아? 몰랐으면 지금 알게 됐네.','*처마 끝 물줄기를 세다가 키리엔이 말한다.','엄마는 비 오는 날엔 손님을 안 받았어. 비 오는 날엔 사람들이 잊은 게 너무 많이 보인대.'],
    c:[['나는 비 오는 날이 좋다',3,['…이상한 애. 그럼 오늘은 네 날이네.','*꼬리로 물을 한 번 더 튀긴다. 이번엔 일부러.']],['네 손금도 봐 줄까',2,['점쟁이 딸 손금을 보겠다고? 배짱 좋네.','*손을 내밀었다가 도로 거둔다.','다음에.']]]},
   6:{w:'base',h:'지붕 위',h2:'새벽',p2:()=>['*새벽이 가까워지자 가스등이 하나씩 꺼진다. 키리엔이 꺼지는 순서를 눈으로 따라간다.','점등꾼들이 끄는 거야. 토벤 씨도 저렇게 끄고 다녔다나 봐.','*마지막 하나가 꺼지자 키리엔이 숨을 길게 내쉰다.','다 꺼지니까 아무도 안 없어진 것 같아. 아침엔 늘… 그래.'],c2:[['내일 밤엔 내가 세 줄게',4,['…그럼 나는 너를 셀게. 하나. 끝.','*키리엔이 처음 보는 웃음을 웃는다.']],['이제 내려가서 자자',2,['*키리엔이 담요를 내 쪽으로 다 밀어 놓고 먼저 내려간다.']]],p:()=>['*한밤중에 지붕에서 기와 밟는 소리가 난다. 올라가 보니 키리엔이 용마루에 앉아 있다.','서른여덟.','*아래 거리의 가스등 줄을 가리킨다.','오빠가 사라진 해에 저 거리 가스등이 서른여덟 개였어. 지금은 마흔하나.','등불이 하나 늘 때마다 누가 하나씩 없어진 것 같아서. 가끔 세.'].concat(S.mg&&S.mgs.kirien?['*키리엔이 내 손을 흘끗 본다.','네 불은 다르더라. 저것들처럼 탄내가 안 나.']:[]),
    c:[['옆에 앉는다',3,['*키리엔이 담요 한쪽을 말없이 내 어깨에 걸친다.','추워서 그런 거야. 너 말고 나.']],['같이 세어 준다',3,['서른아홉. 마흔. 마흔하나.','…맞네. 혼자 셀 때보다 덜 무섭다.']]]},
@@ -5003,7 +5003,7 @@ Object.assign(CMD,{duo:()=>{if(!S.act&&S.loc==='base')SCENE.duo()}});
 
 Object.assign(CMD,{recon:a=>{if(!S.act&&(S.left||{})[a]){if(a==='barg'&&(S.bk==='leave'||S.bk==='duel'||!S.bk)&&S.bqe!=='free'){if(!S.brRet)SCENE.brec1();return}SCENE.recon(a)}},a2a:()=>{if(!S.act&&(S.a2||0)===0)SCENE.a2a()},a2b:()=>{if(!S.act&&S.a2===1)SCENE.a2b()},a2c:()=>{if(!S.act&&S.a2===2)SCENE.a2c()},a2d:()=>{if(!S.act&&S.a2===3)SCENE.a2d()},a2e:()=>{if(!S.act&&S.a2===4)SCENE.a2e()},a2f:()=>{if(!S.act&&S.a2===5)SCENE.a2f()}});
 Object.keys(QA6).forEach(k=>{if(QA[k]&&!QA[k].includes(QA6[k]))QA[k].push(QA6[k])});
-window.__k2={MS,R4X,payDue,payLines,moodT,talkT,KNOW,PL,isAmn,easyB,MV,CFG,shNext:()=>shNext(),shStep:()=>{const x=shStepAct(false);return x?String(x).slice(0,80):null},bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
+window.__k2={get EV0(){return EV0},dbgR:()=>({ROMI,ROMD,ROMQ,ROMKEEP,ROMA,ROMEND,ROMBACK,ROMBK,romAcc}),MS,R4X,payDue,payLines,moodT,talkT,KNOW,PL,isAmn,easyB,MV,CFG,shNext:()=>shNext(),shStep:()=>{const x=shStepAct(false);return x?String(x).slice(0,80):null},bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>
 </body>
