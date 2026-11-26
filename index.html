@@ -471,12 +471,15 @@ const ROAD=ROADS_SUB.concat([['docks','street'],['street','church'],['street','a
 // 이동 시간(v044): 구역 사이 2분 + 좌표 거리 × 6초, 작은 장소를 거치면 1분씩 더. 같은 구역 안은 1분. 마차 창고를 고치면 40% 준다
 const pk=k=>PL[k].sub||k;
 // 이동 시간(v044, 사용자: 1편과 비슷하게): 구역 사이 2분 + 거리, 대개 4~9분. 같은 구역 안 작은 장소는 1분
-const travelSec=(a,b)=>{const A=pk(a),B=pk(b);if(A===B)return 60;return Math.round((120+Math.hypot(PL[A].x-PL[B].x,PL[A].y-PL[B].y)*6+(A!==a?60:0)+(B!==b?60:0))*(S&&S.fix&&S.fix.coach?.6:1))};
+const TRAVK=.5; // 이동 시간 배수(v081 사용자: 반으로)
+const travelSec=(a,b)=>{const A=pk(a),B=pk(b);if(A===B)return Math.round(60*TRAVK);return Math.round((120+Math.hypot(PL[A].x-PL[B].x,PL[A].y-PL[B].y)*6+(A!==a?60:0)+(B!==b?60:0))*(S&&S.fix&&S.fix.coach?.6:1)*TRAVK)};
 // 길 위의 마주침: 첫 번째 밤을 하나라도 넘긴 뒤, 가스등 거리나 교단 구역을 지나는 길에서. 테스트 모드에서는 꺼 둔다
 let ENC_ON=!TEST;
 const roadFoe=a0=>{if(pk(a0.fr)===pk(a0.to))return null;const a={fr:pk(a0.fr),to:pk(a0.to)};{const F={square:['crows','watch'],under:['eel','drown'],silver:['glove','footman']},k=[a.to,a.fr].find(x=>F[x]);if(ENC_ON&&k&&Math.random()<.22)return F[k][Math.random()*2|0]}if(ENC_ON&&(a.to==='works'||a.fr==='works')&&Math.random()<.25)return Math.random()<.5?'halfw':'slag';if(ENC_ON&&S.hunt&&a.to!=='base'&&a.fr!=='base'&&Math.random()<.2)return 'hunter';if(ENC_ON&&(a.to==='outskirts'||a.fr==='outskirts'))return Math.random()<.25?(Math.random()<.5?'mutt':'hollow'):null;if(!ENC_ON||!S.night||a.fr==='base'&&a.to==='docks'||a.to==='base'&&a.fr==='docks')return null;if(!['street','church'].includes(a.fr)&&!['street','church'].includes(a.to))return null;
   if(Math.random()>=(S.fix&&S.fix.coach?.08:.18))return null;if(S.mgh==='open'&&Math.random()<.4)return 'hunter';return S.night>=2&&Math.random()<.5?'thief':'dog'};
 const LODGE='녹슨 닻 여관';
+const CABS=15; // 삯마차: 어디서든 거처까지 15초, 거처에서 떠나온 곳까지 15초(사용자: 동료를 바꾸러 오가는 시간이 길다)
+const homeK=()=>S.base?'base':'inn',cabOk=k=>!!PL[k]&&(!PL[k].u||PL[k].u(S))&&!(PL[k].hide&&PL[k].hide(S));
 /* ===== 장소 그림 (1편 방식: 면 톤만으로 겹친 실루엣, 가스등 불빛만 따뜻하게) ===== */
 const SCN=(()=>{
 const W=480,H=160,f=n=>(+n).toFixed(1);
@@ -2242,7 +2245,7 @@ function statusCard(){
 }
 function actProg(){
   const a=S.act;if(!a)return '';
-  const lbl=a.t==='m'?`${PL[a.to].n}(으)로 가는 중`:a.t==='r'?(S.loc==='base'?'화로 곁에서 쉬는 중':'여관 방에서 쉬는 중'):a.t==='p'?'가스등 거리를 순찰하는 중':a.t==='x'?`${a.l} 중`:a.t==='f'?`${FIX[a.k].n} 고치는 중`:a.t==='b'?'서재에서 책 읽는 중':'';
+  const lbl=a.t==='m'?`${a.cab?'삯마차로 ':''}${PL[a.to].n}(으)로 가는 중`:a.t==='r'?(S.loc==='base'?'화로 곁에서 쉬는 중':'여관 방에서 쉬는 중'):a.t==='p'?'가스등 거리를 순찰하는 중':a.t==='x'?`${a.l} 중`:a.t==='f'?`${FIX[a.k].n} 고치는 중`:a.t==='b'?'서재에서 책 읽는 중':'';
   return `<div class="card prog"><div class="row"><span>${lbl}</span><span id="rm">${fmt((a.t0+a.d*1000-Date.now())/1000)}</span></div>
   <div class="bar"><i id="pb" style="width:${Math.min(100,(Date.now()-a.t0)/(a.d*10))}%"></i></div>${B('cancel','그만두기',{cls:'sm'})}</div>`;
 }
@@ -2374,6 +2377,9 @@ function placeView(){
   }
   if(!S.party&&S.mort===1)acts.push(B('mtalk','모르텐과 이야기하기',{sub:'막대를 쥔 늙은 교관',dis:busy&&S.act.t==='m'}));
   acts.push(...sxActs());
+  if(S.base||S.comps.length>=2){const H=homeK(),hn=H==='base'?'저택':LODGE,cs=fmt(CABS*SEC())+' · 길에서 아무도 마주치지 않는다';
+    if(S.loc!==H)acts.push(B('cab',`삯마차를 불러 ${hn}으로 돌아간다`,{a:H,sub:cs,dis:busy}));
+    else if(S.ret&&S.ret!==H&&cabOk(S.ret))acts.push(B('cab',`삯마차로 ${PL[S.ret].n}에 다시 간다`,{a:S.ret,sub:cs,dis:busy}))}
   if(S.party)acts.push(B('talk',josa(cn(S.party),'과','와')+' 이야기하기',{a:S.party,sub:talkSub(S.party),dis:busy&&S.act.t==='m'}));
   if(acts.length)h+=`<div class="acts">${acts.join('')}</div>`;
   const X=EXP[S.loc];
@@ -2598,9 +2604,9 @@ function resolveAct(){
     const SXR=sxExplore(a.at),say=[X.say,...SXR.notes];if(!SXR.started)xevRoll(a.at);
     if(!S.pend&&Math.random()<X.enc*(a.cd?.5:1)){const fs=X.foes(S),foe=fs[Math.random()*fs.length|0];S.xl={t:X.n,i:L.i,g:L.g,say:say.join(' ')};save();startBattle('fight',foe,packFor(foe));return true}
     pop(X.n,{i:L.i,g:L.g,n:say})}
-  if(a.t==='m'){S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='inn'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='inn'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(a.to==='academy'&&S.sole&&(S.oq||0)>=2&&!S.solv&&!S.pend)S.pend='soleV';if(a.to==='base'&&S.oq===6&&!S.lisL&&!S.pend)S.pend='liseL';if(a.to==='base'&&!S.pend&&!(S.a3&&!S.a3h)&&typeof duoNext==='function'&&duoNext()&&Math.random()<.35&&!TEST)S.pend='duo';if(a.to==='base'&&S.a3&&!S.a3h&&S.comps.filter(c=>!(S.left||{})[c]&&S.taken!==c).length>=2&&!S.pend)S.pend='a3Hearth';sxArrive(a.to);if(a.to==='church'&&!S.archM&&!S.pend)S.pend='archM';if(a.to==='base'&&(S.a2||0)>=3&&!S.gift&&!S.pend)S.pend='gift';if(a.to==='base'&&S.brRet&&Date.now()-S.brRet>=600e3*SEC()&&!S.pend)S.pend='brecBack';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&typeof NDF!=='undefined'&&NDF[a.to])jr(NDF[a.to]);if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
-    const rf=!S.pend&&roadFoe(a);if(rf){save();SCENE.road(rf,a);return true}
-    if(S.base&&!(TEST&&!ROADT))roadPick(a.to);
+  if(a.t==='m'){if(a.to===homeK()&&a.fr!==a.to)S.ret=a.fr;S.loc=a.to;const first=!S.vis[a.to];S.vis[a.to]=1;log(PL[a.to].n+'에 닿았다.');if(a.to==='inn'&&S.comps.length>=2&&met(S,'ibre')&&!S.manor&&!S.base&&!S.mr)S.pend='manorRumor';if(a.to==='inn'&&S.comps.length>=2&&!met(S,'ibre')&&!S.ring&&!S.manor&&!S.base&&!S.mr)S.pend='innRing';if(a.to==='docks'&&S.mg&&S.mgh==='open'&&!S.mgr&&!S.pend)S.pend='mgRumor';if(a.to==='academy'&&S.sole&&(S.oq||0)>=2&&!S.solv&&!S.pend)S.pend='soleV';if(a.to==='base'&&S.oq===6&&!S.lisL&&!S.pend)S.pend='liseL';if(a.to==='base'&&!S.pend&&!(S.a3&&!S.a3h)&&typeof duoNext==='function'&&duoNext()&&Math.random()<.35&&!TEST)S.pend='duo';if(a.to==='base'&&S.a3&&!S.a3h&&S.comps.filter(c=>!(S.left||{})[c]&&S.taken!==c).length>=2&&!S.pend)S.pend='a3Hearth';sxArrive(a.to);if(a.to==='church'&&!S.archM&&!S.pend)S.pend='archM';if(a.to==='base'&&(S.a2||0)>=3&&!S.gift&&!S.pend)S.pend='gift';if(a.to==='base'&&S.brRet&&Date.now()-S.brRet>=600e3*SEC()&&!S.pend)S.pend='brecBack';if(first&&a.to==='church')jr('교단 구역에 처음 들어섰다. 대성당 안에서 옛 불이 소리 없이 탄다.');if(first&&typeof NDF!=='undefined'&&NDF[a.to])jr(NDF[a.to]);if(first&&a.to==='academy')jr('학술원 언덕에 처음 올랐다. 유리 지붕 아래 강의동이 불을 밝히고 있다. 저 아래 어딘가에서 점등꾼은 내 이름을 기억했다.');
+    const rf=!S.pend&&!a.cab&&roadFoe(a);if(rf){save();SCENE.road(rf,a);return true}
+    if(S.base&&!a.cab&&!(TEST&&!ROADT))roadPick(a.to);
 }
   if(a.t==='r'){S.hp=S.mhp;const b=S.loc==='base';const bell=BELLS[(S.bell=(S.bell||0)+1)%BELLS.length];log(b?'화로 곁에서 쉬었다. 몸이 풀렸다.':'여관 방에서 쉬었다.');const n=[b?'장작이 타는 소리를 듣다 깜박 잠들었다. 체력을 모두 되찾았다.':'창밖 가스등이 밤새 깜박였다. 그래도 눈을 붙였다. 체력을 모두 되찾았다.'];if(!b&&Math.random()<.3)n.push('계단참에서 마그다가 묻는다. “오늘은 어디 다녀왔어?” 대답을 기다리지 않고 내려간다.');n.push(`<span class="m">대성당 종이 일곱 번 울렸다. 바람에 ${(S.a2||0)>=1?'불의 목자 '+ARCHN+'의 ':''}설교 한 줄이 실려 왔다. ${bell}</span>`);
     if(b&&mealOk()){const k=S.fix.kitchen?1:0,c=comfort()>=8?1:0;if(k+c){S.meal=Date.now();S.comps.forEach(id=>aff(id,1));
@@ -2674,6 +2680,7 @@ const CMD={
   legclear:()=>{C.leg=null;C.legMsg='';render()},
   start:()=>{newGame()},
   import2:()=>{ev('기록 코드로 이어 하기',`<p class="m">다른 기기에서 만든 2편 기록 코드(KS2.)를 붙여 넣는다.</p><textarea id="imp2"></textarea><p class="m" id="impm"></p>`,[['불러오기',()=>doImport()],['닫기',null]])},
+  cab:a=>{if(S.act||!cabOk(a))return;startAct({t:'m',fr:S.loc,to:a,cab:1,d:DEV&&FMOVE?0.05:CABS})},
   go:a=>{if(S.act)return;const p=PL[a];if(p.u&&!p.u(S))return;startAct({t:'m',fr:S.loc,to:a,d:DEV&&FMOVE?0.05:travelSec(S.loc,a)})},
   rest:()=>{if(S.act)return;startAct({t:'r',d:Math.round((S.loc==='base'?(S.fix.hearth?30:60):120)*(stal('three')?.8:1))})},
   fix:()=>{if(S.loc!=='base'||!S.base)return;
