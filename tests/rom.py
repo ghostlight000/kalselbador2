@@ -37,7 +37,10 @@ with sync_playwright() as p:
     E(pg,"()=>{const K=window.__k2;K.S.aff.oswin=K.S.romNo.oswin+15;K.render()}")
     E(pg,"window.__k2.CMD.talk('oswin')");pg.wait_for_timeout(150);listen(pg);choose(pg,'너야.');listen(pg);choose(pg,'곁에 있는다')
     E(pg,"window.__k2.CMD.talk('kirien')");pg.wait_for_timeout(150);listen(pg);choose(pg,'응. 미안해');listen(pg);choose(pg,'자리를 뜬다')
-    s=E(pg,"window.__k2.S");assert s['rom']=='oswin' and not s['romAsk']
+    s=E(pg,"window.__k2.S");assert s['rom']=='oswin' and not s['romAsk'] and s['romX']['kirien']==1
+    # 헤어진 키리엔은 호감이 높아도 다시 고백하지 않는다
+    E(pg,"()=>{const K=window.__k2;K.S.aff.kirien=95;K.render()}")
+    E(pg,"window.__k2.CMD.talk('kirien')");pg.wait_for_timeout(150);listen(pg);t=pg.inner_text('#ov');assert '나야, 오스윈' not in t and '오스윈 말이야' not in t,t[-300:]
     print('rom ok')
     b.close()
 print('errors',errs);assert not errs;print('ALL OK')

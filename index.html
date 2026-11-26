@@ -2004,7 +2004,7 @@ function pending(){const k=S.pend;S.pend=null;save();if(k&&k.startsWith('leave:'
 function grantBase(){if(S.base)return;SCENE.manorW();save()}
 function grantPit(){if(S.pit)return;SCENE.pitJoin(1);save()}
 // 저장 이전: 구조를 바꾸면 여기서 옛 저장을 고친다(1편 원칙)
-function migrate(){
+function migrate(){if(S&&S.romO&&!S.romX&&S.v075!==1){S.romX={};Object.keys(S.romO).forEach(id=>{if(S.rom!==id&&(S.romNo||{})[id]==null&&S.romAsk!==id&&S.romBk!==id)S.romX[id]=1})}if(S)S.v075=1;
   if(!S.v)S.v=1;
   if(S.v<2){S.base=1;S.pro=99;S.og=Math.min(7,Math.max(0,S.og|0));S.v=2} // v1: 처음부터 여관에서 시작했다
   if(S.v<3){if(S.loc==='inn')S.loc='base';S.vis=S.vis||{};if(S.vis.inn){S.vis.base=1;delete S.vis.inn}S.pit=S.base?1:0;S.v=3} // v2: 본거지 id가 inn이었다
@@ -4635,7 +4635,7 @@ Object.assign(CMD,{xt1:()=>{if(!S.act&&xtNext()==='xt1')SCENE.xt1()},xt2:()=>{if
 /* ===== 로맨스 다시 짜기 (v072, 사용자) — 호감이 일정 이상이면 그 동료가 먼저 마음을 꺼낸다(동료 퀘스트와 따로). 이미 다른 사람과 마음을 나눴다면 “나야, 쟤야?”를 묻고, 새 사람을 고르면 원래 상대가 나중에 “정말 끝낼 거야?”를 묻는다(다시 고를 수 있다) ===== */
 const ROMT={kirien:60,oswin:60,kasimir:60,barg:75};
 const romNoOK=id=>{const n=(S.romNo||{})[id];return n==null||((S.aff||{})[id]||0)>=n+15};
-const romDue=id=>romOK(id)&&ROMT[id]&&S.rom!==id&&actN()>=2&&((S.aff||{})[id]||0)>=ROMT[id]&&romNoOK(id)&&!S.romAsk&&!isAmn(id)&&S.taken!==id;
+const romDue=id=>!(S.romX||{})[id]&&romOK(id)&&ROMT[id]&&S.rom!==id&&actN()>=2&&((S.aff||{})[id]||0)>=ROMT[id]&&romNoOK(id)&&!S.romAsk&&!isAmn(id)&&S.taken!==id;
 const ROMI={kirien:['*키리엔이 지붕 위로 올라오라며 손짓한다. 담요가 한 장뿐이다.','요즘 이상해. 네가 어디 가면 냄새로 먼저 찾아. 일도 아닌데.','*꼬리가 내 발목에 감겼다가 풀린다.','…말 안 하면 계속 이럴 것 같아서.'],
  oswin:['*오스윈이 서재 촛불 아래서 장부를 덮는다. 꼬리 끝에서 불꽃이 쉬지 않고 튄다.','학자로서 정확하게 말하겠습니다. 요즘 당신이 방에 들어오면 계산이 틀립니다.','*안경을 벗었다가 다시 쓴다.','이걸 뭐라고 부르는지 압니다. 당신 입으로 듣고 싶을 뿐이지요.'],
  barg:['*바르그가 마당에 선 채 대검을 지면에 내려놓는다.','나는 이런 걸 잘 모른다. 맹세만이 내가 알던 유일한 것이다.','*한참 말이 없다.','네가 곁에 없으면 등이 허전하다. …그게 다다.'],
@@ -4653,7 +4653,7 @@ function romScene(id){const T=cn(id),A=S.rom&&S.rom!==id&&S.comps.includes(S.rom
   const no=(L)=>{S.romNo=S.romNo||{};S.romNo[id]=(S.aff||{})[id]||0;save();seq(id,`${T} — 마음`,L,h=>tev(id,`${T} — 마음`,h,[['이야기를 마친다',null]]))};
   seq(id,`${T} — 마음`,ROMI[id].concat(A?[ROMQ[id](cn(A))]:[]),h=>tev(id,`${T} — 마음`,h,A?[['너야. '+acc[0],take],[josa(cn(A),'이야','야'),()=>no(ROMKEEP[id])]]:[[acc[0],take],['지금처럼 지내자',()=>no(ROMD[id])]]))}
 function romAskScene(id){const B=S.rom,T=cn(id);
-  seq(id,`${T} — 정말이야?`,ROMA[id](cn(B)),h=>tev(id,`${T} — 정말이야?`,h,[[`응. 미안해`,()=>{S.romAsk=null;S.romPrev=null;aff(id,-8);jr(`${josa(T,'과','와')} 헤어졌다. 이제 ${josa(cn(B),'과','와')} 마음을 나눈다.`);save();seq(id,T,ROMEND[id],h2=>tev(id,T,h2,[['자리를 뜬다',null]]))}],
+  seq(id,`${T} — 정말이야?`,ROMA[id](cn(B)),h=>tev(id,`${T} — 정말이야?`,h,[[`응. 미안해`,()=>{S.romAsk=null;S.romPrev=null;S.romX=S.romX||{};S.romX[id]=1;aff(id,-8);jr(`${josa(T,'과','와')} 헤어졌다. 이제 ${josa(cn(B),'과','와')} 마음을 나눈다.`);save();seq(id,T,ROMEND[id],h2=>tev(id,T,h2,[['자리를 뜬다',null]]))}],
    [`아니. 너야`,()=>{S.romBk=B;S.rom=id;S.romAsk=null;S.romPrev=null;jr(`${josa(T,'에게','에게')} 돌아왔다. ${cn(B)}에게 말해야 한다.`);save();seq(id,T,ROMBACK[id],h2=>tev(id,T,h2,[['곁에 있는다',null]]))}]]))}
 function romBkScene(id){const T=cn(id);S.romBk=null;aff(id,-8);S.romNo=S.romNo||{};S.romNo[id]=(S.aff||{})[id]||0;jr(`${josa(T,'은','는')} 내가 원래 상대에게 돌아간 걸 알았다.`);save();seq(id,T,ROMBK[id],h=>tev(id,T,h,[['자리를 뜬다',null]]))}
 
