@@ -81,6 +81,43 @@ kbd{font:12px/1 "Gowun Batang",serif;border:1px solid var(--al);padding:2px 5px;
 #bacts .btn{min-height:42px}
 .acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;margin:6px 0}
 .acts .btn{text-align:left}
+.bagp{padding-top:14px}
+.bgh{display:flex;align-items:baseline;gap:8px;width:100%;background:none;border:0;padding:0;margin:0 0 4px;font:inherit;color:var(--t);cursor:pointer;text-align:left}
+.bgh .bgl{font-size:17px;font-weight:700;letter-spacing:.02em}
+.bgs{margin-left:auto;font-size:13px;color:var(--m)}.bgs b{color:var(--t)}
+.bgx{flex:none;width:7px;height:7px;margin:0 3px 2px;border-right:1.5px solid var(--a);border-bottom:1.5px solid var(--a);transform:rotate(45deg);transition:transform .15s;align-self:center}
+.bagp.fold .bgx{transform:rotate(-45deg)}
+.bgtr{display:flex;gap:6px;align-items:stretch;margin:6px 0 2px}
+.bgtr .bgt{flex:1;min-width:0;flex-wrap:nowrap}
+.bgt .btn{min-height:34px;white-space:nowrap}
+.bgn{margin-left:4px;font-size:11px;opacity:.75}
+.bgv{flex:none;flex-wrap:nowrap}.bgv .btn{flex:none;width:38px;min-height:34px;padding:0;display:flex;align-items:center;justify-content:center}
+.bgv svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.igr{display:grid;grid-template-columns:repeat(auto-fill,52px);gap:6px;padding:8px 0 4px}
+.isl{position:relative;width:52px;height:52px;padding:0;min-height:0;display:flex;align-items:center;justify-content:center;font:inherit;color:var(--t);background:none;border:6px solid transparent;border-image:var(--bo) 8 / 6px stretch;cursor:pointer}
+.isl:hover{color:var(--a)}
+.isl.on{border-image:var(--bf) 8 fill / 6px stretch}
+.isl svg,.iri svg,.ibig svg{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.isl svg{width:28px;height:28px}
+.isl svg .f,.irw svg .f,.ibig svg .f{fill:currentColor;fill-opacity:.22}
+.isl svg .f2,.irw svg .f2,.ibig svg .f2{fill:currentColor;fill-opacity:.55}
+.isn{position:absolute;right:0;bottom:-2px;font-size:11px;line-height:1;font-weight:700;color:var(--m)}
+.ise{position:absolute;left:1px;top:1px;width:5px;height:5px;transform:rotate(45deg);background:var(--a)}
+.irl{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px;padding:8px 0 4px}
+.irw{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;width:100%;padding:3px 8px;font:inherit;color:var(--t);background:none;border:6px solid transparent;border-image:var(--bo) 8 / 6px stretch;cursor:pointer}
+.irw.on{border-image:var(--bf) 8 fill / 6px stretch}
+.iri svg{width:26px;height:26px;display:block}
+.irn{min-width:0;display:flex;flex-direction:column;gap:1px}
+.irt{font-size:14px;font-weight:600;line-height:1.3}
+.ire{font-style:normal;font-size:11px;color:var(--a);margin-left:6px}
+.ird{font-size:12px;line-height:1.35;color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.irc{font-size:12px;color:var(--m)}
+.ibig{display:flex;justify-content:center;margin:0 0 6px;color:var(--a)}.ibig svg{width:44px;height:44px}
+#itip{position:fixed;z-index:95;display:none;max-width:260px;padding:9px 12px 10px;pointer-events:none;background:var(--k1);color:#dce1e8;font-size:13px;line-height:1.55;clip-path:polygon(5px 0,calc(100% - 5px) 0,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0 calc(100% - 5px),0 5px);filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))}
+#itip b{font-size:15px;color:#c9d3e3}
+#itip .itm{display:block;font-size:12px;color:#959eac;margin-top:1px}
+#itip p{margin:6px 0 0}
+@media (max-width:560px){.bgtr{flex-wrap:wrap}.bgtr .bgt{flex-basis:100%}.bgv{margin-left:auto}}
 .agh{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--m);letter-spacing:.12em;margin:12px 0 0}
 .agh:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--al),transparent)}
 .agh+.acts{margin-top:5px}
@@ -2015,7 +2052,7 @@ Object.assign(SX,{
  jobCh:{t:'흰 옷의 부탁',k:'job',j0:'고해소의 젊은 사제가 형제단 예배실로 간 동생을 찾아 달라고 했다.',hook:{arr:'confess',when:s=>(s.a2||0)>=5},
   open:()=>ev('젊은 사제','<p>사제 — “동생이 맨발이 됐어요. 이마에 줄을 그었대요. 지하로 내려가는 걸 봤다는 사람이 있어요.”</p>',[['찾아보겠다',()=>sxStart('jobCh')],['어렵다',()=>sxNo('jobCh')]]),
   steps:[{n:'맨발의 동생',d:'지하 예배실에서 사제의 동생을 찾자.',at:'chapel',b:['줄 그은 소년','숫자를 세다 멈춘다'],run:()=>ev('맨발의 동생','<p>이마에 줄이 셋인 소년이 숫자를 세다가 형 이야기를 꺼내자 멎는다.</p><p>소년 — “형? 나한테 형이 있었어?”</p>',[['형에게 데려간다',()=>{sxEnd('jobCh','home',{a:2,x:15});ev('고해소','<p>사제가 동생의 이마를 소매로 닦자 줄 하나가 지워진다. 소년이 무언가를 떠올린 얼굴을 한다.</p>',[['돌아선다',null]],1)}],['억지로 데려가지 않는다',()=>{disl({eno:-2});sxEnd('jobCh','stay',{x:5});ev('지하 예배실','<p>소년이 다시 숫자를 센다. 처음부터.</p>',[['계단을 오른다',null]],1)}]])}],end:{home:'사제의 동생을 데려다주었다. 줄 하나가 지워졌다.',stay:'사제의 동생은 지하에 남아 숫자를 센다.'}}});
-IT.wwater=['미지근한 물','갱도에서 떠 온 물. 숨을 쉬는 것처럼 물결이 인다.'];
+IT.wwater=['갱도의 미지근한 물','갱도에서 떠 온 물. 숨을 쉬는 것처럼 물결이 인다.'];
 
 Object.assign(SCENE,{
  sxmortW:()=>ev('일곱째 문 곁방',`<p>열쇠가 돌아가자 곁방 철문이 무겁게 열린다. 옆의 일곱째 문은 아무 일도 없었다는 듯 매끈하게 닫혀 있다.</p><p class="m">작은 방. 벽마다 빼곡한 유리병에는 꼬리표 대신 노래 한 줄씩이 새겨져 있다. 병들이 낮게 웅웅거린다. 소리가 나지 않는 노래다.</p><p class="m">맨 앞 선반에 새 병 하나가 있다. 꼬리표 — “사망자 기억 수거. 경비대 모르텐. 공급 하나.”</p><p class="m">그 옆 낡은 병에서 여자 목소리가 새어 나온다. “모르야. 첫 줄은 이거야.”</p>`+pline({kirien:'…모르텐이야. 여기까지 끌려왔구나.',oswin:'공급 하나. 그 글자를 이렇게 다시 볼 줄은 몰랐습니다.',ibre:'두 병이 나란히 있습니다. 어머니와 아들입니다.',kasimir:'불 아래 창고라. 교단이 가장 아끼는 방이겠군요.',barg:'…영감. 여기 있었냐.',eno:'다 살아 있어요. 다 노래하고 싶어 해요.'}),
@@ -2420,10 +2457,9 @@ function placeView(){
   if(S.loc==='church')h+=`<p class="m">대성당 문 앞에 순례자들이 줄을 서 있고 안쪽 깊은 곳에서는 옛 불이 소리 없이 탄다.</p>`;
   h+=`</div>`;
   h+=`<div class="card"><h2>오렌하르트 <span class="m">${S.act&&S.act.t==='m'?PL[S.act.fr].n+' → '+PL[S.act.to].n:'지도의 장소를 누르면 그곳으로 간다'}</span></h2><div class="mapw" id="mapw"><div class="mapc"><button class="btn" data-c="mapzoom" data-a="1.3" title="확대">＋</button><button class="btn" data-c="mapzoom" data-a="0.77" title="축소">－</button><button class="btn" data-c="mapcenter" title="현재 위치로">현재 위치로</button></div>${mapSvg()}</div></div>`;
-  if(S.loc===(S.base?'base':'inn'))h+=`<div class="card"><details open><summary>가방</summary>${bagHtml()}</details></div>`;
+  if(S.loc===(S.base?'base':'inn'))h+=`<div class="card bagp${S.bgx?' fold':''}">${bagHtml()}</div>`;
   return h;
 }
-function bagHtml(){const e=Object.entries(S.inv).filter(([,n])=>n>0);return e.length?`<div class="bag">${e.map(([k,n])=>`<span title="${esc(k==='relic'&&S.legacy&&RELIC[S.legacy.pa]?RELIC[S.legacy.pa][1]:(IT[k]||['',''])[1])}">${esc(itName(k))} ${n}</span>`).join('')}</div>`:'<p class="empty">가방이 비어 있다</p>'}
 function sideCards(){
   const P=COMP[S.party];
   let h=`<div class="card"><h2>동료</h2>${!P&&S.mort===1?'<p><b class="g">모르텐</b></p><p class="m">경비대 교관</p>':''}${P?`<p><b class="g">${P.n}</b></p><p class="m">${compLine(S.party)}</p>${CSK[S.party]?`<p class="m">${Object.keys(CSK[S.party]).filter(k=>cst(S.party).r[k]).map(k=>CSK[S.party][k].n+' '+'◆'.repeat(cst(S.party).r[k])).join(' · ')||'기술을 아직 고르지 않았다'}${cst(S.party).cp?' · <span class="hbn">점수 '+cst(S.party).cp+'</span>':''}</p>`:''}${S.comps.length>1?`<p class="m">${S.comps.filter(x=>x!==S.party).map(cn).join(', ')} — ${S.base?'본거지에서 지낸다':'여관 1층에서 기다린다'}</p>`:''}`:'<p class="empty">아직 함께 걷는 이가 없다</p>'}</div>`;
@@ -2934,7 +2970,9 @@ const CRAFT_CMD={
   const L=S.rcpL||{},cr=S.craft,lines=[];
   if(cr)lines.push(`<div class="disp">만드는 중 — ${RCP[cr.id].n}<div class="row"><span class="m">끝나기까지</span><span class="dl" data-t="${cr.t0+cr.d*1000}">${fmt((cr.t0+cr.d*1000-Date.now())/1000)}</span></div></div>`);
   lines.push('<h3>배운 것</h3>');const kn=Object.keys(RCP).filter(k=>L[k]);
-  lines.push(kn.length?kn.map(k=>{const R0=RCP[k],done=rcpDone(k);return `<div class="ms"><b>${R0.n}</b> <span class="m">${done?(R0.gear==='shoe'?'아이들 모두 신발이 있다':'이미 가지고 있다'):fmt(R0.d*SEC())}</span><div class="m">${matTxt(R0.m)}</div><div class="m">${R0.e}</div></div>`}).join(''):'<p class="empty">아직 배운 것이 없다</p>');
+  /* v086 한 번 만들면 끝나는 것(아이 신발 · 무두질한 외투 · 칼날 · 등잔)은 만든 뒤 목록에서 뺀다(사용자) */
+  const kv=kn.filter(k=>!rcpDone(k));
+  lines.push(kv.length?kv.map(k=>{const R0=RCP[k];return `<div class="ms"><b>${R0.n}</b> <span class="m">${fmt(R0.d*SEC())}</span><div class="m">${matTxt(R0.m)}</div><div class="m">${R0.e}</div></div>`}).join(''):`<p class="empty">${kn.length?'지금 만들 것이 없다':'아직 배운 것이 없다'}</p>`);
   const lr=Object.keys(RCP).filter(k=>!L[k]&&(RCP[k].how==='c'||RCP[k].how==='q'));
   const lt=Object.keys(RCP).filter(k=>!L[k]&&RCP[k].how==='t');if(lt.length)lines.push('<h3>우두머리 전리품이 있으면 만들 수 있는 것</h3>'+lt.map(k=>`<div class="ms"><b>${RCP[k].n}</b> <span class="m">${itName(RCP[k].need)} — ${MSRC[RCP[k].need]||''}</span><div class="m">${RCP[k].e}</div></div>`).join(''));
   if(lr.length)lines.push('<h3>오틸리에에게 배울 수 있는 것</h3>'+lr.map(k=>{const R0=RCP[k];return `<div class="ms"><b>${R0.n}</b> <span class="m">${R0.how==='c'?`동전 ${px(R0.coin)}`:'부탁을 들어주면'}</span><div class="m">${R0.e}</div>${R0.how==='q'&&(S.rq||{})[k]?`<div class="m">오틸리에의 부탁 — ${matTxt(R0.q)}</div>`:''}</div>`}).join(''));
@@ -5162,6 +5200,98 @@ Object.assign(SCENE,{
 });
 Object.assign(CMD,{romx:()=>{const r=romP();if(!S.act&&r&&romxDue(r))SCENE.romx(r)},lastN:()=>{if(!S.act&&S.loc==='base'&&lnDue())SCENE.lastN()}});
 
+/* v086 가방 — 1편처럼 묶음 탭 · 아이콘 격자/목록 · 툴팁 · 자세히 보기(사용자). 아이콘은 1편 것을 쓰고 없는 것만 새로 그렸다 */
+const ICN={
+"armor": "<path d='M8.5 3.5 5 5.5 3.8 10.5 6.5 11.5V19c3.6 2 7.4 2 11 0v-7.5l2.7-1L19 5.5l-3.5-2c-1 1.7-2.2 2.5-3.5 2.5s-2.5-.8-3.5-2.5Z'/><path d='M9 13.5h6M9.5 16.5h5'/>",
+"coat": "<path d='M9 3.5h6l1.5 2.5 3 14.5h-15L7.5 6Z'/><path d='M9 3.5 12 8l3-4.5M12 8v12.5'/>",
+"sword": "<path d='M18 3.5h2.5V6L10 16.5 7.5 14Z'/><path d='M5.5 12.5l6 6M8 16l-3.5 3.5'/>",
+"club": "<path d='M5 19.5 12.5 12'/><path d='M12.5 12c-1.5-4.5.5-8 4-8.5 3 .3 4 3.2 3 6.3-2.2 2.7-4.7 3-7 2.2Z'/><path d='M15 6.5h.01M18 8.5h.01M15.5 10h.01'/>",
+"pelt": "<path d='M6 5l2.5 2h7L18 5l1 4-2 2 1.5 3.5L17 19l-2-1.5H9L7 19l-1.5-4.5L7 11 5 9Z'/>",
+"ore": "<path d='M4 17 7 9.5l5-3.5 6.5 2L20.5 15l-5 4.5H8Z'/><path d='M10 11.5l3 2 3-1.5M13 13.5V17'/>",
+"ingot": "<path d='M3.5 17.5 6 11.5h12l2.5 6Z'/><path d='M6 11.5 8 8h8l2 3.5'/>",
+"herb": "<path d='M12 21V9'/><path d='M12 14c-4-.5-6-3.5-5.5-7 3.2.2 5.5 3 5.5 7Z'/><path d='M12 10.5c3.5-.5 5.5-3 5.5-7-3.5.3-5.5 3.3-5.5 7Z'/>",
+"crystal": "<path d='M12 3 17.5 9 12 21 6.5 9Z'/><path d='M6.5 9h11M12 3v18'/>",
+"gem": "<path d='M6 9 9 5h6l3 4-6 11Z'/><path d='M6 9h12M9 5l3 4 3-4M12 9v11'/>",
+"vial": "<path d='M10 3.5h4M10.5 3.5V8L6.5 16a3.6 3.6 0 0 0 3.3 5h4.4a3.6 3.6 0 0 0 3.3-5l-4-8V3.5'/><path d='M8 14h8'/>",
+"jar": "<path d='M8.5 4h7v3h-7Z'/><path d='M8 7c-2 1-3 3-3 6v4.5A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5V13c0-3-1-5-3-6'/><path d='M9 13.5h6'/>",
+"fish": "<path d='M3 12c4-6 11-6 15 0-4 6-11 6-15 0Z'/><path d='M18 12l3-4v8Z'/><path d='M7.5 11h.01'/>",
+"meat": "<path d='M14.5 3.5c4.5 0 6.5 5.5 3.5 8.5-2 2-5 2-7 1L7.5 16.5'/><path d='M14.5 3.5c-3.5 0-5.5 4-3.5 9.5'/><circle cx='5.6' cy='17.6' r='1.6'/><circle cx='7' cy='19.6' r='1.6'/>",
+"cup": "<path d='M5 9h11v5a4.5 4.5 0 0 1-4.5 4.5h-2A4.5 4.5 0 0 1 5 14Z'/><path d='M16 10.5h1.8a2.2 2.2 0 0 1 0 4.4H16M9 6.5c-.8-1 .8-2 0-3M12 6.5c-.8-1 .8-2 0-3'/>",
+"sack": "<path d='M8 7c-2.8 3-3 9.5-.5 13h9c2.5-3.5 2.3-10-.5-13Z'/><path d='M8 7h8M9 4.5l3 2.5 3-2.5'/>",
+"torch": "<path d='M10.5 21 12 11.5l1.5 9.5'/><path d='M12 3.5c3 2.5 3.5 5.5 0 8-3.5-2.5-3-5.5 0-8Z'/><path d='M9.5 11.5h5'/>",
+"lamp": "<path d='M8 20.5h8M12 20.5v-4'/><path d='M5.5 12.5h13c0 2.5-2.9 4-6.5 4s-6.5-1.5-6.5-4Z'/><path d='M12 4c2 2 2.3 4 0 6.5-2.3-2.5-2-4.5 0-6.5Z'/>",
+"rod": "<path d='M4 20.5 18 4.5'/><path d='M18 4.5V15'/><path d='M18 15a1.6 1.6 0 1 1-2.2 1.5'/>",
+"knife": "<path d='M4.5 19.5 8.5 15.5'/><path d='M8.5 15.5 19.5 4.5c.8 5.5-3 10-8.5 12.5Z'/>",
+"book": "<path d='M5 18V5.5A2 2 0 0 1 7 3.5h12V17H7a2 2 0 0 0 0 4h12'/><path d='M9 7.5h6M9 10.5h6'/>",
+"letter": "<path d='M4 6.5h16v11H4Z'/><path d='M4 6.5l8 6 8-6'/>",
+"ring": "<circle cx='12' cy='14.5' r='5.5'/><path d='M10 9.3 12 5.5l2 3.8'/>",
+"necklace": "<path d='M5 3.5c0 7 4 8.5 7 8.5s7-1.5 7-8.5'/><circle cx='12' cy='16' r='3'/><path d='M12 12v1'/>",
+"flame": "<path d='M12 3c4.5 4.5 6 8.5 4 12.5a4.5 4.5 0 0 1-8 0c-1.6-3.2 0-5.8 2-7.5 0 2.5.8 3.8 2 4.5 1.2-2.6 1-6.2 0-9.5Z'/>",
+"shard": "<path d='M9 3 17 7 14 21 6 13Z'/><path d='M9 3l2 8.5L6 13M11 11.5 14 21'/>",
+"ash": "<path d='M3 19.5c3-6 6-8 9-8s6 2 9 8Z'/><path d='M8 7.5h.01M12.5 5h.01M16.5 8h.01M10.5 9h.01'/>",
+"token": "<path d='M12 3v4'/><path d='M8 7h8l-2 12-2 2-2-2Z'/><path d='M10 11h4M10.5 14.5h3'/>",
+"veil": "<path d='M5 4h14c-1 5 0 10.5-2 16-3-2-7-2-10 0-2-5.5-1-11-2-16Z'/><path d='M8 8c2.5 1 5.5 1 8 0'/>",
+"misc": "<path d='M12 4l7 8-7 8-7-8Z'/>",
+"fd_loaf": "<path class='f' d='M3.5 17.5v-5c0-4 3.8-6.5 8.5-6.5s8.5 2.5 8.5 6.5v5Z'/><path d='M8 9.5 9.5 12M12 8.8v3M16 9.5 14.5 12'/>",
+"fd_bun": "<path class='f' d='M4 16.5c0-5 3.6-8.5 8-8.5s8 3.5 8 8.5Z'/><path d='M3.5 16.5h17'/><path d='M9 11.5h.01M12 10.5h.01M15 11.5h.01'/>",
+"fd_soup": "<path class='f' d='M3 11h18c0 5-4 8.5-9 8.5S3 16 3 11Z'/><path d='M14.5 11 19.5 3.5'/><path d='M8 8c-.8-1.2.8-2.2 0-3.5M11 8c-.8-1.2.8-2.2 0-3.5'/>",
+"fd_stewpot": "<path class='f' d='M5 10h14v6.5a3.5 3.5 0 0 1-3.5 3.5h-7A3.5 3.5 0 0 1 5 16.5Z'/><path d='M3 11h2M19 11h2M4.5 10h15'/><path d='M9.5 7c-.8-1.2.8-2.2 0-3.5M14.5 7c-.8-1.2.8-2.2 0-3.5'/>",
+"fd_broth": "<path class='f' d='M3 12h18c0 4.5-4 7.5-9 7.5S3 16.5 3 12Z'/><path d='M9 9l6-4.5'/><circle cx='8.3' cy='9.8' r='1.3'/><circle cx='15.7' cy='4' r='1.3'/>",
+"fd_roast": "<path class='f' d='M14.5 3.5c4.5 0 6.5 5.5 3.5 8.5-2 2-5 2-7 1L7.5 16.5'/><path d='M14.5 3.5c-3.5 0-5.5 4-3.5 9.5'/><circle cx='5.6' cy='17.6' r='1.6'/><circle cx='7' cy='19.6' r='1.6'/>",
+"fd_steak": "<path class='f' d='M5 9c2-4 7-5 11-4s5 4 4 7-4 6-8 6-8-1.5-8.5-4.5Z'/><circle cx='15' cy='10' r='2'/>",
+"fd_gfish": "<path class='f' d='M3 11c4-5.5 11-5.5 15 0-4 5.5-11 5.5-15 0Z'/><path d='M18 11l3-3.5v7Z'/><path d='M8 8.5l2 5M11.5 8l2 6'/><path d='M3.5 20h17'/>",
+"fd_sfish": "<path class='f' d='M3 13c4-5.5 11-5.5 15 0-4 5.5-11 5.5-15 0Z'/><path d='M18 13l3-3.5v7Z'/><path d='M7 4.5l1.2 1.2-1.2 1.2-1.2-1.2ZM12 3l1.2 1.2L12 5.4l-1.2-1.2ZM16.5 5l1.2 1.2-1.2 1.2-1.2-1.2Z'/>",
+"fd_dishfish": "<path class='f' d='M2.5 15.5h19c-1 3-4.5 4.5-9.5 4.5s-8.5-1.5-9.5-4.5Z'/><path d='M5 12c3-4 9-4 12 0-3 3.5-9 3.5-12 0Z'/><path d='M17 12l2.5-2.5v5Z'/>",
+"fd_pie": "<path class='f' d='M3.5 13.5h17L19 18.5H5Z'/><path d='M4 13.5c2-4.5 14-4.5 16 0'/><path d='M9 11l1 2.5M12 10.3v3.2M15 11l-1 2.5'/>",
+"fd_cup": "<path class='f' d='M5 9h11v5a4.5 4.5 0 0 1-4.5 4.5h-2A4.5 4.5 0 0 1 5 14Z'/><path d='M16 10.5h1.8a2.2 2.2 0 0 1 0 4.4H16M9 6.5c-.8-1 .8-2 0-3M12 6.5c-.8-1 .8-2 0-3'/>",
+"fd_honey": "<path class='f' d='M9 4.5l3-1.7 3 1.7v3.4l-3 1.7-3-1.7Z'/><path class='f' d='M5.5 10.5l3-1.7 3 1.7v3.4l-3 1.7-3-1.7Z'/><path class='f' d='M12.5 10.5l3-1.7 3 1.7v3.4l-3 1.7-3-1.7Z'/><path d='M15.5 15.6v2.4a1.2 1.2 0 0 1-2.4 0'/><path d='M8.5 17.5v1.5'/>",
+"fd_rcake": "<path class='f' d='M3.5 12.5c0-2 3.8-3.5 8.5-3.5s8.5 1.5 8.5 3.5-3.8 3.5-8.5 3.5-8.5-1.5-8.5-3.5Z'/><path d='M3.5 12.5V15c0 2 3.8 3.5 8.5 3.5s8.5-1.5 8.5-3.5v-2.5'/><path d='M9 12h.01M12 11h.01M15 12.5h.01'/><path d='M10 6.5c-.6-.9.6-1.7 0-2.7M14 6.5c-.6-.9.6-1.7 0-2.7'/>",
+"scroll": "<path class='f' d='M6.5 5.5h11v13h-11Z'/><path d='M4.5 5.5a2 2 0 0 1 4 0M15.5 18.5a2 2 0 0 0 4 0M9 9.5h6M9 12.5h6M9 15.5h4'/>",
+"key": "<circle class='f' cx='7.5' cy='12' r='3.5'/><path d='M11 12h9.5M17 12v3M19.5 12v2.5'/>",
+"bell": "<path class='f' d='M6 17c1-1.5 1.5-3 1.5-6a4.5 4.5 0 0 1 9 0c0 3 .5 4.5 1.5 6Z'/><path d='M4.5 17h15M10.5 19.5a1.5 1.5 0 0 0 3 0M12 4.5V3'/>",
+"bandage": "<path class='f' d='M4.5 15.5 15.5 4.5l4 4-11 11Z'/><path d='M9.5 10.5l4 4 1-1-4-4ZM7 13l1.5 1.5M15.5 6.5 17 8'/>",
+"candle": "<path class='f' d='M9 10h6v10.5H9Z'/><path d='M12 10V7.5'/><path d='M12 3c1.6 1.4 1.8 2.8 0 4.5-1.8-1.7-1.6-3.1 0-4.5Z'/><path d='M7 20.5h10'/>",
+"cog": "<circle class='f' cx='12' cy='12' r='5'/><circle cx='12' cy='12' r='1.8'/><path d='M12 3.5V7M12 17v3.5M3.5 12H7M17 12h3.5M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6'/>",
+"mask": "<path class='f' d='M3.5 8c3-1.5 5.5-1 8.5.5 3-1.5 5.5-2 8.5-.5 0 5-2.5 8.5-5.5 8.5-1.5 0-2.5-1-3-2-.5 1-1.5 2-3 2-3 0-5.5-3.5-5.5-8.5Z'/><path d='M6.5 10.5c1-.8 2.2-.8 3 0M14.5 10.5c.8-.8 2-.8 3 0'/>",
+"spool": "<path class='f' d='M7.5 6.5h9v11h-9Z'/><path d='M5.5 4.5h13M5.5 19.5h13M7.5 9.5l9 2M7.5 12.5l9 2'/>",
+"drop": "<path class='f' d='M12 3.5c3.5 4.5 5.5 7.5 5.5 10.5a5.5 5.5 0 0 1-11 0c0-3 2-6 5.5-10.5Z'/><path d='M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5'/>",
+"staff": "<path d='M6 20.5 17 5.5'/><path class='f' d='M15.5 4.5a2.2 2.2 0 1 1 3 3'/><path d='M8.5 14l2 1.5'/>",
+"pancake": "<ellipse class='f' cx='12' cy='14' rx='8.5' ry='3.5'/><path d='M3.5 14v1.5c0 2 3.8 3.5 8.5 3.5s8.5-1.5 8.5-3.5V14M9 13.5h.01M13 12.5h.01M15 14.5h.01'/>",
+"moss": "<path class='f' d='M3.5 18.5c1-3 3-4.5 5-4 1-2.5 3.5-3.5 6-2.5 2-1 4.5 0 6 2.5v4Z'/><path d='M8 11V8.5M12 9.5V6M16 10.5V8M8 8.5l-1-1M12 6l1-1.2M16 8l1-1'/>"
+};
+const IMAP={"bless":"scroll","mkey":"key","hkey":"key","clap":"bell","letter":"letter","grim":"book","mstaff":"staff","mem":"jar","wick":"torch","relic":"gem","roll":"scroll","wwater":"vial","rub":"scroll","rubw":"scroll","cogw":"cog","sledg":"book","wash":"ash","invit":"letter","smask":"mask","mledg":"book","gvial":"vial","scrap":"ore","ash":"ash","cloth":"veil","herb":"herb","oil":"drop","thread":"spool","wax":"ingot","fish":"fish","flour":"sack","meat":"meat","honey":"fd_honey","warm":"vial","moss":"moss","spring":"cog","shard":"shard","eelskin":"pelt","cinder":"flame","censer":"lamp","vial":"jar","redw":"drop","ashcore":"crystal","band":"bandage","salve":"jar","candle":"candle","soup":"fd_soup","tea":"fd_cup","roast":"fd_roast","raw":"fd_steak","cake":"fd_rcake","htea":"fd_cup","hwater":"cup","fry":"fd_dishfish","dumpl":"fd_bun","stew":"fd_stewpot","pie":"fd_pie","pan":"pancake","mossy":"fd_broth","pickle":"fd_sfish","bread":"fd_loaf","grill":"fd_gfish","sabre":"sword","hakan":"sword","ablade":"knife","chain":"club","greats":"sword","spblade":"sword","glassd":"knife","ashgs":"sword","quilt":"coat","tcoat":"coat","grey":"coat","eelcoat":"coat","leather":"armor","apron":"armor","hplate":"armor","waxc":"token","flamp":"lamp","hook":"rod","page":"scroll","valve":"cog","mask":"mask","censt":"token","vialt":"necklace","redt":"ring"};
+const iico=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICN[IMAP[k]]||ICN.misc}</svg>`;
+const BCAT=[['use','쓸 것'],['mat','재료'],['eq','장비'],['story','이야기']];
+const bcat=k=>EQI[k]?'eq':(['band','salve','candle'].includes(k)||DISH[k])?'use':(MATS.includes(k)||Object.values(TROPHY).includes(k))?'mat':'story';
+const bName=k=>EQI[k]?EQI[k].n:itName(k);
+const bDesc=k=>EQI[k]?(EQI[k].t?EQI[k].t+' ':'')+EQI[k].d:k==='relic'&&S.legacy&&RELIC[S.legacy.pa]?RELIC[S.legacy.pa][1]:(IT[k]||['',''])[1];
+const bN=k=>EQI[k]?1:(S.inv[k]||0);
+const bOn=k=>!!(EQI[k]&&(S.eq||{})[EQI[k].s]===k);
+function bgrp(){const G={};Object.keys(S.inv).filter(k=>S.inv[k]>0&&IT[k]).forEach(k=>{(G[bcat(k)]=G[bcat(k)]||[]).push(k)});Object.keys(S.geq||{}).filter(k=>EQI[k]).forEach(k=>{(G.eq=G.eq||[]).push(k)});
+  if(G.eq)G.eq.sort((a,b)=>Object.keys(EQSL).indexOf(EQI[a].s)-Object.keys(EQSL).indexOf(EQI[b].s));return G}
+function islot(k){const n=bN(k),on=bOn(k);return `<button class="isl${on?' on':''}" data-c="iopen" data-a="${k}" data-tip="${k}" aria-label="${esc(bName(k))} ${n}개">${iico(k)}${n>1?`<b class="isn">${n}</b>`:''}${on?'<i class="ise"></i>':''}</button>`}
+function irow(k){const n=bN(k),on=bOn(k),E=EQI[k],d=E?E.d:(DISH[k]?DISH[k].e:bDesc(k));
+  return `<button class="irw${on?' on':''}" data-c="iopen" data-a="${k}"><span class="iri">${iico(k)}</span><span class="irn"><span class="irt">${esc(bName(k))}${on?'<i class="ire">갖춤</i>':''}</span>${d?`<span class="ird">${esc(d)}</span>`:''}</span><span class="irc">${E?EQSL[E.s]:'×'+n}</span></button>`}
+function bagHtml(){const G=bgrp(),cs=BCAT.map(c=>c[0]).filter(c=>G[c]),n=cs.reduce((a,c)=>a+G[c].length,0),sel=cs.includes(S.bt)?S.bt:cs[0],lv=(S.bv||{})[sel]==='l';
+  const hd=`<button class="bgh" data-c="bgfold" aria-expanded="${S.bgx?'false':'true'}"><span class="bgl">가방</span><span class="bgs">동전 <b>${S.coin}</b> · ${n}종</span><i class="bgx"></i></button>`;
+  if(S.bgx)return hd;if(!cs.length)return hd+'<p class="empty">가방이 비어 있다</p>';
+  const vt=`<div class="seg bgv"><button class="btn${lv?'':' on'}" data-c="bview" data-a="${sel}:g" title="격자로 보기" aria-label="격자로 보기"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg></button><button class="btn${lv?' on':''}" data-c="bview" data-a="${sel}:l" title="목록으로 보기" aria-label="목록으로 보기"><svg viewBox="0 0 16 16"><path d="M2 3.5h1M6 3.5h8M2 8h1M6 8h8M2 12.5h1M6 12.5h8"/></svg></button></div>`;
+  return hd+`<div class="bgtr"><div class="seg bgt">${cs.map(c=>`<button class="btn${c===sel?' on':''}" data-c="btab" data-a="${c}">${BCAT.find(x=>x[0]===c)[1]}<span class="bgn">${G[c].length}</span></button>`).join('')}</div>${vt}</div>`+(lv?`<div class="irl">${G[sel].map(irow).join('')}</div>`:`<div class="igr">${G[sel].map(islot).join('')}</div>`)}
+function itip(el){let t=document.getElementById('itip');const k=el&&el.dataset.tip;if(!k||!S||!bN(k)){if(t)t.style.display='none';return}
+  if(!t){t=document.createElement('div');t.id='itip';document.body.appendChild(t)}const E=EQI[k],cat=(BCAT.find(c=>c[0]===bcat(k))||[,''])[1];
+  t.innerHTML=`<b>${esc(bName(k))}</b><span class="itm">${cat}${E?' · '+EQSL[E.s]+(bOn(k)?' · 갖춤':''):' · '+bN(k)+'개'}</span><p>${esc(bDesc(k))}</p>`;
+  t.style.display='block';const r=el.getBoundingClientRect(),w=t.offsetWidth,h=t.offsetHeight;let x=Math.min(Math.max(8,r.left+r.width/2-w/2),innerWidth-w-8),y=r.top-h-8;if(y<8)y=r.bottom+8;t.style.left=x+'px';t.style.top=y+'px'}
+document.addEventListener('mouseover',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');itip(el)});
+window.addEventListener('scroll',()=>itip(null),{passive:true});
+Object.assign(CMD,{
+  bgfold:()=>{S.bgx=S.bgx?0:1;itip(null);save();render()},
+  btab:c=>{S.bt=c;itip(null);save();render()},
+  bview:a=>{const [c,v]=String(a).split(':');S.bv=S.bv||{};S.bv[c]=v;itip(null);save();render()},
+  iopen:k=>{itip(null);if(!bN(k))return;const E=EQI[k],cat=(BCAT.find(c=>c[0]===bcat(k))||[,''])[1],b=[];
+    if(E){const on=bOn(k);b.push([on?'빼 둔다':'갖춘다',()=>{S.eq=S.eq||{};if(on)delete S.eq[E.s];else S.eq[E.s]=k;eqRecalc();log(E.n+(on?'을(를) 빼 두었다.':'을(를) 갖췄다.'));save()}])}
+    b.push(['닫는다',null]);
+    ev(bName(k),`<div class="ibig">${iico(k)}</div><p>${esc(bDesc(k))}</p><p class="m">${cat}${E?' · '+EQSL[E.s]+(bOn(k)?' · 지금 갖추고 있다':''):' · '+bN(k)+'개'}${bcat(k)==='use'&&k!=='candle'?' · 싸움 중 「가방」에서 쓴다':''}</p>`,b,b.length===1?1:undefined)}
+});
 window.__k2={get EV0(){return EV0},lnDue:()=>lnDue(),romxDue:id=>romxDue(id),QTALK,BQU:()=>BQU,BQC:()=>BQC,dlg:()=>({TALK,QA,QAT,QATX,QA6,MOOD,MOODT,TALKT,DEFL,ORX,RCX,CH,CHX,CMT,CMTN,MGT,RVT,GREETS,TIERL,JEAL,JEALR,QEND}),dbgR:()=>({ROMI,ROMD,ROMQ,ROMKEEP,ROMA,ROMEND,ROMBACK,ROMBK,romAcc}),MS,R4X,payDue,payLines,moodT,talkT,KNOW,PL,isAmn,easyB,MV,CFG,shNext:()=>shNext(),shStep:()=>{const x=shStepAct(false);return x?String(x).slice(0,80):null},bpick,FSIG,setAffk:k=>{AFFK=k},sxEnd,ev,aff,CH,travelSec,sayFmt,CMD,hurt,BW,tln,isB,TAL,STAL,RAB,RX,tal,stal,tlCan,tlAvail,px,skC,mhpB,LVMAX,SX,sxQ,sxStart,sxExplore,XEV,AEV,aevNext,aevFor,actN,met,KIDS,DSP,QA,CSK,cst,affName,TALK,CH,chNext,KQ,FIX,DECO,BOOK,comfort,comfortT,travelSec,roadFoe,get ENC_ON(){return ENC_ON},set ENC_ON(v){ENC_ON=v},SKL,OSK,gainXp,useSkill,get MW(){return MW},COMP,affTier,romOK,romReady,SCENE,EXP,joinComp,grantBase,grantPit,get DEV(){return DEV},get S(){return S},get PV(){return PV},ORIGIN,set S(v){S=v},get G(){return G},get C(){return C},CFG,FOES,TS,MV,press,bact,startBattle,endBattle,render,save,load,tick,scode,sdecode,legacyDecode,BW,TEST};
 applyTheme();load();if(DEV)devInit();render();if(S&&S.pro!==99)prologue();setInterval(tick,500);caps();
 </script>

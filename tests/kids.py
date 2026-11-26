@@ -22,7 +22,7 @@ with sync_playwright() as p:
     assert E(pg,"window.__k2.S.kids.pit.st")=='out';pg.click('button[data-c=board]');assert pg.locator('#ov .drow[disabled]').count()>=6;choose(pg,'닫기')
     pg.wait_for_selector('#ov.on h2:has-text("파견에서 돌아왔다")',timeout=40000);okpop(pg);assert E(pg,"window.__k2.S.kids.pit.st")=='ok'
     # 다친 아이: 간호
-    E(pg,"()=>{const K=window.__k2;K.S.kids.pit.st='hurt';K.render()}");assert '다친 아이' in pg.inner_text('button[data-c=kids]')
+    E(pg,"()=>{const K=window.__k2;K.S.kids.pit.st='hurt';K.render()}");assert '다친 아이' in pg.get_attribute('button[data-c=kids]','title') and '✦' in pg.inner_text('button[data-c=kids]')
     pg.click('button[data-c=board]');assert pg.locator("#ov .drow[disabled]").count()>=6;choose(pg,'닫기')
     pg.click('button[data-c=kids]');assert '돌봐 줘야' in pg.inner_text('#ov');assert '일을 찾아올' in pg.inner_text('#ov');choose(pg,'피트 간호하기');okpop(pg)
     assert E(pg,"window.__k2.S.kids.pit.st")=='care' and E(pg,"window.__k2.S.inv.band")==3

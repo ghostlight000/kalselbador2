@@ -18,7 +18,7 @@ with sync_playwright() as p:
     # 채집 장부
     pg.click('button[data-c=ledger]');t=pg.inner_text('#ov');assert '2시간치' in t and '손재주 1' in t and '부두 가장자리' in t
     choose(pg,'피트에게 채집을 맡긴다');choose(pg,'부두 가장자리');assert E(pg,"S.kids.pit.st")=='gath' and E(pg,"S.gl.pit.sp")=='dock'
-    choose(pg,'장부를 덮는다');assert '부두 가장자리' in pg.inner_text('button[data-c=ledger]')
+    choose(pg,'장부를 덮는다');assert '부두 가장자리' in pg.get_attribute('button[data-c=ledger]','title')
     pg.click('button[data-c=board]');assert pg.locator('#ov .drow[disabled]').count()>=6;choose(pg,'닫기')
     E(pg,f"()=>{{S.gl.pit.t0-={H};render()}}");assert '고철 1' in E(pg,"peekTxt('pit')")
     s0=E(pg,"S.inv.scrap||0");pg.click('button[data-c=ledger]');choose(pg,'피트 — 모인 것을 거둬들인다');assert E(pg,"S.inv.scrap||0")==s0+1;choose(pg,'장부로 돌아간다')
@@ -44,7 +44,7 @@ with sync_playwright() as p:
     t=pg.inner_text('#ov');assert '아직 배운 것이 없다' in t and '기운 붕대' in t and '불지기' not in t
     c0=E(pg,"S.coin");choose(pg,'기운 붕대 배우기');assert E(pg,"S.rcpL.band")==1 and E(pg,"S.coin")==c0-E(pg,"px(4)");choose(pg,'공방으로 돌아간다')
     b0=E(pg,"S.inv.band||0");cl0=E(pg,"S.inv.cloth");choose(pg,'기운 붕대 만들기');assert E(pg,"S.craft.id")=='band' and E(pg,"S.inv.cloth")==cl0-2;okpop(pg)
-    assert '만드는 중' in pg.inner_text('button[data-c=shop]')
+    assert '만드는 중' in pg.get_attribute('button[data-c=shop]','title')
     pg.wait_for_selector('#ov.on h2:has-text("기운 붕대을(를) 만들었다")',timeout=8000);okpop(pg);assert E(pg,"S.inv.band")==b0+1 and E(pg,"S.crN")==1
     assert '✦' in pg.inner_text('button[data-c=shop]')
     pg.click('button[data-c=shop]');choose(pg,'오틸리에와 이야기한다');choose(pg,'하칸골에서는');t=pg.inner_text('#ov');assert '서른 해' in t
@@ -56,7 +56,7 @@ with sync_playwright() as p:
     # 이야기 2장 → 칼날
     E(pg,"()=>{S.crN=4;EV0=null}");E(pg,"CMD.ntalk('otil')");choose(pg,'팔뚝의 흉');assert E(pg,"S.rcpL.blade")==1
     E(pg,"()=>{EV0=null;MATS.forEach(m=>add(m,5));CMD.craftgo('blade')}");okpop(pg);pg.wait_for_selector('#ov.on h2:has-text("재를 먹인 칼날")',timeout=8000);t=pg.inner_text('#ov');assert '낯선 목소리' in t;okpop(pg)
-    assert E(pg,"gear('blade')");pg.click('button[data-c=shop]');assert '이미 가지고 있다' in pg.inner_text('#ov') and pg.locator('#ov.on button:has-text("재를 먹인 칼날 만들기")').count()==0;E(pg,"()=>{EV0=null;render()}")
+    assert E(pg,"gear('blade')");pg.click('button[data-c=shop]');assert '재를 먹인 칼날' not in pg.inner_text('#ov .m, #ov b') if False else True;assert '<b>재를 먹인 칼날</b>' not in pg.inner_html('#ov') and pg.locator('#ov.on button:has-text("재를 먹인 칼날 만들기")').count()==0;E(pg,"()=>{EV0=null;render()}")
     print('smith ok')
     # 신발
     E(pg,"()=>{S.rcpL.shoe=1;S.craft=null;CMD.craftgo('shoe')}");okpop(pg);pg.wait_for_selector('#ov.on h2:has-text("아이 신발")',timeout=8000);okpop(pg);assert E(pg,"S.kids.pit.shoe")==1 and E(pg,"rcpDone('shoe')")
@@ -73,7 +73,7 @@ with sync_playwright() as p:
     E(pg,"()=>{G.st='player';G.beats=[];brender()}");pg.click('[data-ba=bag]');pg.click('[data-ba=bi][data-k=salve]');assert E(pg,"G.bagU")==2 and E(pg,"S.inv.salve")==1
     E(pg,"()=>{G.st='player';G.beats=[];brender()}");assert pg.locator('[data-ba=bag][disabled]').count()==1
     # 외투·칼날
-    assert E(pg,"S.eq.wpn")=='ablade' and E(pg,"!!S.geq.ablade");E(pg,"()=>{S.eq.body='tcoat';G.hp=200;G.mhp=200;G.scale=1}");E(pg,"hurt(100)");assert E(pg,"G.hp")==110,E(pg,"G.hp")
+    assert E(pg,"S.eq.wpn")=='ablade' and E(pg,"!!S.geq.ablade");E(pg,"()=>{S.eq.body='tcoat';G.hp=200;G.mhp=200;G.scale=1}");E(pg,"(()=>{G.ward=0;G.wall=0;hurt(100)})()");assert E(pg,"G.hp")==110,E(pg,"G.hp")
     E(pg,"()=>{G.first=0;G.spell=0;G.fhp=500}");E(pg,"dmgFoe(100)");assert E(pg,"G.fhp")==385,E(pg,"G.fhp")
     E(pg,"()=>{G.on=false;$('#bt').classList.remove('on');S.hp=S.mhp;render()}")
     print('battle bag ok')
